@@ -1,4 +1,4 @@
-rootProject.name = "PresencifyAdmin"
+rootProject.name = "Presencify"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -24,3 +24,17 @@ plugins {
 }
 
 include(":composeApp")
+include(":feature:admin-auth")
+include(":feature:student-auth")
+include(":feature:teacher-auth")
+include(":feature:attendance")
+include(":feature:shedule")
+include(":feature:users")
+include(":feature:academics")
+include(":feature:student-profile")
+include(":feature:teacher-profile")
+include(":feature:admin-profile")
+include(":core:presentation")
+include(":core:data")
+include(":core:domain")
+include(":core:design-systems")

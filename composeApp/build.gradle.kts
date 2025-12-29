@@ -50,6 +50,8 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(project(":core:data"))
+
             // UI
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -139,11 +141,11 @@ dependencies {
 }
 
 android {
-    namespace = "edu.watumull.presencify.admin"
+    namespace = "edu.watumull.presencify"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "edu.watumull.presencify.admin"
+        applicationId = "edu.watumull.presencify"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -167,11 +169,11 @@ android {
 
 compose.desktop {
     application {
-        mainClass = "edu.watumull.presencify.admin.MainKt"
+        mainClass = "edu.watumull.presencify.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "edu.watumull.presencify.admin"
+            packageName = "edu.watumull.presencify"
             packageVersion = "1.0.0"
         }
     }

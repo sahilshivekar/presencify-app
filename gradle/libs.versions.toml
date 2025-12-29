@@ -1,16 +1,16 @@
 [versions]
-agp = "8.7.2"
+agp = "8.10.0"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
-androidx-activity = "1.9.3"
-androidx-appcompat = "1.7.0"
+androidx-activity = "1.10.1"
+androidx-appcompat = "1.7.1"
 androidx-core = "1.15.0"
 androidx-espresso = "3.6.1"
-androidx-lifecycle = "2.8.4"
+androidx-lifecycle = "2.9.2"
 androidx-testExt = "1.2.1"
 composeHotReload = "1.0.0"
-composeMultiplatform = "1.7.0"
+composeMultiplatform = "1.8.2"
 junit = "4.13.2"
 kotlin = "2.1.0"
 kotlinx-coroutines = "1.9.0"
@@ -27,6 +27,10 @@ navigation = "2.8.0-alpha10"  # JetBrains Navigation
 datetime = "0.6.1"
 serialization = "1.7.3"
 turbine = "1.2.0"
+kotlinStdlib = "2.1.0"
+runner = "1.7.0"
+core = "1.7.0"
+okio = "3.9.0"
 
 [libraries]
 # --- EXISTING ---
@@ -87,6 +91,10 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 # but we add Android specific runners if needed.
 androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "composeMultiplatform" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeMultiplatform" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -100,3 +108,5 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+androidLint = { id = "com.android.lint", version.ref = "agp" }

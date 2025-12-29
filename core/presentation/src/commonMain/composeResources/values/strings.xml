@@ -1,0 +1,10 @@
+<resources>
+    <string name="error_disk_full">Disk is full</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_serialization">Serialization error</string>
+    <string name="error_unauthorized">Unauthorized access</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="server_error">Server error</string>
+    <string name="the_request_timed_out">The request timed out</string>
+    <string name="youve_hit_your_rate_limit">You've hit your rate limit</string>
+</resources>
