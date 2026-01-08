@@ -56,10 +56,6 @@ kotlin {
     jvm()
 
     // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
         commonMain {
             dependencies {
@@ -83,6 +79,8 @@ kotlin {
                 implementation(libs.filekit.core)
                 implementation(libs.filekit.dialogs)
                 implementation(libs.filekit.dialogs.compose)
+
+                implementation(libs.kotlinx.datetime)
 
                 implementation(project(":core:domain"))
             }
@@ -121,6 +119,11 @@ kotlin {
                 // part of KMP’s default source set hierarchy. Note that this source set depends
                 // on common by default and will correctly pull the iOS artifacts of any
                 // KMP dependencies declared in commonMain.
+            }
+        }
+
+        jvmMain {
+            dependencies {
             }
         }
     }
