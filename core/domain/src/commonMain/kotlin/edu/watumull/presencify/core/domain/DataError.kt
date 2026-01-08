@@ -11,7 +11,7 @@ sealed interface DataError : Error {
         data object Unknown : Remote
         data object Unauthorized : Remote
         data object Forbidden : Remote
-        data class CustomError(val message: String) : Remote
+        data class BusinessLogicError(val message: String) : Remote
     }
 
     sealed interface Local : DataError {

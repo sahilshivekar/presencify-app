@@ -39,7 +39,7 @@ suspend inline fun <reified T> responseToResult(
         }
 
         400 -> Result.Error(
-            DataError.Remote.CustomError(
+            DataError.Remote.BusinessLogicError(
                 message = response.body<ApiResponseDto<T>>().message
             )
         )

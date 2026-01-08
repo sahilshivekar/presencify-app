@@ -16,7 +16,7 @@ fun DataError.toUiText(): UiText {
 
     return when(this) {
         // Dynamic String Case
-        is DataError.Remote.CustomError -> {
+        is DataError.Remote.BusinessLogicError -> {
             UiText.DynamicString(this.message)
         }
         // Resource ID Cases
