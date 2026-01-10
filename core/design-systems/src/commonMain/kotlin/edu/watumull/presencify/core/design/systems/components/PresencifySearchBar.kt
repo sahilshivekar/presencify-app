@@ -23,27 +23,27 @@ import androidx.compose.ui.text.input.ImeAction
 @Composable
 fun PresencifySearchBar(
     modifier: Modifier = Modifier,
-    searchQuery: String,
-    onSearchQueryValueChange: (String) -> Unit,
-    onSearchIconClick: () -> Unit,
-    onFilterIconClick: (() -> Unit)? = null,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onFilterClick: (() -> Unit)? = null,
     showFilterIcon: Boolean = true,
-    searchBarPlaceholder: String
+    placeHolder: String,
 ) {
 
     TextField(
-        value = searchQuery,
-        onValueChange = { onSearchQueryValueChange(it) },
+        value = query,
+        onValueChange = { onQueryChange(it) },
         modifier = modifier
             .clip(CircleShape)
             .background(color = MaterialTheme.colorScheme.surface)
             .fillMaxWidth(),
         placeholder = {
-            Text(text = searchBarPlaceholder, style = MaterialTheme.typography.bodyMedium)
+            Text(text = placeHolder, style = MaterialTheme.typography.bodyMedium)
         },
         leadingIcon = {
             IconButton(
-                onClick = onSearchIconClick
+                onClick = onSearchClick
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -56,9 +56,7 @@ fun PresencifySearchBar(
             if (showFilterIcon) {
                 IconButton(
                     onClick = {
-                        if (onFilterIconClick != null) {
-                            onFilterIconClick()
-                        }
+                        onFilterClick?.invoke()
                     }
                 ) {
                     Icon(
@@ -78,7 +76,7 @@ fun PresencifySearchBar(
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(
-            onSearch = { onSearchIconClick() }
+            onSearch = { onSearchClick() }
         )
     )
 }
