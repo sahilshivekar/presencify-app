@@ -28,7 +28,7 @@ fun PresencifySearchBar(
     onSearchClick: () -> Unit,
     onFilterClick: (() -> Unit)? = null,
     showFilterIcon: Boolean = true,
-    placeHolder: String,
+    placeholder: String,
 ) {
 
     TextField(
@@ -39,7 +39,7 @@ fun PresencifySearchBar(
             .background(color = MaterialTheme.colorScheme.surface)
             .fillMaxWidth(),
         placeholder = {
-            Text(text = placeHolder, style = MaterialTheme.typography.bodyMedium)
+            Text(text = placeholder, style = MaterialTheme.typography.bodyMedium)
         },
         leadingIcon = {
             IconButton(

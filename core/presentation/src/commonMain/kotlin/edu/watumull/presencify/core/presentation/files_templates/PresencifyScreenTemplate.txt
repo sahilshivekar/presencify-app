@@ -16,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import edu.watumull.presencify.core.presentation.utils.EventsEffect
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
@@ -24,12 +24,11 @@ fun ${NAME}Root(
     navController: NavHostController,
 ) {
     val viewModel: ${NAME}ViewModel = koinViewModel()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
             is ${NAME}Event.NavigateBack -> navController.navigateUp()
-            else -> Unit
         }
     }
 
@@ -48,27 +47,29 @@ fun ${NAME}Root(
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.ExperimentalMaterial3Api
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyLoadingDialog
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiConstants
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.widthIn
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ${NAME}Screen(
     state: ${NAME}State,
     onAction: (${NAME}Action) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(${NAME}Action.NavigateBack) },
+        backPress = { onAction(${NAME}Action.BackButtonClick) },
         topBarTitle = "${NAME}",
     ) { paddingValues ->
         when (state.viewState) {
@@ -77,14 +78,16 @@ fun ${NAME}Screen(
                     isVisible = true
                 )
             }
+
             is ${NAME}State.ViewState.Error -> {
                 PresencifyNoResultsIndicator(
                     text = state.viewState.message
                 )
             }
+
             is ${NAME}State.ViewState.Content -> {
                 ${NAME}ScreenContent(
-                    state = state.viewState as ${NAME}State.ViewState.Content,
+                    state = state,
                     onAction = onAction,
                     modifier = Modifier.padding(paddingValues)
                 )
@@ -99,8 +102,8 @@ fun ${NAME}Screen(
             title = dialogState.title,
             message = dialogState.message,
             onConfirm = {
-                when(dialogState.dialogIntention) {
-                    GENERIC -> {
+                when (dialogState.dialogIntention) {
+                    DialogIntention.GENERIC -> {
 
                     }
                 }
@@ -111,23 +114,23 @@ fun ${NAME}Screen(
         )
     }
 
-    
+
 }
 
 @Preview
 @Composable
 private fun ${NAME}ScreenPreview() {
     ${NAME}Screen(
-        state = ${NAME}State(viewState = ${NAME}State.ViewState.Content()),
+        state = ${NAME}State(viewState = ${NAME}State.ViewState.Content),
         onAction = {}
     )
 }
 
 @Composable
 private fun ${NAME}ScreenContent(
-    state: ${NAME}State.ViewState.Content,
+    state: ${NAME}State,
     onAction: (${NAME}Action) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -139,7 +142,7 @@ private fun ${NAME}ScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .maxWidth(UiConstants.MAX_CONTENT_WIDTH),
+                .widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -158,9 +161,10 @@ import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import kotlinx.coroutines.launch
 
-class ${NAME}ViewModel : BaseViewModel<${NAME}State, ${NAME}Event, ${NAME}Action>(
-    initialState = ${NAME}State()
-) {
+class ${NAME}ViewModel :
+    BaseViewModel<${NAME}State, ${NAME}Event, ${NAME}Action>(
+        initialState = ${NAME}State()
+    ) {
 
     init {
         viewModelScope.launch {
@@ -176,14 +180,6 @@ class ${NAME}ViewModel : BaseViewModel<${NAME}State, ${NAME}Event, ${NAME}Action
         when (action) {
             is ${NAME}Action.BackButtonClick -> {
                 sendEvent(${NAME}Event.NavigateBack)
-            }
-            is ${NAME}Action.ShowDialog -> {
-                updateState { it.copy(dialogState = DialogState(
-                    dialogType = action.dialogType,
-                    dialogIntention = action.dialogIntention,
-                    title = action.title,
-                    message = action.message
-                )) }
             }
             is ${NAME}Action.DismissDialog -> {
                 updateState { it.copy(dialogState = null) }
@@ -202,7 +198,7 @@ import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 
 data class ${NAME}State(
     val viewState: ViewState = ViewState.Loading,
-    val dialogState: DialogState? = null
+    val dialogState: DialogState? = null,
 ) {
     sealed interface ViewState {
         data object Loading : ViewState
@@ -242,5 +238,5 @@ sealed interface ${NAME}Action {
 
 // required if there are multiple different confirmation operations need to be done on screen
 enum class DialogIntention {
-    GENERIC, 
+    GENERIC,
 }
