@@ -46,7 +46,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.compose.ui)
+            implementation(compose.ui)
 
             // --- Android Specific ---
             implementation(libs.kotlinx.coroutines.android)
@@ -65,7 +65,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
-            implementation(libs.androidx.compose.material)
+            implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
