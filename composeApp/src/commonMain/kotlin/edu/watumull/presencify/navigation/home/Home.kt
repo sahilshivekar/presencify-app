@@ -30,9 +30,7 @@ fun Home(
     Scaffold(
         topBar = {
             HomeTopBar(
-                onProfileIconButtonClick = {
-                    rootNavController.navigateToAdminDetails()
-                },
+                onProfileIconButtonClick = rootNavController::navigateToAdminDetails,
             )
 
         },

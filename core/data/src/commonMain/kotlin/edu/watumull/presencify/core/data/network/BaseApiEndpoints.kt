@@ -1,7 +1,12 @@
 package edu.watumull.presencify.core.data.network
 
 object BaseApiEndpoints {
-    const val PRESENCIFY_BASE_URL = "https://api.presencify.com"
+    private const val LOCAL_IP = "192.168.1.100" // Change this to your actual Wi-Fi IP
+    private const val LOCAL_PORT = "4444"
+
+//    const val PRESENCIFY_BASE_URL = "http://$LOCAL_IP:$LOCAL_PORT" // use if using on android app
+    const val PRESENCIFY_BASE_URL = "http://localhost:$LOCAL_PORT" // use if using on desktop app
+
     const val API_V1 = "api/v1"
 
     const val STUDENTS = "students"

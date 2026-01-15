@@ -31,13 +31,31 @@ suspend inline fun <reified T> responseToResult(
         in 200..299 -> {
             try {
                 val apiResponse = response.body<ApiResponseDto<T>>()
-                Result.Success(apiResponse.data!!)
+
+                // 1. Check if the type is Unit
+                if (Unit is T) {
+                    Result.Success(Unit)
+                }
+                // 2. Otherwise, check if data is null before force unwrapping
+                else if (apiResponse.data != null) {
+                    Result.Success(apiResponse.data)
+                }
+                // 3. Handle cases where data is null but T is not Unit
+                else {
+                    Result.Error(DataError.Remote.Serialization)
+                }
             } catch (e: NoTransformationFoundException) {
                 Result.Error(DataError.Remote.Serialization)
             }
         }
 
         400 -> Result.Error(
+            DataError.Remote.BusinessLogicError(
+                message = response.body<ApiResponseDto<T>>().message
+            )
+        )
+
+        404 -> Result.Error(
             DataError.Remote.BusinessLogicError(
                 message = response.body<ApiResponseDto<T>>().message
             )

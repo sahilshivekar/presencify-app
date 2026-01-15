@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -39,9 +40,15 @@ fun PresencifyAlertDialog(
 
     val buttonColors = when (dialogType) {
         DialogType.CONFIRM_RISKY_ACTION -> ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.onErrorContainer
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+            containerColor = Color.Transparent
         )
-        else -> null // No confirm button for INFO, ERROR, SUCCESS and for CONFIRM_NORMAL_ACTION default color will be fine
+        else -> ButtonDefaults.textButtonColors(
+            containerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            disabledContentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        )
     }
 
     if (isVisible) {
@@ -71,7 +78,7 @@ fun PresencifyAlertDialog(
                         )
                     },
                     onClick = onDismiss,
-                    colors = if (dialogType == DialogType.CONFIRM_RISKY_ACTION) buttonColors else null,
+                    colors = buttonColors,
                     modifier = Modifier.testTag("DismissAlertButton"),
                 )
             },

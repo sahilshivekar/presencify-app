@@ -31,3 +31,11 @@ fun HomeNavHost(
         scheduleDashboard()
     }
 }
+
+fun NavHostController.navigateToHome() {
+    navigate(Home){
+        popUpTo(graph.startDestinationId){
+            inclusive = true
+        }
+    }
+}

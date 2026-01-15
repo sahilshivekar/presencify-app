@@ -12,11 +12,9 @@ fun NavController.navigateToAddAdmin() {
 
 /**
  * Navigate to Update Admin Password screen
- *
- * @param adminId The ID of the admin whose password is to be updated
  */
-fun NavController.navigateToUpdateAdminPassword(adminId: String) {
-    navigate(AdminMgtRoutes.UpdateAdminPassword(adminId = adminId))
+fun NavController.navigateToUpdateAdminPassword() {
+    navigate(AdminMgtRoutes.UpdateAdminPassword)
 }
 
 /**

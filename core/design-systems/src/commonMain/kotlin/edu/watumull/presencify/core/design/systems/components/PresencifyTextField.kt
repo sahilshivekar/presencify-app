@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PresencifyTextField(
     modifier: Modifier = Modifier
-        .widthIn(max = 600.dp)
+        .widthIn(max = 800.dp)
         .fillMaxWidth(),
     value: String,
     onValueChange: (String) -> Unit,

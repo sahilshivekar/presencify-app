@@ -9,7 +9,7 @@ sealed interface AdminMgtRoutes : NavRoute {
     data object AddAdmin : AdminMgtRoutes
 
     @Serializable
-    data class UpdateAdminPassword(val adminId: String) : AdminMgtRoutes
+    data object UpdateAdminPassword : AdminMgtRoutes
 
     @Serializable
     data class AdminDetails(val adminId: String? = null) : AdminMgtRoutes

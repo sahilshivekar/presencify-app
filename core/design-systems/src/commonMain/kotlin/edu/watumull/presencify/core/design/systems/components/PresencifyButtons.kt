@@ -13,7 +13,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PresencifyButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
+        .widthIn(max = 800.dp)
+        .fillMaxWidth(),
     onClick: () -> Unit,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.shape,
@@ -33,9 +35,7 @@ fun PresencifyButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
-            .widthIn(max = 600.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         enabled = enabled,
         shape = shape,
         colors = colors ?: buttonColors(),
@@ -81,7 +81,9 @@ fun PresencifyTextButton(
     border: BorderStroke? = null,
     contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
     interactionSource: MutableInteractionSource? = null,
-    content: @Composable RowScope.() -> Unit
+    text: String? = null,
+    isLoading: Boolean? = null,
+    content: (@Composable RowScope.() -> Unit)? = null,
 ) {
     TextButton(
         onClick = onClick,
@@ -93,7 +95,25 @@ fun PresencifyTextButton(
         border = border,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
-        content = content
+        content = {
+            when {
+                content != null -> content()
+                else -> {
+                    if (isLoading == true) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    } else {
+                        Text(
+                            text ?: "",
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        }
     )
 }
 
@@ -111,7 +131,9 @@ fun PresencifyOutlinedButton(
     ),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
-    content: @Composable RowScope.() -> Unit
+    content: (@Composable RowScope.() -> Unit)? = null,
+    text: String? = null,
+    isLoading: Boolean? = null,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -123,6 +145,24 @@ fun PresencifyOutlinedButton(
         border = border,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
-        content = content
+        content = {
+            when {
+                content != null -> content()
+                else -> {
+                    if (isLoading == true) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    } else {
+                        Text(
+                            text ?: "",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        }
     )
 }

@@ -2,18 +2,43 @@ package edu.watumull.presencify.feature.admin.mgt.navigation
 
 import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.feature.admin.mgt.add_admin.AddAdminRoot
+import edu.watumull.presencify.feature.admin.mgt.admin_details.AdminDetailsRoot
+import edu.watumull.presencify.feature.admin.mgt.update_password.UpdatePasswordRoot
 
-fun NavGraphBuilder.adminMgtNavGraph() {
+fun NavGraphBuilder.adminMgtNavGraph(
+    onNavigateBack: () -> Unit,
+    onNavigateToUpdatePassword: () -> Unit,
+    onNavigateToVerifyCode: (String) -> Unit,
+    onNavigateToAddAdmin: () -> Unit,
+    onNavigateToAdminDetails: () -> Unit,
+    onNavigateToSelectRole: () -> Unit,
+) {
 
     composableWithSlideTransitions<AdminMgtRoutes.AddAdmin> {
-        // TODO: Add screen content
+        AddAdminRoot(
+            onBackButtonClick = onNavigateBack,
+            onNavigateToAdminDetails = onNavigateToAdminDetails
+        )
     }
+
     composableWithSlideTransitions<AdminMgtRoutes.UpdateAdminPassword> {
-        // TODO: Add screen content
+        UpdatePasswordRoot(
+            onBackButtonClick = onNavigateBack,
+            onNavigateToAdminDetails = onNavigateToAdminDetails
+        )
     }
+
     composableWithSlideTransitions<AdminMgtRoutes.AdminDetails> {
-        // TODO: Add screen content
+        AdminDetailsRoot(
+            onBackButtonClick = onNavigateBack,
+            onNavigateToUpdatePassword = onNavigateToUpdatePassword,
+            onNavigateToVerifyCode = onNavigateToVerifyCode,
+            onNavigateToAddAdmin = onNavigateToAddAdmin,
+            onNavigateToSelectRole = onNavigateToSelectRole
+        )
     }
+
     composableWithSlideTransitions<AdminMgtRoutes.SearchAdmin> {
         // TODO: Add screen content
     }

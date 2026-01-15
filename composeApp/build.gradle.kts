@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -114,6 +115,8 @@ kotlin {
 
             implementation(libs.compose.material.icons.core)
             implementation(libs.compose.material.icons.extended)
+
+            implementation(libs.slf4j.simple)
         }
 
         commonTest.dependencies {

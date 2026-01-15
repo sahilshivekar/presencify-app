@@ -35,15 +35,23 @@ private fun PresencifyTopBar(
             IconButton(onClick = backPress) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.Transparent,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
         actions = actions,
         modifier = modifier,
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
+            canScroll = {
+                false
+            }
+        ),
     )
 }
 

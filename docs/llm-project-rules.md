@@ -152,6 +152,35 @@ Presencify/
  - **Events:** ViewModel emits navigation events (`NavigateTo<Screen>(args)`, `NavigateBack`).
   - **Intra-feature navigation:** `Root` uses its feature-specific `NavController` and `NavGraphBuilder` extension to navigate internal routes.
   - **Cross-feature navigation:** `composeApp` provides lambdas to `Root` to perform app-level navigation. `Root` invokes these lambdas when handling events. Features must not import other feature routes or `NavController`s.
+ - **Parameter Handling:** ViewModels must extract their own route parameters directly from `SavedStateHandle` using `savedStateHandle.toRoute<RouteClass>()`. The NavGraph should NOT extract parameters and pass them to Root composables. The ViewModel handles parameter extraction internally.
+   ```kotlin
+   // ✅ Correct: ViewModel extracts its own parameters
+    class AdminVerifyCodeViewModel(
+        private val adminAuthRepository: AdminAuthRepository,
+        savedStateHandle: SavedStateHandle,
+    ) : BaseViewModel<AdminVerifyCodeState, AdminVerifyCodeEvent, AdminVerifyCodeAction>(
+        initialState = AdminVerifyCodeState(
+            email = savedStateHandle.toRoute<AdminAuthRoutes.AdminVerifyCode>().email
+        )
+    ) {.....
+   
+   // ✅ NavGraph just calls Root without parameter extraction
+   composableWithSlideTransitions<MyRoutes.MyScreen> { 
+       MyRoot(
+           onNavigateBack = onNavigateBack
+       )
+   }
+   
+   // ❌ Wrong: NavGraph extracting parameters and passing to Root
+   composableWithSlideTransitions<MyRoutes.MyScreen> { backStackEntry ->
+       val args = backStackEntry.toRoute<MyRoutes.MyScreen>()
+       MyRoot(
+           id = args.id,
+           email = args.email,
+           onNavigateBack = onNavigateBack
+       )
+   }
+   ```
  - **Args Passing:** Pass IDs only for simplicity; avoid passing DTOs.
  - **Submit Policy:** After successful create/update operation on specific screen, show a global snackbar and navigate to their details screen (remove the edit/create screen from the backstack as the details screen will have edit button too. If user clicks on edit button, then pop the details screen and navigate to edit screen).
  - **Deep Links:** Future work; no current constraints.
@@ -177,6 +206,16 @@ Presencify/
 - **Empty States:** Use `PresencifyNoResultsIndicator` with custom messages.
 - **Accessibility:** Add short, clear content descriptions for tappables and images.
  - **Validation UX:** Validate on each keystroke using validators in `core/presentation/validation`, show inline field errors, and block submission until all inputs are valid (return early on submit if invalid).
+ - **Text Field Validation:** All `PresencifyTextField` components must use validation extension functions from `core/presentation/validation` directory:
+   - **Keystroke Validation (Forms/Add-Edit Screens):** For form screens (add/edit), validate on every keystroke with proper format validation
+   - **Login Screen Validation:** For login screens, only validate for blank fields on submit - no format validation needed during typing
+   - **State Error Properties:** Each field must have a corresponding error property in state using naming convention `<fieldName>Error: String? = null` (e.g., `emailError`, `passwordError`, `usernameError`)
+   - **Success Handling:** On successful validation, set error property to `null`
+   - **Error Handling:** On validation failure, set error property to the string returned by the validation function
+   - **UI Integration:** Use the error state property for `PresencifyTextField`'s `supportingText` parameter to show validation errors
+   - **Submit Validation:** On submit buttons, validate all required fields and only proceed if all errors are `null`
+   - **Never Custom Validation:** Always use centralized validation extension functions - never implement validation logic in ViewModels (except for simple blank checks on login screens)
+   - 
  - **Typography:** Use `MaterialTheme.typography` (from design-systems). Standardize: `titleLarge` for screen titles, `titleMedium` for section headers, and `bodyLarge/bodyMedium` for content text.
   - Submit buttons remain enabled; on click, validate and return early while showing inline errors.
  - **Required Markers:** Indicate required fields with an asterisk by building annotated text and appending a red `*`.
@@ -310,8 +349,12 @@ PresencifyDropDownBox<SemesterNumber>(
 
 The old app used a single "Event" class for everything. You must now split these:
 
-- **`${NAME}Action`:** Represents User Intents (e.g., `BackButtonClick`, `UpdateSearchQuery`, `DismissDialog`). These are handled in the ViewModel via `handleAction`
+- **`${NAME}Action`:** Represents User Intents (e.g., `ClickBackButton`, `UpdateSearchQuery`, `DismissDialog`). These are handled in the ViewModel via `handleAction`
 - **`${NAME}Event`:** Represents One-shot side effects (e.g., `NavigateBack`, `NavigateToStudentDetails`). These are emitted by the ViewModel and collected in the Root
+
+**Naming Conventions:**
+- **Action Names:** Always use present tense verbs (e.g., `ClickLogin`, `ChangePassword`, `ToggleVisibility`, `DismissDialog`)
+- **Event Names:** Always use present tense verbs (e.g., `NavigateBack`, `ShowError`, `UpdateSuccess`)
 
 ### 6. ViewModel & State Management
 
