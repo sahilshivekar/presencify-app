@@ -65,8 +65,9 @@ class KtorRemoteStudentDataSource(
         return safeCall<StudentListWithTotalCountDto> {
             httpClient.get(GET_STUDENTS) {
                 searchQuery?.let { parameter("searchQuery", it) }
-                branchIds?.let { parameter("branchIds", it) }
-                semesterNumbers?.let { parameter("semesterNumbers", it) }
+                // Send array parameters - each item individually with same parameter name
+                branchIds?.forEach { parameter("branchIds", it) }
+                semesterNumbers?.forEach { parameter("semesterNumbers", it) }
                 academicStartYearOfSemester?.let { parameter("academicStartYearOfSemester", it) }
                 academicEndYearOfSemester?.let { parameter("academicEndYearOfSemester", it) }
                 semesterId?.let { parameter("semesterId", it) }
@@ -75,7 +76,8 @@ class KtorRemoteStudentDataSource(
                 divisionId?.let { parameter("divisionId", it) }
                 dropoutAcademicStartYear?.let { parameter("dropoutAcademicStartYear", it) }
                 dropoutAcademicEndYear?.let { parameter("dropoutAcademicEndYear", it) }
-                admissionTypes?.map { it.value }?.let { parameter("admissionTypes", it) }
+                // Send admissionTypes array - each item individually with same parameter name
+                admissionTypes?.forEach { parameter("admissionTypes", it.value) }
                 admissionYear?.let { parameter("admissionYear", it) }
                 currentBatch?.let { parameter("currentBatch", it) }
                 currentDivision?.let { parameter("currentDivision", it) }
@@ -103,10 +105,9 @@ class KtorRemoteStudentDataSource(
         admissionType: AdmissionType,
         branchId: String,
         parentEmail: String?,
-        studentImage: ByteArray,
+        studentImage: ByteArray?,
     ): Result<StudentDto, DataError.Remote> {
-        val mimeType = FileMimeUtils.getMimeType(studentImage)
-        val extension = FileMimeUtils.getExtensionFromMime(mimeType)
+
 
         return safeCall<StudentDto> {
             httpClient.post(ADD_STUDENT) {
@@ -127,13 +128,17 @@ class KtorRemoteStudentDataSource(
                             append("branchId", branchId)
                             parentEmail?.let { append("parentEmail", it) }
 
-                            append("studentImageFile", studentImage, Headers.build {
-                                append(HttpHeaders.ContentType, mimeType)
-                                append(
-                                    HttpHeaders.ContentDisposition,
-                                    "filename=\"student_new.$extension\""
-                                )
-                            })
+                            studentImage?.let {
+                                val mimeType = FileMimeUtils.getMimeType(studentImage)
+                                val extension = FileMimeUtils.getExtensionFromMime(mimeType)
+                                append("studentImageFile", studentImage, Headers.build {
+                                    append(HttpHeaders.ContentType, mimeType)
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=\"student_new.$extension\""
+                                    )
+                                })
+                            }
                         }
                     )
                 )
@@ -206,10 +211,8 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun updateStudentImage(
         id: String,
-        imageBytes: ByteArray,
+        imageBytes: ByteArray?,
     ): Result<StudentDto, DataError.Remote> {
-        val mimeType = FileMimeUtils.getMimeType(imageBytes)
-        val extension = FileMimeUtils.getExtensionFromMime(mimeType)
 
         return safeCall<StudentDto> {
             httpClient.put(UPDATE_STUDENT_IMAGE) {
@@ -217,13 +220,17 @@ class KtorRemoteStudentDataSource(
                     MultiPartFormDataContent(
                         formData {
                             append("id", id)
-                            append("studentImageFile", imageBytes, Headers.build {
-                                append(HttpHeaders.ContentType, mimeType)
-                                append(
-                                    HttpHeaders.ContentDisposition,
-                                    "filename=\"student_$id.$extension\""
-                                )
-                            })
+                            imageBytes?.let {
+                                val mimeType = FileMimeUtils.getMimeType(imageBytes)
+                                val extension = FileMimeUtils.getExtensionFromMime(mimeType)
+                                append("studentImageFile", imageBytes, Headers.build {
+                                    append(HttpHeaders.ContentType, mimeType)
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=\"student_$id.$extension\""
+                                    )
+                                })
+                            }
                         }
                     )
                 )

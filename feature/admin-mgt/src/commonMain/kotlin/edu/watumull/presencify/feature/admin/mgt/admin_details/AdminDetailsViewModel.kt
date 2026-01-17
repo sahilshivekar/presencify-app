@@ -247,8 +247,6 @@ class AdminDetailsViewModel(
                     updateState { it.copy(isLoggingOut = false) }
 
                     SnackbarController.sendEvent(SnackbarEvent("Logged out successfully."))
-
-                    sendEvent(AdminDetailsEvent.NavigateToSelectRole)
                 }
                 .onError { error ->
                     updateState {
@@ -295,8 +293,6 @@ class AdminDetailsViewModel(
                     updateState { it.copy(isRemovingAccount = false) }
 
                     SnackbarController.sendEvent(SnackbarEvent("Account removed successfully."))
-
-                    sendEvent(AdminDetailsEvent.NavigateToSelectRole)
                 }
                 .onError { error ->
                     updateState {

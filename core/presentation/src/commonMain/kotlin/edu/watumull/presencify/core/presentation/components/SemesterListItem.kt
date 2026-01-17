@@ -48,12 +48,12 @@ fun SemesterListItem(
         supportingContent = {
             Column {
                 Text(
-                    text = "Divisions: ${divisionCodes.joinToString(" • ")}",
+                    text = "Divisions: ${if (divisionCodes.isEmpty()) "None" else divisionCodes.joinToString(" • ")}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Batches: ${batchCodes.joinToString(" • ")}",
+                    text = "Batches: ${if (batchCodes.isEmpty()) "None" else batchCodes.joinToString(" • ")}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

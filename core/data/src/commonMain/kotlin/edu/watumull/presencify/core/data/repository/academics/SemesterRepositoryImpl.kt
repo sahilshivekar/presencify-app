@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
+import edu.watumull.presencify.core.domain.model.academics.SemesterListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import kotlinx.datetime.LocalDate
 
@@ -24,10 +25,15 @@ class SemesterRepositoryImpl(
         page: Int?,
         limit: Int?,
         getAll: Boolean?
-    ): Result<List<Semester>, DataError.Remote> {
+    ): Result<SemesterListWithTotalCount, DataError.Remote> {
         return remoteSemesterDataSource.getSemesters(
             semesterNumber, academicStartYear, academicEndYear, branchId, schemeId, page, limit, getAll
-        ).map { it.semesters.map { semester -> semester.toDomain() } }
+        ).map { dto ->
+            SemesterListWithTotalCount(
+                totalCount = dto.totalCount,
+                semesters = dto.semesters.map { it.toDomain() }
+            )
+        }
     }
 
     override suspend fun addSemester(

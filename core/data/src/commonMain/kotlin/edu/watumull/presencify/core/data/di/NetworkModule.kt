@@ -9,7 +9,9 @@ import edu.watumull.presencify.core.data.network.admin_auth.RemoteAdminAuthDataS
 import edu.watumull.presencify.core.data.network.attendance.KtorRemoteAttendanceDataSource
 import edu.watumull.presencify.core.data.network.attendance.RemoteAttendanceDataSource
 import edu.watumull.presencify.core.data.network.schedule.*
+import edu.watumull.presencify.core.data.network.student.KtorRemoteDropoutDataSource
 import edu.watumull.presencify.core.data.network.student.KtorRemoteStudentDataSource
+import edu.watumull.presencify.core.data.network.student.RemoteDropoutDataSource
 import edu.watumull.presencify.core.data.network.student.RemoteStudentDataSource
 import edu.watumull.presencify.core.data.network.student_auth.KtorRemoteStudentAuthDataSource
 import edu.watumull.presencify.core.data.network.student_auth.RemoteStudentAuthDataSource
@@ -58,6 +60,7 @@ val networkModule: Module = module {
 
     // Student Data Sources
     single<RemoteStudentDataSource> { KtorRemoteStudentDataSource(get()) }
+    single<RemoteDropoutDataSource> { KtorRemoteDropoutDataSource(get()) }
     single<RemoteStudentAuthDataSource> { KtorRemoteStudentAuthDataSource(get()) }
 
     // Teacher Data Sources

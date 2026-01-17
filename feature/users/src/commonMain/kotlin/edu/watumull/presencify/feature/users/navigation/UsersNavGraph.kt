@@ -2,20 +2,65 @@ package edu.watumull.presencify.feature.users.navigation
 
 import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.feature.users.add_edit_student.AddEditStudentRoot
+import edu.watumull.presencify.feature.users.add_edit_teacher.AddEditTeacherRoot
+import edu.watumull.presencify.feature.users.dashboard.UsersDashboardRoot
+import edu.watumull.presencify.feature.users.search_student.SearchStudentRoot
+import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherRoot
+import edu.watumull.presencify.feature.users.student_details.StudentDetailsRoot
+import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsRoot
 
-fun NavGraphBuilder.usersDashboard() {
+fun NavGraphBuilder.usersDashboard(
+    onNavigateToSearchStudents: () -> Unit,
+    onNavigateToSearchTeachers: () -> Unit,
+    onNavigateToAssignSemester: () -> Unit,
+    onNavigateToRemoveSemester: () -> Unit,
+    onNavigateToAssignDivision: () -> Unit,
+    onNavigateToModifyDivision: () -> Unit,
+    onNavigateToRemoveDivision: () -> Unit,
+    onNavigateToAssignBatch: () -> Unit,
+    onNavigateToModifyBatch: () -> Unit,
+    onNavigateToRemoveBatch: () -> Unit,
+    onNavigateToAddToDropout: () -> Unit,
+    onNavigateToRemoveFromDropout: () -> Unit,
+) {
     composableWithSlideTransitions<UsersRoutes.UsersDashboard> {
-        // TODO: Add screen content
+        UsersDashboardRoot(
+            onNavigateToSearchStudents = onNavigateToSearchStudents,
+            onNavigateToSearchTeachers = onNavigateToSearchTeachers,
+            onNavigateToAssignSemester = onNavigateToAssignSemester,
+            onNavigateToRemoveSemester = onNavigateToRemoveSemester,
+            onNavigateToAssignDivision = onNavigateToAssignDivision,
+            onNavigateToModifyDivision = onNavigateToModifyDivision,
+            onNavigateToRemoveDivision = onNavigateToRemoveDivision,
+            onNavigateToAssignBatch = onNavigateToAssignBatch,
+            onNavigateToModifyBatch = onNavigateToModifyBatch,
+            onNavigateToRemoveBatch = onNavigateToRemoveBatch,
+            onNavigateToAddToDropout = onNavigateToAddToDropout,
+            onNavigateToRemoveFromDropout = onNavigateToRemoveFromDropout
+        )
     }
 }
 
-fun NavGraphBuilder.usersNavGraph() {
+fun NavGraphBuilder.usersNavGraph(
+    onNavigateBack: () -> Unit,
+    onNavigateToStudentDetails: (String) -> Unit,
+    onNavigateToAddEditStudent: (studentId: String?) -> Unit,
+    onNavigateToTeacherDetails: (String) -> Unit,
+    onNavigateToAddEditTeacher: (String?) -> Unit
+) {
 
     composableWithSlideTransitions<UsersRoutes.AddEditStudent> {
-        // TODO: Add screen content
+        AddEditStudentRoot(
+            onNavigateBack = onNavigateBack
+        )
     }
     composableWithSlideTransitions<UsersRoutes.SearchStudent> {
-        // TODO: Add screen content
+        SearchStudentRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToStudentDetails = onNavigateToStudentDetails,
+            onNavigateToAddEditStudent = onNavigateToAddEditStudent
+        )
     }
     composableWithSlideTransitions<UsersRoutes.AddStudentToSemester> {
         // TODO: Add screen content
@@ -48,13 +93,22 @@ fun NavGraphBuilder.usersNavGraph() {
         // TODO: Add screen content
     }
     composableWithSlideTransitions<UsersRoutes.StudentDetails> {
-        // TODO: Add screen content
+        StudentDetailsRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToEditStudent = onNavigateToAddEditStudent
+        )
     }
     composableWithSlideTransitions<UsersRoutes.AddEditTeacher> {
-        // TODO: Add screen content
+        AddEditTeacherRoot(
+            onNavigateBack = onNavigateBack
+        )
     }
     composableWithSlideTransitions<UsersRoutes.SearchTeacher> {
-        // TODO: Add screen content
+        SearchTeacherRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToTeacherDetails = onNavigateToTeacherDetails,
+            onNavigateToAddEditTeacher = onNavigateToAddEditTeacher
+        )
     }
     composableWithSlideTransitions<UsersRoutes.AssignSubjectToTeacher> {
         // TODO: Add screen content
@@ -62,7 +116,10 @@ fun NavGraphBuilder.usersNavGraph() {
     composableWithSlideTransitions<UsersRoutes.UnassignSubjectToTeacher> {
         // TODO: Add screen content
     }
-    composableWithSlideTransitions<UsersRoutes.StaffDetails> {
-        // TODO: Add screen content
+    composableWithSlideTransitions<UsersRoutes.TeacherDetails> {
+        TeacherDetailsRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToEditTeacher = onNavigateToAddEditTeacher
+        )
     }
 }

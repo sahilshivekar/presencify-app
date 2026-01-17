@@ -68,18 +68,23 @@ class HttpClientFactory(
             install(Auth) {
                 bearer {
                     loadTokens {
+                        val accessToken = tokenRepository.readAccessToken() ?: ""
+                        val refreshToken = tokenRepository.readRefreshToken() ?: ""
                         BearerTokens(
-                            accessToken = tokenRepository.readAccessToken() ?: "",
-                            refreshToken = tokenRepository.readRefreshToken() ?: ""
+                            accessToken = accessToken,
+                            refreshToken = refreshToken
                         )
                     }
 
                     refreshTokens {
+
                         // Get the current refresh token
-                        val refreshToken = tokenRepository.readRefreshToken() ?: return@refreshTokens null
+                        val refreshToken = tokenRepository.readRefreshToken()
 
                         // Get user role
-                        val userRole = roleRepository.getUserRole().firstOrNull() ?: return@refreshTokens null
+                        val userRole = roleRepository.getUserRole().firstOrNull()
+
+                        println("👤 User role: $userRole")
 
                         // Create basic client for refresh
                         val basicClient = createBasicClient(engine)
@@ -104,6 +109,9 @@ class HttpClientFactory(
                                         setBody(mapOf("refreshToken" to refreshToken))
                                     }.body<TokenDto>()
                                 }
+                                else -> {
+                                    throw IllegalStateException("Unknown user role: $userRole")
+                                }
                             }
 
                             // Update tokens in repository
@@ -113,6 +121,10 @@ class HttpClientFactory(
                             // Return new BearerTokens
                             BearerTokens(tokenDto.accessToken, tokenDto.refreshToken)
                         } catch (e: Exception) {
+                            e.printStackTrace()
+                            // Clear tokens on refresh failure
+                            tokenRepository.clearTokens()
+                            roleRepository.clearUserRole()
                             null
                         } finally {
                             basicClient.close()
@@ -120,8 +132,9 @@ class HttpClientFactory(
                     }
 
                     sendWithoutRequest { request ->
-                        request.url.pathSegments.contains("login") ||
+                        val shouldSkip = request.url.pathSegments.contains("login") ||
                                 request.url.pathSegments.contains("register")
+                        shouldSkip
                     }
                 }
             }

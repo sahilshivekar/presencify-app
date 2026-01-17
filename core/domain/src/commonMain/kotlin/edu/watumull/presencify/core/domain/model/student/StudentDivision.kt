@@ -7,8 +7,8 @@ data class StudentDivision(
     val id: String,
     val studentId: String,
     val divisionId: String,
-    val fromDate: LocalDate,
-    val toDate: LocalDate?,
+    val startDate: LocalDate,
+    val endDate: LocalDate?,
     val student: Student? = null,
     val division: Division? = null
 )

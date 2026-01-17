@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
+import edu.watumull.presencify.core.domain.model.academics.BatchListWithTotalCount
 
 interface BatchRepository {
     suspend fun getBatches(
@@ -16,7 +17,7 @@ interface BatchRepository {
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null
-    ): Result<List<Batch>, DataError.Remote>
+    ): Result<BatchListWithTotalCount, DataError.Remote>
 
     suspend fun addBatch(batchCode: String, divisionId: String): Result<Batch, DataError.Remote>
 

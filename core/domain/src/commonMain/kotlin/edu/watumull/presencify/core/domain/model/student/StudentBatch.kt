@@ -7,8 +7,8 @@ data class StudentBatch(
     val id: String,
     val studentId: String,
     val batchId: String,
-    val fromDate: LocalDate,
-    val toDate: LocalDate?,
+    val startDate: LocalDate,
+    val endDate: LocalDate?,
     val student: Student? = null,
     val batch: Batch? = null
 )

@@ -104,7 +104,7 @@ fun PresencifyBottomSheetScaffold(
             initialValue = SheetValue.Hidden
         )
     ),
-    sheetPeekHeight: Dp = BottomSheetDefaults.SheetPeekHeight,
+    sheetPeekHeight: Dp = 0.dp,
     sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
@@ -137,9 +137,7 @@ fun PresencifyBottomSheetScaffold(
                 content(paddingValues)
                 floatingActionButton?.let {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.BottomEnd
                     ) {
                         floatingActionButton()

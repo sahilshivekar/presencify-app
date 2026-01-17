@@ -113,11 +113,11 @@ sealed interface UsersRoutes : NavRoute {
     @Serializable
     data class SearchTeacher(
 
-        val semesterNumbers: List<Int>? = null, //SemesterNumber
+        val searchQuery: String? = null,
 
-        val academicStartYearOfSemester: Int? = null,
+        val courseId: String? = null,
 
-        val academicEndYearOfSemester: Int? = null,
+        val getAll: Boolean? = null,
 
         val intention: String = SearchTeacherIntention.DEFAULT.name, //SearchTeacherIntention
 
@@ -130,6 +130,6 @@ sealed interface UsersRoutes : NavRoute {
     data object UnassignSubjectToTeacher : UsersRoutes
 
     @Serializable
-    data class StaffDetails(val teacherId: String) : UsersRoutes
+    data class TeacherDetails(val teacherId: String) : UsersRoutes
 
 }

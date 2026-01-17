@@ -2,7 +2,6 @@ package edu.watumull.presencify.core.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,7 +24,6 @@ import edu.watumull.presencify.core.domain.enums.TeacherRole
  * List item component for displaying Teacher information with profile image.
  *
  * @param teacherName The name of the teacher (required).
- * @param department The department of the teacher (required).
  * @param role Optional teacher role (Teacher, Head of Department, Principal).
  * @param teacherImageUrl Optional URL for teacher profile image.
  * @param onClick Optional click handler for the list item.
@@ -34,7 +32,6 @@ import edu.watumull.presencify.core.domain.enums.TeacherRole
 @Composable
 fun TeacherListItem(
     teacherName: String,
-    department: String,
     role: TeacherRole? = null,
     teacherImageUrl: String? = null,
     trailingContent: (@Composable () -> Unit)? = null,
@@ -77,26 +74,12 @@ fun TeacherListItem(
             )
         },
         supportingContent = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            role?.let {
                 Text(
-                    text = department,
+                    text = role.value,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                role?.let {
-                    Text(
-                        text = " • ",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = it.value,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
         },
         trailingContent = trailingContent,
@@ -104,43 +87,3 @@ fun TeacherListItem(
         modifier = modifier
     )
 }
-
-@Composable
-fun TeacherListItemPreview() {
-    MaterialTheme {
-        TeacherListItem(
-            teacherName = "Dr. Rajesh Kumar",
-            department = "Computer Engineering",
-            role = TeacherRole.TEACHER,
-            teacherImageUrl = "https://picsum.photos/seed/rajesh/200",
-            onClick = {}
-        )
-    }
-}
-
-@Composable
-fun TeacherListItemWithDesignationPreview() {
-    MaterialTheme {
-        TeacherListItem(
-            teacherName = "Prof. Anjali Mehta",
-            department = "Electronics Engineering",
-            role = TeacherRole.HEAD_OF_DEPARTMENT,
-            teacherImageUrl = "https://picsum.photos/seed/anjali/200",
-            onClick = {}
-        )
-    }
-}
-
-@Composable
-fun TeacherListItemWithoutDesignationPreview() {
-    MaterialTheme {
-        TeacherListItem(
-            teacherName = "Dr. Suresh Patil",
-            department = "Mechanical Engineering",
-            role = null,
-            teacherImageUrl = null,
-            onClick = {}
-        )
-    }
-}
-

@@ -10,6 +10,7 @@ import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.feature.attendance.navigation.attendanceDashboard
 import edu.watumull.presencify.feature.schedule.navigation.scheduleDashboard
 import edu.watumull.presencify.feature.users.navigation.usersDashboard
+import edu.watumull.presencify.navigation.navcontroller_extensions.*
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,6 +19,7 @@ data object Home : NavRoute
 @Composable
 fun HomeNavHost(
     homeNavController: NavHostController,
+    rootNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -25,9 +27,33 @@ fun HomeNavHost(
         startDestination = AttendanceRoutes.AttendanceDashboard,
         modifier = modifier
     ) {
-        academicsDashboard()
+        academicsDashboard(
+            onNavigateToSearchBranch = rootNavController::navigateToSearchBranch,
+            onNavigateToSearchScheme = rootNavController::navigateToSearchScheme,
+            onNavigateToSearchCourse = rootNavController::navigateToSearchCourse,
+            onNavigateToSearchUniversity = rootNavController::navigateToSearchUniversity,
+            onNavigateToSearchSemester = rootNavController::navigateToSearchSemester,
+            onNavigateToSearchDivision = rootNavController::navigateToSearchDivision,
+            onNavigateToSearchBatch = rootNavController::navigateToSearchBatch
+        )
+
         attendanceDashboard()
-        usersDashboard()
+
+        usersDashboard(
+            onNavigateToSearchStudents = rootNavController::navigateToSearchStudent,
+            onNavigateToSearchTeachers = rootNavController::navigateToSearchTeacher,
+            onNavigateToAssignSemester = rootNavController::navigateToAddStudentToSemester,
+            onNavigateToRemoveSemester = rootNavController::navigateToRemoveStudentFromSemester,
+            onNavigateToAssignDivision = rootNavController::navigateToAddStudentToDivision,
+            onNavigateToModifyDivision = rootNavController::navigateToModifyStudentDivision,
+            onNavigateToRemoveDivision = rootNavController::navigateToRemoveStudentFromDivision,
+            onNavigateToAssignBatch = rootNavController::navigateToAddStudentToBatch,
+            onNavigateToModifyBatch = rootNavController::navigateToModifyStudentBatch,
+            onNavigateToRemoveBatch = rootNavController::navigateToRemoveStudentFromBatch,
+            onNavigateToAddToDropout = rootNavController::navigateToAddStudentToDropout,
+            onNavigateToRemoveFromDropout = rootNavController::navigateToRemoveStudentFromDropout
+        )
+
         scheduleDashboard()
     }
 }
@@ -39,3 +65,4 @@ fun NavHostController.navigateToHome() {
         }
     }
 }
+

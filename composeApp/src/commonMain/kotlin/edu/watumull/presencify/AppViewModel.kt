@@ -9,7 +9,7 @@ import edu.watumull.presencify.feature.onboarding.navigation.OnboardingRoutes
 import edu.watumull.presencify.navigation.home.Home
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,20 +25,25 @@ class AppViewModel(
 
     private fun checkAuthentication() {
         viewModelScope.launch {
-            val userRole = roleRepository.getUserRole().first()
-            _state.update { it.copy(
-                userRole = userRole
-            )}
-            userRole?.let {
-                updateDestination(Home)
-            } ?: updateDestination(OnboardingRoutes.SelectRole)
+            roleRepository.getUserRole().collectLatest { userRole ->
+                _state.update {
+                    it.copy(
+                        userRole = userRole
+                    )
+                }
+                userRole?.let {
+                    updateDestination(Home)
+                } ?: updateDestination(OnboardingRoutes.SelectRole)
+            }
         }
     }
 
     private fun updateDestination(destination: NavRoute) {
-        _state.update { it.copy(
-            startDestination = destination
-        )}
+        _state.update {
+            it.copy(
+                startDestination = destination
+            )
+        }
     }
 }
 

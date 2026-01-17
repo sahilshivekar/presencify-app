@@ -9,8 +9,6 @@ fun StudentSemesterDto.toDomain(): StudentSemester =
         id = id,
         studentId = studentId,
         semesterId = semesterId,
-        fromDate = fromDate,
-        toDate = toDate,
         student = student?.toDomain(),
         semester = semester?.toDomain()
     )

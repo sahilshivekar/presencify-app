@@ -32,7 +32,21 @@ fun AppNavHost(
             Home(rootNavController = rootNavController)
         }
 
-        academicsNavGraph()
+        academicsNavGraph(
+            onNavigateBack = { rootNavController.navigateUp() },
+            onNavigateToBranchDetails = rootNavController::navigateToBranchDetails,
+            onNavigateToAddEditBranch = rootNavController::navigateToAddEditBranch,
+            onNavigateToSchemeDetails = rootNavController::navigateToSchemeDetails,
+            onNavigateToAddEditScheme = rootNavController::navigateToAddEditScheme,
+            onNavigateToCourseDetails = rootNavController::navigateToCourseDetails,
+            onNavigateToAddEditCourse = rootNavController::navigateToAddEditCourse,
+            onNavigateToSemesterDetails = rootNavController::navigateToSemesterDetails,
+            onNavigateToAddEditSemester = rootNavController::navigateToAddEditSemester,
+            onNavigateToDivisionDetails = rootNavController::navigateToDivisionDetails,
+            onNavigateToAddEditDivision = rootNavController::navigateToAddEditDivision,
+            onNavigateToBatchDetails = rootNavController::navigateToBatchDetails,
+            onNavigateToAddEditBatch = rootNavController::navigateToAddEditBatch,
+        )
 
         onboardingNavGraph(
             navigateToStudentLogin = {
@@ -48,7 +62,13 @@ fun AppNavHost(
 
         attendanceNavGraph()
 
-        usersNavGraph()
+        usersNavGraph(
+            onNavigateBack = { rootNavController.navigateUp() },
+            onNavigateToStudentDetails = rootNavController::navigateToStudentDetails,
+            onNavigateToAddEditStudent = rootNavController::navigateToAddEditStudent,
+            onNavigateToTeacherDetails = rootNavController::navigateToTeacherDetails,
+            onNavigateToAddEditTeacher = rootNavController::navigateToAddEditTeacher,
+        )
 
         scheduleNavGraph()
 
@@ -65,7 +85,6 @@ fun AppNavHost(
             onNavigateToVerifyCode = rootNavController::navigateToAdminVerifyCode,
             onNavigateToAddAdmin = rootNavController::navigateToAddAdmin,
             onNavigateToAdminDetails = rootNavController::navigateToAdminDetails,
-            onNavigateToSelectRole = rootNavController::navigateToSelectRole,
         )
 
         studentAuthNavGraph()

@@ -27,7 +27,7 @@ interface TeacherRepository {
         highestQualification: String?,
         role: TeacherRole,
         isActive: Boolean?,
-        teacherImage: ByteArray,
+        teacherImage: ByteArray?,
     ): Result<Teacher, DataError.Remote>
 
     suspend fun getTeacherById(id: String): Result<Teacher, DataError.Remote>
@@ -53,7 +53,7 @@ interface TeacherRepository {
 
     suspend fun updateTeacherImage(
         id: String,
-        teacherImage: ByteArray,
+        teacherImage: ByteArray?,
     ): Result<Teacher, DataError.Remote>
 
     suspend fun removeTeacherImage(id: String): Result<Teacher, DataError.Remote>

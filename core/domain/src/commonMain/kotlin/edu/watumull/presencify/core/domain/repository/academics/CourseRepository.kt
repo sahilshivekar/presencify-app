@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Course
+import edu.watumull.presencify.core.domain.model.academics.CourseListWithTotalCount
 
 interface CourseRepository {
     suspend fun getCourses(
@@ -14,7 +15,7 @@ interface CourseRepository {
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null
-    ): Result<List<Course>, DataError.Remote>
+    ): Result<CourseListWithTotalCount, DataError.Remote>
 
     suspend fun addCourse(
         code: String,

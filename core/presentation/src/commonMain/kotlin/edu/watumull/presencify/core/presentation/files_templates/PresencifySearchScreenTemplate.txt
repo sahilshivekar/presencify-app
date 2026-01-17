@@ -21,14 +21,14 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ${NAME}Root(
-    navController: NavHostController,
+    onBackButtonClick: () -> Unit,
 ) {
     val viewModel: ${NAME}ViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is ${NAME}Event.NavigateBack -> navController.navigateUp()
+            is ${NAME}Event.NavigateBack -> onBackButtonClick()
             is ${NAME}Event.NavigateToAddEdit -> {
                 
             }
@@ -117,7 +117,7 @@ fun ${NAME}Screen(
             isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
             title = dialogState.title,
-            message = dialogState.message,
+            message = dialogState.message.asString(),
             onConfirm = {
                 when (dialogState.dialogIntention) {
                     DialogIntention.GENERIC -> {
@@ -333,7 +333,7 @@ data class ${NAME}State(
         val dialogType: DialogType = DialogType.INFO,
         val dialogIntention: DialogIntention = DialogIntention.GENERIC,
         val title: String = "",
-        val message: String = "",
+        val message: UiText = "",
     )
 
     data class BottomSheetState(

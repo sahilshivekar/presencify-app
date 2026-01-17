@@ -79,6 +79,7 @@ fun Home(
             HomeNavHost(
                 modifier = Modifier.weight(1f),
                 homeNavController = homeNavController,
+                rootNavController = rootNavController
             )
         }
     }

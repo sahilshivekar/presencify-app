@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.academics.Division
+import edu.watumull.presencify.core.domain.model.academics.DivisionListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 
 class DivisionRepositoryImpl(
@@ -23,10 +24,10 @@ class DivisionRepositoryImpl(
         page: Int?,
         limit: Int?,
         getAll: Boolean?
-    ): Result<List<Division>, DataError.Remote> {
+    ): Result<DivisionListWithTotalCount, DataError.Remote> {
         return remoteDivisionDataSource.getDivisions(
             searchQuery, semesterNumber, branchId, semesterId, academicStartYear, academicEndYear, page, limit, getAll
-        ).map { it.divisions.map { division -> division.toDomain() } }
+        ).map { it.toDomain() }
     }
 
     override suspend fun addDivision(

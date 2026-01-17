@@ -9,8 +9,8 @@ fun StudentDivisionDto.toDomain(): StudentDivision =
         id = id,
         studentId = studentId,
         divisionId = divisionId,
-        fromDate = fromDate,
-        toDate = toDate,
+        startDate = startDate,
+        endDate = endDate,
         student = student?.toDomain(),
         division = division?.toDomain()
     )

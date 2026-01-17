@@ -58,10 +58,9 @@ class KtorRemoteTeacherDataSource(
         highestQualification: String?,
         role: TeacherRole,
         isActive: Boolean?,
-        teacherImage: ByteArray
+        teacherImage: ByteArray?
     ): Result<TeacherDto, DataError.Remote> {
-        val mimeType = getMimeType(teacherImage)
-        val extension = getExtensionFromMime(mimeType)
+
 
         return safeCall<TeacherDto> {
             httpClient.post(ADD_TEACHER) {
@@ -77,10 +76,14 @@ class KtorRemoteTeacherDataSource(
                             highestQualification?.let { append("highestQualification", it) }
                             append("role", role.value)
                             isActive?.let { append("isActive", it.toString()) }
-                            append("teacherImageFile", teacherImage, Headers.build {
-                                append(HttpHeaders.ContentType, mimeType)
-                                append(HttpHeaders.ContentDisposition, "filename=\"teacher_new.$extension\"")
-                            })
+                            teacherImage?.let {
+                                val mimeType = getMimeType(teacherImage)
+                                val extension = getExtensionFromMime(mimeType)
+                                append("teacherImageFile", teacherImage, Headers.build {
+                                    append(HttpHeaders.ContentType, mimeType)
+                                    append(HttpHeaders.ContentDisposition, "filename=\"teacher_new.$extension\"")
+                                })
+                            }
                         }
                     )
                 )
@@ -124,7 +127,11 @@ class KtorRemoteTeacherDataSource(
         }
     }
 
-    override suspend fun updateTeacherPassword(id: String, password: String, confirmPassword: String): Result<Unit, DataError.Remote> {
+    override suspend fun updateTeacherPassword(
+        id: String,
+        password: String,
+        confirmPassword: String
+    ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
             httpClient.put(UPDATE_TEACHER_PASSWORD) {
                 contentType(ContentType.Application.Json)
@@ -135,10 +142,8 @@ class KtorRemoteTeacherDataSource(
 
     override suspend fun updateTeacherImage(
         id: String,
-        imageBytes: ByteArray,
+        imageBytes: ByteArray?,
     ): Result<TeacherDto, DataError.Remote> {
-        val mimeType = getMimeType(imageBytes)
-        val extension = getExtensionFromMime(mimeType)
 
         return safeCall<TeacherDto> {
             httpClient.put(UPDATE_TEACHER_IMAGE) {
@@ -146,10 +151,14 @@ class KtorRemoteTeacherDataSource(
                     MultiPartFormDataContent(
                         formData {
                             append("id", id)
-                            append("teacherImageFile", imageBytes, Headers.build {
-                                append(HttpHeaders.ContentType, mimeType)
-                                append(HttpHeaders.ContentDisposition, "filename=\"teacher$id.$extension\"")
-                            })
+                            imageBytes?.let {
+                                val mimeType = getMimeType(imageBytes)
+                                val extension = getExtensionFromMime(mimeType)
+                                append("teacherImageFile", imageBytes, Headers.build {
+                                    append(HttpHeaders.ContentType, mimeType)
+                                    append(HttpHeaders.ContentDisposition, "filename=\"teacher$id.$extension\"")
+                                })
+                            }
                         }
                     )
                 )
@@ -177,7 +186,10 @@ class KtorRemoteTeacherDataSource(
         }
     }
 
-    override suspend fun addTeachingSubject(teacherId: String, courseId: String): Result<TeacherTeachesCourseDto, DataError.Remote> {
+    override suspend fun addTeachingSubject(
+        teacherId: String,
+        courseId: String
+    ): Result<TeacherTeachesCourseDto, DataError.Remote> {
         return safeCall<TeacherTeachesCourseDto> {
             httpClient.post(ADD_TEACHING_SUBJECT) {
                 contentType(ContentType.Application.Json)
@@ -193,7 +205,6 @@ class KtorRemoteTeacherDataSource(
             }
         }
     }
-
 
 
     override suspend fun bulkCreateTeachers(teachers: List<Map<String, Any>>): Result<List<TeacherDto>, DataError.Remote> {
@@ -217,14 +228,15 @@ class KtorRemoteTeacherDataSource(
     override suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<List<TeacherDto>, DataError.Remote> {
         return safeCall<List<TeacherDto>> {
             httpClient.post(ApiEndpoints.BULK_CREATE_TEACHERS_FROM_CSV) {
-                setBody(MultiPartFormDataContent(
-                    formData {
-                        append("csvFile", csvData, Headers.build {
-                            append(HttpHeaders.ContentType, "text/csv")
-                            append(HttpHeaders.ContentDisposition, "filename=\"teachers.csv\"")
-                        })
-                    }
-                ))
+                setBody(
+                    MultiPartFormDataContent(
+                        formData {
+                            append("csvFile", csvData, Headers.build {
+                                append(HttpHeaders.ContentType, "text/csv")
+                                append(HttpHeaders.ContentDisposition, "filename=\"teachers.csv\"")
+                            })
+                        }
+                    ))
             }
         }
     }

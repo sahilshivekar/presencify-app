@@ -12,7 +12,6 @@ fun AdminDetailsRoot(
     onNavigateToUpdatePassword: () -> Unit,
     onNavigateToVerifyCode: (String) -> Unit,
     onNavigateToAddAdmin: () -> Unit,
-    onNavigateToSelectRole: () -> Unit,
 ) {
     val viewModel: AdminDetailsViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -23,7 +22,6 @@ fun AdminDetailsRoot(
             is AdminDetailsEvent.NavigateToUpdatePassword -> onNavigateToUpdatePassword()
             is AdminDetailsEvent.NavigateToVerifyCode -> onNavigateToVerifyCode(event.email)
             is AdminDetailsEvent.NavigateToAddAdmin -> onNavigateToAddAdmin()
-            is AdminDetailsEvent.NavigateToSelectRole -> onNavigateToSelectRole()
         }
     }
 

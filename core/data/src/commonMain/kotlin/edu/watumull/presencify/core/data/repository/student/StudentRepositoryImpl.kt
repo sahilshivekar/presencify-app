@@ -8,10 +8,7 @@ import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
-import edu.watumull.presencify.core.domain.model.student.Student
-import edu.watumull.presencify.core.domain.model.student.StudentBatch
-import edu.watumull.presencify.core.domain.model.student.StudentDivision
-import edu.watumull.presencify.core.domain.model.student.StudentSemester
+import edu.watumull.presencify.core.domain.model.student.*
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import kotlinx.datetime.LocalDate
 
@@ -41,7 +38,7 @@ class StudentRepositoryImpl(
         page: Int?,
         limit: Int?,
         getAll: Boolean?,
-    ): Result<List<Student>, DataError.Remote> {
+    ): Result<StudentListWithTotalCount, DataError.Remote> {
         return remoteDataSource.getStudents(
             searchQuery,
             branchIds,
@@ -65,7 +62,7 @@ class StudentRepositoryImpl(
             limit,
             getAll
         ).map { response ->
-            response.students.map { it.toDomain() }
+            response.toDomain()
         }
     }
 
@@ -83,7 +80,7 @@ class StudentRepositoryImpl(
         admissionType: AdmissionType,
         branchId: String,
         parentEmail: String?,
-        studentImage: ByteArray,
+        studentImage: ByteArray?,
     ): Result<Student, DataError.Remote> {
         return remoteDataSource.addStudent(
             prn,
@@ -151,7 +148,7 @@ class StudentRepositoryImpl(
 
     override suspend fun updateStudentImage(
         id: String,
-        studentImage: ByteArray,
+        studentImage: ByteArray?,
     ): Result<Student, DataError.Remote> {
         return remoteDataSource.updateStudentImage(id, studentImage).map { it.toDomain() }
     }

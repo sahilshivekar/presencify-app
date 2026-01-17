@@ -10,8 +10,8 @@ data class StudentBatchDto(
     val id: String,
     val studentId: String,
     val batchId: String,
-    val fromDate: LocalDate,
-    val toDate: LocalDate? = null,
+    val startDate: LocalDate,
+    val endDate: LocalDate? = null,
     val createdAt: String,
     val updatedAt: String,
     @SerialName("Student")

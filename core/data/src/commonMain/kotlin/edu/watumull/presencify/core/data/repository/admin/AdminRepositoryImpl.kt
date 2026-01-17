@@ -11,7 +11,7 @@ import edu.watumull.presencify.core.domain.model.admin.Admin
 import edu.watumull.presencify.core.domain.repository.admin.AdminRepository
 
 class AdminRepositoryImpl(
-    private val remoteDataSource: RemoteAdminDataSource
+    private val remoteDataSource: RemoteAdminDataSource,
 ) : AdminRepository {
 
     override suspend fun addAdmin(email: String, username: String, password: String): Result<Admin, DataError.Remote> {

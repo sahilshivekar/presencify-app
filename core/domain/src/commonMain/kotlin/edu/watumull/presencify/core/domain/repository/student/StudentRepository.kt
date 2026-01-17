@@ -5,10 +5,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import edu.watumull.presencify.core.domain.model.student.Student
-import edu.watumull.presencify.core.domain.model.student.StudentBatch
-import edu.watumull.presencify.core.domain.model.student.StudentDivision
-import edu.watumull.presencify.core.domain.model.student.StudentSemester
+import edu.watumull.presencify.core.domain.model.student.*
 import kotlinx.datetime.LocalDate
 
 interface StudentRepository {
@@ -34,7 +31,7 @@ interface StudentRepository {
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null
-    ): Result<List<Student>, DataError.Remote>
+    ): Result<StudentListWithTotalCount, DataError.Remote>
 
     suspend fun addStudent(
         prn: String,
@@ -50,7 +47,7 @@ interface StudentRepository {
         admissionType: AdmissionType,
         branchId: String,
         parentEmail: String?,
-        studentImage: ByteArray
+        studentImage: ByteArray?
     ): Result<Student, DataError.Remote>
 
     suspend fun getStudentById(id: String): Result<Student, DataError.Remote>
@@ -74,7 +71,7 @@ interface StudentRepository {
 
     suspend fun updateStudentPassword(id: String, password: String, confirmPassword: String): Result<Unit, DataError.Remote>
 
-    suspend fun updateStudentImage(id: String, studentImage: ByteArray): Result<Student, DataError.Remote>
+    suspend fun updateStudentImage(id: String, studentImage: ByteArray?): Result<Student, DataError.Remote>
 
     suspend fun removeStudentImage(studentId: String): Result<Student, DataError.Remote>
 

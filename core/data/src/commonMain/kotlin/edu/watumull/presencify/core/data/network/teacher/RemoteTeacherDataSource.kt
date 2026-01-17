@@ -27,7 +27,7 @@ interface RemoteTeacherDataSource {
         highestQualification: String?,
         role: TeacherRole,
         isActive: Boolean?,
-        teacherImage: ByteArray
+        teacherImage: ByteArray?
     ): Result<TeacherDto, DataError.Remote>
 
     suspend fun updateTeacherDetails(
@@ -51,7 +51,7 @@ interface RemoteTeacherDataSource {
 
     suspend fun updateTeacherImage(
         id: String,
-        imageBytes: ByteArray,
+        imageBytes: ByteArray?,
     ): Result<TeacherDto, DataError.Remote>
 
     suspend fun removeTeacherImage(id: String): Result<TeacherDto, DataError.Remote>

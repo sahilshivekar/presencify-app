@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.data.repository.attendance.AttendanceReposit
 import edu.watumull.presencify.core.data.repository.schedule.ClassSessionRepositoryImpl
 import edu.watumull.presencify.core.data.repository.schedule.RoomRepositoryImpl
 import edu.watumull.presencify.core.data.repository.schedule.TimetableRepositoryImpl
+import edu.watumull.presencify.core.data.repository.student.StudentDropoutRepositoryImpl
 import edu.watumull.presencify.core.data.repository.student.StudentRepositoryImpl
 import edu.watumull.presencify.core.data.repository.student_auth.StudentAuthRepositoryImpl
 import edu.watumull.presencify.core.data.repository.teacher.TeacherRepositoryImpl
@@ -18,6 +19,7 @@ import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepos
 import edu.watumull.presencify.core.domain.repository.schedule.ClassSessionRepository
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import edu.watumull.presencify.core.domain.repository.schedule.TimetableRepository
+import edu.watumull.presencify.core.domain.repository.student.StudentDropoutRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
@@ -51,6 +53,7 @@ val repositoryModule: Module = module {
 
     // Student Repositories
     single { StudentRepositoryImpl(get()) } bind StudentRepository::class
+    single { StudentDropoutRepositoryImpl(get()) } bind StudentDropoutRepository::class
     single { StudentAuthRepositoryImpl(get(), get(), get()) } bind StudentAuthRepository::class
 
     // Teacher Repositories

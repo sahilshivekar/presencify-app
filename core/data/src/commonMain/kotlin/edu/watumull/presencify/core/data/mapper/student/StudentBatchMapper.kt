@@ -8,8 +8,8 @@ fun StudentBatchDto.toDomain(): StudentBatch = StudentBatch(
     id = id,
     studentId = studentId,
     batchId = batchId,
-    fromDate = fromDate,
-    toDate = toDate,
+    startDate = startDate,
+    endDate = endDate,
     student = student?.toDomain(),
     batch = batch?.toDomain()
 )

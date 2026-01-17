@@ -5,5 +5,4 @@ sealed interface AdminDetailsEvent {
     data object NavigateToUpdatePassword : AdminDetailsEvent
     data class NavigateToVerifyCode(val email: String) : AdminDetailsEvent
     data object NavigateToAddAdmin : AdminDetailsEvent
-    data object NavigateToSelectRole : AdminDetailsEvent
 }

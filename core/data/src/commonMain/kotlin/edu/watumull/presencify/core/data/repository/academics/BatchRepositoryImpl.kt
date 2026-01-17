@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.academics.Batch
+import edu.watumull.presencify.core.domain.model.academics.BatchListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
 
 class BatchRepositoryImpl(
@@ -23,11 +24,11 @@ class BatchRepositoryImpl(
         page: Int?,
         limit: Int?,
         getAll: Boolean?
-    ): Result<List<Batch>, DataError.Remote> {
+    ): Result<BatchListWithTotalCount, DataError.Remote> {
         return remoteBatchDataSource.getBatches(
             semesterNumber, branchId, divisionId, academicStartYear, academicEndYear,
             searchQuery, page, limit, getAll
-        ).map { it.batches.map { batch -> batch.toDomain() } }
+        ).map { it.toDomain() }
     }
 
     override suspend fun addBatch(batchCode: String, divisionId: String): Result<Batch, DataError.Remote> {

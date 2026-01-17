@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.academics.Course
+import edu.watumull.presencify.core.domain.model.academics.CourseListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 
 class CourseRepositoryImpl(
@@ -21,10 +22,10 @@ class CourseRepositoryImpl(
         page: Int?,
         limit: Int?,
         getAll: Boolean?
-    ): Result<List<Course>, DataError.Remote> {
+    ): Result<CourseListWithTotalCount, DataError.Remote> {
         return remoteCourseDataSource.getCourses(
             searchQuery, branchId, semesterNumber, schemeId, page, limit, getAll
-        ).map { it.courses.map { course -> course.toDomain() } }
+        ).map { it.toDomain() }
     }
 
     override suspend fun addCourse(

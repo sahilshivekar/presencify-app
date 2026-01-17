@@ -38,7 +38,7 @@ class TeacherRepositoryImpl(
         highestQualification: String?,
         role: TeacherRole,
         isActive: Boolean?,
-        teacherImage: ByteArray
+        teacherImage: ByteArray?
     ): Result<Teacher, DataError.Remote> {
         return remoteDataSource.addTeacher(
             firstName,
@@ -88,7 +88,7 @@ class TeacherRepositoryImpl(
         return remoteDataSource.updateTeacherPassword(id, password, confirmPassword)
     }
 
-    override suspend fun updateTeacherImage(id: String, teacherImage: ByteArray): Result<Teacher, DataError.Remote> {
+    override suspend fun updateTeacherImage(id: String, teacherImage: ByteArray?): Result<Teacher, DataError.Remote> {
         return remoteDataSource.updateTeacherImage(id, teacherImage).map { it.toDomain() }
     }
 

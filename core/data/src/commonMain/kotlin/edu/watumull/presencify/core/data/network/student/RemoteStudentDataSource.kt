@@ -47,7 +47,7 @@ interface RemoteStudentDataSource {
         admissionType: AdmissionType,
         branchId: String,
         parentEmail: String?,
-        studentImage: ByteArray
+        studentImage: ByteArray?
     ): Result<StudentDto, DataError.Remote>
 
     suspend fun getStudentById(id: String): Result<StudentDto, DataError.Remote>
@@ -77,7 +77,7 @@ interface RemoteStudentDataSource {
 
     suspend fun updateStudentImage(
         id: String,
-        imageBytes: ByteArray,
+        imageBytes: ByteArray?,
     ): Result<StudentDto, DataError.Remote>
 
     suspend fun removeStudentImage(studentId: String): Result<StudentDto, DataError.Remote>

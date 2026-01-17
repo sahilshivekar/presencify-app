@@ -12,7 +12,6 @@ fun NavGraphBuilder.adminMgtNavGraph(
     onNavigateToVerifyCode: (String) -> Unit,
     onNavigateToAddAdmin: () -> Unit,
     onNavigateToAdminDetails: () -> Unit,
-    onNavigateToSelectRole: () -> Unit,
 ) {
 
     composableWithSlideTransitions<AdminMgtRoutes.AddAdmin> {
@@ -35,7 +34,6 @@ fun NavGraphBuilder.adminMgtNavGraph(
             onNavigateToUpdatePassword = onNavigateToUpdatePassword,
             onNavigateToVerifyCode = onNavigateToVerifyCode,
             onNavigateToAddAdmin = onNavigateToAddAdmin,
-            onNavigateToSelectRole = onNavigateToSelectRole
         )
     }
 

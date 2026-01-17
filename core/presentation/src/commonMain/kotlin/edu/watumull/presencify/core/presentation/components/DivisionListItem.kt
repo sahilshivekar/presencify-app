@@ -49,7 +49,7 @@ fun DivisionListItem(
         supportingContent = {
             Column {
                 Text(
-                    text = "Batches: ${batchCodes.joinToString(" • ")}",
+                    text = "Batches: ${if (batchCodes.isEmpty()) "None" else batchCodes.joinToString(" • ")}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

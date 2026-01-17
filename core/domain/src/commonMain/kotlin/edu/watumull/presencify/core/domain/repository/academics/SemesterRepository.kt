@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
+import edu.watumull.presencify.core.domain.model.academics.SemesterListWithTotalCount
 import kotlinx.datetime.LocalDate
 
 interface SemesterRepository {
@@ -17,7 +18,7 @@ interface SemesterRepository {
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null
-    ): Result<List<Semester>, DataError.Remote>
+    ): Result<SemesterListWithTotalCount, DataError.Remote>
 
     suspend fun addSemester(
         branchId: String,

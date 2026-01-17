@@ -184,22 +184,22 @@ fun NavController.navigateToAddEditTeacher(teacherId: String? = null) {
 /**
  * Navigate to Search Teacher screen
  *
- * @param semesterNumbers List of semester numbers to filter by
- * @param academicStartYearOfSemester Academic start year of semester
- * @param academicEndYearOfSemester Academic end year of semester
+ * @param searchQuery The search query string
+ * @param courseId The ID of the course to filter teachers by
+ * @param getAll Get all teachers flag
  * @param intention The intention for search (see SearchTeacherIntention)
  */
 fun NavController.navigateToSearchTeacher(
-    semesterNumbers: List<Int>? = null,
-    academicStartYearOfSemester: Int? = null,
-    academicEndYearOfSemester: Int? = null,
+    searchQuery: String? = null,
+    courseId: String? = null,
+    getAll: Boolean? = null,
     intention: String = SearchTeacherIntention.DEFAULT.name,
 ) {
     navigate(
         UsersRoutes.SearchTeacher(
-            semesterNumbers = semesterNumbers,
-            academicStartYearOfSemester = academicStartYearOfSemester,
-            academicEndYearOfSemester = academicEndYearOfSemester,
+            searchQuery = searchQuery,
+            courseId = courseId,
+            getAll = getAll,
             intention = intention
         )
     )
@@ -224,7 +224,7 @@ fun NavController.navigateToUnassignSubjectToTeacher() {
  *
  * @param teacherId The ID of the teacher to view
  */
-fun NavController.navigateToStaffDetails(teacherId: String) {
-    navigate(UsersRoutes.StaffDetails(teacherId = teacherId))
+fun NavController.navigateToTeacherDetails(teacherId: String) {
+    navigate(UsersRoutes.TeacherDetails(teacherId = teacherId))
 }
 
