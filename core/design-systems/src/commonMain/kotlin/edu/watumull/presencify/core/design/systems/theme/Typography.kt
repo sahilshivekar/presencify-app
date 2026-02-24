@@ -6,7 +6,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import edu.watumull.presencify.core.design.systems.*
+import edu.watumull.presencify.core.design.systems.Res
+import edu.watumull.presencify.core.design.systems.poppins_bold
+import edu.watumull.presencify.core.design.systems.poppins_bold_italic
+import edu.watumull.presencify.core.design.systems.poppins_extra_bold
+import edu.watumull.presencify.core.design.systems.poppins_extra_bold_italic
+import edu.watumull.presencify.core.design.systems.poppins_extra_light
+import edu.watumull.presencify.core.design.systems.poppins_extra_light_italic
+import edu.watumull.presencify.core.design.systems.poppins_italic
+import edu.watumull.presencify.core.design.systems.poppins_light
+import edu.watumull.presencify.core.design.systems.poppins_light_italic
+import edu.watumull.presencify.core.design.systems.poppins_medium
+import edu.watumull.presencify.core.design.systems.poppins_medium_italic
+import edu.watumull.presencify.core.design.systems.poppins_regular
+import edu.watumull.presencify.core.design.systems.poppins_semi_bold
+import edu.watumull.presencify.core.design.systems.poppins_semi_bold_italic
+import edu.watumull.presencify.core.design.systems.poppins_thin
+import edu.watumull.presencify.core.design.systems.poppins_thin_italic
 import org.jetbrains.compose.resources.Font
 
 @Composable

@@ -4,7 +4,12 @@ import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.users.add_edit_student.AddEditStudentRoot
 import edu.watumull.presencify.feature.users.add_edit_teacher.AddEditTeacherRoot
+import edu.watumull.presencify.feature.users.assign_unassign_student_to_batch.AssignUnassignStudentToBatchRoot
+import edu.watumull.presencify.feature.users.assign_unassign_student_to_division.AssignUnassignStudentToDivisionRoot
+import edu.watumull.presencify.feature.users.assign_unassign_student_to_semester.AssignUnassignStudentToSemesterRoot
 import edu.watumull.presencify.feature.users.dashboard.UsersDashboardRoot
+import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchRoot
+import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionRoot
 import edu.watumull.presencify.feature.users.search_student.SearchStudentRoot
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherRoot
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsRoot
@@ -40,6 +45,37 @@ fun NavGraphBuilder.usersNavGraph(
     onNavigateBack: () -> Unit,
     onNavigateToStudentDetails: (String) -> Unit,
     onNavigateToAddEditStudent: (studentId: String?) -> Unit,
+    onNavigateToSearchStudentForAssignUnassignSemester: (semesterId: String, branchId: String) -> Unit,
+    onNavigateToSearchStudentForAssignUnassignDivision: (
+        divisionId: String,
+        branchId: String,
+        academicStartYear: Int,
+        academicEndYear: Int,
+        semesterNumber: Int
+    ) -> Unit,
+    onNavigateToSearchStudentForAssignUnassignBatch: (
+        batchId: String,
+        branchId: String,
+        academicStartYear: Int,
+        academicEndYear: Int,
+        semesterNumber: Int
+    ) -> Unit,
+    onNavigateToSearchStudentForModifyDivision: (
+        divisionId: String,
+        branchId: String,
+        academicStartYear: Int,
+        academicEndYear: Int,
+        semesterNumber: Int,
+        newStartDate: String
+    ) -> Unit,
+    onNavigateToSearchStudentForModifyBatch: (
+        batchId: String,
+        branchId: String,
+        academicStartYear: Int,
+        academicEndYear: Int,
+        semesterNumber: Int,
+        newStartDate: String
+    ) -> Unit,
     onNavigateToTeacherDetails: (String) -> Unit,
     onNavigateToAddEditTeacher: (String?) -> Unit,
     onNavigateToAssignUnassignCourses: (String) -> Unit
@@ -58,19 +94,52 @@ fun NavGraphBuilder.usersNavGraph(
         )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToSemester> {
-        // TODO: Add screen content
+        AssignUnassignStudentToSemesterRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchStudent = onNavigateToSearchStudentForAssignUnassignSemester
+        )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToDivision> {
-        // TODO: Add screen content
+        AssignUnassignStudentToDivisionRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchStudent = onNavigateToSearchStudentForAssignUnassignDivision
+        )
     }
     composableWithSlideTransitions<UsersRoutes.ModifyStudentDivision> {
-        // TODO: Add screen content
+        ModifyStudentDivisionRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchStudent = { divisionId, branchId, academicStartYear, academicEndYear, semesterNumber, newStartDate ->
+                onNavigateToSearchStudentForModifyDivision(
+                    divisionId,
+                    branchId,
+                    academicStartYear,
+                    academicEndYear,
+                    semesterNumber,
+                    newStartDate,
+                )
+            }
+        )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToBatch> {
-        // TODO: Add screen content
+        AssignUnassignStudentToBatchRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchStudent = onNavigateToSearchStudentForAssignUnassignBatch
+        )
     }
     composableWithSlideTransitions<UsersRoutes.ModifyStudentBatch> {
-        // TODO: Add screen content
+        ModifyStudentBatchRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchStudent = { batchId, branchId, academicStartYear, academicEndYear, semesterNumber, newStartDate ->
+                onNavigateToSearchStudentForModifyBatch(
+                    batchId,
+                    branchId,
+                    academicStartYear,
+                    academicEndYear,
+                    semesterNumber,
+                    newStartDate,
+                )
+            }
+        )
     }
     composableWithSlideTransitions<UsersRoutes.AddStudentToDropout> {
         // TODO: Add screen content

@@ -123,3 +123,21 @@ fun LocalDate.toReadableString(): String {
         year()
     })
 }
+
+// Parse from day/month/year format
+fun String.toLocalDate(): LocalDate? {
+    return try {
+        val parts = this.split("/")
+        if (parts.size == 3) {
+            LocalDate(
+                year = parts[2].toInt(),
+                monthNumber = parts[1].toInt(),
+                dayOfMonth = parts[0].toInt()
+            )
+        } else {
+            null
+        }
+    } catch (e: Exception) {
+        null
+    }
+}

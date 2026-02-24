@@ -14,10 +14,39 @@ import edu.watumull.presencify.feature.onboarding.navigation.onboardingNavGraph
 import edu.watumull.presencify.feature.schedule.navigation.scheduleNavGraph
 import edu.watumull.presencify.feature.student.auth.navigation.studentAuthNavGraph
 import edu.watumull.presencify.feature.teacher.auth.navigation.teacherAuthNavGraph
+import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
 import edu.watumull.presencify.feature.users.navigation.usersNavGraph
 import edu.watumull.presencify.navigation.home.Home
 import edu.watumull.presencify.navigation.home.navigateToHome
-import edu.watumull.presencify.navigation.navcontroller_extensions.*
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddAdmin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditBatch
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditBranch
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditClass
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditCourse
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditDivision
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditScheme
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditSemester
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditStudent
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTeacher
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditUniversity
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminForgotPassword
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminVerifyCode
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToBatchDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToBranchDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCourseDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDivisionDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSemesterDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 
 @Composable
 fun AppNavHost(
@@ -75,12 +104,61 @@ fun AppNavHost(
             onNavigateBack = { rootNavController.navigateUp() },
             onNavigateToStudentDetails = rootNavController::navigateToStudentDetails,
             onNavigateToAddEditStudent = rootNavController::navigateToAddEditStudent,
+            onNavigateToSearchStudentForAssignUnassignSemester = { semesterId, branchId ->
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_SEMESTER.name,
+                    semesterId = semesterId,
+                    branchId = branchId
+                )
+            },
+            onNavigateToSearchStudentForAssignUnassignDivision = { divisionId, branchId, academicStartYear, academicEndYear, semesterNumber ->
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_DIVISION.name,
+                    divisionId = divisionId,
+                    branchId = branchId,
+                    academicStartYear = academicStartYear,
+                    academicEndYear = academicEndYear,
+                    semesterNumber = semesterNumber
+                )
+            },
+            onNavigateToSearchStudentForAssignUnassignBatch = { batchId, branchId, academicStartYear, academicEndYear, semesterNumber ->
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_BATCH.name,
+                    batchId = batchId,
+                    branchId = branchId,
+                    academicStartYear = academicStartYear,
+                    academicEndYear = academicEndYear,
+                    semesterNumber = semesterNumber
+                )
+            },
             onNavigateToTeacherDetails = rootNavController::navigateToTeacherDetails,
             onNavigateToAddEditTeacher = rootNavController::navigateToAddEditTeacher,
             onNavigateToAssignUnassignCourses = { teacherId ->
                 rootNavController.navigateToSearchCourse(
                     intention = SearchCourseIntention.ASSIGN_UNASSIGN_COURSE_TO_TEACHER.name,
                     teacherId = teacherId
+                )
+            },
+            onNavigateToSearchStudentForModifyDivision = { divisionId, branchId, academicStartYear, academicEndYear, semesterNumber, newStartDate ->
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.MODIFY_STUDENT_DIVISION.name,
+                    divisionId = divisionId,
+                    branchId = branchId,
+                    academicStartYear = academicStartYear,
+                    academicEndYear = academicEndYear,
+                    semesterNumber = semesterNumber,
+                    newStartDate = newStartDate
+                )
+            },
+            onNavigateToSearchStudentForModifyBatch = { batchId, branchId, academicStartYear, academicEndYear, semesterNumber, newStartDate ->
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.MODIFY_STUDENT_BATCH.name,
+                    batchId = batchId,
+                    branchId = branchId,
+                    academicStartYear = academicStartYear,
+                    academicEndYear = academicEndYear,
+                    semesterNumber = semesterNumber,
+                    newStartDate = newStartDate
                 )
             }
         )

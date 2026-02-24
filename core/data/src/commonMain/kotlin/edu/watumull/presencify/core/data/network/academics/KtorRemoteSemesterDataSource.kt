@@ -1,6 +1,10 @@
 package edu.watumull.presencify.core.data.network.academics
 
-import edu.watumull.presencify.core.data.dto.academics.*
+import edu.watumull.presencify.core.data.dto.academics.AddSemesterRequestDto
+import edu.watumull.presencify.core.data.dto.academics.CourseDto
+import edu.watumull.presencify.core.data.dto.academics.SemesterDto
+import edu.watumull.presencify.core.data.dto.academics.SemesterListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.academics.UpdateSemesterRequestDto
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.ADD_SEMESTER
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.BULK_CREATE_SEMESTERS
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.BULK_DELETE_SEMESTERS

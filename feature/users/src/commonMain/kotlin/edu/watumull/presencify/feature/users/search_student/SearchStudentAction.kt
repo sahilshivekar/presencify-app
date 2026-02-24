@@ -33,15 +33,12 @@ sealed interface SearchStudentAction {
     data object ResetFilters : SearchStudentAction
     data object ApplyFilters : SearchStudentAction
 
-    // Student Selection
-    data class ToggleStudentSelection(val studentId: String) : SearchStudentAction
+    // Student Actions
     data class StudentCardClick(val studentId: String) : SearchStudentAction
+    data class StudentActionButtonClick(val studentId: String) : SearchStudentAction
 
     // Pagination
     data object LoadMoreStudents : SearchStudentAction
-
-    // Done button for selection mode
-    data object DoneButtonClick : SearchStudentAction
 
     data object ClickFloatingActionButton : SearchStudentAction
 }

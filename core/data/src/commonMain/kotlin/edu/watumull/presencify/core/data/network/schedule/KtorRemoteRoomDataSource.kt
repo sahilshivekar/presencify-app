@@ -3,6 +3,8 @@ package edu.watumull.presencify.core.data.network.schedule
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.RoomDto
 import edu.watumull.presencify.core.data.dto.schedule.RoomListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.schedule.request.AddRoomRequest
+import edu.watumull.presencify.core.data.dto.schedule.request.UpdateRoomRequest
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.ADD_ROOM
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_ROOMS
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_ROOM_BY_ID
@@ -60,12 +62,14 @@ class KtorRemoteRoomDataSource(
         return safeCall<RoomDto> {
             httpClient.post(ADD_ROOM) {
                 contentType(ContentType.Application.Json)
-                setBody(buildMap {
-                    put("roomNumber", roomNumber)
-                    put("sittingCapacity", sittingCapacity)
-                    name?.let { put("name", it) }
-                    type?.let { put("type", it.value) }
-                })
+                setBody(
+                    AddRoomRequest(
+                        roomNumber = roomNumber,
+                        sittingCapacity = sittingCapacity,
+                        name = name,
+                        type = type?.value
+                    )
+                )
             }
         }
     }
@@ -103,12 +107,14 @@ class KtorRemoteRoomDataSource(
         return safeCall<RoomDto> {
             httpClient.put("$UPDATE_ROOM/$id") {
                 contentType(ContentType.Application.Json)
-                setBody(buildMap {
-                    roomNumber?.let { put("roomNumber", it) }
-                    sittingCapacity?.let { put("sittingCapacity", it) }
-                    name?.let { put("name", it) }
-                    type?.let { put("type", it.value) }
-                })
+                setBody(
+                    UpdateRoomRequest(
+                        roomNumber = roomNumber,
+                        sittingCapacity = sittingCapacity,
+                        name = name,
+                        type = type?.value
+                    )
+                )
             }
         }
     }

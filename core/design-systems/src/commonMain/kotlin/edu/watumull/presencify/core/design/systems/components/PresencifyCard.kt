@@ -9,6 +9,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -20,7 +21,7 @@ fun PresencifyCard(
     elevation: Dp = 1.dp,
     onClick: (() -> Unit)? = null,
     colors: CardColors = CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
     ),
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -28,7 +29,8 @@ fun PresencifyCard(
         shape = shape,
         modifier = modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .clip(MaterialTheme.shapes.medium),
         elevation = CardDefaults.cardElevation(
             defaultElevation = elevation,
         ),

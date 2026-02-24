@@ -1,6 +1,17 @@
 package edu.watumull.presencify.core.data.network.student
 
-import edu.watumull.presencify.core.data.dto.student.*
+import edu.watumull.presencify.core.data.dto.student.StudentBatchDto
+import edu.watumull.presencify.core.data.dto.student.StudentDivisionDto
+import edu.watumull.presencify.core.data.dto.student.StudentDto
+import edu.watumull.presencify.core.data.dto.student.StudentListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.student.StudentSemesterDto
+import edu.watumull.presencify.core.data.dto.student.request.AddStudentToDivisionRequest
+import edu.watumull.presencify.core.data.dto.student.request.AddStudentToSemesterRequest
+import edu.watumull.presencify.core.data.dto.student.request.ChangeStudentBatchRequest
+import edu.watumull.presencify.core.data.dto.student.request.ChangeStudentDivisionRequest
+import edu.watumull.presencify.core.data.dto.student.request.RevertAddStudentToDivisionRequest
+import edu.watumull.presencify.core.data.dto.student.request.UpdateStudentDetailsRequest
+import edu.watumull.presencify.core.data.dto.student.request.UpdateStudentPasswordRequest
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_BATCH
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_DIVISION
@@ -61,6 +72,7 @@ class KtorRemoteStudentDataSource(
         page: Int?,
         limit: Int?,
         getAll: Boolean?,
+        intention: String?,
     ): Result<StudentListWithTotalCountDto, DataError.Remote> {
         return safeCall<StudentListWithTotalCountDto> {
             httpClient.get(GET_STUDENTS) {
@@ -87,6 +99,7 @@ class KtorRemoteStudentDataSource(
                 page?.let { parameter("page", it) }
                 limit?.let { parameter("limit", it) }
                 getAll?.let { parameter("getAll", it) }
+                intention?.let { parameter("intention", it) }
             }
         }
     }
@@ -171,22 +184,24 @@ class KtorRemoteStudentDataSource(
         return safeCall<StudentDto> {
             httpClient.put(UPDATE_STUDENT_DETAILS) {
                 contentType(ContentType.Application.Json)
-                setBody(buildMap {
-                    put("id", id)
-                    firstName?.let { put("firstName", it) }
-                    middleName?.let { put("middleName", it) }
-                    lastName?.let { put("lastName", it) }
-                    email?.let { put("email", it) }
-                    gender?.value?.let { put("gender", it) }
-                    phoneNumber?.let { put("phoneNumber", it) }
-                    dob?.let { put("dob", it) }
-                    schemeId?.let { put("schemeId", it) }
-                    branchId?.let { put("branchId", it) }
-                    parentEmail?.let { put("parentEmail", it) }
-                    prn?.let { put("prn", it) }
-                    admissionYear?.let { put("admissionYear", it.toString()) }
-                    admissionType?.value?.let { put("admissionType", it) }
-                })
+                setBody(
+                    UpdateStudentDetailsRequest(
+                        id = id,
+                        firstName = firstName,
+                        middleName = middleName,
+                        lastName = lastName,
+                        email = email,
+                        gender = gender?.value,
+                        phoneNumber = phoneNumber,
+                        dob = dob,
+                        schemeId = schemeId,
+                        branchId = branchId,
+                        parentEmail = parentEmail,
+                        prn = prn,
+                        admissionYear = admissionYear?.toString(),
+                        admissionType = admissionType?.value
+                    )
+                )
             }
         }
     }
@@ -200,10 +215,10 @@ class KtorRemoteStudentDataSource(
             httpClient.put(UPDATE_STUDENT_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(
-                    mapOf(
-                        "id" to id,
-                        "password" to password,
-                        "confirmPassword" to confirmPassword
+                    UpdateStudentPasswordRequest(
+                        id = id,
+                        password = password,
+                        confirmPassword = confirmPassword
                     )
                 )
             }
@@ -266,7 +281,7 @@ class KtorRemoteStudentDataSource(
         return safeCall<StudentSemesterDto> {
             httpClient.post(ADD_STUDENT_TO_SEMESTER) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("studentId" to studentId, "semesterId" to semesterId))
+                setBody(AddStudentToSemesterRequest(studentId = studentId, semesterId = semesterId))
             }
         }
     }
@@ -295,9 +310,9 @@ class KtorRemoteStudentDataSource(
         divisionId: String,
     ): Result<StudentDivisionDto, DataError.Remote> {
         return safeCall<StudentDivisionDto> {
-            httpClient.post("${ADD_STUDENT_TO_DIVISION}/$studentId/divisions") {
+            httpClient.post(ADD_STUDENT_TO_DIVISION) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("divisionId" to divisionId))
+                setBody(AddStudentToDivisionRequest(divisionId = divisionId, studentId = studentId))
             }
         }
     }
@@ -311,10 +326,10 @@ class KtorRemoteStudentDataSource(
             httpClient.put(CHANGE_STUDENT_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(
-                    mapOf(
-                        "studentDivisionId" to studentDivisionId,
-                        "divisionId" to divisionId,
-                        "newDivisionStartDate" to newDivisionStartDate
+                    ChangeStudentDivisionRequest(
+                        studentDivisionId = studentDivisionId,
+                        divisionId = divisionId,
+                        newDivisionStartDate = newDivisionStartDate
                     )
                 )
             }
@@ -325,7 +340,7 @@ class KtorRemoteStudentDataSource(
         return safeCall<Unit> {
             httpClient.delete(REVERT_ADD_STUDENT_TO_DIVISION) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("studentDivisionId" to studentDivisionId))
+                setBody(RevertAddStudentToDivisionRequest(studentDivisionId = studentDivisionId))
             }
         }
     }
@@ -355,9 +370,9 @@ class KtorRemoteStudentDataSource(
         batchId: String,
     ): Result<StudentBatchDto, DataError.Remote> {
         return safeCall<StudentBatchDto> {
-            httpClient.post("${ADD_STUDENT_TO_BATCH}/$studentId/batches") {
+            httpClient.post(ADD_STUDENT_TO_BATCH) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("batchId" to batchId))
+                setBody(mapOf("batchId" to batchId, "studentId" to studentId))
             }
         }
     }
@@ -371,10 +386,10 @@ class KtorRemoteStudentDataSource(
             httpClient.put(CHANGE_STUDENT_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(
-                    mapOf(
-                        "studentBatchId" to studentBatchId,
-                        "batchId" to batchId,
-                        "newBatchStartDate" to newBatchStartDate
+                    ChangeStudentBatchRequest(
+                        studentBatchId = studentBatchId,
+                        batchId = batchId,
+                        newBatchStartDate = newBatchStartDate
                     )
                 )
             }

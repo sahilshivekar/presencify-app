@@ -10,6 +10,8 @@ import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.ListItemFeedback
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
@@ -268,7 +270,10 @@ class SearchCourseViewModel(
         val isLinked = branchCourseSemester != null
 
         // Mark course as loading
-        updateState { it.copy(loadingCourseIds = it.loadingCourseIds + courseId) }
+        updateState { it.copy(
+            loadingCourseIds = it.loadingCourseIds + courseId,
+            courseFeedback = it.courseFeedback - courseId
+        ) }
 
         if (isLinked) {
             // Unlink course - need the branchCourseSemesterId
@@ -294,7 +299,8 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             courses = updatedCourses,
-                            loadingCourseIds = it.loadingCourseIds - courseId
+                            loadingCourseIds = it.loadingCourseIds - courseId,
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Success(UiText.DynamicString("Course unlinked successfully")))
                         )
                     }
                 }
@@ -302,12 +308,7 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             loadingCourseIds = it.loadingCourseIds - courseId,
-                            dialogState = SearchCourseState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error Unlinking Course",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Error(error.toUiText()))
                         )
                     }
                 }
@@ -335,7 +336,8 @@ class SearchCourseViewModel(
                                 updateState {
                                     it.copy(
                                         courses = updatedCourses,
-                                        loadingCourseIds = it.loadingCourseIds - courseId
+                                        loadingCourseIds = it.loadingCourseIds - courseId,
+                                        courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Success(UiText.DynamicString("Course linked successfully")))
                                     )
                                 }
                             }
@@ -359,12 +361,7 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             loadingCourseIds = it.loadingCourseIds - courseId,
-                            dialogState = SearchCourseState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error Linking Course",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Error(error.toUiText()))
                         )
                     }
                 }
@@ -386,7 +383,10 @@ class SearchCourseViewModel(
         val isAssigned = teacherTeachesCourse != null
 
         // Mark course as loading
-        updateState { it.copy(loadingCourseIds = it.loadingCourseIds + courseId) }
+        updateState { it.copy(
+            loadingCourseIds = it.loadingCourseIds + courseId,
+            courseFeedback = it.courseFeedback - courseId
+        ) }
 
         if (isAssigned) {
             // Unassign course - need to find the teacherTeachesCourse.id
@@ -408,7 +408,8 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             courses = updatedCourses,
-                            loadingCourseIds = it.loadingCourseIds - courseId
+                            loadingCourseIds = it.loadingCourseIds - courseId,
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Success(UiText.DynamicString("Course unassigned successfully")))
                         )
                     }
                 }
@@ -416,12 +417,7 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             loadingCourseIds = it.loadingCourseIds - courseId,
-                            dialogState = SearchCourseState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error Unassigning Course",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Error(error.toUiText()))
                         )
                     }
                 }
@@ -444,7 +440,8 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             courses = updatedCourses,
-                            loadingCourseIds = it.loadingCourseIds - courseId
+                            loadingCourseIds = it.loadingCourseIds - courseId,
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Success(UiText.DynamicString("Course assigned successfully")))
                         )
                     }
                 }
@@ -452,12 +449,7 @@ class SearchCourseViewModel(
                     updateState {
                         it.copy(
                             loadingCourseIds = it.loadingCourseIds - courseId,
-                            dialogState = SearchCourseState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error Assigning Course",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Error(error.toUiText()))
                         )
                     }
                 }

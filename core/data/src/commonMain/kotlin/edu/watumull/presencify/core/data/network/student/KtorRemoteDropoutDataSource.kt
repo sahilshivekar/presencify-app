@@ -1,6 +1,7 @@
 package edu.watumull.presencify.core.data.network.student
 
 import edu.watumull.presencify.core.data.dto.student.DropoutDto
+import edu.watumull.presencify.core.data.dto.student.request.AddStudentToDropoutRequest
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_DROPOUT
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_DROPOUT_BY_ID
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_DROPOUT_DETAILS_OF_STUDENT
@@ -24,11 +25,13 @@ class KtorRemoteDropoutDataSource(
         return safeCall<DropoutDto> {
             httpClient.post(ADD_STUDENT_TO_DROPOUT) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "studentId" to studentId,
-                    "academicStartYear" to academicStartYear,
-                    "academicEndYear" to academicEndYear
-                ))
+                setBody(
+                    AddStudentToDropoutRequest(
+                        studentId = studentId,
+                        academicStartYear = academicStartYear,
+                        academicEndYear = academicEndYear
+                    )
+                )
             }
         }
     }

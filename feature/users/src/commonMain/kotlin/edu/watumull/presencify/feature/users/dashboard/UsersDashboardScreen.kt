@@ -1,6 +1,12 @@
 package edu.watumull.presencify.feature.users.dashboard
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -13,9 +19,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.*
+import edu.watumull.presencify.core.design.systems.Res
+import edu.watumull.presencify.core.design.systems.add_to_semester
+import edu.watumull.presencify.core.design.systems.baseline_person_remove_24
 import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.design.systems.edit_outlined
+import edu.watumull.presencify.core.design.systems.group_batch
+import edu.watumull.presencify.core.design.systems.group_division
+import edu.watumull.presencify.core.design.systems.outline_person_add_alt_1_24
 import edu.watumull.presencify.core.presentation.UiConstants
 
 @Composable

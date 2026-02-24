@@ -4,9 +4,12 @@ import edu.watumull.presencify.core.data.dto.schedule.CancelledClassDto
 import edu.watumull.presencify.core.data.dto.schedule.CancelledClassListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.schedule.request.AddClassRequest
+import edu.watumull.presencify.core.data.dto.schedule.request.BulkDeleteClassesRequest
+import edu.watumull.presencify.core.data.dto.schedule.request.CancelClassRequest
+import edu.watumull.presencify.core.data.dto.schedule.request.ExtendActiveTillDateRequest
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.ADD_CLASS
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.ADD_EXTRA_CLASS
-import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.BULK_CREATE_CLASSES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.BULK_CREATE_CLASSES_FROM_CSV
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.BULK_DELETE_CLASSES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.CANCEL_CLASS
@@ -90,19 +93,21 @@ class KtorRemoteClassSessionDataSource(
         return safeCall<ClassDto> {
             httpClient.post(ADD_CLASS) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "teacherId" to teacherId,
-                    "startTime" to startTime,
-                    "endTime" to endTime,
-                    "dayOfWeek" to dayOfWeek.value,
-                    "roomId" to roomId,
-                    "batchId" to batchId,
-                    "activeFrom" to activeFrom.toString(),
-                    "activeTill" to activeTill.toString(),
-                    "classType" to classType.value,
-                    "courseId" to courseId,
-                    "timetableId" to timetableId
-                ))
+                setBody(
+                    AddClassRequest(
+                        teacherId = teacherId,
+                        startTime = startTime,
+                        endTime = endTime,
+                        dayOfWeek = dayOfWeek.value,
+                        roomId = roomId,
+                        batchId = batchId,
+                        activeFrom = activeFrom.toString(),
+                        activeTill = activeTill.toString(),
+                        classType = classType.value,
+                        courseId = courseId,
+                        timetableId = timetableId
+                    )
+                )
             }
         }
     }
@@ -117,7 +122,7 @@ class KtorRemoteClassSessionDataSource(
         return safeCall<ClassDto> {
             httpClient.put("$EXTEND_ACTIVE_TILL_DATE/$classId") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("newActiveTill" to newActiveTill.toString()))
+                setBody(ExtendActiveTillDateRequest(newActiveTill = newActiveTill.toString()))
             }
         }
     }
@@ -144,19 +149,21 @@ class KtorRemoteClassSessionDataSource(
         return safeCall<ClassDto> {
             httpClient.post(ADD_EXTRA_CLASS) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "teacherId" to teacherId,
-                    "startTime" to startTime,
-                    "endTime" to endTime,
-                    "dayOfWeek" to dayOfWeek.value,
-                    "roomId" to roomId,
-                    "batchId" to batchId,
-                    "activeFrom" to activeFrom.toString(),
-                    "activeTill" to activeTill.toString(),
-                    "classType" to classType.value,
-                    "courseId" to courseId,
-                    "timetableId" to timetableId
-                ))
+                setBody(
+                    AddClassRequest(
+                        teacherId = teacherId,
+                        startTime = startTime,
+                        endTime = endTime,
+                        dayOfWeek = dayOfWeek.value,
+                        roomId = roomId,
+                        batchId = batchId,
+                        activeFrom = activeFrom.toString(),
+                        activeTill = activeTill.toString(),
+                        classType = classType.value,
+                        courseId = courseId,
+                        timetableId = timetableId
+                    )
+                )
             }
         }
     }
@@ -189,29 +196,31 @@ class KtorRemoteClassSessionDataSource(
         return safeCall<CancelledClassDto> {
             httpClient.post(CANCEL_CLASS) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "classId" to classId,
-                    "date" to date.toString(),
-                    "reason" to reason
-                ))
+                setBody(
+                    CancelClassRequest(
+                        classId = classId,
+                        date = date.toString(),
+                        reason = reason
+                    )
+                )
             }
         }
     }
 
-    override suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassDto>, DataError.Remote> {
-        return safeCall<List<ClassDto>> {
-            httpClient.post(BULK_CREATE_CLASSES) {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("classes" to classes))
-            }
-        }
-    }
+//    override suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassDto>, DataError.Remote> {
+//        return safeCall<List<ClassDto>> {
+//            httpClient.post(BULK_CREATE_CLASSES) {
+//                contentType(ContentType.Application.Json)
+//                setBody(BulkCreateClassesRequest(classes = classes))
+//            }
+//        }
+//    }
 
     override suspend fun bulkDeleteClasses(classIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
             httpClient.delete(BULK_DELETE_CLASSES) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("classIds" to classIds))
+                setBody(BulkDeleteClassesRequest(classIds = classIds))
             }
         }
     }

@@ -10,6 +10,7 @@ import edu.watumull.presencify.core.domain.model.academics.Division
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.ListItemFeedback
 import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
 import kotlinx.collections.immutable.ImmutableList
@@ -32,8 +33,19 @@ data class SearchStudentState(
 
     // Selection Mode
     val intention: SearchStudentIntention = SearchStudentIntention.DEFAULT,
-    val selectedStudentIds: Set<String> = emptySet(),
-    val isSelectable: Boolean = false,
+
+    // Required parameters for specific intentions
+    val semesterId: String? = null,
+    val divisionId: String? = null,
+    val batchId: String? = null,
+    val newStartDate: String? = null,
+
+
+    // Track individual student operations
+    val loadingStudentIds: Set<String> = emptySet(),
+
+    // Feedback for individual student operations
+    val studentFeedback: Map<String, ListItemFeedback?> = emptyMap(),
 
     // Filter Options - Branches
     val branchOptions: PersistentList<Branch> = persistentListOf(),
@@ -114,4 +126,3 @@ private fun generateYears(): ImmutableList<String> {
         (currentYear - offset).toString()
     }.toImmutableList()
 }
-

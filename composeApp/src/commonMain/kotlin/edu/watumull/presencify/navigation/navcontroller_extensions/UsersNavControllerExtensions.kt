@@ -44,6 +44,10 @@ fun NavController.navigateToAddEditStudent(studentId: String? = null) {
  * @param batchCode Batch code to filter by
  * @param getAll Get all students flag
  * @param intention The intention for search (see SearchStudentIntention)
+ * @param branchId Filter constraint for specific branch
+ * @param academicStartYear Filter constraint for academic start year
+ * @param academicEndYear Filter constraint for academic end year
+ * @param semesterNumber Filter constraint for specific semester number
  */
 fun NavController.navigateToSearchStudent(
     searchQuery: String? = null,
@@ -66,6 +70,11 @@ fun NavController.navigateToSearchStudent(
     batchCode: String? = null,
     getAll: Boolean? = null,
     intention: String = SearchStudentIntention.DEFAULT.name,
+    branchId: String? = null,
+    academicStartYear: Int? = null,
+    academicEndYear: Int? = null,
+    semesterNumber: Int? = null,
+    newStartDate: String? = null,
 ) {
     navigate(
         UsersRoutes.SearchStudent(
@@ -88,7 +97,12 @@ fun NavController.navigateToSearchStudent(
             divisionCode = divisionCode,
             batchCode = batchCode,
             getAll = getAll,
-            intention = intention
+            intention = intention,
+            branchId = branchId,
+            academicStartYear = academicStartYear,
+            academicEndYear = academicEndYear,
+            semesterNumber = semesterNumber,
+            newStartDate = newStartDate,
         )
     )
 }
@@ -207,4 +221,3 @@ fun NavController.navigateToUnassignCourseToTeacher() {
 fun NavController.navigateToTeacherDetails(teacherId: String) {
     navigate(UsersRoutes.TeacherDetails(teacherId = teacherId))
 }
-

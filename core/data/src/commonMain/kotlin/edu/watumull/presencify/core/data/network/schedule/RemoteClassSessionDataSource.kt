@@ -82,7 +82,7 @@ interface RemoteClassSessionDataSource {
         reason: String?
     ): Result<CancelledClassDto, DataError.Remote>
 
-    suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassDto>, DataError.Remote>
+//    suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassDto>, DataError.Remote>
 
     suspend fun bulkDeleteClasses(classIds: List<String>): Result<Unit, DataError.Remote>
 

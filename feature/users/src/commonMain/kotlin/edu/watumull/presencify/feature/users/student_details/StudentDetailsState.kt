@@ -1,7 +1,11 @@
 package edu.watumull.presencify.feature.users.student_details
 
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
-import edu.watumull.presencify.core.domain.model.student.*
+import edu.watumull.presencify.core.domain.model.student.Dropout
+import edu.watumull.presencify.core.domain.model.student.Student
+import edu.watumull.presencify.core.domain.model.student.StudentBatch
+import edu.watumull.presencify.core.domain.model.student.StudentDivision
+import edu.watumull.presencify.core.domain.model.student.StudentSemester
 import edu.watumull.presencify.core.presentation.UiText
 
 data class StudentDetailsState(

@@ -1,6 +1,12 @@
 package edu.watumull.presencify.feature.academics.dashboard
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -10,9 +16,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.*
+import edu.watumull.presencify.core.design.systems.Res
+import edu.watumull.presencify.core.design.systems.apartment_24
+import edu.watumull.presencify.core.design.systems.branch_24
+import edu.watumull.presencify.core.design.systems.clock_icon
 import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.design.systems.group_batch
+import edu.watumull.presencify.core.design.systems.group_division
+import edu.watumull.presencify.core.design.systems.round_menu_book_24
+import edu.watumull.presencify.core.design.systems.scheme_24
 import edu.watumull.presencify.core.presentation.UiConstants
 
 @Composable

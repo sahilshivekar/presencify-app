@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.ListItemFeedback
 import edu.watumull.presencify.feature.academics.navigation.SearchCourseIntention
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -59,7 +60,10 @@ data class SearchCourseState(
     val isBottomSheetVisible: Boolean = false,
 
     // Track individual course operations (assign/unassign)
-    val loadingCourseIds: Set<String> = emptySet()
+    val loadingCourseIds: Set<String> = emptySet(),
+
+    // Feedback for individual course operations
+    val courseFeedback: Map<String, ListItemFeedback?> = emptyMap()
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

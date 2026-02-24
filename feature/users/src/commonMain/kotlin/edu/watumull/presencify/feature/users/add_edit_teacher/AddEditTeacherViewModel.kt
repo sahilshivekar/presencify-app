@@ -11,7 +11,11 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
-import edu.watumull.presencify.core.presentation.validation.*
+import edu.watumull.presencify.core.presentation.validation.validateAsEmail
+import edu.watumull.presencify.core.presentation.validation.validateAsFirstName
+import edu.watumull.presencify.core.presentation.validation.validateAsLastName
+import edu.watumull.presencify.core.presentation.validation.validateAsMiddleName
+import edu.watumull.presencify.core.presentation.validation.validateAsPhoneNumber
 import edu.watumull.presencify.feature.users.navigation.UsersRoutes
 import kotlinx.coroutines.launch
 

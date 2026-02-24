@@ -1,6 +1,7 @@
 package edu.watumull.presencify.core.data.network.student
 
 import edu.watumull.presencify.core.data.dto.student.StudentFCMTokenDto
+import edu.watumull.presencify.core.data.dto.student.request.StudentFCMTokenRequest
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_FCM_TOKENS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.REMOVE_STUDENT_FCM_TOKENS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.UPDATE_STUDENT_FCM_TOKENS
@@ -22,10 +23,12 @@ class KtorRemoteStudentFCMTokenDataSource(
         return safeCall<StudentFCMTokenDto> {
             httpClient.post(ADD_STUDENT_FCM_TOKENS) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "studentId" to studentId,
-                    "fcmToken" to fcmToken
-                ))
+                setBody(
+                    StudentFCMTokenRequest(
+                        studentId = studentId,
+                        fcmToken = fcmToken
+                    )
+                )
             }
         }
     }
@@ -37,10 +40,12 @@ class KtorRemoteStudentFCMTokenDataSource(
         return safeCall<StudentFCMTokenDto> {
             httpClient.put(UPDATE_STUDENT_FCM_TOKENS) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "studentId" to studentId,
-                    "fcmToken" to fcmToken
-                ))
+                setBody(
+                    StudentFCMTokenRequest(
+                        studentId = studentId,
+                        fcmToken = fcmToken
+                    )
+                )
             }
         }
     }

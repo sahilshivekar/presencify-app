@@ -3,7 +3,11 @@ package edu.watumull.presencify.core.presentation.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -76,24 +80,26 @@ fun TimetableListItem(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                feedback?.let {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(4.dp))
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = expandVertically(),
-                        exit = shrinkVertically()
-                    ) {
+                AnimatedVisibility(
+                    visible = feedback != null,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    feedback?.let {
                         val (color, message) = when (it) {
                             is ListItemFeedback.Success -> Color.Green to it.message
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
-                        Text(
-                            text = message,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = color
-                        )
+                        Column {    
+                            Spacer(modifier = Modifier.height(8.dp))
+                            HorizontalDivider()
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = message.asString(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = color
+                            )
+                        }
                     }
                 }
             }

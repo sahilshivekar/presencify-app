@@ -5,7 +5,11 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import edu.watumull.presencify.core.domain.model.student.*
+import edu.watumull.presencify.core.domain.model.student.Student
+import edu.watumull.presencify.core.domain.model.student.StudentBatch
+import edu.watumull.presencify.core.domain.model.student.StudentDivision
+import edu.watumull.presencify.core.domain.model.student.StudentListWithTotalCount
+import edu.watumull.presencify.core.domain.model.student.StudentSemester
 import kotlinx.datetime.LocalDate
 
 interface StudentRepository {
@@ -30,7 +34,8 @@ interface StudentRepository {
         batchCode: String? = null,
         page: Int? = null,
         limit: Int? = null,
-        getAll: Boolean? = null
+        getAll: Boolean? = null,
+        intention: String? = null,
     ): Result<StudentListWithTotalCount, DataError.Remote>
 
     suspend fun addStudent(

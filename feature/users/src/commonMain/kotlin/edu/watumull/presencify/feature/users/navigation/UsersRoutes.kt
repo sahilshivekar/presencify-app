@@ -11,7 +11,7 @@ enum class SearchStudentIntention {
 
     ASSIGN_UNASSIGN_STUDENT_TO_BATCH, MODIFY_STUDENT_BATCH,
 
-    SELECT_STUDENT, DEFAULT
+    DEFAULT
 
 }
 
@@ -70,7 +70,18 @@ sealed interface UsersRoutes : NavRoute {
 
         val getAll: Boolean? = null,
 
+        val newStartDate: String? = null,
+
         val intention: String = SearchStudentIntention.DEFAULT.name,
+
+        // Additional filter constraint parameters
+        val branchId: String? = null,
+
+        val academicStartYear: Int? = null,
+
+        val academicEndYear: Int? = null,
+
+        val semesterNumber: Int? = null,
 
     ) : UsersRoutes
 

@@ -2,6 +2,8 @@ package edu.watumull.presencify.core.data.network.schedule
 
 import edu.watumull.presencify.core.data.dto.schedule.TimetableDto
 import edu.watumull.presencify.core.data.dto.schedule.TimetableListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.schedule.request.AddTimetableRequest
+import edu.watumull.presencify.core.data.dto.schedule.request.UpdateTimetableRequest
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.ADD_TIMETABLE
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_TIMETABLES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_TIMETABLE_BY_ID
@@ -47,10 +49,12 @@ class KtorRemoteTimetableDataSource(
         return safeCall<TimetableDto> {
             httpClient.post(ADD_TIMETABLE) {
                 contentType(ContentType.Application.Json)
-                setBody(buildMap {
-                    put("divisionId", divisionId)
-                    timetableVersion?.let { put("timetableVersion", it) }
-                })
+                setBody(
+                    AddTimetableRequest(
+                        divisionId = divisionId,
+                        timetableVersion = timetableVersion
+                    )
+                )
             }
         }
     }
@@ -59,7 +63,7 @@ class KtorRemoteTimetableDataSource(
         return safeCall<TimetableDto> {
             httpClient.put("$UPDATE_TIMETABLE/$id") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("timetableVersion" to timetableVersion))
+                setBody(UpdateTimetableRequest(timetableVersion = timetableVersion))
             }
         }
     }
