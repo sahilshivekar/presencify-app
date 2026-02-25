@@ -10,14 +10,13 @@ import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.feature.attendance.navigation.attendanceDashboard
 import edu.watumull.presencify.feature.schedule.navigation.scheduleDashboard
 import edu.watumull.presencify.feature.users.navigation.usersDashboard
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddStudentToDropout
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToDivision
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToSemester
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToLinkUnlinkCourse
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkUnmarkStudentAsDropout
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentDivision
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRemoveStudentFromDropout
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchBranch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchClass
@@ -66,8 +65,7 @@ fun HomeNavHost(
             onNavigateToAssignUnassignBatch = rootNavController::navigateToAssignUnassignStudentToBatch,
             onNavigateToModifyDivision = rootNavController::navigateToModifyStudentDivision,
             onNavigateToModifyBatch = rootNavController::navigateToModifyStudentBatch,
-            onNavigateToAddToDropout = rootNavController::navigateToAddStudentToDropout,
-            onNavigateToRemoveFromDropout = rootNavController::navigateToRemoveStudentFromDropout
+            onNavigateToMarkUnmarkStudentAsDropout = rootNavController::navigateToMarkUnmarkStudentAsDropout
         )
 
         scheduleDashboard(

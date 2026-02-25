@@ -34,6 +34,7 @@ sealed interface SearchStudentAction {
     // Student Actions
     data class StudentCardClick(val studentId: String) : SearchStudentAction
     data class StudentActionButtonClick(val studentId: String) : SearchStudentAction
+    data class ToggleStudentDropout(val studentId: String, val isCurrentlyDropout: Boolean) : SearchStudentAction
 
     // Pagination
     data object LoadMoreStudents : SearchStudentAction

@@ -27,7 +27,6 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.edit_outlined
 import edu.watumull.presencify.core.design.systems.group_batch
 import edu.watumull.presencify.core.design.systems.group_division
-import edu.watumull.presencify.core.design.systems.outline_person_add_alt_1_24
 import edu.watumull.presencify.core.presentation.UiConstants
 
 @Composable
@@ -108,20 +107,12 @@ fun UsersDashboardScreen(
 
                     // Section 3: Dropout
                     DashboardSection(title = "Dropout students management") {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            PresencifyActionBar(
-                                text = "Add to dropout",
-                                leadingIcon = Res.drawable.baseline_person_remove_24,
-                                onClick = { onAction(UsersDashboardAction.ClickAddToDropout) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            PresencifyActionBar(
-                                text = "Remove from dropout",
-                                leadingIcon = Res.drawable.outline_person_add_alt_1_24,
-                                onClick = { onAction(UsersDashboardAction.ClickRemoveFromDropout) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                        PresencifyActionBar(
+                            text = "Mark/Unmark Student as Dropout",
+                            leadingIcon = Res.drawable.baseline_person_remove_24,
+                            onClick = { onAction(UsersDashboardAction.ClickMarkUnmarkStudentAsDropout) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
             }

@@ -8,6 +8,7 @@ import edu.watumull.presencify.feature.users.assign_unassign_student_to_batch.As
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_division.AssignUnassignStudentToDivisionRoot
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_semester.AssignUnassignStudentToSemesterRoot
 import edu.watumull.presencify.feature.users.dashboard.UsersDashboardRoot
+import edu.watumull.presencify.feature.users.mark_unmark_student_dropout.MarkUnmarkStudentAsDropoutRoot
 import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchRoot
 import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionRoot
 import edu.watumull.presencify.feature.users.search_student.SearchStudentRoot
@@ -23,8 +24,7 @@ fun NavGraphBuilder.usersDashboard(
     onNavigateToAssignUnassignBatch: () -> Unit,
     onNavigateToModifyDivision: () -> Unit,
     onNavigateToModifyBatch: () -> Unit,
-    onNavigateToAddToDropout: () -> Unit,
-    onNavigateToRemoveFromDropout: () -> Unit,
+    onNavigateToMarkUnmarkStudentAsDropout: () -> Unit,
 ) {
     composableWithSlideTransitions<UsersRoutes.UsersDashboard> {
         UsersDashboardRoot(
@@ -35,8 +35,7 @@ fun NavGraphBuilder.usersDashboard(
             onNavigateToAssignUnassignBatch = onNavigateToAssignUnassignBatch,
             onNavigateToModifyDivision = onNavigateToModifyDivision,
             onNavigateToModifyBatch = onNavigateToModifyBatch,
-            onNavigateToAddToDropout = onNavigateToAddToDropout,
-            onNavigateToRemoveFromDropout = onNavigateToRemoveFromDropout
+            onNavigateToMarkUnmarkStudentAsDropout = onNavigateToMarkUnmarkStudentAsDropout
         )
     }
 }
@@ -75,6 +74,10 @@ fun NavGraphBuilder.usersNavGraph(
         academicEndYear: Int,
         semesterNumber: Int,
         newStartDate: String
+    ) -> Unit,
+    onNavigateToSearchStudentForMarkUnmarkDropout: (
+        dropoutAcademicStartYear: Int,
+        dropoutAcademicEndYear: Int
     ) -> Unit,
     onNavigateToTeacherDetails: (String) -> Unit,
     onNavigateToAddEditTeacher: (String?) -> Unit,
@@ -141,11 +144,11 @@ fun NavGraphBuilder.usersNavGraph(
             }
         )
     }
-    composableWithSlideTransitions<UsersRoutes.AddStudentToDropout> {
-        // TODO: Add screen content
-    }
-    composableWithSlideTransitions<UsersRoutes.RemoveStudentFromDropout> {
-        // TODO: Add screen content
+    composableWithSlideTransitions<UsersRoutes.MarkUnmarkStudentAsDropout> {
+        MarkUnmarkStudentAsDropoutRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchStudent = onNavigateToSearchStudentForMarkUnmarkDropout
+        )
     }
     composableWithSlideTransitions<UsersRoutes.StudentDetails> {
         StudentDetailsRoot(

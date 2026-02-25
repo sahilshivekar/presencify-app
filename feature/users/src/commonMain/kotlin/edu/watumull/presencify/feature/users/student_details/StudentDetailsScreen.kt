@@ -501,8 +501,7 @@ private fun DropoutDetailsContainer(state: StudentDetailsState) {
 
                 state.dropoutDetails.forEach { dropout ->
                     Text(
-                        text = dropout.dropoutDate.toReadableString() +
-                                (dropout.reason?.let { " - $it" } ?: ""),
+                        text = "Academic Year: ${dropout.academicStartYear} - ${dropout.academicEndYear}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(top = 4.dp)

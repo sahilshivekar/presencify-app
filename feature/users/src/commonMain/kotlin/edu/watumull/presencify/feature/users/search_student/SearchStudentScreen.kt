@@ -71,6 +71,7 @@ fun SearchStudentScreen(
         SearchStudentIntention.MODIFY_STUDENT_DIVISION -> "Modify Student Division"
         SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_BATCH -> "Assign/Unassign Students to Batch"
         SearchStudentIntention.MODIFY_STUDENT_BATCH -> "Modify Student Batch"
+        SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> "Mark/Unmark Student as Dropout"
     }
 
     PresencifyBottomSheetScaffold(
@@ -386,6 +387,40 @@ private fun SearchStudentScreenContent(
                                                     checked = isInTargetBatch,
                                                     onCheckedChange = {
                                                         onAction(SearchStudentAction.StudentActionButtonClick(student.id))
+                                                    },
+                                                    enabled = !isLoading,
+                                                    thumbContent = if (isLoading) {
+                                                        {
+                                                            CircularProgressIndicator(
+                                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                                strokeWidth = 2.dp
+                                                            )
+                                                        }
+                                                    } else null
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> {
+                                        val isDropout = state.studentDropoutStatus[student.id] ?: false
+                                        {
+                                            Column(
+                                                verticalArrangement = Arrangement.Top,
+                                                horizontalAlignment = Alignment.End,
+                                            ) {
+                                                Text(
+                                                    text = if (isDropout) "Dropout" else "Active",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = if (isDropout)
+                                                        MaterialTheme.colorScheme.error
+                                                    else
+                                                        MaterialTheme.colorScheme.primary
+                                                )
+                                                Switch(
+                                                    checked = isDropout,
+                                                    onCheckedChange = {
+                                                        onAction(SearchStudentAction.ToggleStudentDropout(student.id, isDropout))
                                                     },
                                                     enabled = !isLoading,
                                                     thumbContent = if (isLoading) {

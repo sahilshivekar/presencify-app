@@ -40,6 +40,12 @@ data class SearchStudentState(
     val batchId: String? = null,
     val newStartDate: String? = null,
 
+    // Dropout parameters (for MARK_UNMARK_STUDENT_AS_DROPOUT intention)
+    val dropoutAcademicStartYear: Int? = null,
+    val dropoutAcademicEndYear: Int? = null,
+
+    // Track dropout status per student (studentId -> isDropout)
+    val studentDropoutStatus: Map<String, Boolean> = emptyMap(),
 
     // Track individual student operations
     val loadingStudentIds: Set<String> = emptySet(),

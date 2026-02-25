@@ -160,6 +160,13 @@ fun AppNavHost(
                     semesterNumber = semesterNumber,
                     newStartDate = newStartDate
                 )
+            },
+            onNavigateToSearchStudentForMarkUnmarkDropout = { dropoutAcademicStartYear, dropoutAcademicEndYear ->
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT.name,
+                    dropoutAcademicStartYear = dropoutAcademicStartYear,
+                    dropoutAcademicEndYear = dropoutAcademicEndYear
+                )
             }
         )
 

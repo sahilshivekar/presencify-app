@@ -11,6 +11,5 @@ sealed interface UsersDashboardEvent {
     data object NavigateToModifyDivision : UsersDashboardEvent
     data object NavigateToModifyBatch : UsersDashboardEvent
 
-    data object NavigateToAddToDropout : UsersDashboardEvent
-    data object NavigateToRemoveFromDropout : UsersDashboardEvent
+    data object NavigateToMarkUnmarkStudentAsDropout : UsersDashboardEvent
 }

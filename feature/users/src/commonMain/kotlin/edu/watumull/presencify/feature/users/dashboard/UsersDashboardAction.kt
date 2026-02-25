@@ -14,6 +14,5 @@ sealed interface UsersDashboardAction {
     data object ClickModifyBatch : UsersDashboardAction
 
     // Dropout
-    data object ClickAddToDropout : UsersDashboardAction
-    data object ClickRemoveFromDropout : UsersDashboardAction
+    data object ClickMarkUnmarkStudentAsDropout : UsersDashboardAction
 }

@@ -142,19 +142,11 @@ fun NavController.navigateToModifyStudentBatch() {
     navigate(UsersRoutes.ModifyStudentBatch)
 }
 
-
 /**
- * Navigate to Add Student to Dropout screen
+ * Navigate to Mark/Unmark Student as Dropout screen
  */
-fun NavController.navigateToAddStudentToDropout() {
-    navigate(UsersRoutes.AddStudentToDropout)
-}
-
-/**
- * Navigate to Remove Student from Dropout screen
- */
-fun NavController.navigateToRemoveStudentFromDropout() {
-    navigate(UsersRoutes.RemoveStudentFromDropout)
+fun NavController.navigateToMarkUnmarkStudentAsDropout() {
+    navigate(UsersRoutes.MarkUnmarkStudentAsDropout)
 }
 
 /**

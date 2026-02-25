@@ -6,6 +6,7 @@ import edu.watumull.presencify.feature.users.assign_unassign_student_to_batch.As
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_division.AssignUnassignStudentToDivisionViewModel
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_semester.AssignUnassignStudentToSemesterViewModel
 import edu.watumull.presencify.feature.users.dashboard.UsersDashboardViewModel
+import edu.watumull.presencify.feature.users.mark_unmark_student_dropout.MarkUnmarkStudentAsDropoutViewModel
 import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchViewModel
 import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionViewModel
 import edu.watumull.presencify.feature.users.search_student.SearchStudentViewModel
@@ -23,6 +24,7 @@ val usersModule = module {
         semesterRepository = get(),
         divisionRepository = get(),
         batchRepository = get(),
+        studentDropoutRepository = get(),
         savedStateHandle = get()
     ) }
     viewModel {
@@ -87,6 +89,9 @@ val usersModule = module {
             divisionRepository = get(),
             batchRepository = get()
         )
+    }
+    viewModel {
+        MarkUnmarkStudentAsDropoutViewModel()
     }
 }
 

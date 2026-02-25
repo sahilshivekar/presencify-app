@@ -13,7 +13,10 @@ import edu.watumull.presencify.core.domain.repository.academics.DivisionReposito
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
+import edu.watumull.presencify.core.domain.repository.student.StudentDropoutRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.components.ListItemFeedback
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
@@ -40,6 +43,7 @@ class SearchStudentViewModel(
     private val semesterRepository: SemesterRepository,
     private val divisionRepository: DivisionRepository,
     private val batchRepository: BatchRepository,
+    private val studentDropoutRepository: StudentDropoutRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<SearchStudentState, SearchStudentEvent, SearchStudentAction>(
     initialState = run {
@@ -88,6 +92,12 @@ class SearchStudentViewModel(
                 }
             }
 
+            SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> {
+                if (routeParams.dropoutAcademicStartYear == null || routeParams.dropoutAcademicEndYear == null) {
+                    throw IllegalArgumentException("Dropout academic years are required for mark/unmark dropout operations")
+                }
+            }
+
             SearchStudentIntention.DEFAULT -> {
                 // No validation needed
             }
@@ -99,7 +109,9 @@ class SearchStudentViewModel(
             semesterId = routeParams.semesterId,
             divisionId = routeParams.divisionId,
             batchId = routeParams.batchId,
-            newStartDate = routeParams.newStartDate
+            newStartDate = routeParams.newStartDate,
+            dropoutAcademicStartYear = routeParams.dropoutAcademicStartYear,
+            dropoutAcademicEndYear = routeParams.dropoutAcademicEndYear
         )
     }
 ) {
@@ -400,9 +412,96 @@ class SearchStudentViewModel(
                 handleModifyStudentBatch(studentId)
             }
 
+            SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> {
+                // For dropout intention, the action button is handled via ToggleStudentDropout
+                // This case should not be triggered
+            }
+
             SearchStudentIntention.DEFAULT -> {
                 // Should not happen
             }
+        }
+    }
+
+    private suspend fun handleToggleStudentDropout(studentId: String, isCurrentlyDropout: Boolean) {
+        val state = stateFlow.value
+        val dropoutStartYear = state.dropoutAcademicStartYear ?: return
+        val dropoutEndYear = state.dropoutAcademicEndYear ?: return
+
+        // Prevent duplicate clicks
+        if (state.loadingStudentIds.contains(studentId)) return
+
+        // Mark student as loading
+        updateState {
+            it.copy(
+                loadingStudentIds = it.loadingStudentIds + studentId
+            )
+        }
+
+        if (isCurrentlyDropout) {
+            // Remove from dropout
+            studentDropoutRepository.removeStudentFromDropout(studentId, dropoutStartYear, dropoutEndYear)
+                .onSuccess {
+                    updateState {
+                        it.copy(
+                            loadingStudentIds = it.loadingStudentIds - studentId,
+                            studentDropoutStatus = it.studentDropoutStatus + (studentId to false)
+                        )
+                    }
+                    // Show success snackbar
+                    viewModelScope.launch {
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = "Student removed from dropout successfully"
+                            )
+                        )
+                    }
+                }
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            loadingStudentIds = it.loadingStudentIds - studentId,
+                            dialogState = SearchStudentState.DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = "Error",
+                                message = error.toUiText(),
+                                dialogIntention = DialogIntention.GENERIC
+                            )
+                        )
+                    }
+                }
+        } else {
+            // Add to dropout
+            studentDropoutRepository.addStudentToDropout(studentId, dropoutStartYear, dropoutEndYear)
+                .onSuccess {
+                    updateState {
+                        it.copy(
+                            loadingStudentIds = it.loadingStudentIds - studentId,
+                            studentDropoutStatus = it.studentDropoutStatus + (studentId to true)
+                        )
+                    }
+                    // Show success snackbar
+                    viewModelScope.launch {
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = "Student marked as dropout successfully"
+                            )
+                        )
+                    }
+                }
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            loadingStudentIds = it.loadingStudentIds - studentId,
+                            dialogState = SearchStudentState.DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = "Error",
+                                message = error.toUiText(),
+                                dialogIntention = DialogIntention.GENERIC
+                            )
+                        )
+                    }
+                }
         }
     }
 
@@ -1314,6 +1413,12 @@ class SearchStudentViewModel(
             is SearchStudentAction.StudentActionButtonClick -> {
                 viewModelScope.launch {
                     handleStudentActionButton(action.studentId)
+                }
+            }
+
+            is SearchStudentAction.ToggleStudentDropout -> {
+                viewModelScope.launch {
+                    handleToggleStudentDropout(action.studentId, action.isCurrentlyDropout)
                 }
             }
 

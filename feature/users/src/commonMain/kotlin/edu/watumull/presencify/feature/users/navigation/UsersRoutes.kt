@@ -10,6 +10,7 @@ enum class SearchStudentIntention {
     ASSIGN_UNASSIGN_STUDENT_TO_DIVISION, MODIFY_STUDENT_DIVISION,
 
     ASSIGN_UNASSIGN_STUDENT_TO_BATCH, MODIFY_STUDENT_BATCH,
+    MARK_UNMARK_STUDENT_AS_DROPOUT,
 
     DEFAULT
 
@@ -83,7 +84,7 @@ sealed interface UsersRoutes : NavRoute {
 
         val semesterNumber: Int? = null,
 
-    ) : UsersRoutes
+        ) : UsersRoutes
 
     @Serializable
     data object AssignUnassignStudentToSemester : UsersRoutes
@@ -100,12 +101,8 @@ sealed interface UsersRoutes : NavRoute {
     @Serializable
     data object ModifyStudentBatch : UsersRoutes
 
-
     @Serializable
-    data object AddStudentToDropout : UsersRoutes
-
-    @Serializable
-    data object RemoveStudentFromDropout : UsersRoutes
+    data object MarkUnmarkStudentAsDropout : UsersRoutes
 
     @Serializable
     data class StudentDetails(val studentId: String) : UsersRoutes

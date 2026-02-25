@@ -15,8 +15,7 @@ fun UsersDashboardRoot(
     onNavigateToAssignUnassignBatch: () -> Unit,
     onNavigateToModifyDivision: () -> Unit,
     onNavigateToModifyBatch: () -> Unit,
-    onNavigateToAddToDropout: () -> Unit,
-    onNavigateToRemoveFromDropout: () -> Unit,
+    onNavigateToMarkUnmarkStudentAsDropout: () -> Unit,
     viewModel: UsersDashboardViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -33,8 +32,7 @@ fun UsersDashboardRoot(
             UsersDashboardEvent.NavigateToModifyDivision -> onNavigateToModifyDivision()
             UsersDashboardEvent.NavigateToModifyBatch -> onNavigateToModifyBatch()
 
-            UsersDashboardEvent.NavigateToAddToDropout -> onNavigateToAddToDropout()
-            UsersDashboardEvent.NavigateToRemoveFromDropout -> onNavigateToRemoveFromDropout()
+            UsersDashboardEvent.NavigateToMarkUnmarkStudentAsDropout -> onNavigateToMarkUnmarkStudentAsDropout()
         }
     }
 

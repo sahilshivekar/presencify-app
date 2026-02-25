@@ -6,7 +6,7 @@ import edu.watumull.presencify.core.domain.model.student.Dropout
 fun DropoutDto.toDomain(): Dropout = Dropout(
     id = id,
     studentId = studentId,
-    reason = reason,
-    dropoutDate = dropoutDate,
+    academicStartYear = academicStartYear,
+    academicEndYear = academicEndYear,
     student = student?.toDomain()
 )
