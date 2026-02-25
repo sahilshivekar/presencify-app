@@ -269,16 +269,6 @@ class SearchBatchViewModel(
                 loadNextBatches()
             }
 
-            SearchBatchAction.HideBottomSheet -> {
-                updateState { it.copy(isBottomSheetVisible = false) }
-            }
-
-            SearchBatchAction.ShowBottomSheet -> {
-                updateState {
-                    it.copy(isBottomSheetVisible = true)
-                }
-            }
-
             SearchBatchAction.ClickFloatingActionButton -> {
                 sendEvent(SearchBatchEvent.NavigateToAddEditBatch)
             }

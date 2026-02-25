@@ -11,8 +11,6 @@ sealed interface SearchStudentAction {
     data object BackButtonClick : SearchStudentAction
     data object DismissDialog : SearchStudentAction
 
-    data object ShowBottomSheet: SearchStudentAction
-    data object HideBottomSheet: SearchStudentAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchStudentAction

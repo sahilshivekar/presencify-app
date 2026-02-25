@@ -57,7 +57,6 @@ data class SearchCourseState(
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false,
 
-    val isBottomSheetVisible: Boolean = false,
 
     // Track individual course operations (assign/unassign)
     val loadingCourseIds: Set<String> = emptySet(),

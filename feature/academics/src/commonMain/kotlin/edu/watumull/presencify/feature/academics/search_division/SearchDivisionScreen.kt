@@ -59,14 +59,8 @@ fun SearchDivisionScreen(
         )
     )
 
-    // Control bottom sheet visibility based on state
-    LaunchedEffect(state.isBottomSheetVisible) {
-        if (state.isBottomSheetVisible) {
-            scaffoldState.bottomSheetState.expand()
-        }
-    }
-
     val scope = rememberCoroutineScope()
+
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchDivisionAction.BackButtonClick) },
         topBarTitle = "Search Divisions",
@@ -77,7 +71,6 @@ fun SearchDivisionScreen(
                 onAction = onAction,
                 onDismiss = {
                     scope.launch { scaffoldState.bottomSheetState.hide() }
-                    onAction(SearchDivisionAction.HideBottomSheet)
                 },
             )
         },
@@ -108,6 +101,7 @@ fun SearchDivisionScreen(
                 SearchDivisionScreenContent(
                     state = state,
                     onAction = onAction,
+                    onFilterClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -139,6 +133,7 @@ fun SearchDivisionScreen(
 private fun SearchDivisionScreenContent(
     state: SearchDivisionState,
     onAction: (SearchDivisionAction) -> Unit,
+    onFilterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(
@@ -177,7 +172,7 @@ private fun SearchDivisionScreenContent(
             PresencifySearchBar(
                 query = state.searchQuery,
                 onQueryChange = { onAction(SearchDivisionAction.UpdateSearchQuery(it)) },
-                onFilterClick = { onAction(SearchDivisionAction.ShowBottomSheet) },
+                onFilterClick = onFilterClick,
                 placeholder = "Search divisions...",
                 onSearchClick = { onAction(SearchDivisionAction.Search) }
             )

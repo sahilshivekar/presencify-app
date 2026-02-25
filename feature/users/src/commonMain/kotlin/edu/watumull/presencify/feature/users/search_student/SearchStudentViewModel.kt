@@ -1322,16 +1322,6 @@ class SearchStudentViewModel(
             }
 
 
-            SearchStudentAction.HideBottomSheet -> {
-                updateState { it.copy(isBottomSheetVisible = false) }
-            }
-
-            SearchStudentAction.ShowBottomSheet -> {
-                updateState {
-                    it.copy(isBottomSheetVisible = true)
-                }
-            }
-
             SearchStudentAction.ClickFloatingActionButton -> {
                 sendEvent(NavigateToAddEditStudent)
             }

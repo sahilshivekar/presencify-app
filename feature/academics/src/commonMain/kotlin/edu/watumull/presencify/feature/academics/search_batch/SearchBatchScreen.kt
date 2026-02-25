@@ -58,13 +58,6 @@ fun SearchBatchScreen(
         )
     )
 
-    // Control bottom sheet visibility based on state
-    LaunchedEffect(state.isBottomSheetVisible) {
-        if (state.isBottomSheetVisible) {
-            scaffoldState.bottomSheetState.expand()
-        }
-    }
-
     val scope = rememberCoroutineScope()
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchBatchAction.BackButtonClick) },
@@ -76,7 +69,6 @@ fun SearchBatchScreen(
                 onAction = onAction,
                 onDismiss = {
                     scope.launch { scaffoldState.bottomSheetState.hide() }
-                    onAction(SearchBatchAction.HideBottomSheet)
                 },
             )
         },
@@ -107,6 +99,7 @@ fun SearchBatchScreen(
                 SearchBatchScreenContent(
                     state = state,
                     onAction = onAction,
+                    onFilterClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -138,6 +131,7 @@ fun SearchBatchScreen(
 private fun SearchBatchScreenContent(
     state: SearchBatchState,
     onAction: (SearchBatchAction) -> Unit,
+    onFilterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(
@@ -176,7 +170,7 @@ private fun SearchBatchScreenContent(
             PresencifySearchBar(
                 query = state.searchQuery,
                 onQueryChange = { onAction(SearchBatchAction.UpdateSearchQuery(it)) },
-                onFilterClick = { onAction(SearchBatchAction.ShowBottomSheet) },
+                onFilterClick = onFilterClick,
                 placeholder = "Search batches...",
                 onSearchClick = { onAction(SearchBatchAction.Search) }
             )

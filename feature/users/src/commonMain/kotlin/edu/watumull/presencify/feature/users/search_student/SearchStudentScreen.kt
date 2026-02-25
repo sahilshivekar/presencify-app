@@ -38,6 +38,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
@@ -47,7 +48,6 @@ import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.StudentListItem
 import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,13 +61,6 @@ fun SearchStudentScreen(
             initialValue = SheetValue.Hidden
         )
     )
-
-    // Control bottom sheet visibility based on state
-    LaunchedEffect(state.isBottomSheetVisible) {
-        if (state.isBottomSheetVisible) {
-            scaffoldState.bottomSheetState.expand()
-        }
-    }
 
     val scope = rememberCoroutineScope()
 
@@ -90,7 +83,6 @@ fun SearchStudentScreen(
                 onAction = onAction,
                 onDismiss = {
                     scope.launch { scaffoldState.bottomSheetState.hide() }
-                    onAction(SearchStudentAction.HideBottomSheet)
                 },
             )
         },
@@ -121,6 +113,7 @@ fun SearchStudentScreen(
                 SearchStudentScreenContent(
                     state = state,
                     onAction = onAction,
+                    onFilterClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -152,6 +145,7 @@ fun SearchStudentScreen(
 private fun SearchStudentScreenContent(
     state: SearchStudentState,
     onAction: (SearchStudentAction) -> Unit,
+    onFilterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(
@@ -165,13 +159,9 @@ private fun SearchStudentScreenContent(
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
             // Trigger load more when we're close to the end (within 3 items)
-            // This accounts for the loading indicator item that comes after students
-            val shouldLoadMore = state.students.isNotEmpty() &&
-                    !state.isLoadingMore &&
-                    lastVisibleIndex != null &&
-                    lastVisibleIndex >= state.students.lastIndex - 3
-
-            if (shouldLoadMore) {
+            // Skip if lastVisibleIndex is 0 (initial loading state) to prevent
+            // double loading (the viewmodel will call it after filtering is set up)
+            if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.students.lastIndex - 3) {
                 onAction(SearchStudentAction.LoadMoreStudents)
             }
         }
@@ -195,7 +185,7 @@ private fun SearchStudentScreenContent(
             PresencifySearchBar(
                 query = state.searchQuery,
                 onQueryChange = { onAction(SearchStudentAction.UpdateSearchQuery(it)) },
-                onFilterClick = { onAction(SearchStudentAction.ShowBottomSheet) },
+                onFilterClick = onFilterClick,
                 placeholder = "Search students...",
                 onSearchClick = { onAction(SearchStudentAction.Search) }
             )

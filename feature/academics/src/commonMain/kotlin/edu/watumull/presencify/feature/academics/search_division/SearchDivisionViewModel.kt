@@ -197,16 +197,6 @@ class SearchDivisionViewModel(
                 loadNextDivisions()
             }
 
-            SearchDivisionAction.HideBottomSheet -> {
-                updateState { it.copy(isBottomSheetVisible = false) }
-            }
-
-            SearchDivisionAction.ShowBottomSheet -> {
-                updateState {
-                    it.copy(isBottomSheetVisible = true)
-                }
-            }
-
             SearchDivisionAction.ClickFloatingActionButton -> {
                 sendEvent(SearchDivisionEvent.NavigateToAddEditDivision)
             }

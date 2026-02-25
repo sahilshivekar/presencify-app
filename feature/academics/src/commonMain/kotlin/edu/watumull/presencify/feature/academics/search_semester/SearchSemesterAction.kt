@@ -8,8 +8,6 @@ sealed interface SearchSemesterAction {
     data object BackButtonClick : SearchSemesterAction
     data object DismissDialog : SearchSemesterAction
 
-    data object ShowBottomSheet: SearchSemesterAction
-    data object HideBottomSheet: SearchSemesterAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchSemesterAction

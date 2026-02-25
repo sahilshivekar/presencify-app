@@ -8,8 +8,6 @@ sealed interface SearchBatchAction {
     data object BackButtonClick : SearchBatchAction
     data object DismissDialog : SearchBatchAction
 
-    data object ShowBottomSheet: SearchBatchAction
-    data object HideBottomSheet: SearchBatchAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchBatchAction

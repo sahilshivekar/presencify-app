@@ -46,9 +46,7 @@ data class SearchSemesterState(
 
     // Pagination
     val currentPage: Int = 1,
-    val isLoadingMore: Boolean = false,
-
-    val isBottomSheetVisible: Boolean = false
+    val isLoadingMore: Boolean = false
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

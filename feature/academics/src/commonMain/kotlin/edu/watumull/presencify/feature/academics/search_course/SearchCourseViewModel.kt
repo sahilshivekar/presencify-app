@@ -535,16 +535,6 @@ class SearchCourseViewModel(
                 loadNextCourses()
             }
 
-            SearchCourseAction.HideBottomSheet -> {
-                updateState { it.copy(isBottomSheetVisible = false) }
-            }
-
-            SearchCourseAction.ShowBottomSheet -> {
-                updateState {
-                    it.copy(isBottomSheetVisible = true)
-                }
-            }
-
             SearchCourseAction.ClickFloatingActionButton -> {
                 sendEvent(SearchCourseEvent.NavigateToAddEditCourse)
             }

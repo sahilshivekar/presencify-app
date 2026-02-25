@@ -59,14 +59,8 @@ fun SearchSemesterScreen(
         )
     )
 
-    // Control bottom sheet visibility based on state
-    LaunchedEffect(state.isBottomSheetVisible) {
-        if (state.isBottomSheetVisible) {
-            scaffoldState.bottomSheetState.expand()
-        }
-    }
-
     val scope = rememberCoroutineScope()
+
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchSemesterAction.BackButtonClick) },
         topBarTitle = "Search Semesters",
@@ -77,7 +71,6 @@ fun SearchSemesterScreen(
                 onAction = onAction,
                 onDismiss = {
                     scope.launch { scaffoldState.bottomSheetState.hide() }
-                    onAction(SearchSemesterAction.HideBottomSheet)
                 },
             )
         },
@@ -108,6 +101,7 @@ fun SearchSemesterScreen(
                 SearchSemesterScreenContent(
                     state = state,
                     onAction = onAction,
+                    onFilterClick = { scope.launch { scaffoldState.bottomSheetState.expand() } },
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -139,6 +133,7 @@ fun SearchSemesterScreen(
 private fun SearchSemesterScreenContent(
     state: SearchSemesterState,
     onAction: (SearchSemesterAction) -> Unit,
+    onFilterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(
@@ -177,7 +172,7 @@ private fun SearchSemesterScreenContent(
             PresencifySearchBar(
                 query = state.searchQuery,
                 onQueryChange = { onAction(SearchSemesterAction.UpdateSearchQuery(it)) },
-                onFilterClick = { onAction(SearchSemesterAction.ShowBottomSheet) },
+                onFilterClick = onFilterClick,
                 placeholder = "Search semesters...",
                 onSearchClick = { onAction(SearchSemesterAction.Search) }
             )

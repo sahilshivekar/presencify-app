@@ -237,16 +237,6 @@ class SearchSemesterViewModel(
                 loadNextSemesters()
             }
 
-            SearchSemesterAction.HideBottomSheet -> {
-                updateState { it.copy(isBottomSheetVisible = false) }
-            }
-
-            SearchSemesterAction.ShowBottomSheet -> {
-                updateState {
-                    it.copy(isBottomSheetVisible = true)
-                }
-            }
-
             SearchSemesterAction.ClickFloatingActionButton -> {
                 sendEvent(SearchSemesterEvent.NavigateToAddEditSemester)
             }

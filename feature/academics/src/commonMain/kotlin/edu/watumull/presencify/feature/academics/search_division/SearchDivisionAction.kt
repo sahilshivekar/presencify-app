@@ -7,8 +7,6 @@ sealed interface SearchDivisionAction {
     data object BackButtonClick : SearchDivisionAction
     data object DismissDialog : SearchDivisionAction
 
-    data object ShowBottomSheet: SearchDivisionAction
-    data object HideBottomSheet: SearchDivisionAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchDivisionAction
