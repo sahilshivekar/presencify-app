@@ -52,7 +52,11 @@ interface ClassSessionRepository {
 
     suspend fun getClassById(classId: String): Result<ClassSession, DataError.Remote>
 
-    suspend fun extendActiveTillDateOfClass(classId: String, newActiveTill: LocalDate): Result<ClassSession, DataError.Remote>
+    suspend fun editActiveDatesOfClass(
+        classId: String,
+        newActiveFrom: LocalDate,
+        newActiveTill: LocalDate
+    ): Result<ClassSession, DataError.Remote>
 
     suspend fun removeClass(classId: String): Result<Unit, DataError.Remote>
 

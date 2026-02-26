@@ -29,6 +29,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdd
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditSemester
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTeacher
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditUniversity
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminForgotPassword
@@ -48,6 +49,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStu
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 
 @Composable
@@ -177,7 +179,9 @@ fun AppNavHost(
             onNavigateToRoomDetails = rootNavController::navigateToRoomDetails,
             onNavigateToAddEditRoom = rootNavController::navigateToAddEditRoom,
             onNavigateToClassDetails = rootNavController::navigateToClassDetails,
-            onNavigateToAddEditClass = rootNavController::navigateToAddEditClass
+            onNavigateToAddEditClass = rootNavController::navigateToAddEditClass,
+            onNavigateToTimetableDetails = rootNavController::navigateToTimetableDetails,
+            onNavigateToAddEditTimetable = rootNavController::navigateToAddEditTimetable
         )
 
         adminAuthNavGraph(

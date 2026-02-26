@@ -9,7 +9,7 @@ sealed interface ScheduleRoutes : NavRoute {
     data object ScheduleDashboard : ScheduleRoutes
 
     @Serializable
-    data class AddEditClass(val classId: String? = null) : ScheduleRoutes
+    data class AddEditClass(val timetableId: String, val classId: String? = null) : ScheduleRoutes
 
     @Serializable
     data object SearchClass : ScheduleRoutes

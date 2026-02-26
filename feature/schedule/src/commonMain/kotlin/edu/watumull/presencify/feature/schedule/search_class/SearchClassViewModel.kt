@@ -15,7 +15,6 @@ import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateBack
-import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateToAddEditClass
 import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateToClassDetails
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -534,10 +533,6 @@ class SearchClassViewModel(
 
             SearchClassAction.LoadMoreClasses -> {
                 loadNextClasses()
-            }
-
-            SearchClassAction.ClickFloatingActionButton -> {
-                sendEvent(NavigateToAddEditClass)
             }
         }
     }

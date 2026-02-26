@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,7 +19,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -42,7 +40,6 @@ import edu.watumull.presencify.core.design.systems.components.PresencifySearchBa
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.SemesterListItem
-import edu.watumull.presencify.feature.academics.search_course.SearchCourseAction
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch

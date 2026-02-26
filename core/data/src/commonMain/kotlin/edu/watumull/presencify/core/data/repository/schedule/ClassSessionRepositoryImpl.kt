@@ -73,11 +73,12 @@ class ClassSessionRepositoryImpl(
         return remoteDataSource.getClassById(classId).map { it.toDomain() }
     }
 
-    override suspend fun extendActiveTillDateOfClass(
+    override suspend fun editActiveDatesOfClass(
         classId: String,
+        newActiveFrom: LocalDate,
         newActiveTill: LocalDate
     ): Result<ClassSession, DataError.Remote> {
-        return remoteDataSource.extendActiveTillDateOfClass(classId, newActiveTill).map { it.toDomain() }
+        return remoteDataSource.editActiveDatesOfClass(classId, newActiveFrom, newActiveTill).map { it.toDomain() }
     }
 
     override suspend fun removeClass(classId: String): Result<Unit, DataError.Remote> {

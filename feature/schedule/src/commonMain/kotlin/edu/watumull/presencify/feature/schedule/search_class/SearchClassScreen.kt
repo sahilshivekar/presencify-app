@@ -24,7 +24,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -36,7 +35,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -105,17 +103,6 @@ fun SearchClassScreen(
                     scope.launch { scaffoldState.bottomSheetState.hide() }
                 },
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchClassAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add class"
-                )
-            }
         }
     ) { paddingValues ->
         when (state.viewState) {
@@ -510,7 +497,7 @@ private fun SearchClassBottomSheetContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Include Extra Classes",
+                    text = "Only show Extra Classes",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.SemiBold

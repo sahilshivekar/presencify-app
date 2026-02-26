@@ -42,7 +42,6 @@ import edu.watumull.presencify.core.design.systems.components.PresencifySearchBa
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.BatchListItem
-import edu.watumull.presencify.feature.academics.search_division.SearchDivisionAction
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 

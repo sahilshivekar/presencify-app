@@ -13,10 +13,11 @@ fun NavController.navigateToScheduleDashboard() {
 /**
  * Navigate to Add/Edit Class screen
  *
+ * @param timetableId The ID of the timetable for the class
  * @param classId The ID of the class to edit, null for creating a new class
  */
-fun NavController.navigateToAddEditClass(classId: String? = null) {
-    navigate(ScheduleRoutes.AddEditClass(classId = classId))
+fun NavController.navigateToAddEditClass(timetableId: String, classId: String? = null) {
+    navigate(ScheduleRoutes.AddEditClass(timetableId = timetableId, classId = classId))
 }
 
 /**

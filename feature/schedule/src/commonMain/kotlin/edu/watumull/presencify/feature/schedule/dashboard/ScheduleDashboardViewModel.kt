@@ -9,6 +9,7 @@ class ScheduleDashboardViewModel : BaseViewModel<ScheduleDashboardState, Schedul
         when (action) {
             ScheduleDashboardAction.ClickRoom -> sendEvent(ScheduleDashboardEvent.NavigateToRoom)
             ScheduleDashboardAction.ClickClasses -> sendEvent(ScheduleDashboardEvent.NavigateToClasses)
+            ScheduleDashboardAction.ClickTimetable -> sendEvent(ScheduleDashboardEvent.NavigateToTimetable)
         }
     }
 }

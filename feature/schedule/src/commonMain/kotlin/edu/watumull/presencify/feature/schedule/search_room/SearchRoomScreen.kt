@@ -26,7 +26,6 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -38,9 +37,6 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerDefaults
-import androidx.compose.material3.TimePickerDialog
-import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
@@ -61,9 +57,7 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.domain.enums.RoomSortBy

@@ -54,6 +54,4 @@ sealed interface SearchClassAction {
 
     // Pagination
     data object LoadMoreClasses : SearchClassAction
-
-    data object ClickFloatingActionButton : SearchClassAction
 }

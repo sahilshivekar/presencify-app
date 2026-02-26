@@ -53,7 +53,11 @@ interface RemoteClassSessionDataSource {
 
     suspend fun getClassById(classId: String): Result<ClassDto, DataError.Remote>
 
-    suspend fun extendActiveTillDateOfClass(classId: String, newActiveTill: LocalDate): Result<ClassDto, DataError.Remote>
+    suspend fun editActiveDatesOfClass(
+        classId: String,
+        newActiveFrom: LocalDate,
+        newActiveTill: LocalDate
+    ): Result<ClassDto, DataError.Remote>
 
     suspend fun removeClass(classId: String): Result<Unit, DataError.Remote>
 

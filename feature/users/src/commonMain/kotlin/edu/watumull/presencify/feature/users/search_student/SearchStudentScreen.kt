@@ -38,7 +38,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
@@ -48,6 +47,7 @@ import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.StudentListItem
 import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

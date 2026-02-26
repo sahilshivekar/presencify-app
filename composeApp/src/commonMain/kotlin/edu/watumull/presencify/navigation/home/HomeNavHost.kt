@@ -27,6 +27,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchSemester
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTeacher
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUniversityDetails
 import kotlinx.serialization.Serializable
 
@@ -70,7 +71,8 @@ fun HomeNavHost(
 
         scheduleDashboard(
             onNavigateToSearchRoom = rootNavController::navigateToSearchRoom,
-            onNavigateToSearchClass = rootNavController::navigateToSearchClass
+            onNavigateToSearchClass = rootNavController::navigateToSearchClass,
+            onNavigateToSearchTimetable = rootNavController::navigateToSearchTimetable
         )
     }
 }

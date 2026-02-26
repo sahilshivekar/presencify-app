@@ -7,13 +7,13 @@ import edu.watumull.presencify.core.data.dto.schedule.ClassListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.request.AddClassRequest
 import edu.watumull.presencify.core.data.dto.schedule.request.BulkDeleteClassesRequest
 import edu.watumull.presencify.core.data.dto.schedule.request.CancelClassRequest
-import edu.watumull.presencify.core.data.dto.schedule.request.ExtendActiveTillDateRequest
+import edu.watumull.presencify.core.data.dto.schedule.request.EditActiveDatesRequest
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.ADD_CLASS
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.ADD_EXTRA_CLASS
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.BULK_CREATE_CLASSES_FROM_CSV
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.BULK_DELETE_CLASSES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.CANCEL_CLASS
-import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.EXTEND_ACTIVE_TILL_DATE
+import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.EDIT_ACTIVE_DATES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_CANCELLED_CLASSES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_CLASSES
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_CLASS_BY_ID
@@ -127,11 +127,20 @@ class KtorRemoteClassSessionDataSource(
         }
     }
 
-    override suspend fun extendActiveTillDateOfClass(classId: String, newActiveTill: LocalDate): Result<ClassDto, DataError.Remote> {
+    override suspend fun editActiveDatesOfClass(
+        classId: String,
+        newActiveFrom: LocalDate,
+        newActiveTill: LocalDate
+    ): Result<ClassDto, DataError.Remote> {
         return safeCall<ClassDto> {
-            httpClient.put("$EXTEND_ACTIVE_TILL_DATE/$classId") {
+            httpClient.put("$EDIT_ACTIVE_DATES/$classId") {
                 contentType(ContentType.Application.Json)
-                setBody(ExtendActiveTillDateRequest(newActiveTill = newActiveTill.toString()))
+                setBody(
+                    EditActiveDatesRequest(
+                        newActiveFrom = newActiveFrom.toString(),
+                        newActiveTill = newActiveTill.toString()
+                    )
+                )
             }
         }
     }

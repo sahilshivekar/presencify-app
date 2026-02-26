@@ -5,7 +5,6 @@ import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
-import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText

@@ -10,6 +10,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ScheduleDashboardRoot(
     onNavigateToSearchRoom: () -> Unit,
     onNavigateToSearchClass: () -> Unit,
+    onNavigateToSearchTimetable: () -> Unit,
     viewModel: ScheduleDashboardViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -18,6 +19,7 @@ fun ScheduleDashboardRoot(
         when (event) {
             ScheduleDashboardEvent.NavigateToRoom -> onNavigateToSearchRoom()
             ScheduleDashboardEvent.NavigateToClasses -> onNavigateToSearchClass()
+            ScheduleDashboardEvent.NavigateToTimetable -> onNavigateToSearchTimetable()
         }
     }
 

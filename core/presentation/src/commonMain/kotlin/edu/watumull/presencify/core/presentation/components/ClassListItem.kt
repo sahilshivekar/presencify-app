@@ -59,10 +59,10 @@ fun ClassListItem(
     teacherName: String,
     startTime: String,
     endTime: String,
-    dayOfWeek: String,
-    activeFrom: String,
-    activeTill: String,
-    classType: String,
+    dayOfWeek: String? = null,
+    activeFrom: String? = null,
+    activeTill: String? = null,
+    classType: String? = null,
     isExtraClass: Boolean,
     roomNumber: String? = null,
     divisionOrBatchText: String? = null,
@@ -72,12 +72,13 @@ fun ClassListItem(
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    // Check if class is inactive (activeTill is less than today)
-    val activeTillDate = activeTill.toLocalDate()
-    val activeFromDate = activeFrom.toLocalDate()
+    // Check if class is inactive (current date is outside the active period)
+    val activeTillDate = activeTill?.toLocalDate()
+    val activeFromDate = activeFrom?.toLocalDate()
     val today = DateTimeUtils.getCurrentDate()
     val isInactive =
-        activeTillDate != null && activeFromDate != null && activeTillDate >= today && activeFromDate <= today
+        (activeTillDate != null && today > activeTillDate) ||
+                (activeFromDate != null && today < activeFromDate)
 
     PresencifyListItem(
         headlineContent = {
@@ -121,14 +122,29 @@ fun ClassListItem(
                     )
 
                     // Day of week
-                    Text(
-                        text = " • $dayOfWeek",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    dayOfWeek?.let {
+                        Text(
+                            text = " • $dayOfWeek",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    if (roomNumber != null && dayOfWeek == null) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = roomNumber,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
+                if (classType != null || roomNumber != null || isExtraClass) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 // Tags row: Class Type, Room Number, Extra Class (at end)
                 FlowRow(
@@ -136,20 +152,22 @@ fun ClassListItem(
                     verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
                 ) {
                     // Class Type tag
-                    Text(
-                        text = classType,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
+                    classType?.let {
+                        Text(
+                            text = classType,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
 
                     // Room Number tag
-                    roomNumber?.let { room ->
+                    if (roomNumber != null && dayOfWeek != null) {
                         Text(
-                            text = room,
+                            text = roomNumber,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
@@ -173,8 +191,9 @@ fun ClassListItem(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
+                if (semesterText != null && divisionOrBatchText != null && branchAbbreviation != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 // Semester, Division/Batch, Academic Year, Branch in one row with tags
                 FlowRow(
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
@@ -220,41 +239,40 @@ fun ClassListItem(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
 
-                // Active/Inactive status with dates
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Status text or tag
-                    if (isInactive) {
-                        // Inactive tag with red background
+                if (activeFrom != null && activeTill != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (isInactive) {
+                            Text(
+                                text = "Inactive",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                            )
+                        } else {
+                            // Active as normal text (no tag)
+                            Text(
+                                text = "Active:",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // Dates text
                         Text(
-                            text = "Inactive",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .padding(horizontal = 4.dp, vertical = 4.dp)
-                        )
-                    } else {
-                        // Active as normal text (no tag)
-                        Text(
-                            text = "Active:",
+                            text = "$activeFrom - $activeTill",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    // Dates text
-                    Text(
-                        text = "$activeFrom - $activeTill",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                 }
 
                 // Feedback section (if any)

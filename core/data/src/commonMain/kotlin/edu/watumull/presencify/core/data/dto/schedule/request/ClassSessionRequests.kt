@@ -1,6 +1,5 @@
 package edu.watumull.presencify.core.data.dto.schedule.request
 
-import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,7 +18,8 @@ data class AddClassRequest(
 )
 
 @Serializable
-data class ExtendActiveTillDateRequest(
+data class EditActiveDatesRequest(
+    val newActiveFrom: String, // LocalDate as String
     val newActiveTill: String // LocalDate as String
 )
 

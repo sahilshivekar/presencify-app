@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.Res
 import edu.watumull.presencify.core.design.systems.apartment_24
+import edu.watumull.presencify.core.design.systems.clock_icon
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
 import edu.watumull.presencify.core.design.systems.round_menu_book_24
@@ -60,6 +61,13 @@ fun ScheduleDashboardScreen(
                                 text = "Classes",
                                 icon = Res.drawable.round_menu_book_24,
                                 onClick = { onAction(ScheduleDashboardAction.ClickClasses) }
+                            )
+                        }
+                        DashboardRow {
+                            DashboardItem(
+                                text = "Timetable",
+                                icon = Res.drawable.clock_icon,
+                                onClick = { onAction(ScheduleDashboardAction.ClickTimetable) }
                             )
                         }
                     }

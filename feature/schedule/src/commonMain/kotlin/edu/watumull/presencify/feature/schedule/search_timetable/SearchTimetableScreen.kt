@@ -1,0 +1,426 @@
+package edu.watumull.presencify.feature.schedule.search_timetable
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
+import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
+import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
+import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.components.TimetableListItem
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchTimetableScreen(
+    state: SearchTimetableState,
+    onAction: (SearchTimetableAction) -> Unit,
+) {
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(
+            skipHiddenState = false,
+            initialValue = SheetValue.Hidden
+        )
+    )
+
+    val scope = rememberCoroutineScope()
+
+    PresencifyBottomSheetScaffold(
+        backPress = { onAction(SearchTimetableAction.BackButtonClick) },
+        topBarTitle = "Search Timetables",
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            SearchTimetableBottomSheetContent(
+                state = state,
+                onAction = onAction,
+                onDismiss = {
+                    scope.launch { scaffoldState.bottomSheetState.hide() }
+                },
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAction(SearchTimetableAction.ClickFloatingActionButton) },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add timetable"
+                )
+            }
+        }
+    ) { paddingValues ->
+        when (state.viewState) {
+            is SearchTimetableState.ViewState.Loading -> {
+                PresencifyDefaultLoadingScreen()
+            }
+
+            is SearchTimetableState.ViewState.Error -> {
+                PresencifyNoResultsIndicator(
+                    text = state.viewState.message.asString()
+                )
+            }
+
+            is SearchTimetableState.ViewState.Content -> {
+                SearchTimetableScreenContent(
+                    state = state,
+                    onAction = onAction,
+                    onFilterClick = {
+                        scope.launch { scaffoldState.bottomSheetState.expand() }
+                    },
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+        }
+    }
+
+    state.dialogState?.let { dialogState ->
+        PresencifyAlertDialog(
+            isVisible = dialogState.isVisible,
+            dialogType = dialogState.dialogType,
+            title = dialogState.title,
+            message = dialogState.message.asString(),
+            onConfirm = {
+                when (dialogState.dialogIntention) {
+                    DialogIntention.GENERIC -> {
+                        // Handle generic dialog confirmation
+                    }
+                }
+            },
+            onDismiss = {
+                onAction(SearchTimetableAction.DismissDialog)
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun SearchTimetableScreenContent(
+    state: SearchTimetableState,
+    onAction: (SearchTimetableAction) -> Unit,
+    onFilterClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isRefreshing,
+        onRefresh = { onAction(SearchTimetableAction.Refresh) }
+    )
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(state.timetables) {
+        snapshotFlow {
+            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+        }.distinctUntilChanged().collect { lastVisibleIndex ->
+            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
+            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading timetables for the first time
+            if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.filteredTimetables.lastIndex - 10) {
+                onAction(SearchTimetableAction.LoadMoreTimetables)
+            }
+        }
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            PresencifySearchBar(
+                query = state.searchQuery,
+                onQueryChange = { onAction(SearchTimetableAction.UpdateSearchQuery(it)) },
+                onFilterClick = onFilterClick,
+                placeholder = "Search timetables...",
+                onSearchClick = { onAction(SearchTimetableAction.Search) }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .pullRefresh(pullRefreshState)
+            ) {
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        items = state.filteredTimetables,
+                        key = { it.id }
+                    ) { timetable ->
+                        // Extract division and semester info
+                        val division = timetable.division
+                        val semester = division?.semester
+                        val branch = semester?.branch
+
+                        // Determine year from semester number
+                        val year = semester?.semesterNumber?.let { semNum ->
+                            when (semNum.value) {
+                                1, 2 -> "FE"
+                                3, 4 -> "SE"
+                                5, 6 -> "TE"
+                                7, 8 -> "BE"
+                                else -> "Unknown"
+                            }
+                        } ?: "Unknown"
+
+                        TimetableListItem(
+                            branchAbbreviation = branch?.abbreviation ?: "Unknown Branch",
+                            year = year,
+                            semesterNumber = semester?.semesterNumber ?: edu.watumull.presencify.core.domain.enums.SemesterNumber.SEMESTER_1,
+                            semesterAcademicStartYear = semester?.academicStartYear ?: 0,
+                            semesterAcademicEndYear = semester?.academicEndYear ?: 0,
+                            divisionCode = division?.divisionCode ?: "Unknown Division",
+                            onClick = { onAction(SearchTimetableAction.TimetableCardClick(timetable.id)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    item {
+                        when {
+                            state.isLoadingMore || (state.filteredTimetables.isEmpty() && state.isLoadingTimetables) -> {
+                                PresencifyDefaultLoadingScreen()
+                            }
+
+                            state.filteredTimetables.isEmpty() && !state.isLoadingTimetables -> {
+                                PresencifyNoResultsIndicator(
+                                    text = "No timetables found"
+                                )
+                            }
+                        }
+                    }
+                }
+                if (state.isRefreshing) {
+                    PullRefreshIndicator(
+                        refreshing = state.isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+private fun SearchTimetableBottomSheetContent(
+    state: SearchTimetableState,
+    onAction: (SearchTimetableAction) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        // Header with Reset
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Filter Timetables",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "Reset",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable {
+                    onAction(SearchTimetableAction.ResetFilters)
+                }
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        // Branch Filter
+        FilterSection(
+            title = "Branch",
+            isLoading = state.areBranchesLoading
+        ) {
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                state.branchOptions.forEach { branch ->
+                    FilterChip(
+                        selected = state.selectedBranches.contains(branch),
+                        onClick = { onAction(SearchTimetableAction.ToggleBranch(branch)) },
+                        label = { Text(branch.abbreviation) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                }
+            }
+        }
+
+        // Semester Filter
+        FilterSection(title = "Semester") {
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                state.semesterOptions.forEach { semester ->
+                    FilterChip(
+                        selected = state.selectedSemesters.contains(semester),
+                        onClick = { onAction(SearchTimetableAction.ToggleSemester(semester)) },
+                        label = { Text("Sem ${semester.value}") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                }
+            }
+        }
+
+        // Academic Year of Semester Filter
+        FilterSection(title = "Academic Year of Semester") {
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                state.academicYearOfSemesterOptions.forEach { year ->
+                    FilterChip(
+                        selected = state.selectedAcademicYearOfSemester == year,
+                        onClick = {
+                            val newYear = if (state.selectedAcademicYearOfSemester == year) null else year
+                            onAction(SearchTimetableAction.SelectAcademicYearOfSemester(newYear))
+                        },
+                        label = { Text(year) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                }
+            }
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        // Action Buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            PresencifyOutlinedButton(
+                text = "Cancel",
+                onClick = { onDismiss() },
+                modifier = Modifier.weight(1f)
+            )
+            PresencifyButton(
+                text = "Apply",
+                onClick = {
+                    onAction(SearchTimetableAction.ApplyFilters)
+                    onDismiss()
+                },
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterSection(
+    title: String,
+    isLoading: Boolean = false,
+    emptyMessage: String? = null,
+    content: @Composable () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        when {
+            isLoading -> {
+                Text(
+                    text = "Loading...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            emptyMessage != null -> {
+                Text(
+                    text = emptyMessage,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            else -> {
+                content()
+            }
+        }
+    }
+}

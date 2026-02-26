@@ -2,20 +2,27 @@ package edu.watumull.presencify.feature.schedule.navigation
 
 import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.feature.schedule.add_edit_class.AddEditClassRoot
 import edu.watumull.presencify.feature.schedule.add_edit_room.AddEditRoomRoot
+import edu.watumull.presencify.feature.schedule.add_edit_timetable.AddEditTimetableRoot
+import edu.watumull.presencify.feature.schedule.class_details.ClassDetailsRoot
 import edu.watumull.presencify.feature.schedule.dashboard.ScheduleDashboardRoot
 import edu.watumull.presencify.feature.schedule.room_details.RoomDetailsRoot
 import edu.watumull.presencify.feature.schedule.search_class.SearchClassRoot
 import edu.watumull.presencify.feature.schedule.search_room.SearchRoomRoot
+import edu.watumull.presencify.feature.schedule.search_timetable.SearchTimetableRoot
+import edu.watumull.presencify.feature.schedule.timetable_details.TimetableDetailsRoot
 
 fun NavGraphBuilder.scheduleDashboard(
     onNavigateToSearchRoom: () -> Unit,
-    onNavigateToSearchClass: () -> Unit
+    onNavigateToSearchClass: () -> Unit,
+    onNavigateToSearchTimetable: () -> Unit
 ) {
     composableWithSlideTransitions<ScheduleRoutes.ScheduleDashboard> {
         ScheduleDashboardRoot(
             onNavigateToSearchRoom = onNavigateToSearchRoom,
-            onNavigateToSearchClass = onNavigateToSearchClass
+            onNavigateToSearchClass = onNavigateToSearchClass,
+            onNavigateToSearchTimetable = onNavigateToSearchTimetable
         )
     }
 }
@@ -25,7 +32,9 @@ fun NavGraphBuilder.scheduleNavGraph(
     onNavigateToRoomDetails: (String) -> Unit,
     onNavigateToAddEditRoom: (String?) -> Unit,
     onNavigateToClassDetails: (String) -> Unit,
-    onNavigateToAddEditClass: (String?) -> Unit
+    onNavigateToAddEditClass: (timetableId: String, classId: String?) -> Unit,
+    onNavigateToTimetableDetails: (String) -> Unit,
+    onNavigateToAddEditTimetable: (String?) -> Unit
 ) {
     // Room Navigation
     composableWithSlideTransitions<ScheduleRoutes.SearchRoom> {
@@ -51,26 +60,42 @@ fun NavGraphBuilder.scheduleNavGraph(
     composableWithSlideTransitions<ScheduleRoutes.SearchClass> {
         SearchClassRoot(
             onNavigateBack = onNavigateBack,
-            onNavigateToClassDetails = onNavigateToClassDetails,
-            onNavigateToAddEditClass = { onNavigateToAddEditClass(null) }
+            onNavigateToClassDetails = onNavigateToClassDetails
         )
     }
     composableWithSlideTransitions<ScheduleRoutes.AddEditClass> {
-        // TODO: Add screen content
+        AddEditClassRoot(
+            onNavigateBack = onNavigateBack
+        )
     }
     composableWithSlideTransitions<ScheduleRoutes.ClassDetails> {
-        // TODO: Add screen content
+        ClassDetailsRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToEditClass = onNavigateToAddEditClass
+        )
     }
 
-    // Timetable Navigation (TODO)
-    composableWithSlideTransitions<ScheduleRoutes.AddEditTimetable> {
-        // TODO: Add screen content
-    }
+    // Timetable Navigation
     composableWithSlideTransitions<ScheduleRoutes.SearchTimetable> {
-        // TODO: Add screen content
+        SearchTimetableRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToTimetableDetails = onNavigateToTimetableDetails,
+            onNavigateToAddEditTimetable = { onNavigateToAddEditTimetable(null) }
+        )
+    }
+    composableWithSlideTransitions<ScheduleRoutes.AddEditTimetable> {
+        AddEditTimetableRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToTimetableDetails = onNavigateToTimetableDetails
+        )
     }
     composableWithSlideTransitions<ScheduleRoutes.TimetableDetails> {
-        // TODO: Add screen content
+        TimetableDetailsRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToEditTimetable = onNavigateToAddEditTimetable,
+            onNavigateToAddClass = onNavigateToAddEditClass,
+            onNavigateToClassDetails = onNavigateToClassDetails
+        )
     }
 
     // Schedule Views (TODO)
