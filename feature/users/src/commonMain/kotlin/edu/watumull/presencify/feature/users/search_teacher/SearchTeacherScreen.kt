@@ -133,13 +133,13 @@ private fun SearchTeacherScreenContent(
     )
     val lazyListState = rememberLazyListState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(state.teachers) {
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // Trigger load more when we're close to the end (within 3 items)
-            // This accounts for the loading indicator item that comes after teachers
-            if (lastVisibleIndex != null && lastVisibleIndex >= state.teachers.lastIndex - 3) {
+            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
+            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading students for the first time
+            if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.teachers.lastIndex - 10) {
                 onAction(SearchTeacherAction.LoadMoreTeachers)
             }
         }

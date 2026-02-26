@@ -1,4 +1,4 @@
-package edu.watumull.presencify.feature.schedule.search_class
+package edu.watumull.presencify.feature.schedule.search_room
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,23 +7,23 @@ import edu.watumull.presencify.core.presentation.utils.EventsEffect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SearchClassRoot(
+fun SearchRoomRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToClassDetails: (String) -> Unit,
-    onNavigateToAddEditClass: () -> Unit,
-    viewModel: SearchClassViewModel = koinViewModel()
+    onNavigateToRoomDetails: (String) -> Unit,
+    onNavigateToAddEditRoom: () -> Unit,
+    viewModel: SearchRoomViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            SearchClassEvent.NavigateBack -> onNavigateBack()
-            is SearchClassEvent.NavigateToClassDetails -> onNavigateToClassDetails(event.classId)
-            SearchClassEvent.NavigateToAddEditClass -> onNavigateToAddEditClass()
+            SearchRoomEvent.NavigateBack -> onNavigateBack()
+            is SearchRoomEvent.NavigateToRoomDetails -> onNavigateToRoomDetails(event.roomId)
+            SearchRoomEvent.NavigateToAddEditRoom -> onNavigateToAddEditRoom()
         }
     }
 
-    SearchClassScreen(
+    SearchRoomScreen(
         state = state,
         onAction = viewModel::trySendAction
     )

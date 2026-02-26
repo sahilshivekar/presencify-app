@@ -82,12 +82,9 @@ class SearchBatchViewModel(
     )
 
     init {
-        // Load initial data
         viewModelScope.launch {
             loadBranches()
         }
-
-        // Setup debounced search
         setupDebouncedSearch()
     }
 

@@ -155,14 +155,13 @@ private fun SearchStudentScreenContent(
     )
     val lazyListState = rememberLazyListState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(state.students) {
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // Trigger load more when we're close to the end (within 3 items)
-            // Skip if lastVisibleIndex is 0 (initial loading state) to prevent
-            // double loading (the viewmodel will call it after filtering is set up)
-            if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.students.lastIndex - 3) {
+            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
+            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading students for the first time
+            if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.students.lastIndex - 10) {
                 onAction(SearchStudentAction.LoadMoreStudents)
             }
         }
@@ -452,7 +451,7 @@ private fun SearchStudentScreenContent(
 
                             state.students.isEmpty() && !state.isLoadingStudents -> {
                                 PresencifyNoResultsIndicator(
-                                    text = "No students found"
+                                    text = "No rooms found"
                                 )
                             }
                         }

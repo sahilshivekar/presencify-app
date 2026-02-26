@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.data.dto.schedule.RoomDto
 import edu.watumull.presencify.core.data.dto.schedule.RoomListWithTotalCountDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.enums.RoomType
@@ -16,12 +17,15 @@ interface RemoteRoomDataSource {
         searchQuery: String? = null,
         sortBy: RoomSortBy? = null,
         sortOrder: RoomSortOrder? = null,
-        busyBetweenStartTime: LocalTime? = null,
-        busyBetweenEndTime: LocalTime? = null,
+        freeBetweenStartTime: LocalTime? = null,
+        freeBetweenEndTime: LocalTime? = null,
+        dayOfWeek: DayOfWeek? = null,
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null,
-        type: RoomType? = null
+        type: RoomType? = null,
+        minCapacity: Int? = null,
+        maxCapacity: Int? = null
     ): Result<RoomListWithTotalCountDto, DataError.Remote>
 
     suspend fun addRoom(

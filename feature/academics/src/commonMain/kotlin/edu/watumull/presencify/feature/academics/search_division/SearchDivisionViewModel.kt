@@ -25,66 +25,64 @@ class SearchDivisionViewModel(
     initialState = SearchDivisionState()
 ) {
 
-    private val paginator = Paginator<Int, edu.watumull.presencify.core.domain.model.academics.DivisionListWithTotalCount>(
-        initialKey = 1,
-        onLoadUpdated = { isLoading ->
-            updateState { it.copy(isLoadingMore = isLoading) }
-        },
-        onRequest = { page ->
-            val state = stateFlow.value
-            val academicYears = state.selectedAcademicYear?.split("-")?.map { it.trim().toInt() }
+    private val paginator =
+        Paginator<Int, edu.watumull.presencify.core.domain.model.academics.DivisionListWithTotalCount>(
+            initialKey = 1,
+            onLoadUpdated = { isLoading ->
+                updateState { it.copy(isLoadingMore = isLoading) }
+            },
+            onRequest = { page ->
+                val state = stateFlow.value
+                val academicYears = state.selectedAcademicYear?.split("-")?.map { it.trim().toInt() }
 
-            divisionRepository.getDivisions(
-                searchQuery = state.searchQuery.ifBlank { null },
-                semesterNumber = state.selectedSemesterNumber,
-                branchId = state.selectedBranch?.id,
-                academicStartYear = academicYears?.getOrNull(0),
-                academicEndYear = academicYears?.getOrNull(1),
-                page = page,
-                limit = 20
-            )
-        },
-        getNextKey = { currentPage, _ ->
-            currentPage + 1
-        },
-        onError = { error ->
-            updateState {
-                it.copy(
-                    dialogState = SearchDivisionState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
+                divisionRepository.getDivisions(
+                    searchQuery = state.searchQuery.ifBlank { null },
+                    semesterNumber = state.selectedSemesterNumber,
+                    branchId = state.selectedBranch?.id,
+                    academicStartYear = academicYears?.getOrNull(0),
+                    academicEndYear = academicYears?.getOrNull(1),
+                    page = page,
+                    limit = 20
+                )
+            },
+            getNextKey = { currentPage, _ ->
+                currentPage + 1
+            },
+            onError = { error ->
+                updateState {
+                    it.copy(
+                        dialogState = SearchDivisionState.DialogState(
+                            dialogType = DialogType.ERROR,
+                            title = "Error",
+                            message = error.toUiText(),
+                            dialogIntention = DialogIntention.GENERIC
+                        )
                     )
-                )
+                }
+            },
+            onSuccess = { response, _ ->
+                updateState {
+                    it.copy(
+                        divisions = if (stateFlow.value.currentPage == 1) response.divisions.toPersistentList() else it.divisions.addAll(
+                            response.divisions.toPersistentList()
+                        ),
+                        currentPage = stateFlow.value.currentPage + 1,
+                        isRefreshing = false,
+                        isLoadingDivisions = false
+                    )
+                }
+            },
+            endReached = { currentPage, response ->
+                // End reached when we have loaded all divisions
+                val totalLoadedDivisions = currentPage * 20
+                totalLoadedDivisions >= response.totalCount
             }
-        },
-        onSuccess = { response, _ ->
-            updateState {
-                it.copy(
-                    divisions = if (stateFlow.value.currentPage == 1) response.divisions.toPersistentList() else it.divisions.addAll(
-                        response.divisions.toPersistentList()
-                    ),
-                    currentPage = stateFlow.value.currentPage + 1,
-                    isRefreshing = false,
-                    isLoadingDivisions = false
-                )
-            }
-        },
-        endReached = { currentPage, response ->
-            // End reached when we have loaded all divisions
-            val totalLoadedDivisions = currentPage * 20
-            totalLoadedDivisions >= response.totalCount
-        }
-    )
+        )
 
     init {
-        // Load initial data
         viewModelScope.launch {
             loadBranches()
         }
-
-        // Setup debounced search
         setupDebouncedSearch()
     }
 

@@ -5,4 +5,3 @@ sealed interface SearchClassEvent {
     data class NavigateToClassDetails(val classId: String) : SearchClassEvent
     data object NavigateToAddEditClass : SearchClassEvent
 }
-

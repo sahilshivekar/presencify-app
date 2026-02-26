@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AddClassRequest(
     val teacherId: String,
-    val startTime: LocalTime,
-    val endTime: LocalTime,
+    val startTime: String,
+    val endTime: String,
     val dayOfWeek: String,
     val roomId: String,
     val batchId: String?,

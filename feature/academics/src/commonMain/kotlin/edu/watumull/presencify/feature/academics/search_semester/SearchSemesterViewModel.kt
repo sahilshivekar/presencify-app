@@ -13,6 +13,8 @@ import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -81,14 +83,12 @@ class SearchSemesterViewModel(
     )
 
     init {
-        // Load initial data
         viewModelScope.launch {
-            loadBranches()
-            loadSchemes()
+            val task1 = async { loadBranches() }
+            val task2 = async { loadSchemes() }
+            awaitAll(task1, task2)
+            setupDebouncedSearch()
         }
-
-        // Setup debounced search
-        setupDebouncedSearch()
     }
 
     @OptIn(FlowPreview::class)

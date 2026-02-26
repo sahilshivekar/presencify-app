@@ -1,21 +1,27 @@
 package edu.watumull.presencify.feature.schedule.search_class
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
-import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
+import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
+import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.schedule.ClassSessionRepository
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateBack
+import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateToAddEditClass
+import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateToClassDetails
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,36 +30,42 @@ import kotlinx.coroutines.launch
 
 class SearchClassViewModel(
     private val classSessionRepository: ClassSessionRepository,
-    private val teacherRepository: TeacherRepository,
     private val roomRepository: RoomRepository,
-    private val batchRepository: BatchRepository,
-    private val courseRepository: CourseRepository,
-    savedStateHandle: SavedStateHandle,
+    private val teacherRepository: TeacherRepository,
+    private val branchRepository: BranchRepository,
+    private val divisionRepository: DivisionRepository,
+    private val batchRepository: BatchRepository
 ) : BaseViewModel<SearchClassState, SearchClassEvent, SearchClassAction>(
     initialState = SearchClassState()
 ) {
 
-    private val paginator = Paginator<Int, edu.watumull.presencify.core.domain.model.schedule.ClassListWithTotalCount>(
+    private val paginator = Paginator(
         initialKey = 1,
         onLoadUpdated = { isLoading ->
             updateState { it.copy(isLoadingMore = isLoading) }
         },
         onRequest = { page ->
             val state = stateFlow.value
+            val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
 
             classSessionRepository.getClasses(
                 searchQuery = state.searchQuery.ifBlank { null },
-                timetableId = null,
-                teacherId = state.selectedTeacher?.id,
-                roomId = state.selectedRoom?.id,
-                batchId = state.selectedBatch?.id,
-                courseId = state.selectedCourse?.id,
-                dayOfWeek = state.selectedDayOfWeek,
-                classType = state.selectedClassType,
+                classType = state.selectedClassTypes.firstOrNull(),
                 isExtraClass = state.isExtraClass,
+                startTime = state.startTime,
+                endTime = state.endTime,
+                activeFrom = state.activeFrom,
+                activeTill = state.activeTill,
+                roomId = state.selectedRoomIds.firstOrNull(),
+                teacherId = state.selectedTeacherIds.firstOrNull(),
+                branchId = state.selectedBranches.firstOrNull()?.id,
+                semesterNumber = state.selectedSemesters.firstOrNull()?.value,
+                academicStartYearOfSemester = academicYears?.getOrNull(0),
+                academicEndYearOfSemester = academicYears?.getOrNull(1),
+                divisionId = state.selectedDivision?.id,
+                batchId = state.selectedBatch?.id,
                 page = page,
-                limit = 20,
-                getAll = false
+                limit = 20
             )
         },
         getNextKey = { currentPage, _ ->
@@ -90,16 +102,166 @@ class SearchClassViewModel(
     )
 
     init {
-        // Load initial data
         viewModelScope.launch {
-            loadTeachers()
-            loadRooms()
-            loadBatches()
-            loadCourses()
+            val task1 = async { loadBranches() }
+            val task2 = async { loadRoomsAndTeachers() }
+            awaitAll(task1, task2)
         }
-
-        // Setup debounced search
         setupDebouncedSearch()
+    }
+
+    private suspend fun loadBranches() {
+        updateState { it.copy(areBranchesLoading = true) }
+        branchRepository.getBranches(searchQuery = null)
+            .onSuccess { branches ->
+                updateState {
+                    it.copy(
+                        branchOptions = branches.toPersistentList(),
+                        areBranchesLoading = false
+                    )
+                }
+            }
+            .onError { error ->
+                updateState {
+                    it.copy(
+                        areBranchesLoading = false,
+                        dialogState = SearchClassState.DialogState(
+                            dialogType = DialogType.ERROR,
+                            title = "Error",
+                            message = error.toUiText(),
+                            dialogIntention = DialogIntention.GENERIC
+                        )
+                    )
+                }
+            }
+    }
+
+    private suspend fun loadDivisionsAndBatches() {
+        val state = stateFlow.value
+
+        val semester = state.selectedSemesters.firstOrNull()
+        val branchId = state.selectedBranches.firstOrNull()?.id
+        val academicYear = state.selectedAcademicYearOfSemester
+
+        if (semester != null && branchId != null && academicYear != null) {
+            val years = academicYear.split("-").map { it.trim().toInt() }
+            val startYear = years[0]
+            val endYear = years[1]
+
+            // Load divisions
+            updateState { it.copy(areDivisionsLoading = true) }
+            divisionRepository.getDivisions(
+                semesterNumber = semester,
+                branchId = branchId,
+                academicStartYear = startYear,
+                academicEndYear = endYear,
+                searchQuery = null,
+                getAll = true
+            )
+                .onSuccess { divisionsWithTotalCount ->
+                    updateState {
+                        it.copy(
+                            divisionOptions = divisionsWithTotalCount.divisions.toPersistentList(),
+                            areDivisionsLoading = false
+                        )
+                    }
+                }
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            areDivisionsLoading = false,
+                            dialogState = SearchClassState.DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = "Error",
+                                message = error.toUiText(),
+                                dialogIntention = DialogIntention.GENERIC
+                            )
+                        )
+                    }
+                }
+
+            // Load batches
+            updateState { it.copy(areBatchesLoading = true) }
+            batchRepository.getBatches(
+                semesterNumber = semester,
+                branchId = branchId,
+                academicStartYear = startYear,
+                academicEndYear = endYear,
+                searchQuery = null,
+                getAll = true
+            )
+                .onSuccess { batchesWithTotalCount ->
+                    updateState {
+                        it.copy(
+                            batchOptions = batchesWithTotalCount.batches.toPersistentList(),
+                            areBatchesLoading = false
+                        )
+                    }
+                }
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            areBatchesLoading = false,
+                            dialogState = SearchClassState.DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = "Error",
+                                message = error.toUiText(),
+                                dialogIntention = DialogIntention.GENERIC
+                            )
+                        )
+                    }
+                }
+        } else {
+            // Clear divisions and batches if prerequisites are not met
+            updateState {
+                it.copy(
+                    divisionOptions = persistentListOf(),
+                    batchOptions = persistentListOf(),
+                    selectedDivision = null,
+                    selectedBatch = null,
+                    areDivisionsLoading = false,
+                    areBatchesLoading = false
+                )
+            }
+        }
+    }
+
+    private fun loadRoomsAndTeachers() {
+        viewModelScope.launch {
+            updateState { it.copy(isLoadingRooms = true, isLoadingTeachers = true) }
+
+            // Load all rooms
+            val roomsResult = roomRepository.getRooms(getAll = true)
+            when (roomsResult) {
+                is edu.watumull.presencify.core.domain.Result.Success -> {
+                    updateState {
+                        it.copy(
+                            availableRooms = roomsResult.data.rooms.toPersistentList(),
+                            isLoadingRooms = false
+                        )
+                    }
+                }
+                is edu.watumull.presencify.core.domain.Result.Error -> {
+                    updateState { it.copy(isLoadingRooms = false) }
+                }
+            }
+
+            // Load all teachers
+            val teachersResult = teacherRepository.getTeachers(getAll = true)
+            when (teachersResult) {
+                is edu.watumull.presencify.core.domain.Result.Success -> {
+                    updateState {
+                        it.copy(
+                            availableTeachers = teachersResult.data.teachers.toPersistentList(),
+                            isLoadingTeachers = false
+                        )
+                    }
+                }
+                is edu.watumull.presencify.core.domain.Result.Error -> {
+                    updateState { it.copy(isLoadingTeachers = false) }
+                }
+            }
+        }
     }
 
     @OptIn(FlowPreview::class)
@@ -127,173 +289,255 @@ class SearchClassViewModel(
         loadNextClasses()
     }
 
-    private suspend fun loadTeachers() {
-        updateState { it.copy(areTeachersLoading = true) }
-        teacherRepository.getTeachers(searchQuery = null, getAll = true)
-            .onSuccess { teachersWithCount ->
-                updateState {
-                    it.copy(
-                        teacherOptions = teachersWithCount.teachers.toPersistentList(),
-                        areTeachersLoading = false
-                    )
-                }
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        areTeachersLoading = false,
-                        dialogState = SearchClassState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
-                    )
-                }
-            }
-    }
+    private fun validateFilters(): Boolean {
+        val state = stateFlow.value
+        var isValid: Boolean
 
-    private suspend fun loadRooms() {
-        updateState { it.copy(areRoomsLoading = true) }
-        roomRepository.getRooms(searchQuery = null, getAll = true)
-            .onSuccess { rooms ->
-                updateState {
-                    it.copy(
-                        roomOptions = rooms.toPersistentList(),
-                        areRoomsLoading = false
-                    )
-                }
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        areRoomsLoading = false,
-                        dialogState = SearchClassState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
-                    )
-                }
-            }
-    }
+        // Validate time range
+        var startTimeError: String? = null
+        var endTimeError: String? = null
 
-    private suspend fun loadBatches() {
-        updateState { it.copy(areBatchesLoading = true) }
-        batchRepository.getBatches(searchQuery = null, getAll = true)
-            .onSuccess { batchesWithCount ->
-                updateState {
-                    it.copy(
-                        batchOptions = batchesWithCount.batches.toPersistentList(),
-                        areBatchesLoading = false
-                    )
-                }
+        if (state.startTime != null && state.endTime == null) {
+            endTimeError = "End time is required when start time is selected"
+        } else if (state.startTime == null && state.endTime != null) {
+            startTimeError = "Start time is required when end time is selected"
+        } else if (state.startTime != null && state.endTime != null) {
+            if (state.startTime >= state.endTime) {
+                endTimeError = "End time must be after start time"
             }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        areBatchesLoading = false,
-                        dialogState = SearchClassState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
-                    )
-                }
-            }
-    }
+        }
 
-    private suspend fun loadCourses() {
-        updateState { it.copy(areCoursesLoading = true) }
-        courseRepository.getCourses(searchQuery = null, getAll = true)
-            .onSuccess { coursesWithCount ->
-                updateState {
-                    it.copy(
-                        courseOptions = coursesWithCount.courses.toPersistentList(),
-                        areCoursesLoading = false
-                    )
-                }
+        // Validate date range
+        var activeFromError: String? = null
+        var activeTillError: String? = null
+
+        if (state.activeFrom != null && state.activeTill == null) {
+            activeTillError = "Active till date is required when active from date is selected"
+        } else if (state.activeFrom == null && state.activeTill != null) {
+            activeFromError = "Active from date is required when active till date is selected"
+        } else if (state.activeFrom != null && state.activeTill != null) {
+            if (state.activeFrom > state.activeTill) {
+                activeTillError = "Active till date must be after active from date"
             }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        areCoursesLoading = false,
-                        dialogState = SearchClassState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+        }
+
+        updateState {
+            it.copy(
+                startTimeError = startTimeError,
+                endTimeError = endTimeError,
+                activeFromError = activeFromError,
+                activeTillError = activeTillError
+            )
+        }
+
+        isValid = startTimeError == null && endTimeError == null &&
+                  activeFromError == null && activeTillError == null
+
+        if (!isValid) {
+            val errorMessage = listOfNotNull(
+                startTimeError, endTimeError, activeFromError, activeTillError
+            ).firstOrNull() ?: "Invalid filter values"
+
+            updateState {
+                it.copy(
+                    dialogState = SearchClassState.DialogState(
+                        dialogType = DialogType.ERROR,
+                        title = "Validation Error",
+                        message = UiText.DynamicString(errorMessage),
+                        dialogIntention = DialogIntention.GENERIC
                     )
-                }
+                )
             }
+        }
+
+        return isValid
     }
 
     override fun handleAction(action: SearchClassAction) {
         when (action) {
-            SearchClassAction.BackButtonClick -> sendEvent(SearchClassEvent.NavigateBack)
-            SearchClassAction.DismissDialog -> updateState { it.copy(dialogState = null) }
+            SearchClassAction.BackButtonClick -> {
+                sendEvent(NavigateBack)
+            }
 
-            SearchClassAction.ShowBottomSheet -> updateState { it.copy(isBottomSheetVisible = true) }
-            SearchClassAction.HideBottomSheet -> updateState { it.copy(isBottomSheetVisible = false) }
+            SearchClassAction.DismissDialog -> {
+                updateState { it.copy(dialogState = null) }
+            }
 
-            is SearchClassAction.UpdateSearchQuery -> updateState { it.copy(searchQuery = action.query) }
-            SearchClassAction.Search -> refreshSearch()
+            is SearchClassAction.UpdateSearchQuery -> {
+                updateState { it.copy(searchQuery = action.query) }
+            }
+
+            SearchClassAction.Search -> {
+                refreshSearch()
+            }
+
             SearchClassAction.Refresh -> {
                 updateState { it.copy(isRefreshing = true) }
                 refreshSearch()
             }
 
-            is SearchClassAction.SelectTeacher -> {
-                updateState { it.copy(selectedTeacher = action.teacher) }
+            is SearchClassAction.ToggleBranch -> {
+                val currentBranches = stateFlow.value.selectedBranches
+                val newBranches = if (currentBranches.contains(action.branch)) {
+                    currentBranches - action.branch
+                } else {
+                    // Server accepts only single value, so clear others
+                    persistentListOf(action.branch)
+                }
+                updateState { it.copy(selectedBranches = newBranches.toPersistentList()) }
+                viewModelScope.launch {
+                    loadDivisionsAndBatches()
+                }
             }
-            is SearchClassAction.SelectRoom -> {
-                updateState { it.copy(selectedRoom = action.room) }
+
+            is SearchClassAction.ToggleSemester -> {
+                val currentSemesters = stateFlow.value.selectedSemesters
+                val newSemesters = if (currentSemesters.contains(action.semester)) {
+                    currentSemesters - action.semester
+                } else {
+                    // Server accepts only single value, so clear others
+                    persistentListOf(action.semester)
+                }
+                updateState { it.copy(selectedSemesters = newSemesters.toPersistentList()) }
+                viewModelScope.launch {
+                    loadDivisionsAndBatches()
+                }
             }
+
+            is SearchClassAction.SelectAcademicYearOfSemester -> {
+                updateState { it.copy(selectedAcademicYearOfSemester = action.year) }
+                viewModelScope.launch {
+                    loadDivisionsAndBatches()
+                }
+            }
+
+            is SearchClassAction.SelectDivision -> {
+                updateState { it.copy(selectedDivision = action.division) }
+            }
+
             is SearchClassAction.SelectBatch -> {
                 updateState { it.copy(selectedBatch = action.batch) }
             }
-            is SearchClassAction.SelectCourse -> {
-                updateState { it.copy(selectedCourse = action.course) }
+
+            is SearchClassAction.ToggleClassType -> {
+                updateState {
+                    val currentTypes = it.selectedClassTypes
+                    val newTypes = if (currentTypes.contains(action.classType)) {
+                        currentTypes.remove(action.classType)
+                    } else {
+                        // Server accepts only single value, so clear others
+                        persistentListOf(action.classType)
+                    }
+                    it.copy(selectedClassTypes = newTypes)
+                }
             }
-            is SearchClassAction.SelectDayOfWeek -> {
-                updateState { it.copy(selectedDayOfWeek = action.dayOfWeek) }
+
+            is SearchClassAction.ToggleRoom -> {
+                updateState {
+                    val currentRooms = it.selectedRoomIds
+                    val newRooms = if (currentRooms.contains(action.roomId)) {
+                        currentRooms.remove(action.roomId)
+                    } else {
+                        // Server accepts only single value, so clear others
+                        persistentListOf(action.roomId)
+                    }
+                    it.copy(selectedRoomIds = newRooms)
+                }
             }
-            is SearchClassAction.SelectClassType -> {
-                updateState { it.copy(selectedClassType = action.classType) }
+
+            is SearchClassAction.ToggleTeacher -> {
+                updateState {
+                    val currentTeachers = it.selectedTeacherIds
+                    val newTeachers = if (currentTeachers.contains(action.teacherId)) {
+                        currentTeachers.remove(action.teacherId)
+                    } else {
+                        // Server accepts only single value, so clear others
+                        persistentListOf(action.teacherId)
+                    }
+                    it.copy(selectedTeacherIds = newTeachers)
+                }
             }
-            is SearchClassAction.ToggleIsExtraClass -> {
+
+            is SearchClassAction.UpdateIsExtraClass -> {
                 updateState { it.copy(isExtraClass = action.isExtraClass) }
+            }
+
+            is SearchClassAction.UpdateStartTime -> {
+                updateState {
+                    it.copy(
+                        startTime = action.time,
+                        startTimeError = null
+                    )
+                }
+            }
+
+            is SearchClassAction.UpdateEndTime -> {
+                updateState {
+                    it.copy(
+                        endTime = action.time,
+                        endTimeError = null
+                    )
+                }
+            }
+
+            is SearchClassAction.UpdateActiveFrom -> {
+                updateState {
+                    it.copy(
+                        activeFrom = action.date,
+                        activeFromError = null
+                    )
+                }
+            }
+
+            is SearchClassAction.UpdateActiveTill -> {
+                updateState {
+                    it.copy(
+                        activeTill = action.date,
+                        activeTillError = null
+                    )
+                }
             }
 
             SearchClassAction.ResetFilters -> {
                 updateState {
                     it.copy(
-                        selectedTeacher = null,
-                        selectedRoom = null,
+                        selectedBranches = persistentListOf(),
+                        selectedSemesters = persistentListOf(),
+                        selectedAcademicYearOfSemester = null,
+                        selectedDivision = null,
                         selectedBatch = null,
-                        selectedCourse = null,
-                        selectedDayOfWeek = null,
-                        selectedClassType = null,
-                        isExtraClass = null
+                        selectedClassTypes = persistentListOf(),
+                        selectedRoomIds = persistentListOf(),
+                        selectedTeacherIds = persistentListOf(),
+                        isExtraClass = null,
+                        startTime = null,
+                        endTime = null,
+                        startTimeError = null,
+                        endTimeError = null,
+                        activeFrom = null,
+                        activeTill = null,
+                        activeFromError = null,
+                        activeTillError = null
                     )
                 }
             }
+
             SearchClassAction.ApplyFilters -> {
-                updateState { it.copy(isBottomSheetVisible = false) }
-                refreshSearch()
+                if (validateFilters()) {
+                    refreshSearch()
+                }
             }
 
             is SearchClassAction.ClassCardClick -> {
-                sendEvent(SearchClassEvent.NavigateToClassDetails(action.classId))
+                sendEvent(NavigateToClassDetails(action.classId))
             }
 
-            SearchClassAction.LoadMoreClasses -> loadNextClasses()
+            SearchClassAction.LoadMoreClasses -> {
+                loadNextClasses()
+            }
 
             SearchClassAction.ClickFloatingActionButton -> {
-                sendEvent(SearchClassEvent.NavigateToAddEditClass)
+                sendEvent(NavigateToAddEditClass)
             }
         }
     }

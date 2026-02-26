@@ -4,12 +4,14 @@ import edu.watumull.presencify.core.data.mapper.schedule.toDomain
 import edu.watumull.presencify.core.data.network.schedule.RemoteRoomDataSource
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.enums.RoomType
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.domain.model.schedule.Room
+import edu.watumull.presencify.core.domain.model.schedule.RoomListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -22,17 +24,34 @@ class RoomRepositoryImpl(
         searchQuery: String?,
         sortBy: RoomSortBy?,
         sortOrder: RoomSortOrder?,
-        busyBetweenStartTime: LocalTime?,
-        busyBetweenEndTime: LocalTime?,
+        freeBetweenStartTime: LocalTime?,
+        freeBetweenEndTime: LocalTime?,
+        dayOfWeek: DayOfWeek?,
         page: Int?,
         limit: Int?,
         getAll: Boolean?,
-        type: RoomType?
-    ): Result<List<Room>, DataError.Remote> {
+        type: RoomType?,
+        minCapacity: Int?,
+        maxCapacity: Int?
+    ): Result<RoomListWithTotalCount, DataError.Remote> {
         return remoteDataSource.getRooms(
-            searchQuery, sortBy, sortOrder, busyBetweenStartTime, busyBetweenEndTime, page, limit, getAll, type
+            searchQuery = searchQuery,
+            sortBy = sortBy,
+            sortOrder = sortOrder,
+            freeBetweenStartTime = freeBetweenStartTime,
+            freeBetweenEndTime = freeBetweenEndTime,
+            dayOfWeek = dayOfWeek,
+            page = page,
+            limit = limit,
+            getAll = getAll,
+            type = type,
+            minCapacity = minCapacity,
+            maxCapacity = maxCapacity
         ).map { response ->
-            response.rooms.map { it.toDomain() }
+            RoomListWithTotalCount(
+                rooms = response.rooms.map { it.toDomain() },
+                totalCount = response.totalCount
+            )
         }
     }
 

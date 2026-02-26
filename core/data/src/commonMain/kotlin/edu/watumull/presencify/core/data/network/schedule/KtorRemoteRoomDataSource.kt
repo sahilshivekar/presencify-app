@@ -12,8 +12,10 @@ import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_ROOM_
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.REMOVE_ROOM
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.UPDATE_ROOM
 import edu.watumull.presencify.core.data.repository.safeCall
+import edu.watumull.presencify.core.data.util.toApiTimeString
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.enums.RoomType
@@ -31,24 +33,34 @@ class KtorRemoteRoomDataSource(
         searchQuery: String?,
         sortBy: RoomSortBy?,
         sortOrder: RoomSortOrder?,
-        busyBetweenStartTime: LocalTime?,
-        busyBetweenEndTime: LocalTime?,
+        freeBetweenStartTime: LocalTime?,
+        freeBetweenEndTime: LocalTime?,
+        dayOfWeek: DayOfWeek?,
         page: Int?,
         limit: Int?,
         getAll: Boolean?,
-        type: RoomType?
+        type: RoomType?,
+        minCapacity: Int?,
+        maxCapacity: Int?
     ): Result<RoomListWithTotalCountDto, DataError.Remote> {
         return safeCall<RoomListWithTotalCountDto> {
             httpClient.get(GET_ROOMS) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 sortBy?.let { parameter("sortBy", it.value) }
                 sortOrder?.let { parameter("sortOrder", it.value) }
-                busyBetweenStartTime?.let { parameter("busyBetweenStartTime", it) }
-                busyBetweenEndTime?.let { parameter("busyBetweenEndTime", it) }
+                freeBetweenStartTime?.let {
+                    parameter("freeBetweenStartTime", it.toApiTimeString()) // Formats as HH:MM:SS
+                }
+                freeBetweenEndTime?.let {
+                    parameter("freeBetweenEndTime", it.toApiTimeString()) // Formats as HH:MM:SS
+                }
+                dayOfWeek?.let { parameter("dayOfWeek", it.value) }
                 page?.let { parameter("page", it) }
                 limit?.let { parameter("limit", it) }
                 getAll?.let { parameter("getAll", it) }
                 type?.let { parameter("type", it.value) }
+                minCapacity?.let { parameter("minCapacity", it) }
+                maxCapacity?.let { parameter("maxCapacity", it) }
             }
         }
     }
@@ -91,8 +103,8 @@ class KtorRemoteRoomDataSource(
             httpClient.get("$GET_ROOM_SCHEDULE/$id") {
                 parameter("startDate", startDate.toString())
                 parameter("endDate", endDate.toString())
-                parameter("startTime", startTime.toString())
-                parameter("endTime", endTime.toString())
+                parameter("startTime", startTime.toApiTimeString())
+                parameter("endTime", endTime.toApiTimeString())
             }
         }
     }

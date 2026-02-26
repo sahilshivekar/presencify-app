@@ -33,6 +33,10 @@ class ClassSessionRepositoryImpl(
         classType: ClassType?,
         courseId: String?,
         semesterId: String?,
+        semesterNumber: Int?,
+        academicStartYearOfSemester: Int?,
+        academicEndYearOfSemester: Int?,
+        branchId: String?,
         isExtraClass: Boolean?,
         page: Int?,
         limit: Int?,
@@ -40,8 +44,9 @@ class ClassSessionRepositoryImpl(
     ): Result<ClassListWithTotalCount, DataError.Remote> {
         return remoteDataSource.getClasses(
             searchQuery, timetableId, divisionId, startTime, endTime, activeFrom, activeTill,
-            teacherId, dayOfWeek, roomId, batchId, classType, courseId, semesterId, isExtraClass,
-            page, limit, getAll
+            teacherId, dayOfWeek, roomId, batchId, classType, courseId, semesterId,
+            semesterNumber, academicStartYearOfSemester, academicEndYearOfSemester, branchId,
+            isExtraClass, page, limit, getAll
         ).map { it.toDomain() }
     }
 

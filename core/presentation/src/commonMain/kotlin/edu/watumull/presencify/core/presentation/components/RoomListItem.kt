@@ -54,16 +54,21 @@ fun RoomListItem(
                 ) {
                     Text(
                         text = roomNumber,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
 
                 if (type != null) {
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = type.toDisplayLabel(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Badge(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ) {
+                        Text(
+                            text = type.toDisplayLabel(),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
             }
         },

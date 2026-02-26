@@ -2,11 +2,13 @@ package edu.watumull.presencify.core.domain.repository.schedule
 
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.enums.RoomType
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.domain.model.schedule.Room
+import edu.watumull.presencify.core.domain.model.schedule.RoomListWithTotalCount
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -15,13 +17,16 @@ interface RoomRepository {
         searchQuery: String? = null,
         sortBy: RoomSortBy? = null,
         sortOrder: RoomSortOrder? = null,
-        busyBetweenStartTime: LocalTime? = null,
-        busyBetweenEndTime: LocalTime? = null,
+        freeBetweenStartTime: LocalTime? = null,
+        freeBetweenEndTime: LocalTime? = null,
+        dayOfWeek: DayOfWeek? = null,
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null,
-        type: RoomType? = null
-    ): Result<List<Room>, DataError.Remote>
+        type: RoomType? = null,
+        minCapacity: Int? = null,
+        maxCapacity: Int? = null
+    ): Result<RoomListWithTotalCount, DataError.Remote>
 
     suspend fun addRoom(
         roomNumber: String,

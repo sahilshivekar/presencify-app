@@ -36,10 +36,10 @@ class Paginator<Key, Item>(
             }
             is Result.Success -> {
                 val item = result.data
+                isEndReached = endReached(currentKey, item)
                 currentKey = getNextKey(currentKey, item)
                 onSuccess(item, currentKey)
                 onLoadUpdated(false)
-                isEndReached = endReached(currentKey, item)
             }
         }
     }

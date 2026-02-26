@@ -20,6 +20,8 @@ import edu.watumull.presencify.feature.academics.navigation.SearchCourseIntentio
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -102,10 +104,18 @@ class SearchCourseViewModel(
         },
         onSuccess = { response, _ ->
             updateState {
+                // distinct by is used because there is issue on server side
+                // server is returning one course two times for some courses
+                // after hours of debugging the issue wasn't fix
+                // hence a temp fix is applied on app side
+                val distinctCourses = response.courses.distinctBy { course -> course.id }
+                val newCourses = if (stateFlow.value.currentPage == 1) {
+                    distinctCourses.toPersistentList()
+                } else {
+                    it.courses.addAll(distinctCourses.toPersistentList()).distinctBy { course -> course.id }.toPersistentList()
+                }
                 it.copy(
-                    courses = if (stateFlow.value.currentPage == 1) response.courses.toPersistentList() else it.courses.addAll(
-                        response.courses.toPersistentList()
-                    ),
+                    courses = newCourses,
                     currentPage = stateFlow.value.currentPage + 1,
                     isRefreshing = false,
                     isLoadingCourses = false
@@ -120,15 +130,13 @@ class SearchCourseViewModel(
     )
 
     init {
-        // Load initial data
         viewModelScope.launch {
-            loadBranches()
-            loadSchemes()
-            loadTeachers()
+            val task1 = async { loadBranches() }
+            val task2 = async { loadSchemes() }
+            val task3 = async { loadTeachers() }
+            awaitAll(task1, task2, task3)
+            setupDebouncedSearch()
         }
-
-        // Setup debounced search
-        setupDebouncedSearch()
     }
 
     @OptIn(FlowPreview::class)

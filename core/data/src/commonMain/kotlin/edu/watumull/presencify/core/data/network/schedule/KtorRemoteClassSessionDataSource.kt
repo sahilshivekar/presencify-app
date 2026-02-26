@@ -19,6 +19,7 @@ import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_CLASS
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.GET_CLASS_BY_ID
 import edu.watumull.presencify.core.data.network.schedule.ApiEndpoints.REMOVE_CLASS
 import edu.watumull.presencify.core.data.repository.safeCall
+import edu.watumull.presencify.core.data.util.toApiTimeString
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.ClassType
@@ -48,6 +49,10 @@ class KtorRemoteClassSessionDataSource(
         classType: ClassType?,
         courseId: String?,
         semesterId: String?,
+        semesterNumber: Int?,
+        academicStartYearOfSemester: Int?,
+        academicEndYearOfSemester: Int?,
+        branchId: String?,
         isExtraClass: Boolean?,
         page: Int?,
         limit: Int?,
@@ -58,8 +63,8 @@ class KtorRemoteClassSessionDataSource(
                 searchQuery?.let { parameter("searchQuery", it) }
                 timetableId?.let { parameter("timetableId", it) }
                 divisionId?.let { parameter("divisionId", it) }
-                startTime?.let { parameter("startTime", it) }
-                endTime?.let { parameter("endTime", it) }
+                startTime?.let { parameter("startTime", it.toApiTimeString()) }
+                endTime?.let { parameter("endTime", it.toApiTimeString()) }
                 activeFrom?.let { parameter("activeFrom", it.toString()) }
                 activeTill?.let { parameter("activeTill", it.toString()) }
                 teacherId?.let { parameter("teacherId", it) }
@@ -69,6 +74,10 @@ class KtorRemoteClassSessionDataSource(
                 classType?.value?.let { parameter("classType", it) }
                 courseId?.let { parameter("courseId", it) }
                 semesterId?.let { parameter("semesterId", it) }
+                semesterNumber?.let { parameter("semesterNumber", it) }
+                academicStartYearOfSemester?.let { parameter("academicStartYearOfSemester", it) }
+                academicEndYearOfSemester?.let { parameter("academicEndYearOfSemester", it) }
+                branchId?.let { parameter("branchId", it) }
                 isExtraClass?.let { parameter("isExtraClass", it) }
                 page?.let { parameter("page", it) }
                 limit?.let { parameter("limit", it) }
@@ -96,8 +105,8 @@ class KtorRemoteClassSessionDataSource(
                 setBody(
                     AddClassRequest(
                         teacherId = teacherId,
-                        startTime = startTime,
-                        endTime = endTime,
+                        startTime = startTime.toApiTimeString(),
+                        endTime = endTime.toApiTimeString(),
                         dayOfWeek = dayOfWeek.value,
                         roomId = roomId,
                         batchId = batchId,
@@ -152,8 +161,8 @@ class KtorRemoteClassSessionDataSource(
                 setBody(
                     AddClassRequest(
                         teacherId = teacherId,
-                        startTime = startTime,
-                        endTime = endTime,
+                        startTime = startTime.toApiTimeString(),
+                        endTime = endTime.toApiTimeString(),
                         dayOfWeek = dayOfWeek.value,
                         roomId = roomId,
                         batchId = batchId,

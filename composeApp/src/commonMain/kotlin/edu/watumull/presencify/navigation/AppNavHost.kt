@@ -24,6 +24,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdd
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditClass
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditDivision
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditRoom
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditScheme
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditSemester
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditStudent
@@ -38,6 +39,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToBra
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCourseDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDivisionDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
@@ -172,6 +174,8 @@ fun AppNavHost(
 
         scheduleNavGraph(
             onNavigateBack = { rootNavController.navigateUp() },
+            onNavigateToRoomDetails = rootNavController::navigateToRoomDetails,
+            onNavigateToAddEditRoom = rootNavController::navigateToAddEditRoom,
             onNavigateToClassDetails = rootNavController::navigateToClassDetails,
             onNavigateToAddEditClass = rootNavController::navigateToAddEditClass
         )
