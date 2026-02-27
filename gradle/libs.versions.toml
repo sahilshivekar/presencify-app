@@ -15,7 +15,7 @@ androidx-compose-material = "1.7.6"
 junit = "4.13.2"
 kotlin = "2.1.20"
 kotlinx-coroutines = "1.9.0"
-
+vico = "2.1.4"
 #ksp = "2.1.0-1.0.29"          # Must match Kotlin version
 kotlinx-collections-immutable = "0.3.7"
 #room = "2.7.0-alpha11"        # Required for KMP support
@@ -126,6 +126,11 @@ compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-pre
 # Required for the Android Studio Design tab to render the preview
 compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 
+# Core logic for charts (Required)
+# Use 'multiplatform' instead of 'core' and 'compose'
+vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatform", version.ref = "vico" }
+# Use 'multiplatform-m3' instead of 'compose-m3'
+vico-multiplatform-m3 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m3", version.ref = "vico" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

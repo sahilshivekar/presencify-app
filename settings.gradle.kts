@@ -16,6 +16,10 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://jitpack.io")
+        // Add this for Vico 3.x Multiplatform releases
+        maven { url = uri("https://oss.sonatype.org/content/repositories/releases/") }
+        // Optional: If you want to use alpha/snapshot versions
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
 }
 

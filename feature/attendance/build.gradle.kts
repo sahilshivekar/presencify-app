@@ -94,6 +94,8 @@ kotlin {
 
                 implementation(libs.compose.material.icons.core)
                 implementation(libs.compose.material.icons.extended)
+                implementation(libs.vico.multiplatform)
+                implementation(libs.vico.multiplatform.m3)
             }
             dependencies {
                 implementation(libs.kotlin.stdlib)
