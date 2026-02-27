@@ -10,6 +10,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SearchClassRoot(
     onNavigateBack: () -> Unit,
     onNavigateToClassDetails: (String) -> Unit,
+    onNavigateToCreateAttendanceSheet: (String) -> Unit,
     viewModel: SearchClassViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -18,6 +19,7 @@ fun SearchClassRoot(
         when (event) {
             SearchClassEvent.NavigateBack -> onNavigateBack()
             is SearchClassEvent.NavigateToClassDetails -> onNavigateToClassDetails(event.classId)
+            is SearchClassEvent.NavigateToCreateAttendanceSheet -> onNavigateToCreateAttendanceSheet(event.classId)
         }
     }
 

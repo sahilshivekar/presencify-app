@@ -71,6 +71,7 @@ import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyA
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.utils.toReadableString
+import edu.watumull.presencify.feature.schedule.navigation.SearchClassIntention
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -93,7 +94,7 @@ fun SearchClassScreen(
 
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchClassAction.BackButtonClick) },
-        topBarTitle = "Search Classes",
+        topBarTitle = if(state.intention == SearchClassIntention.CREATE_ATTENDANCE_SHEET) "Select Class" else "Search Classes",
         scaffoldState = scaffoldState,
         sheetContent = {
             SearchClassBottomSheetContent(

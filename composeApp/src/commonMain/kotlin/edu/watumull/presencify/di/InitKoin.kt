@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.data.di.coreDataModule
 import edu.watumull.presencify.feature.academics.di.academicsModule
 import edu.watumull.presencify.feature.admin.auth.di.adminAuthModule
 import edu.watumull.presencify.feature.admin.mgt.di.adminMgtModule
+import edu.watumull.presencify.feature.attendance.di.attendanceModule
 import edu.watumull.presencify.feature.onboarding.di.onboardingModule
 import edu.watumull.presencify.feature.schedule.di.scheduleModule
 import edu.watumull.presencify.feature.users.di.usersModule
@@ -28,7 +29,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             adminMgtModule,
             usersModule,
             academicsModule,
-            scheduleModule
+            scheduleModule,
+            attendanceModule
         )
     }
 }

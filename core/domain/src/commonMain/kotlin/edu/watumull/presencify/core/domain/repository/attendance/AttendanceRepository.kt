@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceSummary
+import edu.watumull.presencify.core.domain.model.attendance.AttendanceWithTotalCount
 import kotlinx.datetime.LocalDate
 
 interface AttendanceRepository {
@@ -15,11 +16,6 @@ interface AttendanceRepository {
         date: LocalDate,
     ): Result<Attendance, DataError.Remote>
 
-    suspend fun addStudentsAttendance(
-        attendanceId: String,
-        presentStudentIds: List<String>,
-        absentStudentIds: List<String>,
-    ): Result<Unit, DataError.Remote>
 
     suspend fun updateStudentAttendance(
         attendanceId: String,
@@ -82,18 +78,25 @@ interface AttendanceRepository {
         semesterId: String?,
     ): Result<Map<String, Any>, DataError.Remote>
 
-    suspend fun getAttendance(
+    suspend fun getAttendanceById(
+        attendanceId: String,
+    ): Result<Attendance, DataError.Remote>
+
+    suspend fun getAttendances(
         date: LocalDate?,
-        attendanceId: String?,
         classId: String?,
         studentId: String?,
         courseId: String?,
         semesterId: String?,
         divisionId: String?,
         batchId: String?,
-        startDate: LocalDate?,
-        endDate: LocalDate?,
-    ): Result<List<Attendance>, DataError.Remote>
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        page: Int,
+        limit: Int,
+    ): Result<AttendanceWithTotalCount, DataError.Remote>
 
     suspend fun getActiveAttendanceSheet(
         studentId: String,

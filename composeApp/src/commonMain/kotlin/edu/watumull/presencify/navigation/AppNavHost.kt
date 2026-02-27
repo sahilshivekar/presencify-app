@@ -35,11 +35,14 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdm
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminLogin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminVerifyCode
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAttendanceDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToBatchDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToBranchDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCourseDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCreateAttendanceSheet
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDivisionDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkStudentAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
@@ -102,7 +105,11 @@ fun AppNavHost(
             }
         )
 
-        attendanceNavGraph()
+        attendanceNavGraph(
+            onNavigateBack = { rootNavController.navigateUp() },
+            onNavigateToMarkAttendance = rootNavController::navigateToMarkStudentAttendance,
+            onNavigateToAttendanceDetails = rootNavController::navigateToAttendanceDetails
+        )
 
         usersNavGraph(
             onNavigateBack = { rootNavController.navigateUp() },
@@ -181,7 +188,8 @@ fun AppNavHost(
             onNavigateToClassDetails = rootNavController::navigateToClassDetails,
             onNavigateToAddEditClass = rootNavController::navigateToAddEditClass,
             onNavigateToTimetableDetails = rootNavController::navigateToTimetableDetails,
-            onNavigateToAddEditTimetable = rootNavController::navigateToAddEditTimetable
+            onNavigateToAddEditTimetable = rootNavController::navigateToAddEditTimetable,
+            onNavigateToCreateAttendanceSheet = rootNavController::navigateToCreateAttendanceSheet
         )
 
         adminAuthNavGraph(

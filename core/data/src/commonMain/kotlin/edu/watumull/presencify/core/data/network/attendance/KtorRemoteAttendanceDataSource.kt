@@ -4,11 +4,14 @@ import edu.watumull.presencify.core.data.dto.attendance.AggregatedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
-import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.ADD_STUDENTS_ATTENDANCE
+import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.attendance.CreateAttendanceRequestDto
+import edu.watumull.presencify.core.data.dto.attendance.UpdateStudentAttendanceRequestDto
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.BULK_UPDATE_STUDENT_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.CREATE_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ACTIVE_ATTENDANCE_SHEET
-import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE
+import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCES
+import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_BY_ID
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_ALL
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_STUDENT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.REMOVE_ATTENDANCE
@@ -31,25 +34,23 @@ class KtorRemoteAttendanceDataSource(
         return safeCall<AttendanceDto> {
             httpClient.post(CREATE_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("classId" to classId, "date" to date))
+                setBody(CreateAttendanceRequestDto(classId = classId, date = date))
             }
         }
     }
 
-    override suspend fun addStudentsAttendance(attendanceId: String, presentStudentIds: List<String>, absentStudentIds: List<String>): Result<Unit, DataError.Remote> {
-        return safeCall<Unit> {
-            httpClient.post(ADD_STUDENTS_ATTENDANCE) {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("attendanceId" to attendanceId, "presentStudentIds" to presentStudentIds, "absentStudentIds" to absentStudentIds))
-            }
-        }
-    }
 
     override suspend fun updateStudentAttendance(attendanceId: String, studentId: String, newAttendanceStatus: Boolean): Result<AttendanceStudentDto, DataError.Remote> {
         return safeCall<AttendanceStudentDto> {
             httpClient.put(UPDATE_STUDENT_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf("attendanceId" to attendanceId, "studentId" to studentId, "newAttendanceStatus" to newAttendanceStatus))
+                setBody(
+                    UpdateStudentAttendanceRequestDto(
+                        attendanceId = attendanceId,
+                        studentId = studentId,
+                        newAttendanceStatus = newAttendanceStatus
+                    )
+                )
             }
         }
     }
@@ -154,22 +155,32 @@ class KtorRemoteAttendanceDataSource(
         }
     }
 
-    override suspend fun getAttendance(
-        date: LocalDate?, attendanceId: String?, classId: String?, studentId: String?, courseId: String?, semesterId: String?,
-        divisionId: String?, batchId: String?, startDate: LocalDate?, endDate: LocalDate?
-    ): Result<List<AttendanceDto>, DataError.Remote> {
-        return safeCall<List<AttendanceDto>> {
-            httpClient.get(GET_ATTENDANCE) {
+    override suspend fun getAttendanceById(attendanceId: String): Result<AttendanceDto, DataError.Remote> {
+        return safeCall<AttendanceDto> {
+            httpClient.get("$GET_ATTENDANCE_BY_ID/$attendanceId")
+        }
+    }
+
+    override suspend fun getAttendances(
+        date: LocalDate?, classId: String?, studentId: String?, courseId: String?, semesterId: String?,
+        divisionId: String?, batchId: String?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
+        branchId: String?, page: Int, limit: Int
+    ): Result<AttendanceWithTotalCountDto, DataError.Remote> {
+        return safeCall<AttendanceWithTotalCountDto> {
+            httpClient.get(GET_ATTENDANCES) {
                 date?.let { parameter("date", it) }
-                attendanceId?.let { parameter("attendanceId", it) }
                 classId?.let { parameter("classId", it) }
                 studentId?.let { parameter("studentId", it) }
                 courseId?.let { parameter("courseId", it) }
                 semesterId?.let { parameter("semesterId", it) }
                 divisionId?.let { parameter("divisionId", it) }
                 batchId?.let { parameter("batchId", it) }
-                startDate?.let { parameter("startDate", it) }
-                endDate?.let { parameter("endDate", it) }
+                semesterNumber?.value?.let { parameter("semesterNumber", it) }
+                academicStartYear?.let { parameter("academicStartYear", it) }
+                academicEndYear?.let { parameter("academicEndYear", it) }
+                branchId?.let { parameter("branchId", it) }
+                parameter("page", page)
+                parameter("limit", limit)
             }
         }
     }

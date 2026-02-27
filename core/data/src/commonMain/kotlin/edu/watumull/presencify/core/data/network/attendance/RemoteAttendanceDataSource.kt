@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.data.dto.attendance.AggregatedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
+import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
@@ -15,11 +16,6 @@ interface RemoteAttendanceDataSource {
         date: LocalDate,
     ): Result<AttendanceDto, DataError.Remote>
 
-    suspend fun addStudentsAttendance(
-        attendanceId: String,
-        presentStudentIds: List<String>,
-        absentStudentIds: List<String>,
-    ): Result<Unit, DataError.Remote>
 
     suspend fun updateStudentAttendance(
         attendanceId: String,
@@ -82,18 +78,25 @@ interface RemoteAttendanceDataSource {
         semesterId: String?,
     ): Result<Map<String, Any>, DataError.Remote>
 
-    suspend fun getAttendance(
+    suspend fun getAttendanceById(
+        attendanceId: String,
+    ): Result<AttendanceDto, DataError.Remote>
+
+    suspend fun getAttendances(
         date: LocalDate?,
-        attendanceId: String?,
         classId: String?,
         studentId: String?,
         courseId: String?,
         semesterId: String?,
         divisionId: String?,
         batchId: String?,
-        startDate: LocalDate?,
-        endDate: LocalDate?,
-    ): Result<List<AttendanceDto>, DataError.Remote>
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        page: Int,
+        limit: Int,
+    ): Result<AttendanceWithTotalCountDto, DataError.Remote>
 
     suspend fun getActiveAttendanceSheet(
         studentId: String,

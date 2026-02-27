@@ -1,6 +1,8 @@
 package edu.watumull.presencify.feature.schedule.search_class
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
@@ -14,8 +16,11 @@ import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.feature.schedule.navigation.ScheduleRoutes
+import edu.watumull.presencify.feature.schedule.navigation.SearchClassIntention
 import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateBack
 import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateToClassDetails
+import edu.watumull.presencify.feature.schedule.search_class.SearchClassEvent.NavigateToCreateAttendanceSheet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
@@ -33,9 +38,16 @@ class SearchClassViewModel(
     private val teacherRepository: TeacherRepository,
     private val branchRepository: BranchRepository,
     private val divisionRepository: DivisionRepository,
-    private val batchRepository: BatchRepository
+    private val batchRepository: BatchRepository,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel<SearchClassState, SearchClassEvent, SearchClassAction>(
-    initialState = SearchClassState()
+    initialState = SearchClassState(
+        intention = runCatching {
+            SearchClassIntention.valueOf(
+                savedStateHandle.toRoute<ScheduleRoutes.SearchClass>().intention
+            )
+        }.getOrDefault(SearchClassIntention.DEFAULT)
+    )
 ) {
 
     private val paginator = Paginator(
@@ -528,7 +540,14 @@ class SearchClassViewModel(
             }
 
             is SearchClassAction.ClassCardClick -> {
-                sendEvent(NavigateToClassDetails(action.classId))
+                when (stateFlow.value.intention) {
+                    SearchClassIntention.DEFAULT -> {
+                        sendEvent(NavigateToClassDetails(action.classId))
+                    }
+                    SearchClassIntention.CREATE_ATTENDANCE_SHEET -> {
+                        sendEvent(NavigateToCreateAttendanceSheet(action.classId))
+                    }
+                }
             }
 
             SearchClassAction.LoadMoreClasses -> {

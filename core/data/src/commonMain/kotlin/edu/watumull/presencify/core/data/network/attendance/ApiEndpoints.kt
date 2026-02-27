@@ -9,10 +9,10 @@ object ApiEndpoints {
     // Attendance endpoints
     const val CREATE_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES" // POST /
     const val REMOVE_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES" // DELETE /
-    const val GET_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES"    // GET /
+    const val GET_ATTENDANCES = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES"    // GET / (paginated with filters)
+    const val GET_ATTENDANCE_BY_ID = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES" // GET /:attendanceId
 
     // Student operations
-    const val ADD_STUDENTS_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/students" // POST /students
     const val UPDATE_STUDENT_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/students" // PUT /students
 
     const val BULK_UPDATE_STUDENT_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/bulk/update"

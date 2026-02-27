@@ -11,6 +11,7 @@ import edu.watumull.presencify.core.domain.model.schedule.Room
 import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
+import edu.watumull.presencify.feature.schedule.navigation.SearchClassIntention
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -21,6 +22,9 @@ import kotlinx.datetime.LocalTime
 data class SearchClassState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
+
+    // Intention
+    val intention: SearchClassIntention = SearchClassIntention.DEFAULT,
 
     // Search & Filter
     val searchQuery: String = "",

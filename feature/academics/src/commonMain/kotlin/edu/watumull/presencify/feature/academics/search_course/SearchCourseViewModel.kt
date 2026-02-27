@@ -104,15 +104,10 @@ class SearchCourseViewModel(
         },
         onSuccess = { response, _ ->
             updateState {
-                // distinct by is used because there is issue on server side
-                // server is returning one course two times for some courses
-                // after hours of debugging the issue wasn't fix
-                // hence a temp fix is applied on app side
-                val distinctCourses = response.courses.distinctBy { course -> course.id }
                 val newCourses = if (stateFlow.value.currentPage == 1) {
-                    distinctCourses.toPersistentList()
+                    response.courses.toPersistentList()
                 } else {
-                    it.courses.addAll(distinctCourses.toPersistentList()).distinctBy { course -> course.id }.toPersistentList()
+                    it.courses.addAll(response.courses).toPersistentList()
                 }
                 it.copy(
                     courses = newCourses,

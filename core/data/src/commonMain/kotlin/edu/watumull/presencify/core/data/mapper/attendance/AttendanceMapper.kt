@@ -8,9 +8,6 @@ fun AttendanceDto.toDomain(): Attendance = Attendance(
     id = id,
     classId = classId,
     date = date,
-    totalStudents = totalStudents,
-    presentCount = presentCount,
-    absentCount = absentCount,
     klass = klass?.toDomain(),
     attendanceStudents = attendanceStudents?.map { it.toDomain() }
 )

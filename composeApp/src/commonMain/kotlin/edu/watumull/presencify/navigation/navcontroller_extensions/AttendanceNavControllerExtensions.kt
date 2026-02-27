@@ -11,36 +11,115 @@ fun NavController.navigateToAttendanceDashboard() {
 }
 
 /**
- * Navigate to Create Attendance screen
+ * Navigate to Create/Update Attendance Sheet
  */
-fun NavController.navigateToCreateAttendance() {
-    navigate(AttendanceRoutes.CreateAttendance)
+fun NavController.navigateToCreateAttendanceSheet(classId: String) {
+    navigate(AttendanceRoutes.CreateAttendanceSheet(classId = classId))
 }
 
 /**
- * Navigate to Edit Attendance Details screen
- *
- * @param attendanceId The ID of the attendance to edit
+ * Navigate to Mark Student Attendance screen
  */
-fun NavController.navigateToEditAttendanceDetails(attendanceId: String) {
-    navigate(AttendanceRoutes.EditAttendanceDetails(attendanceId = attendanceId))
+fun NavController.navigateToMarkStudentAttendance(attendanceId: String) {
+    navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId = attendanceId))
 }
 
 /**
- * Navigate to Edit Students Attendance screen
- *
- * @param attendanceId The ID of the attendance to edit students for
+ * Navigate to Individual Student Analytics with filters
  */
-fun NavController.navigateToEditStudentsAttendance(attendanceId: String) {
-    navigate(AttendanceRoutes.EditStudentsAttendance(attendanceId = attendanceId))
+fun NavController.navigateToStudentAttendanceAnalytics(
+    studentId: String,
+    semesterId: String? = null,
+    divisionId: String? = null,
+    batchId: String? = null,
+    startDate: String? = null,
+    endDate: String? = null,
+    courseId: String? = null,
+    semesterNumber: String? = null,
+    academicStartYear: String? = null,
+    academicEndYear: String? = null,
+    branchId: String? = null,
+    schemeId: String? = null,
+) {
+    navigate(
+        AttendanceRoutes.StudentAttendanceAnalytics(
+            studentId = studentId,
+            semesterId = semesterId,
+            divisionId = divisionId,
+            batchId = batchId,
+            startDate = startDate,
+            endDate = endDate,
+            courseId = courseId,
+            semesterNumber = semesterNumber,
+            academicStartYear = academicStartYear,
+            academicEndYear = academicEndYear,
+            branchId = branchId,
+            schemeId = schemeId
+        )
+    )
 }
 
 /**
- * Navigate to Attendance Details screen
- *
- * @param attendanceId The ID of the attendance to view
+ * Navigate to Aggregate (Batch/Group) Analytics with filters
+ */
+fun NavController.navigateToAggregateAttendanceAnalytics(
+    semesterId: String? = null,
+    divisionId: String? = null,
+    batchId: String? = null,
+    startDate: String? = null,
+    endDate: String? = null,
+    courseId: String? = null,
+    semesterNumber: String? = null,
+    academicStartYear: String? = null,
+    academicEndYear: String? = null,
+    branchId: String? = null,
+    schemeId: String? = null,
+) {
+    navigate(
+        AttendanceRoutes.AggregateAttendanceAnalytics(
+            semesterId = semesterId,
+            divisionId = divisionId,
+            batchId = batchId,
+            startDate = startDate,
+            endDate = endDate,
+            courseId = courseId,
+            semesterNumber = semesterNumber,
+            academicStartYear = academicStartYear,
+            academicEndYear = academicEndYear,
+            branchId = branchId,
+            schemeId = schemeId
+        )
+    )
+}
+
+/**
+ * Navigate to Search Attendance screen
+ */
+fun NavController.navigateToSearchAttendance(
+    courseId: String? = null,
+    studentId: String? = null,
+    startDate: String? = null,
+    endDate: String? = null,
+    semesterId: String? = null,
+    batchId: String? = null,
+    divisionId: String? = null,
+) {
+    navigate(
+        AttendanceRoutes.SearchAttendance(
+            courseId = courseId,
+            studentId = studentId,
+            startDate = startDate,
+            endDate = endDate,
+            semesterId = semesterId,
+            batchId = batchId,
+            divisionId = divisionId
+        )
+    )
+}
+
+/**
+ * Navigate to specific Attendance Details
  */
 fun NavController.navigateToAttendanceDetails(attendanceId: String) {
     navigate(AttendanceRoutes.AttendanceDetails(attendanceId = attendanceId))
 }
-

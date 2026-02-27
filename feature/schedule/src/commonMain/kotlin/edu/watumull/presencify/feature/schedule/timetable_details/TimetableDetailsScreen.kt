@@ -167,6 +167,7 @@ fun TimetableDetailsScreen(
                         SecondaryScrollableTabRow(
                             selectedTabIndex = allDays.indexOf(state.selectedDay),
                             divider = {},
+                            edgePadding = 16.dp
                         ) {
                             allDays.forEach { day ->
                                 Tab(

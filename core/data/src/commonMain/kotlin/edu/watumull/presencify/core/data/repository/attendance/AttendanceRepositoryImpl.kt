@@ -10,6 +10,7 @@ import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceSummary
+import edu.watumull.presencify.core.domain.model.attendance.AttendanceWithTotalCount
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
 import kotlinx.datetime.LocalDate
 
@@ -21,9 +22,6 @@ class AttendanceRepositoryImpl(
         return remoteDataSource.createAttendance(classId, date).map { it.toDomain() }
     }
 
-    override suspend fun addStudentsAttendance(attendanceId: String, presentStudentIds: List<String>, absentStudentIds: List<String>): Result<Unit, DataError.Remote> {
-        return remoteDataSource.addStudentsAttendance(attendanceId, presentStudentIds, absentStudentIds)
-    }
 
     override suspend fun updateStudentAttendance(attendanceId: String, studentId: String, newAttendanceStatus: Boolean): Result<AttendanceStudent, DataError.Remote> {
         return remoteDataSource.updateStudentAttendance(attendanceId, studentId, newAttendanceStatus).map { it.toDomain() }
@@ -72,13 +70,18 @@ class AttendanceRepositoryImpl(
         return remoteDataSource.sendAttendanceReport(startDate, endDate, studentIds, courseIds, semesterId)
     }
 
-    override suspend fun getAttendance(
-        date: LocalDate?, attendanceId: String?, classId: String?, studentId: String?, courseId: String?, semesterId: String?,
-        divisionId: String?, batchId: String?, startDate: LocalDate?, endDate: LocalDate?
-    ): Result<List<Attendance>, DataError.Remote> {
-        return remoteDataSource.getAttendance(
-            date, attendanceId, classId, studentId, courseId, semesterId, divisionId, batchId, startDate, endDate
-        ).map { list -> list.map { it.toDomain() } }
+    override suspend fun getAttendanceById(attendanceId: String): Result<Attendance, DataError.Remote> {
+        return remoteDataSource.getAttendanceById(attendanceId).map { it.toDomain() }
+    }
+
+    override suspend fun getAttendances(
+        date: LocalDate?, classId: String?, studentId: String?, courseId: String?, semesterId: String?,
+        divisionId: String?, batchId: String?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
+        branchId: String?, page: Int, limit: Int
+    ): Result<AttendanceWithTotalCount, DataError.Remote> {
+        return remoteDataSource.getAttendances(
+            date, classId, studentId, courseId, semesterId, divisionId, batchId, semesterNumber, academicStartYear, academicEndYear, branchId, page, limit
+        ).map { it.toDomain() }
     }
 
     override suspend fun getActiveAttendanceSheet(studentId: String, divisionId: String): Result<List<Attendance>, DataError.Remote> {

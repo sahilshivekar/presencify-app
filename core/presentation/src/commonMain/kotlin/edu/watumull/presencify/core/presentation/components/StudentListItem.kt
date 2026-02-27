@@ -42,7 +42,8 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
 @Composable
 fun StudentListItem(
     studentName: String,
-    studentBranch: String,
+    prn: String? = null,
+    studentBranch: String? = null,
     studentYear: String? = null,
     studentImageUrl: String? = null,
     feedback: ListItemFeedback? = null,
@@ -90,11 +91,13 @@ fun StudentListItem(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = studentBranch,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    if (studentBranch != null) {
+                        Text(
+                            text = studentBranch,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                     if (studentYear != null) {
                         Text(
                             text = " • ",
@@ -103,6 +106,18 @@ fun StudentListItem(
                         )
                         Text(
                             text = studentYear,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    prn?.let {
+                        Text(
+                            text = "PRN: $prn",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -118,7 +133,7 @@ fun StudentListItem(
                             is ListItemFeedback.Success -> Color.Green to it.message
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
-                        Column {    
+                        Column {
                             Spacer(modifier = Modifier.height(8.dp))
                             HorizontalDivider()
                             Spacer(modifier = Modifier.height(4.dp))

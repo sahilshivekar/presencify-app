@@ -22,9 +22,11 @@ fun NavController.navigateToAddEditClass(timetableId: String, classId: String? =
 
 /**
  * Navigate to Search Class screen
+ *
+ * @param intention The intention for searching classes (DEFAULT or CREATE_ATTENDANCE_SHEET)
  */
-fun NavController.navigateToSearchClass() {
-    navigate(ScheduleRoutes.SearchClass)
+fun NavController.navigateToSearchClass(intention: String = "DEFAULT") {
+    navigate(ScheduleRoutes.SearchClass(intention = intention))
 }
 
 /**

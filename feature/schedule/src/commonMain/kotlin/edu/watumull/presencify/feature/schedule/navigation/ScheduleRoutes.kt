@@ -3,6 +3,11 @@ package edu.watumull.presencify.feature.schedule.navigation
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
 import kotlinx.serialization.Serializable
 
+enum class SearchClassIntention {
+    CREATE_ATTENDANCE_SHEET,
+    DEFAULT
+}
+
 sealed interface ScheduleRoutes : NavRoute {
 
     @Serializable
@@ -12,7 +17,9 @@ sealed interface ScheduleRoutes : NavRoute {
     data class AddEditClass(val timetableId: String, val classId: String? = null) : ScheduleRoutes
 
     @Serializable
-    data object SearchClass : ScheduleRoutes
+    data class SearchClass(
+        val intention: String = SearchClassIntention.DEFAULT.name // search class
+    ) : ScheduleRoutes
 
     @Serializable
     data class ClassDetails(val classId: String) : ScheduleRoutes

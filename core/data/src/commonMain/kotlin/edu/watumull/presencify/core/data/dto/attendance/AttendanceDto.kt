@@ -10,9 +10,6 @@ data class AttendanceDto(
     val id: String,
     val classId: String,
     val date: LocalDate,
-    val totalStudents: Int,
-    val presentCount: Int,
-    val absentCount: Int,
     val createdAt: String,
     val updatedAt: String,
     @SerialName("Class")
