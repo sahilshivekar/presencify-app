@@ -6,5 +6,5 @@ data class AttendanceRecord(
     val attendanceDate: LocalDate,
     val totalStudents: Int,
     val presentStudents: Int,
-    val attendanceId: Int
+    val attendanceId: String
 )

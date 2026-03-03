@@ -5,6 +5,7 @@ import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceD
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceViewModel
 import edu.watumull.presencify.feature.attendance.mark_attendance.MarkAttendanceViewModel
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceViewModel
+import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -14,4 +15,5 @@ val attendanceModule = module {
     viewModel { MarkAttendanceViewModel(get(), get()) }
     viewModel { SearchAttendanceViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { AttendanceDetailsViewModel(get(), get()) }
+    viewModel { StudentAttendanceAnalyticsViewModel(get(), get(), get(), get()) }
 }

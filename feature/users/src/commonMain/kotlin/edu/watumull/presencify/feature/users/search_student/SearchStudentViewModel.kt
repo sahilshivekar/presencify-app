@@ -100,6 +100,10 @@ class SearchStudentViewModel(
                 }
             }
 
+            SearchStudentIntention.VIEW_ATTENDANCE -> {
+                // No validation needed
+            }
+
             SearchStudentIntention.DEFAULT -> {
                 // No validation needed
             }
@@ -418,6 +422,10 @@ class SearchStudentViewModel(
             SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> {
                 // For dropout intention, the action button is handled via ToggleStudentDropout
                 // This case should not be triggered
+            }
+
+            SearchStudentIntention.VIEW_ATTENDANCE -> {
+                sendEvent(SearchStudentEvent.NavigateToStudentAttendanceAnalytics(studentId))
             }
 
             SearchStudentIntention.DEFAULT -> {

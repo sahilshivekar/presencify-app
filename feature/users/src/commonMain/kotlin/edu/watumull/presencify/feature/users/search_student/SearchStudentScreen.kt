@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -72,6 +73,7 @@ fun SearchStudentScreen(
         SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_BATCH -> "Assign/Unassign Students to Batch"
         SearchStudentIntention.MODIFY_STUDENT_BATCH -> "Modify Student Batch"
         SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> "Mark/Unmark Student as Dropout"
+        SearchStudentIntention.VIEW_ATTENDANCE -> "Select Student"
     }
 
     PresencifyBottomSheetScaffold(
@@ -435,6 +437,18 @@ private fun SearchStudentScreenContent(
                                         }
                                     }
 
+                                    SearchStudentIntention.VIEW_ATTENDANCE -> {
+                                        {
+                                            Button(
+                                                onClick = {
+                                                    onAction(SearchStudentAction.StudentActionButtonClick(student.id))
+                                                }
+                                            ) {
+                                                Text("View Attendance")
+                                            }
+                                        }
+                                    }
+
                                     SearchStudentIntention.DEFAULT -> null
                                 }
                             } else null,
@@ -451,7 +465,7 @@ private fun SearchStudentScreenContent(
 
                             state.students.isEmpty() && !state.isLoadingStudents -> {
                                 PresencifyNoResultsIndicator(
-                                    text = "No rooms found"
+                                    text = "No students found"
                                 )
                             }
                         }

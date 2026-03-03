@@ -10,6 +10,7 @@ import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.feature.attendance.navigation.attendanceDashboard
 import edu.watumull.presencify.feature.schedule.navigation.scheduleDashboard
 import edu.watumull.presencify.feature.users.navigation.usersDashboard
+import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAggregateAttendanceAnalytics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToDivision
@@ -30,7 +31,6 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTeacher
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTimetable
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentAttendanceAnalytics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUniversityDetails
 import kotlinx.serialization.Serializable
 
@@ -62,19 +62,8 @@ fun HomeNavHost(
         attendanceDashboard(
             onNavigateBack = homeNavController::navigateUp,
             onNavigateToStudentAttendanceAnalytics = {
-                rootNavController.navigateToStudentAttendanceAnalytics(
-                    studentId = "", // Will be selected in the screen
-                    semesterId = null,
-                    divisionId = null,
-                    batchId = null,
-                    startDate = null,
-                    endDate = null,
-                    courseId = null,
-                    semesterNumber = null,
-                    academicStartYear = null,
-                    academicEndYear = null,
-                    branchId = null,
-                    schemeId = null
+                rootNavController.navigateToSearchStudent(
+                    intention = SearchStudentIntention.VIEW_ATTENDANCE.name
                 )
             },
             onNavigateToAggregateAttendanceAnalytics = {

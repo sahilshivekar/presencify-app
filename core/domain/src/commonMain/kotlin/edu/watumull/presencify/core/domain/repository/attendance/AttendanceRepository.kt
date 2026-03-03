@@ -6,6 +6,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
+import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudentAggregatedAndDetailed
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceSummary
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceWithTotalCount
 import kotlinx.datetime.LocalDate
@@ -40,7 +41,7 @@ interface AttendanceRepository {
         academicEndYear: Int?,
         branchId: String?,
         schemeId: String?,
-    ): Result<AggregatedAttendance, DataError.Remote>
+    ): Result<AttendanceStudentAggregatedAndDetailed, DataError.Remote>
 
     suspend fun getAttendanceOfSelfForSpecificCourseInSemester(
         courseId: String,

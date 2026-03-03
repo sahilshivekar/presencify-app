@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DetailedAttendanceRecordDto(
-    val attendanceId: Int,
+    val attendanceId: String,
     val date: LocalDate,
     val attendanceStatus: Boolean
 )

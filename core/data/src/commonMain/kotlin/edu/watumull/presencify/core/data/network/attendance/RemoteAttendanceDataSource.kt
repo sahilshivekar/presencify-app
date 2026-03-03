@@ -2,6 +2,7 @@ package edu.watumull.presencify.core.data.network.attendance
 
 import edu.watumull.presencify.core.data.dto.attendance.AggregatedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceDto
+import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentAggregatedAndDetailedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
@@ -40,7 +41,7 @@ interface RemoteAttendanceDataSource {
         academicEndYear: Int?,
         branchId: String?,
         schemeId: String?,
-    ): Result<AggregatedAttendanceDto, DataError.Remote>
+    ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote>
 
     suspend fun getAttendanceOfSelfForSpecificCourseInSemester(
         courseId: String,

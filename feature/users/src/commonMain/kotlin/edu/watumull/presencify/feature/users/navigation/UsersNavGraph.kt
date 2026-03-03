@@ -44,6 +44,7 @@ fun NavGraphBuilder.usersNavGraph(
     onNavigateBack: () -> Unit,
     onNavigateToStudentDetails: (String) -> Unit,
     onNavigateToAddEditStudent: (studentId: String?) -> Unit,
+    onNavigateToStudentAttendanceAnalytics: (studentId: String) -> Unit,
     onNavigateToSearchStudentForAssignUnassignSemester: (semesterId: String, branchId: String) -> Unit,
     onNavigateToSearchStudentForAssignUnassignDivision: (
         divisionId: String,
@@ -93,7 +94,8 @@ fun NavGraphBuilder.usersNavGraph(
         SearchStudentRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToStudentDetails = onNavigateToStudentDetails,
-            onNavigateToAddEditStudent = onNavigateToAddEditStudent
+            onNavigateToAddEditStudent = onNavigateToAddEditStudent,
+            onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics
         )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToSemester> {

@@ -48,6 +48,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSemesterDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentAttendanceAnalytics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
@@ -115,6 +116,11 @@ fun AppNavHost(
             onNavigateBack = { rootNavController.navigateUp() },
             onNavigateToStudentDetails = rootNavController::navigateToStudentDetails,
             onNavigateToAddEditStudent = rootNavController::navigateToAddEditStudent,
+            onNavigateToStudentAttendanceAnalytics = { studentId ->
+                rootNavController.navigateToStudentAttendanceAnalytics(
+                    studentId = studentId
+                )
+            },
             onNavigateToSearchStudentForAssignUnassignSemester = { semesterId, branchId ->
                 rootNavController.navigateToSearchStudent(
                     intention = SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_SEMESTER.name,

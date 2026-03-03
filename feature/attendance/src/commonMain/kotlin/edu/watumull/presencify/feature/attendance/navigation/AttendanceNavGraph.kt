@@ -7,6 +7,7 @@ import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceD
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceRoot
 import edu.watumull.presencify.feature.attendance.mark_attendance.MarkAttendanceRoot
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceRoot
+import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsRoot
 
 fun NavGraphBuilder.attendanceDashboard(
     onNavigateBack: () -> Unit,
@@ -48,8 +49,9 @@ fun NavGraphBuilder.attendanceNavGraph(
 
     // 4. Individual Student Analytics
     composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
-        // Access args via: it.toRoute<AttendanceRoutes.StudentAttendanceAnalytics>()
-        // TODO: Add StudentAttendanceAnalyticsScreen()
+        StudentAttendanceAnalyticsRoot(
+            onNavigateBack = onNavigateBack
+        )
     }
 
     // 5. Aggregate (Batch/Group) Analytics

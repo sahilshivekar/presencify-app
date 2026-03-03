@@ -2,6 +2,7 @@ package edu.watumull.presencify.core.data.network.attendance
 
 import edu.watumull.presencify.core.data.dto.attendance.AggregatedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceDto
+import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentAggregatedAndDetailedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
@@ -76,8 +77,8 @@ class KtorRemoteAttendanceDataSource(
         studentId: String, courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
         startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
         branchId: String?, schemeId: String?
-    ): Result<AggregatedAttendanceDto, DataError.Remote> {
-        return safeCall<AggregatedAttendanceDto> {
+    ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote> {
+        return safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
             httpClient.get(GET_ATTENDANCE_OF_STUDENT) {
                 parameter("studentId", studentId)
                 parameter("courseId", courseId)
@@ -100,7 +101,7 @@ class KtorRemoteAttendanceDataSource(
         startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
         branchId: String?, schemeId: String?
     ): Result<AggregatedAttendanceDto, DataError.Remote> {
-        return safeCall<AggregatedAttendanceDto> {
+        val result = safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
             httpClient.get(GET_ATTENDANCE_OF_STUDENT) {
                 parameter("courseId", courseId)
                 semesterId?.let { parameter("semesterId", it) }
@@ -114,6 +115,19 @@ class KtorRemoteAttendanceDataSource(
                 branchId?.let { parameter("branchId", it) }
                 schemeId?.let { parameter("schemeId", it) }
             }
+        }
+
+        return when (result) {
+            is Result.Success -> {
+                val aggregated = result.data.aggregatedAttendance.firstOrNull()
+                if (aggregated != null) {
+                    Result.Success(aggregated)
+                } else {
+                    // No attendance data for this course
+                    Result.Error(DataError.Remote.Unknown)
+                }
+            }
+            is Result.Error -> result
         }
     }
 

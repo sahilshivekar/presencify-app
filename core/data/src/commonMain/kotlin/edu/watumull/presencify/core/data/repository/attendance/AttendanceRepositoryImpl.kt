@@ -9,6 +9,7 @@ import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
+import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudentAggregatedAndDetailed
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceSummary
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceWithTotalCount
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
@@ -39,7 +40,7 @@ class AttendanceRepositoryImpl(
         studentId: String, courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
         startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
         branchId: String?, schemeId: String?
-    ): Result<AggregatedAttendance, DataError.Remote> {
+    ): Result<AttendanceStudentAggregatedAndDetailed, DataError.Remote> {
         return remoteDataSource.getAttendanceOfAnyStudentForSpecificCourseInSemester(
             studentId, courseId, semesterId, divisionId, batchId, startDate, endDate, semesterNumber, academicStartYear, academicEndYear, branchId, schemeId
         ).map { it.toDomain() }

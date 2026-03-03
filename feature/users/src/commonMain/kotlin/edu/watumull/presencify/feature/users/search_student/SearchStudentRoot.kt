@@ -11,6 +11,7 @@ fun SearchStudentRoot(
     onNavigateBack: () -> Unit,
     onNavigateToStudentDetails: (String) -> Unit = {},
     onNavigateToAddEditStudent: (String?) -> Unit = {},
+    onNavigateToStudentAttendanceAnalytics: (String) -> Unit = {},
 ) {
     val viewModel: SearchStudentViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -28,6 +29,9 @@ fun SearchStudentRoot(
             }
             is SearchStudentEvent.NavigateToAddEditStudent -> {
                 onNavigateToAddEditStudent(null)
+            }
+            is SearchStudentEvent.NavigateToStudentAttendanceAnalytics -> {
+                onNavigateToStudentAttendanceAnalytics(event.studentId)
             }
         }
     }
