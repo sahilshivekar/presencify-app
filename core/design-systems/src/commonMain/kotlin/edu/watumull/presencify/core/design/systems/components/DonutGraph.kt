@@ -3,7 +3,6 @@ package edu.watumull.presencify.core.design.systems.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -161,36 +160,33 @@ fun DonutGraph(
                 )
             }
 
-            // Center content
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                // Main center text
-                Text(
-                    text = centerText ?: if (value != null && total != null) {
-                        "$value/$total"
-                    } else {
-                        "${calculatedPercentage.roundToInt()}%"
-                    },
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+            // Center content - only show percentage
+            Text(
+                text = centerText ?: "${calculatedPercentage.roundToInt()}%",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
 
-                // Subtext (percentage by default if not custom)
-                if (showPercentage || centerSubtext != null) {
-                    Text(
-                        text = centerSubtext ?: if (centerText == null && value != null && total != null) {
-                            "${calculatedPercentage.roundToInt()}%"
-                        } else {
-                            ""
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+        // Value/Total below the circle (if both value and total are provided)
+        if (value != null && total != null) {
+            Text(
+                text = "$value/$total",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        // Center subtext (if provided)
+        if (centerSubtext != null) {
+            Text(
+                text = centerSubtext,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
         }
 
         // Label below the indicator

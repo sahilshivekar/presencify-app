@@ -2,6 +2,7 @@ package edu.watumull.presencify.feature.attendance.navigation
 
 import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsRoot
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardRoot
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsRoot
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceRoot
@@ -56,7 +57,9 @@ fun NavGraphBuilder.attendanceNavGraph(
 
     // 5. Aggregate (Batch/Group) Analytics
     composableWithSlideTransitions<AttendanceRoutes.AggregateAttendanceAnalytics> {
-        // TODO: Add AggregateAttendanceAnalyticsScreen()
+        AggregateAttendanceAnalyticsRoot(
+            onNavigateBack = onNavigateBack
+        )
     }
 
     // 6. Search

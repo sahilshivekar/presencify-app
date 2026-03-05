@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -30,11 +31,14 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -625,6 +629,8 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
     }
 }
 
+private const val OVERALL_CHIP_ID = "__overall__"
+
 @Composable
 private fun AttendanceCoursesGrid(
     attendanceData: List<AggregatedAttendance>,
@@ -633,8 +639,9 @@ private fun AttendanceCoursesGrid(
     modifier: Modifier = Modifier
 ) {
     // State to track which courses are selected for display in the chart
-    val selectedCourseIds = androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf(attendanceData.map { it.courseId }.toSet())
+    // Default: only "Overall" selected
+    val selectedCourseIds = remember {
+        mutableStateOf(setOf(OVERALL_CHIP_ID))
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
@@ -657,12 +664,43 @@ private fun AttendanceCoursesGrid(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Course filter chips
+                // Course filter chips (Overall first, then individual courses)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    // Overall chip
+                    val isOverallSelected = selectedCourseIds.value.contains(OVERALL_CHIP_ID)
+                    val overallColor = getOverallChartColor()
+
+                    FilterChip(
+                        selected = isOverallSelected,
+                        onClick = {
+                            selectedCourseIds.value = if (isOverallSelected) {
+                                selectedCourseIds.value - OVERALL_CHIP_ID
+                            } else {
+                                selectedCourseIds.value + OVERALL_CHIP_ID
+                            }
+                        },
+                        label = { Text("Overall") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        leadingIcon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .background(
+                                        color = overallColor,
+                                        shape = androidx.compose.foundation.shape.CircleShape
+                                    )
+                            )
+                        }
+                    )
+
+                    // Individual course chips
                     attendanceData.forEachIndexed { index, course ->
                         val isSelected = selectedCourseIds.value.contains(course.courseId)
                         val courseColor = getChartColorForIndex(index)
@@ -677,6 +715,10 @@ private fun AttendanceCoursesGrid(
                                 }
                             },
                             label = { Text(course.courseName) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                            ),
                             leadingIcon = {
                                 Box(
                                     modifier = Modifier
@@ -695,18 +737,21 @@ private fun AttendanceCoursesGrid(
                 val filteredAttendanceData = attendanceData.filter {
                     selectedCourseIds.value.contains(it.courseId)
                 }
+                val showOverall = selectedCourseIds.value.contains(OVERALL_CHIP_ID)
 
-                if (filteredAttendanceData.isNotEmpty()) {
+                if (filteredAttendanceData.isNotEmpty() || showOverall) {
                     WeeklyAttendanceTrendChart(
                         attendanceData = filteredAttendanceData,
                         detailedAttendance = detailedAttendance,
                         semester = semester,
-                        originalAttendanceData = attendanceData, // Pass full list for color mapping
+                        originalAttendanceData = attendanceData,
+                        showOverall = showOverall,
+                        allAttendanceData = attendanceData,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
                     Text(
-                        text = "Select at least one course to view trends",
+                        text = "Select at least one course to view attendance graph",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)
@@ -772,58 +817,127 @@ private fun WeeklyAttendanceTrendChart(
     detailedAttendance: Map<String, List<edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord>>,
     semester: edu.watumull.presencify.core.domain.model.academics.Semester,
     originalAttendanceData: List<AggregatedAttendance>,
+    showOverall: Boolean = false,
+    allAttendanceData: List<AggregatedAttendance> = emptyList(),
     modifier: Modifier = Modifier
 ) {
-    if (attendanceData.isEmpty() || detailedAttendance.isEmpty()) return
+    if (attendanceData.isEmpty() && !showOverall) return
+    if (detailedAttendance.isEmpty()) return
 
     val scrollState = rememberScrollState()
 
-    // Calculate number of weeks from semester start and end date
-    val semesterStartDate = semester.startDate
-    val semesterEndDate = semester.endDate
-    val totalDays = semesterEndDate.toEpochDays() - semesterStartDate.toEpochDays()
-    val numberOfWeeks = maxOf(1, ((totalDays + 6) / 7).toInt())
+    // Calculate calendar weeks (Monday-to-Sunday) spanning the semester
+    val weekSundays = getWeekSundays(semester.startDate, semester.endDate)
+    val numberOfWeeks = weekSundays.size
+    if (numberOfWeeks == 0) return
 
-    // Build weekly percentage data for each course from real detailed records
-    val weeklyPercentages = attendanceData.map { course ->
+    // The Monday of the first week
+    val firstMonday = getMondayOfWeek(semester.startDate)
+
+    // Build weekly percentage data for each selected course
+    val courseWeeklyPercentages = attendanceData.map { course ->
         val records = detailedAttendance[course.courseId] ?: emptyList()
-        calculateWeeklyPercentages(records, semesterStartDate, numberOfWeeks)
+        calculateWeeklyPercentages(records, firstMonday, numberOfWeeks)
     }
 
-    // Create a stable key from courseIds to force recomposition when selection changes
-    val courseKey = attendanceData.joinToString(",") { it.courseId }
+    // Build overall average line: average of ALL courses' weekly percentages (not just selected)
+    val overallWeeklyPercentages = if (showOverall) {
+        val allCoursePercentages = allAttendanceData.map { course ->
+            val records = detailedAttendance[course.courseId] ?: emptyList()
+            calculateWeeklyPercentages(records, firstMonday, numberOfWeeks)
+        }
+        if (allCoursePercentages.isNotEmpty()) {
+            (0 until numberOfWeeks).map { weekIdx ->
+                val values = allCoursePercentages.map { it[weekIdx] }
+                val nonZeroValues = values.filter { it > 0f }
+                if (nonZeroValues.isNotEmpty()) nonZeroValues.average().toFloat() else 0f
+            }
+        } else {
+            null
+        }
+    } else {
+        null
+    }
 
-    // Use key() to force a full tear-down and re-creation of the chart when data changes.
-    // This ensures the model producer, chart, and axis formatters are all created fresh together.
+    // Combine: overall line first (if present), then individual course lines
+    val allWeeklyPercentages = buildList {
+        overallWeeklyPercentages?.let { add(it) }
+        addAll(courseWeeklyPercentages)
+    }
+
+    if (allWeeklyPercentages.isEmpty()) return
+
+    // Build x-axis labels: "12 Jan" (Sunday date of each week)
+    @Suppress("DEPRECATION")
+    val weekLabels = weekSundays.map { sunday ->
+        val monthName = sunday.month.name.take(3).lowercase()
+            .replaceFirstChar { it.uppercase() }
+        "${sunday.dayOfMonth} $monthName"
+    }
+
+    // Create a stable key from courseIds + overall flag
+    val courseKey = (if (showOverall) "overall," else "") +
+        attendanceData.joinToString(",") { it.courseId }
+
     androidx.compose.runtime.key(courseKey) {
         val modelProducer = androidx.compose.runtime.remember { CartesianChartModelProducer() }
 
-        // Populate data inside LaunchedEffect (runTransaction is suspend)
         androidx.compose.runtime.LaunchedEffect(Unit) {
             val xValues = (0 until numberOfWeeks).map { it.toDouble() }
             modelProducer.runTransaction {
                 lineSeries {
-                    weeklyPercentages.forEach { yData ->
+                    // Add invisible series with 0% and 100% to force Y-axis range
+                    series(listOf(0.0, 0.0), listOf(0.0, 100.0))
+
+                    allWeeklyPercentages.forEach { yData ->
                         series(xValues, yData.map { it.toDouble() })
                     }
                 }
             }
         }
 
-        // Pre-build line specs using original indices for color mapping
-        val lineSpecs = attendanceData.map { course ->
-            val originalIndex = originalAttendanceData.indexOfFirst { it.courseId == course.courseId }
-            LineCartesianLayer.Line(
-                fill = LineCartesianLayer.LineFill.single(
-                    com.patrykandpatrick.vico.multiplatform.common.fill(
-                        getChartColorForIndex(originalIndex)
-                    )
+        // Build line specs: overall line first (if present), then course lines
+        val overallColor = getOverallChartColor()
+        val lineSpecs = buildList {
+            // Invisible line for Y-axis range anchor (0-100%)
+            add(
+                LineCartesianLayer.Line(
+                    fill = LineCartesianLayer.LineFill.single(
+                        com.patrykandpatrick.vico.multiplatform.common.fill(
+                            androidx.compose.ui.graphics.Color.Transparent
+                        )
+                    ),
+                    pointConnector = LineCartesianLayer.PointConnector.cubic()
                 )
             )
+
+            if (showOverall && overallWeeklyPercentages != null) {
+                add(
+                    LineCartesianLayer.Line(
+                        fill = LineCartesianLayer.LineFill.single(
+                            com.patrykandpatrick.vico.multiplatform.common.fill(overallColor)
+                        ),
+                        pointConnector = LineCartesianLayer.PointConnector.cubic()
+                    )
+                )
+            }
+            attendanceData.forEach { course ->
+                val originalIndex = originalAttendanceData.indexOfFirst { it.courseId == course.courseId }
+                add(
+                    LineCartesianLayer.Line(
+                        fill = LineCartesianLayer.LineFill.single(
+                            com.patrykandpatrick.vico.multiplatform.common.fill(
+                                getChartColorForIndex(originalIndex)
+                            )
+                        ),
+                        pointConnector = LineCartesianLayer.PointConnector.cubic()
+                    )
+                )
+            }
         }
 
         Column(modifier = modifier.fillMaxWidth()) {
-            val chartWidth = maxOf(500.dp, (numberOfWeeks * 48).dp)
+            val chartWidth = maxOf(500.dp, (numberOfWeeks * 72).dp)
 
             Box(
                 modifier = Modifier
@@ -833,7 +947,7 @@ private fun WeeklyAttendanceTrendChart(
                 Box(
                     modifier = Modifier
                         .width(chartWidth)
-                        .height(220.dp)
+                        .height(240.dp)
                         .pointerInput(Unit) {
                             detectTransformGestures { _, _, _, _ -> }
                         }
@@ -843,16 +957,17 @@ private fun WeeklyAttendanceTrendChart(
                             LineCartesianLayer(
                                 lineProvider = LineCartesianLayer.LineProvider.series(lineSpecs)
                             ),
-                        startAxis = VerticalAxis.rememberStart(
-                            valueFormatter = { _, value, _ ->
-                                "${value.toInt()}%"
-                            }
-                        ),
-                        bottomAxis = HorizontalAxis.rememberBottom(
-                            valueFormatter = { _, value, _ ->
-                                "W${value.toInt() + 1}"
-                            }
-                        )
+                            startAxis = VerticalAxis.rememberStart(
+                                valueFormatter = { _, value, _ ->
+                                    "${value.toInt()}%"
+                                }
+                            ),
+                            bottomAxis = HorizontalAxis.rememberBottom(
+                                valueFormatter = { _, value, _ ->
+                                    val idx = value.toInt().coerceIn(0, weekLabels.size - 1)
+                                    weekLabels[idx]
+                                }
+                            )
                         ),
                         modelProducer = modelProducer,
                         modifier = Modifier.fillMaxSize()
@@ -864,23 +979,55 @@ private fun WeeklyAttendanceTrendChart(
 }
 
 /**
+ * Get the Monday of the calendar week (ISO: Monday=first day) containing [date].
+ * kotlinx.datetime DayOfWeek: MONDAY=1 ... SUNDAY=7
+ */
+private fun getMondayOfWeek(date: kotlinx.datetime.LocalDate): kotlinx.datetime.LocalDate {
+    val dayOfWeek = date.dayOfWeek // MONDAY..SUNDAY
+    val daysFromMonday = dayOfWeek.ordinal // MONDAY=0, TUESDAY=1, ..., SUNDAY=6
+    return kotlinx.datetime.LocalDate.fromEpochDays(date.toEpochDays() - daysFromMonday)
+}
+
+/**
+ * Get the Sunday ending each calendar week (Mon-Sun) that spans from
+ * [semesterStart] to [semesterEnd]. Returns a list of Sunday dates.
+ */
+private fun getWeekSundays(
+    semesterStart: kotlinx.datetime.LocalDate,
+    semesterEnd: kotlinx.datetime.LocalDate
+): List<kotlinx.datetime.LocalDate> {
+    val firstMonday = getMondayOfWeek(semesterStart)
+    // First Sunday = firstMonday + 6 days
+    var sunday = kotlinx.datetime.LocalDate.fromEpochDays(firstMonday.toEpochDays() + 6)
+    val sundays = mutableListOf<kotlinx.datetime.LocalDate>()
+    while (sunday.toEpochDays() <= semesterEnd.toEpochDays() + 6) {
+        sundays.add(sunday)
+        sunday = kotlinx.datetime.LocalDate.fromEpochDays(sunday.toEpochDays() + 7)
+        // Stop if we've gone past the semester end's week
+        if (sundays.last().toEpochDays() > semesterEnd.toEpochDays() + 6) break
+    }
+    return sundays
+}
+
+/**
  * Calculate weekly attendance percentages from detailed records.
- * Groups records by week number (based on semester start date),
- * then for each week: (attended / total classes that week) * 100
+ * Weeks are Mon-Sun calendar weeks starting from [firstMonday].
+ * For each week: (attended / total classes that week) * 100.
+ * Weeks with no classes yield 0%.
  */
 private fun calculateWeeklyPercentages(
     records: List<edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord>,
-    semesterStartDate: kotlinx.datetime.LocalDate,
+    firstMonday: kotlinx.datetime.LocalDate,
     numberOfWeeks: Int
 ): List<Float> {
     if (records.isEmpty()) return List(numberOfWeeks) { 0f }
 
-    val startEpochDay = semesterStartDate.toEpochDays()
+    val firstMondayEpoch = firstMonday.toEpochDays()
 
-    // Group records by week index
+    // Group records by week index (each week is 7 days starting from firstMonday)
     val recordsByWeek = records.groupBy { record ->
-        val daysSinceStart = record.date.toEpochDays() - startEpochDay
-        (daysSinceStart / 7).toInt().coerceIn(0, numberOfWeeks - 1)
+        val daysSinceFirstMonday = record.date.toEpochDays() - firstMondayEpoch
+        (daysSinceFirstMonday / 7).toInt().coerceIn(0, numberOfWeeks - 1)
     }
 
     return (0 until numberOfWeeks).map { weekIndex ->
@@ -899,16 +1046,13 @@ private fun calculateWeeklyPercentages(
 @Composable
 private fun getChartColorForIndex(index: Int): androidx.compose.ui.graphics.Color {
     val colors = listOf(
-        MaterialTheme.colorScheme.primary,
         MaterialTheme.colorScheme.secondary,
         MaterialTheme.colorScheme.tertiary,
         MaterialTheme.colorScheme.error,
-        androidx.compose.ui.graphics.Color(0xFF00BCD4), // Cyan
         androidx.compose.ui.graphics.Color(0xFFFF9800), // Orange
         androidx.compose.ui.graphics.Color(0xFF9C27B0), // Purple
         androidx.compose.ui.graphics.Color(0xFF4CAF50), // Green
         androidx.compose.ui.graphics.Color(0xFFE91E63), // Pink
-        androidx.compose.ui.graphics.Color(0xFF009688), // Teal
         androidx.compose.ui.graphics.Color(0xFFFF5722), // Deep Orange
         androidx.compose.ui.graphics.Color(0xFF3F51B5), // Indigo
         androidx.compose.ui.graphics.Color(0xFF8BC34A), // Light Green
@@ -917,3 +1061,10 @@ private fun getChartColorForIndex(index: Int): androidx.compose.ui.graphics.Colo
     )
     return colors[index % colors.size]
 }
+
+// Color for the "Overall" average line — distinct from all course colors
+@Composable
+private fun getOverallChartColor(): androidx.compose.ui.graphics.Color {
+    return MaterialTheme.colorScheme.onSurface
+}
+

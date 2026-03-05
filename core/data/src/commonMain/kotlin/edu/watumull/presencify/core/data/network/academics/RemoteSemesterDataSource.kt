@@ -17,7 +17,9 @@ interface RemoteSemesterDataSource {
         schemeId: String? = null,
         page: Int? = null,
         limit: Int? = null,
-        getAll: Boolean? = null
+        getAll: Boolean? = null,
+        isEven: Boolean? = true,
+        isOdd: Boolean? = true
     ): Result<SemesterListWithTotalCountDto, DataError.Remote>
 
     suspend fun addSemester(

@@ -34,7 +34,9 @@ class KtorRemoteSemesterDataSource(
         schemeId: String?,
         page: Int?,
         limit: Int?,
-        getAll: Boolean?
+        getAll: Boolean?,
+        isEven: Boolean?,
+        isOdd: Boolean?
     ): Result<SemesterListWithTotalCountDto, DataError.Remote> {
         return safeCall<SemesterListWithTotalCountDto> {
             httpClient.get(GET_SEMESTERS) {
@@ -46,6 +48,8 @@ class KtorRemoteSemesterDataSource(
                 page?.let { parameter("page", it) }
                 limit?.let { parameter("limit", it) }
                 getAll?.let { parameter("getAll", it) }
+                isEven?.let { parameter("isEven", it) }
+                isOdd?.let { parameter("isOdd", it) }
             }
         }
     }

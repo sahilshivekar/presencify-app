@@ -24,10 +24,12 @@ class SemesterRepositoryImpl(
         schemeId: String?,
         page: Int?,
         limit: Int?,
-        getAll: Boolean?
+        getAll: Boolean?,
+        isEven: Boolean?,
+        isOdd: Boolean?
     ): Result<SemesterListWithTotalCount, DataError.Remote> {
         return remoteSemesterDataSource.getSemesters(
-            semesterNumber, academicStartYear, academicEndYear, branchId, schemeId, page, limit, getAll
+            semesterNumber, academicStartYear, academicEndYear, branchId, schemeId, page, limit, getAll, isEven, isOdd
         ).map { dto ->
             SemesterListWithTotalCount(
                 totalCount = dto.totalCount,
@@ -78,5 +80,19 @@ class SemesterRepositoryImpl(
 
     override suspend fun bulkDeleteSemesters(semesterIds: List<String>): Result<Unit, DataError.Remote> {
         return remoteSemesterDataSource.bulkDeleteSemesters(semesterIds)
+    }
+
+    override suspend fun getOngoingSemesters(): Result<SemesterListWithTotalCount, DataError.Remote> {
+        val academicStartYear = SemesterNumber.getCurrentAcademicStartYear()
+        val academicEndYear = SemesterNumber.getCurrentAcademicEndYear()
+        val isEvenSemesterActive = SemesterNumber.isEvenSemesterPeriod()
+
+        return getSemesters(
+            academicStartYear = academicStartYear,
+            academicEndYear = academicEndYear,
+            getAll = true,
+            isEven = isEvenSemesterActive,
+            isOdd = !isEvenSemesterActive
+        )
     }
 }

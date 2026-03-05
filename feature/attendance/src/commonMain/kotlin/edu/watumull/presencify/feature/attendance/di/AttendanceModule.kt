@@ -1,5 +1,6 @@
 package edu.watumull.presencify.feature.attendance.di
 
+import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsViewModel
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardViewModel
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsViewModel
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceViewModel
@@ -16,4 +17,5 @@ val attendanceModule = module {
     viewModel { SearchAttendanceViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { AttendanceDetailsViewModel(get(), get()) }
     viewModel { StudentAttendanceAnalyticsViewModel(get(), get(), get(), get()) }
+    viewModel { AggregateAttendanceAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
 }

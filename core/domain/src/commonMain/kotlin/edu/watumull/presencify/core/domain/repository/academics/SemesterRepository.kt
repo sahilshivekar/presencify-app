@@ -17,7 +17,9 @@ interface SemesterRepository {
         schemeId: String? = null,
         page: Int? = null,
         limit: Int? = null,
-        getAll: Boolean? = null
+        getAll: Boolean? = null,
+        isEven: Boolean? = true,
+        isOdd: Boolean? = true
     ): Result<SemesterListWithTotalCount, DataError.Remote>
 
     suspend fun addSemester(
@@ -47,4 +49,6 @@ interface SemesterRepository {
     suspend fun bulkCreateSemesters(semesters: List<Map<String, Any>>): Result<List<Semester>, DataError.Remote>
 
     suspend fun bulkDeleteSemesters(semesterIds: List<String>): Result<Unit, DataError.Remote>
+
+    suspend fun getOngoingSemesters(): Result<SemesterListWithTotalCount, DataError.Remote>
 }
