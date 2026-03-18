@@ -188,6 +188,14 @@ class StudentAttendanceAnalyticsViewModel(
                     }
                 }
             }
+            is StudentAttendanceAnalyticsAction.DonutCourseClick -> {
+                sendEvent(
+                    StudentAttendanceAnalyticsEvent.NavigateToSearchAttendanceForCourse(
+                        courseId = action.courseId,
+                        studentId = studentId,
+                    )
+                )
+            }
         }
     }
 }

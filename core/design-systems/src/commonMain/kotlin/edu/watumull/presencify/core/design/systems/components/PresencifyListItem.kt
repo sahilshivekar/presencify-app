@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
@@ -32,7 +33,8 @@ fun PresencifyListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    onClick: (() -> Unit)? = null
+    containerColor: Color? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     ListItem(
         headlineContent = headlineContent,
@@ -50,7 +52,7 @@ fun PresencifyListItem(
         leadingContent = leadingContent,
         trailingContent = trailingContent,
         colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = containerColor ?: MaterialTheme.colorScheme.surface
         ),
         tonalElevation = 2.dp
     )

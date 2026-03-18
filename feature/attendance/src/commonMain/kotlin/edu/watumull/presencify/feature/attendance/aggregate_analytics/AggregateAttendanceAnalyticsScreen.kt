@@ -43,6 +43,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
+import edu.watumull.presencify.core.design.systems.components.DonutGraph
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
@@ -101,7 +102,8 @@ fun AggregateAttendanceAnalyticsScreen(
                         AttendanceChartsSection(
                             attendanceData = state.attendanceData,
                             detailedRecords = state.detailedAttendanceRecords,
-                            semester = state.semester
+                            semester = state.semester,
+                            onAction = onAction
                         )
                     }
 
@@ -158,7 +160,13 @@ private fun FilterSection(
             label = "Semester Number *",
             itemToString = { it.toDisplayLabel() },
             expanded = state.isSemesterNumberDropdownOpen,
-            onDropDownVisibilityChanged = { onAction(AggregateAttendanceAnalyticsAction.ChangeSemesterNumberDropDownVisibility(it)) },
+            onDropDownVisibilityChanged = {
+                onAction(
+                    AggregateAttendanceAnalyticsAction.ChangeSemesterNumberDropDownVisibility(
+                        it
+                    )
+                )
+            },
             enabled = !state.isLoadingAttendance,
             modifier = Modifier.fillMaxWidth()
         )
@@ -192,7 +200,13 @@ private fun FilterSection(
             label = "Branch *",
             itemToString = { it.name },
             expanded = state.isBranchDropdownOpen,
-            onDropDownVisibilityChanged = { onAction(AggregateAttendanceAnalyticsAction.ChangeBranchDropDownVisibility(it)) },
+            onDropDownVisibilityChanged = {
+                onAction(
+                    AggregateAttendanceAnalyticsAction.ChangeBranchDropDownVisibility(
+                        it
+                    )
+                )
+            },
             enabled = !state.areBranchesLoading && !state.isLoadingAttendance,
             modifier = Modifier.fillMaxWidth()
         )
@@ -221,7 +235,13 @@ private fun FilterSection(
                     label = "Division (Optional)",
                     itemToString = { it.divisionCode },
                     expanded = state.isDivisionDropdownOpen,
-                    onDropDownVisibilityChanged = { onAction(AggregateAttendanceAnalyticsAction.ChangeDivisionDropDownVisibility(it)) },
+                    onDropDownVisibilityChanged = {
+                        onAction(
+                            AggregateAttendanceAnalyticsAction.ChangeDivisionDropDownVisibility(
+                                it
+                            )
+                        )
+                    },
                     enabled = !state.areDivisionsLoading && !state.isLoadingAttendance,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -234,7 +254,13 @@ private fun FilterSection(
                     label = "Batch (Optional)",
                     itemToString = { it.batchCode },
                     expanded = state.isBatchDropdownOpen,
-                    onDropDownVisibilityChanged = { onAction(AggregateAttendanceAnalyticsAction.ChangeBatchDropDownVisibility(it)) },
+                    onDropDownVisibilityChanged = {
+                        onAction(
+                            AggregateAttendanceAnalyticsAction.ChangeBatchDropDownVisibility(
+                                it
+                            )
+                        )
+                    },
                     enabled = !state.areBatchesLoading && !state.isLoadingAttendance,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -247,6 +273,7 @@ private fun FilterSection(
 private fun AttendanceChartsSection(
     attendanceData: List<AggregatedAttendance>,
     detailedRecords: Map<String, List<AttendanceRecord>>,
+    onAction: (AggregateAttendanceAnalyticsAction) -> Unit,
     semester: Semester,
 ) {
     val selectedCourseIds = remember {
@@ -392,14 +419,20 @@ private fun AttendanceChartsSection(
                                 (attendance.attendedLectures.toFloat() / attendance.totalLectures.toFloat()) * 100f
                             } else 0f
 
-                            edu.watumull.presencify.core.design.systems.components.DonutGraph(
+                            DonutGraph(
                                 modifier = Modifier.weight(1f),
                                 percentage = percentage,
                                 label = attendance.courseName,
                                 size = 100.dp,
                                 strokeWidth = 8.dp,
                                 animate = true,
-                                showPercentage = true
+                                onClick = {
+                                    onAction(
+                                        AggregateAttendanceAnalyticsAction.DonutCourseClick(
+                                            courseId = attendance.courseId
+                                        )
+                                    )
+                                }
                             )
                         }
 
@@ -481,7 +514,7 @@ private fun AggregateWeeklyAttendanceTrendChart(
     }
 
     val courseKey = (if (showOverall) "overall," else "") +
-        attendanceData.joinToString(",") { it.courseId }
+            attendanceData.joinToString(",") { it.courseId }
 
     androidx.compose.runtime.key(courseKey) {
         val modelProducer = androidx.compose.runtime.remember { CartesianChartModelProducer() }

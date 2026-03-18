@@ -9,6 +9,8 @@ sealed interface AggregateAttendanceAnalyticsAction {
     data object BackButtonClick : AggregateAttendanceAnalyticsAction
     data object DismissDialog : AggregateAttendanceAnalyticsAction
 
+    data class DonutCourseClick(val courseId: String) : AggregateAttendanceAnalyticsAction
+
     // Filter actions
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber) : AggregateAttendanceAnalyticsAction
     data class UpdateAcademicStartYear(val year: String) : AggregateAttendanceAnalyticsAction

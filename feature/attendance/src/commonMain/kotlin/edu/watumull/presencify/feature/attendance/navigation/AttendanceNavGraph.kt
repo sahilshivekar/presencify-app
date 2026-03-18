@@ -31,7 +31,9 @@ fun NavGraphBuilder.attendanceDashboard(
 fun NavGraphBuilder.attendanceNavGraph(
     onNavigateBack: () -> Unit,
     onNavigateToMarkAttendance: (String) -> Unit,
-    onNavigateToAttendanceDetails: (String) -> Unit
+    onNavigateToAttendanceDetails: (String) -> Unit,
+    onNavigateToSearchAttendanceForCourse: (String) -> Unit,
+    onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
 ) {
     // 2. Create/Update Sheet
     composableWithSlideTransitions<AttendanceRoutes.CreateAttendanceSheet> {
@@ -51,14 +53,16 @@ fun NavGraphBuilder.attendanceNavGraph(
     // 4. Individual Student Analytics
     composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
         StudentAttendanceAnalyticsRoot(
-            onNavigateBack = onNavigateBack
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
         )
     }
 
     // 5. Aggregate (Batch/Group) Analytics
     composableWithSlideTransitions<AttendanceRoutes.AggregateAttendanceAnalytics> {
         AggregateAttendanceAnalyticsRoot(
-            onNavigateBack = onNavigateBack
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourse,
         )
     }
 
@@ -78,4 +82,3 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 }
-

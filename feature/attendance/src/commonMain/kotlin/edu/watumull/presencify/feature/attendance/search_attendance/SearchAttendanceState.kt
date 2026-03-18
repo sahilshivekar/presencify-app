@@ -66,7 +66,8 @@ data class SearchAttendanceState(
     val isLoadingMore: Boolean = false,
 
     // Parameters passed via navigation (if any)
-    val courseId: String? = null,
+    val routeCourseId: String? = null,
+    val isRouteCourseLoading: Boolean = false,
     val studentId: String? = null,
     val semesterId: String? = null,
     val divisionId: String? = null,

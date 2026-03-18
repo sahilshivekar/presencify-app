@@ -1,8 +1,10 @@
 package edu.watumull.presencify.core.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import edu.watumull.presencify.core.design.systems.components.DonutGraph
 import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
 
 /**
@@ -44,41 +47,38 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
 @Composable
 fun AttendanceListItem(
     attendanceDate: String,
-    courseName: String,
+    courseName: String?,
     teacherName: String,
     startTime: String,
     endTime: String,
     dayOfWeek: String? = null,
     feedback: ListItemFeedback? = null,
     onClick: (() -> Unit)? = null,
+    isPresent: Boolean? = null,
+    presentCount: Int? = null,
+    totalCount: Int? = null,
     modifier: Modifier = Modifier
 ) {
     PresencifyListItem(
         headlineContent = {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                    ) {
-                        Text(
-                            text = attendanceDate,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
+                courseName?.let {
                     Text(
-                        text = courseName,
+                        text = it,
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurface
                     )
-
-
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Badge(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.tertiary,
+                ) {
+                    Text(
+                        text = attendanceDate,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
 
                 // Teacher name with prefix (same line logically, but wraps if needed)
@@ -87,6 +87,37 @@ fun AttendanceListItem(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+        },
+        trailingContent = {
+            if (isPresent != null) {
+                Text(
+                    text = if (isPresent) "Present" else "Absent",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (isPresent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                )
+            } else if (presentCount != null && totalCount != null) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+//                    Text(
+//                        text = "$presentCount/$totalCount",
+//                        style = MaterialTheme.typography.labelMedium, // Or bodyMedium? labelMedium is slightly smaller/bolder usually
+//                        color = MaterialTheme.colorScheme.onSurface
+//                    )
+//                    Spacer(modifier = Modifier.height(8.dp))
+
+                    val percentage = if (totalCount > 0) (presentCount.toFloat() / totalCount.toFloat()) * 100f else 0f
+                    DonutGraph(
+                        percentage = percentage,
+                        size = 40.dp,
+                        strokeWidth = 4.dp,
+                        total = totalCount,
+                        value = presentCount,
+                        animate = false // Disable animation for list items to improve performance
+                    )
+                }
             }
         },
         supportingContent = {

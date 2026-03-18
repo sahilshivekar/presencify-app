@@ -39,7 +39,7 @@ class AggregateAttendanceAnalyticsViewModel(
         }
 
         // Pre-populate from route params if available (override defaults if provided)
-        routeParams.semesterNumber?.toIntOrNull()?.let { semNum ->
+        routeParams.semesterNumber?.let { semNum ->
             edu.watumull.presencify.core.domain.enums.SemesterNumber.fromValue(semNum)?.let { sn ->
                 updateState { it.copy(selectedSemesterNumber = sn) }
             }
@@ -265,6 +265,9 @@ class AggregateAttendanceAnalyticsViewModel(
             }
             is AggregateAttendanceAnalyticsAction.DismissDialog -> {
                 updateState { it.copy(dialogState = null) }
+            }
+            is AggregateAttendanceAnalyticsAction.DonutCourseClick -> {
+                sendEvent(AggregateAttendanceAnalyticsEvent.NavigateToSearchAttendanceForCourse(action.courseId))
             }
             is AggregateAttendanceAnalyticsAction.SelectSemesterNumber -> {
                 updateState { it.copy(selectedSemesterNumber = action.semesterNumber) }

@@ -20,6 +20,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
@@ -46,6 +47,7 @@ import edu.watumull.presencify.core.design.systems.components.PresencifySearchBa
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.AttendanceListItem
+import edu.watumull.presencify.core.presentation.components.CourseListItem
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -70,7 +72,7 @@ fun SearchAttendanceScreen(
 
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchAttendanceAction.BackButtonClick) },
-        topBarTitle = "Search Attendance",
+        topBarTitle = if (state.routeCourseId != null) "Course Attendance" else "Search Attendance",
         scaffoldState = scaffoldState,
         sheetContent = {
             SearchAttendanceBottomSheetContent(
@@ -181,13 +183,26 @@ private fun SearchAttendanceScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            PresencifySearchBar(
-                query = state.searchQuery,
-                onQueryChange = { onAction(SearchAttendanceAction.UpdateSearchQuery(it)) },
-                onFilterClick = onFilterClick,
-                placeholder = "Search attendances...",
-                onSearchClick = { onAction(SearchAttendanceAction.Search) }
-            )
+            if (state.routeCourseId != null && state.isRouteCourseLoading) {
+
+            } else if (state.routeCourseId != null) {
+                CourseListItem(
+                    name = state.selectedCourse?.name ?: "",
+                    code = state.selectedCourse?.code ?: "",
+                    schemeName = state.selectedCourse?.scheme?.name ?: "",
+                    optionalCourse = state.selectedCourse?.optionalCourse,
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                )
+            } else {
+                PresencifySearchBar(
+                    query = state.searchQuery,
+                    onQueryChange = { onAction(SearchAttendanceAction.UpdateSearchQuery(it)) },
+                    onFilterClick = onFilterClick,
+                    placeholder = "Search attendances...",
+                    onSearchClick = { onAction(SearchAttendanceAction.Search) }
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -216,33 +231,31 @@ private fun SearchAttendanceScreenContent(
                     ) { attendance ->
                         val classSession = attendance.klass
                         if (classSession != null) {
-                            val division = classSession.timetable?.division
-                            val batch = classSession.batch
-                            val semester = division?.semester
-                            val branch = semester?.branch
+                            val isPresent = attendance.attendanceStudents?.find {
+                                it.studentId == state.studentId
+                            }?.attendanceStatus
 
-                            val divisionBatchText = when {
-                                batch != null -> batch.batchCode
-                                division != null -> division.divisionCode
-                                else -> null
-                            }
+                            var totalCount: Int? = null
+                            var presentCount: Int? = null
 
-                            val semesterText = semester?.let { sem ->
-                                val semNum = sem.semesterNumber.value
-                                val academicYear = "${sem.academicStartYear}-${sem.academicEndYear}"
-                                "Sem: $semNum $academicYear"
+                            if (state.studentId == null) {
+                                totalCount = attendance.attendanceStudents?.size
+                                presentCount = attendance.attendanceStudents?.count { it.attendanceStatus }
                             }
 
                             AttendanceListItem(
                                 attendanceDate = attendance.date.toReadableString(),
-                                courseName = classSession.course?.name ?: "Unknown Course",
+                                courseName = if (state.routeCourseId == null) classSession.course?.name else null,
                                 teacherName = classSession.teacher?.let { "${it.firstName} ${it.lastName}" }
                                     ?: "Unknown Teacher",
                                 startTime = classSession.startTime.toReadableString(),
                                 endTime = classSession.endTime.toReadableString(),
                                 dayOfWeek = classSession.dayOfWeek.toDisplayLabel(),
                                 onClick = { onAction(SearchAttendanceAction.AttendanceCardClick(attendance.id)) },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                isPresent = isPresent,
+                                totalCount = totalCount,
+                                presentCount = presentCount,
                             )
                         }
                     }

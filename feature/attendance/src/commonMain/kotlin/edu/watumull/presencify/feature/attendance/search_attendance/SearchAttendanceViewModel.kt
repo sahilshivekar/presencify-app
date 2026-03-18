@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
+import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
@@ -30,12 +31,13 @@ class SearchAttendanceViewModel(
     private val semesterRepository: SemesterRepository,
     private val divisionRepository: DivisionRepository,
     private val batchRepository: BatchRepository,
+    private val courseRepository: CourseRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<SearchAttendanceState, SearchAttendanceEvent, SearchAttendanceAction>(
     initialState = run {
         val routeParams = savedStateHandle.toRoute<AttendanceRoutes.SearchAttendance>()
         SearchAttendanceState(
-            courseId = routeParams.courseId,
+            routeCourseId = routeParams.courseId,
             studentId = routeParams.studentId,
             semesterId = routeParams.semesterId,
             divisionId = routeParams.divisionId,
@@ -59,7 +61,7 @@ class SearchAttendanceViewModel(
                 date = state.selectedDate,
                 classId = state.classId,
                 studentId = state.studentId,
-                courseId = state.selectedCourse?.id ?: state.courseId,
+                courseId = state.selectedCourse?.id ?: state.routeCourseId,
                 semesterId = state.semesterId,
                 divisionId = state.selectedDivision?.id ?: state.divisionId,
                 batchId = state.selectedBatch?.id ?: state.batchId,
@@ -75,21 +77,25 @@ class SearchAttendanceViewModel(
             currentPage + 1
         },
         onError = { error ->
-            updateState { it.copy(
-                dialogState = SearchAttendanceState.DialogState(
-                    dialogType = DialogType.ERROR,
-                    title = "Error Loading Attendances",
-                    message = error.toUiText()
+            updateState {
+                it.copy(
+                    dialogState = SearchAttendanceState.DialogState(
+                        dialogType = DialogType.ERROR,
+                        title = "Error Loading Attendances",
+                        message = error.toUiText()
+                    )
                 )
-            ) }
+            }
         },
         onSuccess = { items, newKey ->
 
-            updateState { it.copy(
-                attendances = (it.attendances + items.attendances).toPersistentList(),
-                currentPage = newKey,
-                isLoadingAttendances = false
-            ) }
+            updateState {
+                it.copy(
+                    attendances = (it.attendances + items.attendances).toPersistentList(),
+                    currentPage = newKey,
+                    isLoadingAttendances = false
+                )
+            }
         },
         endReached = { _, result ->
             result.attendances.isEmpty()
@@ -137,16 +143,36 @@ class SearchAttendanceViewModel(
         viewModelScope.launch {
             branchRepository.getBranches()
                 .onSuccess { branchList ->
-                    updateState { it.copy(
-                        branchOptions = branchList.toPersistentList(),
-                        areBranchesLoading = false
-                    ) }
+                    updateState {
+                        it.copy(
+                            branchOptions = branchList.toPersistentList(),
+                            areBranchesLoading = false
+                        )
+                    }
                 }
                 .onError { _ ->
                     updateState { it.copy(areBranchesLoading = false) }
                 }
         }
-
+        state.routeCourseId?.let { courseId ->
+            updateState {
+                it.copy(isRouteCourseLoading = true)
+            }
+            viewModelScope.launch {
+                courseRepository.getCourseById(courseId)
+                    .onSuccess { course ->
+                        updateState {
+                            it.copy(
+                                selectedCourse = course,
+                                isRouteCourseLoading = false
+                            )
+                        }
+                    }
+                    .onError {
+                        updateState { it.copy(isRouteCourseLoading = false) }
+                    }
+            }
+        }
         // Initial load with empty filters
         loadAttendances()
     }
@@ -164,11 +190,13 @@ class SearchAttendanceViewModel(
     }
 
     private fun loadAttendances() {
-        updateState { it.copy(
-            attendances = persistentListOf(),
-            currentPage = 1,
-            isLoadingAttendances = true
-        ) }
+        updateState {
+            it.copy(
+                attendances = persistentListOf(),
+                currentPage = 1,
+                isLoadingAttendances = true
+            )
+        }
         paginator.reset()
         viewModelScope.launch {
             paginator.loadNextItems()
@@ -223,12 +251,14 @@ class SearchAttendanceViewModel(
 
         // Early return if required filters are not selected
         if (selectedSemester == null || academicYears == null || academicYears.size != 2) {
-            updateState { it.copy(
-                divisionOptions = persistentListOf(),
-                batchOptions = persistentListOf(),
-                selectedDivision = null,
-                selectedBatch = null
-            ) }
+            updateState {
+                it.copy(
+                    divisionOptions = persistentListOf(),
+                    batchOptions = persistentListOf(),
+                    selectedDivision = null,
+                    selectedBatch = null
+                )
+            }
             return
         }
 
@@ -242,10 +272,12 @@ class SearchAttendanceViewModel(
                 academicEndYear = academicYears?.getOrNull(1),
                 getAll = true
             ).onSuccess { divisionResult ->
-                updateState { it.copy(
-                    divisionOptions = divisionResult.divisions.toPersistentList(),
-                    areDivisionsLoading = false
-                ) }
+                updateState {
+                    it.copy(
+                        divisionOptions = divisionResult.divisions.toPersistentList(),
+                        areDivisionsLoading = false
+                    )
+                }
             }.onError { _ ->
                 updateState { it.copy(areDivisionsLoading = false) }
             }
@@ -257,10 +289,12 @@ class SearchAttendanceViewModel(
                 academicEndYear = academicYears?.getOrNull(1),
                 getAll = true
             ).onSuccess { batchResult ->
-                updateState { it.copy(
-                    batchOptions = batchResult.batches.toPersistentList(),
-                    areBatchesLoading = false
-                ) }
+                updateState {
+                    it.copy(
+                        batchOptions = batchResult.batches.toPersistentList(),
+                        areBatchesLoading = false
+                    )
+                }
             }.onError { _ ->
                 updateState { it.copy(areBatchesLoading = false) }
             }
@@ -294,45 +328,55 @@ class SearchAttendanceViewModel(
                     // Fetch courses for this semester
                     semesterRepository.getCoursesOfSemester(semester.id)
                         .onSuccess { courses ->
-                            updateState { it.copy(
-                                courseOptions = courses.toPersistentList(),
-                                areCoursesLoading = false
-                            ) }
+                            updateState {
+                                it.copy(
+                                    courseOptions = courses.toPersistentList(),
+                                    areCoursesLoading = false
+                                )
+                            }
                         }
                         .onError {
-                            updateState { it.copy(
-                                courseOptions = persistentListOf(),
-                                areCoursesLoading = false
-                            ) }
+                            updateState {
+                                it.copy(
+                                    courseOptions = persistentListOf(),
+                                    areCoursesLoading = false
+                                )
+                            }
                         }
                 } else {
-                    updateState { it.copy(
-                        courseOptions = persistentListOf(),
-                        areCoursesLoading = false
-                    ) }
+                    updateState {
+                        it.copy(
+                            courseOptions = persistentListOf(),
+                            areCoursesLoading = false
+                        )
+                    }
                 }
             }.onError {
-                updateState { it.copy(
-                    courseOptions = persistentListOf(),
-                    areCoursesLoading = false
-                ) }
+                updateState {
+                    it.copy(
+                        courseOptions = persistentListOf(),
+                        areCoursesLoading = false
+                    )
+                }
             }
         }
     }
 
     private fun resetFilters() {
-        updateState { it.copy(
-            selectedDate = null,
-            selectedBranch = null,
-            selectedSemesters = persistentListOf(),
-            selectedAcademicYearOfSemester = null,
-            selectedDivision = null,
-            selectedBatch = null,
-            selectedCourse = null,
-            divisionOptions = persistentListOf(),
-            batchOptions = persistentListOf(),
-            courseOptions = persistentListOf()
-        ) }
+        updateState {
+            it.copy(
+                selectedDate = null,
+                selectedBranch = null,
+                selectedSemesters = persistentListOf(),
+                selectedAcademicYearOfSemester = null,
+                selectedDivision = null,
+                selectedBatch = null,
+                selectedCourse = null,
+                divisionOptions = persistentListOf(),
+                batchOptions = persistentListOf(),
+                courseOptions = persistentListOf()
+            )
+        }
     }
 
     private fun applyFilters() {

@@ -1,5 +1,6 @@
 package edu.watumull.presencify.feature.attendance.navigation
 
+
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
 import kotlinx.serialization.Serializable
 
@@ -23,7 +24,7 @@ sealed interface AttendanceRoutes : NavRoute {
         val startDate: String?,
         val endDate: String?,
         val courseId: String?,
-        val semesterNumber: String?,
+        val semesterNumber: Int?,
         val academicStartYear: String?,
         val academicEndYear: String?,
         val branchId: String?,
@@ -38,7 +39,7 @@ sealed interface AttendanceRoutes : NavRoute {
         val startDate: String?,
         val endDate: String?,
         val courseId: String?,
-        val semesterNumber: String?,
+        val semesterNumber: Int?,
         val academicStartYear: String?,
         val academicEndYear: String?,
         val branchId: String?,
@@ -54,11 +55,11 @@ sealed interface AttendanceRoutes : NavRoute {
         val semesterId: String?,
         val batchId: String?,
         val divisionId: String?,
-    ): AttendanceRoutes
+    ) : AttendanceRoutes
 
     @Serializable
     data class AttendanceDetails(
         val attendanceId: String
-    ): AttendanceRoutes
+    ) : AttendanceRoutes
 
 }

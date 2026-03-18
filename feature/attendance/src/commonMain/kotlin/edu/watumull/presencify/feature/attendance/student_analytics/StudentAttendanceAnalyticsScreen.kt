@@ -51,6 +51,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
+import edu.watumull.presencify.core.design.systems.components.DonutGraph
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
@@ -173,7 +174,8 @@ private fun StudentAttendanceAnalyticsScreenContent(
                                 studentSemester.semester?.id?.let { semesterId ->
                                     onAction(StudentAttendanceAnalyticsAction.ToggleSemesterExpansion(semesterId))
                                 }
-                            }
+                            },
+                            onAction = onAction
                         )
                     }
                 }
@@ -229,6 +231,7 @@ private fun SemesterAttendanceItem(
     attendanceData: List<AggregatedAttendance>,
     detailedAttendance: Map<String, List<edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord>>,
     onToggleExpansion: () -> Unit,
+    onAction: (StudentAttendanceAnalyticsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val semester = studentSemester.semester ?: return
@@ -328,7 +331,8 @@ private fun SemesterAttendanceItem(
                             AttendanceCoursesGrid(
                                 attendanceData = attendanceData,
                                 detailedAttendance = detailedAttendance,
-                                semester = semester
+                                semester = semester,
+                                onAction = onAction
                             )
                         }
                     }
@@ -636,6 +640,7 @@ private fun AttendanceCoursesGrid(
     attendanceData: List<AggregatedAttendance>,
     detailedAttendance: Map<String, List<edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord>>,
     semester: edu.watumull.presencify.core.domain.model.academics.Semester,
+    onAction: (StudentAttendanceAnalyticsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // State to track which courses are selected for display in the chart
@@ -781,7 +786,7 @@ private fun AttendanceCoursesGrid(
                         verticalAlignment = Alignment.Top
                     ) {
                         rowItems.forEach { attendance ->
-                            edu.watumull.presencify.core.design.systems.components.DonutGraph(
+                            DonutGraph(
                                 modifier = Modifier.weight(1f),
                                 value = attendance.attendedLectures,
                                 total = attendance.totalLectures,
@@ -789,7 +794,13 @@ private fun AttendanceCoursesGrid(
                                 size = 100.dp,
                                 strokeWidth = 8.dp,
                                 animate = true,
-                                showPercentage = true
+                                onClick = {
+                                    onAction(
+                                        StudentAttendanceAnalyticsAction.DonutCourseClick(
+                                            courseId = attendance.courseId
+                                        )
+                                    )
+                                }
                             )
                         }
 

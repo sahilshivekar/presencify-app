@@ -36,10 +36,12 @@ fun CourseListItem(
     optionalCourse: String? = null,
     feedback: ListItemFeedback? = null,
     trailingContent: @Composable (() -> Unit)? = null,
+    containerColor: Color? = null,
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     PresencifyListItem(
+        containerColor = containerColor,
         headlineContent = {
             Text(
                 text = name,

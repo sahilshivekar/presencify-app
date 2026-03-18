@@ -82,7 +82,6 @@ private fun getAttendanceColor(percentage: Float): Color {
  * @param progressColor Color for the progress arc. If null, uses attendance-based color scheme.
  * @param backgroundColor Background color of the track. Defaults to surface color.
  * @param animate Whether to animate the progress when first displayed.
- * @param showPercentage Whether to show percentage in center. Only applies if centerText is null.
  */
 @Composable
 fun DonutGraph(
@@ -98,7 +97,6 @@ fun DonutGraph(
     progressColor: Color? = null,
     backgroundColor: Color? = null,
     animate: Boolean = true,
-    showPercentage: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
     // Calculate percentage from value/total if not provided directly
@@ -124,6 +122,12 @@ fun DonutGraph(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        val centerTextStyle = when {
+            size <= 40.dp -> MaterialTheme.typography.bodySmall
+            size <= 64.dp -> MaterialTheme.typography.bodyMedium
+            else -> MaterialTheme.typography.titleLarge
+        }
+
         // Circular Progress Indicator
         Box(
             modifier = Modifier.size(size),
@@ -163,7 +167,7 @@ fun DonutGraph(
             // Center content - only show percentage
             Text(
                 text = centerText ?: "${calculatedPercentage.roundToInt()}%",
-                style = MaterialTheme.typography.titleLarge,
+                style = centerTextStyle,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
