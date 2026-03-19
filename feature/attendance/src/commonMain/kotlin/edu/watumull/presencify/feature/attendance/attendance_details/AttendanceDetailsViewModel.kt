@@ -11,6 +11,7 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.utils.ShareUtils
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import kotlinx.coroutines.launch
 
@@ -36,6 +37,7 @@ class AttendanceDetailsViewModel(
             AttendanceDetailsAction.ConfirmRemoveAttendance -> removeAttendance()
             AttendanceDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AttendanceDetailsAction.TabClick -> updateState { it.copy(selectedTab = action.tab) }
+            is AttendanceDetailsAction.ShareAttendance -> shareAttendanceDetails(action.text)
         }
     }
 
@@ -102,6 +104,14 @@ class AttendanceDetailsViewModel(
                         )
                     ) }
                 }
+        }
+    }
+
+    private fun shareAttendanceDetails(text: String) {
+        if (text.isBlank()) return
+
+        viewModelScope.launch {
+            ShareUtils.shareText(text)
         }
     }
 }

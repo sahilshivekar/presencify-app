@@ -14,8 +14,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -34,6 +38,7 @@ import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.components.StudentListItem
+import edu.watumull.presencify.core.presentation.utils.ShareUtils
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
 
@@ -44,7 +49,21 @@ fun AttendanceDetailsScreen(
 ) {
     PresencifyScaffold(
         backPress = { onAction(AttendanceDetailsAction.BackButtonClick) },
-        topBarTitle = "Attendance Details"
+        topBarTitle = "Attendance Details",
+        actions = {
+            if (state.viewState == AttendanceDetailsState.ViewState.Content && state.attendance != null) {
+                IconButton(onClick = {
+                    val shareText = buildAttendanceShareText(state)
+                    onAction(AttendanceDetailsAction.ShareAttendance(shareText))
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share attendance details",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -383,4 +402,95 @@ private fun ActionButtonsSection(
             )
         }
     }
+}
+
+private fun buildAttendanceShareText(
+    state: AttendanceDetailsState,
+): String {
+    val attendance = state.attendance ?: return ""
+    val classSession = state.classSession
+
+    val builder = StringBuilder()
+
+    // Header
+    builder.appendLine("Attendance Details")
+    builder.appendLine()
+
+    // Date
+    builder.appendLine("Date: ${attendance.date.toReadableString()}")
+
+    // Class / course details
+    classSession?.let { session ->
+        val division = session.timetable?.division
+        val batch = session.batch
+        val semester = division?.semester
+        val branch = semester?.branch
+
+        val divisionBatchText = when {
+            batch != null -> batch.batchCode
+            division != null -> division.divisionCode
+            else -> null
+        }
+
+        val semesterText = semester?.let { sem ->
+            val semNum = sem.semesterNumber.value
+            val academicYear = "${sem.academicStartYear}-${sem.academicEndYear}"
+            "Sem $semNum $academicYear"
+        }
+
+        builder.appendLine("Course: ${session.course?.name ?: "Unknown Course"}")
+        builder.appendLine(
+            "Teacher: " + (session.teacher?.let { "${it.firstName} ${it.lastName}" }
+                ?: "Unknown Teacher")
+        )
+        divisionBatchText?.let { builder.appendLine("Division/Batch: $it") }
+        branch?.abbreviation?.let { builder.appendLine("Branch: $it") }
+        semesterText?.let { builder.appendLine("Semester: $it") }
+        builder.appendLine(
+            "Time: ${session.startTime.toReadableString()} - ${session.endTime.toReadableString()}"
+        )
+    }
+
+    builder.appendLine()
+
+    // Stats
+    builder.appendLine("Total Students: ${state.totalStudents}")
+    builder.appendLine("Present Students: ${state.presentStudents}")
+    builder.appendLine("Absent Students: ${state.absentStudents}")
+
+    builder.appendLine()
+
+    val attendanceStudents = attendance.attendanceStudents
+
+    // Present students list
+    val presentStudents = attendanceStudents!!.filter { it.attendanceStatus }
+    builder.appendLine("Present Students (${presentStudents.size}):")
+    if (presentStudents.isEmpty()) {
+        builder.appendLine("- None")
+    } else {
+        presentStudents.forEachIndexed { index, attendanceStudent ->
+            val student = attendanceStudent.student
+            val name = student?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown Student"
+            val prn = student?.prn?.let { " (PRN: $it)" } ?: ""
+            builder.appendLine("${index + 1}. $name$prn")
+        }
+    }
+
+    builder.appendLine()
+
+    // Absent students list
+    val absentStudents = attendanceStudents.filter { !it.attendanceStatus }
+    builder.appendLine("Absent Students (${absentStudents.size}):")
+    if (absentStudents.isEmpty()) {
+        builder.appendLine("- None")
+    } else {
+        absentStudents.forEachIndexed { index, attendanceStudent ->
+            val student = attendanceStudent.student
+            val name = student?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown Student"
+            val prn = student?.prn?.let { " (PRN: $it)" } ?: ""
+            builder.appendLine("${index + 1}. $name$prn")
+        }
+    }
+
+    return builder.toString().trimEnd()
 }

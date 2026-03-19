@@ -7,4 +7,5 @@ sealed interface AttendanceDetailsAction {
     data object ConfirmRemoveAttendance : AttendanceDetailsAction
     data object DismissDialog : AttendanceDetailsAction
     data class TabClick(val tab: AttendanceDetailsState.AttendanceTab) : AttendanceDetailsAction
+    data class ShareAttendance(val text: String) : AttendanceDetailsAction
 }
