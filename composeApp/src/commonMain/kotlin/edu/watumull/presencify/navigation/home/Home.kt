@@ -12,7 +12,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import edu.watumull.presencify.LocalUserId
+import edu.watumull.presencify.LocalUserRole
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
 
 @Composable
 fun Home(
@@ -27,10 +32,20 @@ fun Home(
     val windowSizeClass = calculateWindowWidthSizeClass()
     val useNavigationRail = windowSizeClass >= WindowWidthSizeClass.Medium
 
+    val userRole = LocalUserRole.current
+    val userId = LocalUserId.current
+
     Scaffold(
         topBar = {
             HomeTopBar(
-                onProfileIconButtonClick = rootNavController::navigateToAdminDetails,
+                onProfileIconButtonClick = {
+                    when (userRole) {
+                        UserRole.ADMIN -> rootNavController.navigateToAdminDetails()
+                        UserRole.TEACHER -> userId?.let { rootNavController.navigateToTeacherDetails(it) }
+                        UserRole.STUDENT -> userId?.let { rootNavController.navigateToStudentDetails(it) }
+                        null -> Unit
+                    }
+                },
             )
 
         },

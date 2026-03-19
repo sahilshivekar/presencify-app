@@ -14,4 +14,5 @@ object Constants {
 
     // User role-related constants
     const val USER_ROLE_KEY = "user_role"
+    const val USER_ID_KEY = "user_id"
 }

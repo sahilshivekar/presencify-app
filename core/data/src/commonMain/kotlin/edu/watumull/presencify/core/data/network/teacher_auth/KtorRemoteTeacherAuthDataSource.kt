@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.teacher_auth
 
+import edu.watumull.presencify.core.data.dto.auth.LoginTeacherDto
 import edu.watumull.presencify.core.data.dto.auth.TokenDto
 import edu.watumull.presencify.core.data.network.teacher_auth.ApiEndpoints.LOGIN_TEACHER
 import edu.watumull.presencify.core.data.network.teacher_auth.ApiEndpoints.LOGOUT
@@ -10,6 +11,7 @@ import edu.watumull.presencify.core.data.network.teacher_auth.ApiEndpoints.VERIF
 import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.model.auth.LoginTeacher
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -18,8 +20,8 @@ class KtorRemoteTeacherAuthDataSource(
     private val httpClient: HttpClient
 ) : RemoteTeacherAuthDataSource {
 
-    override suspend fun loginTeacher(email: String, password: String): Result<TokenDto, DataError.Remote> {
-        return safeCall<TokenDto> {
+    override suspend fun loginTeacher(email: String, password: String): Result<LoginTeacherDto, DataError.Remote> {
+        return safeCall<LoginTeacherDto> {
             httpClient.post(LOGIN_TEACHER) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "password" to password))
@@ -36,8 +38,8 @@ class KtorRemoteTeacherAuthDataSource(
         }
     }
 
-    override suspend fun verifyCode(email: String, code: String): Result<Unit, DataError.Remote> {
-        return safeCall<Unit> {
+    override suspend fun verifyCode(email: String, code: String): Result<LoginTeacherDto, DataError.Remote> {
+        return safeCall<LoginTeacherDto> {
             httpClient.post(VERIFY_CODE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "code" to code))

@@ -2,7 +2,7 @@ package edu.watumull.presencify
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.data.repository.auth.RoleRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepository
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
 import edu.watumull.presencify.feature.onboarding.navigation.OnboardingRoutes
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AppViewModel(
-    private val roleRepository: RoleRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppState())
     val state = _state.asStateFlow()
@@ -25,7 +25,7 @@ class AppViewModel(
 
     private fun checkAuthentication() {
         viewModelScope.launch {
-            roleRepository.getUserRole().collectLatest { userRole ->
+            userRepository.getUserRole().collectLatest { userRole ->
                 _state.update {
                     it.copy(
                         userRole = userRole
@@ -34,6 +34,15 @@ class AppViewModel(
                 userRole?.let {
                     updateDestination(Home)
                 } ?: updateDestination(OnboardingRoutes.SelectRole)
+            }
+        }
+        viewModelScope.launch {
+            userRepository.getUserId().collectLatest { userId ->
+                _state.update {
+                    it.copy(
+                        userId = userId
+                    )
+                }
             }
         }
     }
@@ -49,5 +58,6 @@ class AppViewModel(
 
 data class AppState(
     val userRole: UserRole? = null,
+    val userId: String? = null,
     val startDestination: NavRoute? = null
 )

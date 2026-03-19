@@ -40,13 +40,17 @@ import org.koin.compose.viewmodel.koinViewModel
 
 // Define the CompositionLocal for UserRole
 val LocalUserRole = compositionLocalOf<UserRole?> { null }
+val LocalUserId = compositionLocalOf<String?> { null }
 
 @Composable
 fun App() {
     val viewModel = koinViewModel<AppViewModel>()
     val state by viewModel.state.collectAsState()
 
-    CompositionLocalProvider(LocalUserRole provides state.userRole) {
+    CompositionLocalProvider(
+        LocalUserRole provides state.userRole,
+        LocalUserId provides state.userId
+    ) {
 
         PresencifyTheme {
 

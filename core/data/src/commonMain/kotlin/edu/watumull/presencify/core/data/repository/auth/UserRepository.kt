@@ -9,15 +9,17 @@ import edu.watumull.presencify.core.domain.model.auth.UserRole
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RoleRepository(
+class UserRepository(
     private val dataStore: DataStore<Preferences>
 ) {
 
     private val userRoleKey = stringPreferencesKey(Constants.USER_ROLE_KEY)
+    private val userIdKey = stringPreferencesKey(Constants.USER_ID_KEY)
 
-    suspend fun saveUserRole(role: UserRole) {
+    suspend fun saveUserDetails(role: UserRole, userId: String) {
         dataStore.edit { preferences ->
             preferences[userRoleKey] = role.name
+            preferences[userIdKey] = userId
         }
     }
 
@@ -33,9 +35,16 @@ class RoleRepository(
         }
     }
 
-    suspend fun clearUserRole() {
+    fun getUserId(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[userIdKey]
+        }
+    }
+
+    suspend fun clearUserDetails() {
         dataStore.edit { preferences ->
             preferences.remove(userRoleKey)
+            preferences.remove(userIdKey)
         }
     }
 }

@@ -40,8 +40,8 @@ class KtorRemoteAdminAuthDataSource(
         }
     }
 
-    override suspend fun verifyCode(email: String, code: String): Result<TokenDto, DataError.Remote> {
-        return safeCall<TokenDto> {
+    override suspend fun verifyCode(email: String, code: String): Result<LoginAdminDto, DataError.Remote> {
+        return safeCall<LoginAdminDto> {
             httpClient.post(VERIFY_CODE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "code" to code))

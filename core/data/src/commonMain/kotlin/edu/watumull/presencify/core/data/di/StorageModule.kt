@@ -5,7 +5,7 @@ import edu.watumull.presencify.core.data.Constants
 import edu.watumull.presencify.core.data.local.NoOpStringCipher
 import edu.watumull.presencify.core.data.local.SettingsFactory
 import edu.watumull.presencify.core.data.local.StringCipher
-import edu.watumull.presencify.core.data.repository.auth.RoleRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepository
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -23,7 +23,7 @@ val storageModule = module {
     single { TokenRepository(get(named(Constants.AUTH_SETTINGS_QUALIFIER))) }
 
     // RoleRepository for managing user role
-    single { RoleRepository(get()) }
+    single { UserRepository(get()) }
 
     // Add local data sources here as they are implemented
 }

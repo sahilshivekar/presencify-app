@@ -1,7 +1,7 @@
 package edu.watumull.presencify.core.data.network
 
 import edu.watumull.presencify.core.data.dto.auth.TokenDto
-import edu.watumull.presencify.core.data.repository.auth.RoleRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepository
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import io.ktor.client.*
@@ -24,7 +24,7 @@ import edu.watumull.presencify.core.data.network.teacher_auth.ApiEndpoints as Te
 
 class HttpClientFactory(
     private val tokenRepository: TokenRepository,
-    private val roleRepository: RoleRepository
+    private val userRepository: UserRepository
 ) {
     private fun createBasicClient(engine: HttpClientEngine): HttpClient {
         return HttpClient(engine) {
@@ -85,7 +85,7 @@ class HttpClientFactory(
                         val refreshToken = tokenRepository.readRefreshToken()
 
                         // Get user role
-                        val userRole = roleRepository.getUserRole().firstOrNull()
+                        val userRole = userRepository.getUserRole().firstOrNull()
 
                         println("👤 User role: $userRole")
 
@@ -127,7 +127,7 @@ class HttpClientFactory(
                             e.printStackTrace()
                             // Clear tokens on refresh failure
                             tokenRepository.clearTokens()
-                            roleRepository.clearUserRole()
+                            userRepository.clearUserDetails()
                             null
                         } finally {
                             basicClient.close()

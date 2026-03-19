@@ -1,7 +1,8 @@
 package edu.watumull.presencify.core.data.repository.teacher_auth
 
+import edu.watumull.presencify.core.data.dto.auth.LoginTeacherDto
 import edu.watumull.presencify.core.data.network.teacher_auth.RemoteTeacherAuthDataSource
-import edu.watumull.presencify.core.data.repository.auth.RoleRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepository
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
@@ -13,14 +14,14 @@ import edu.watumull.presencify.core.domain.repository.teacher_auth.TeacherAuthRe
 class TeacherAuthRepositoryImpl(
     private val remoteDataSource: RemoteTeacherAuthDataSource,
     private val tokenRepository: TokenRepository,
-    private val roleRepository: RoleRepository,
+    private val userRepository: UserRepository,
 ) : TeacherAuthRepository {
 
     override suspend fun loginTeacher(email: String, password: String): Result<Unit, DataError.Remote> {
-        return remoteDataSource.loginTeacher(email, password).onSuccess { tokenDto ->
-            tokenRepository.saveAccessToken(tokenDto.accessToken)
-            tokenRepository.saveRefreshToken(tokenDto.refreshToken)
-            roleRepository.saveUserRole(UserRole.TEACHER)
+        return remoteDataSource.loginTeacher(email, password).onSuccess { loginTeacherDto ->
+            tokenRepository.saveAccessToken(loginTeacherDto.accessToken)
+            tokenRepository.saveRefreshToken(loginTeacherDto.refreshToken)
+            userRepository.saveUserDetails(UserRole.TEACHER, loginTeacherDto.teacher.id)
         }.map {}
     }
 
@@ -29,7 +30,11 @@ class TeacherAuthRepositoryImpl(
     }
 
     override suspend fun verifyCode(email: String, code: String): Result<Unit, DataError.Remote> {
-        return remoteDataSource.verifyCode(email, code)
+        return remoteDataSource.verifyCode(email, code).onSuccess { loginTeacherDto ->
+            tokenRepository.saveAccessToken(loginTeacherDto.accessToken)
+            tokenRepository.saveRefreshToken(loginTeacherDto.refreshToken)
+            userRepository.saveUserDetails(UserRole.TEACHER, loginTeacherDto.teacher.id)
+        }.map {}
     }
 
     override suspend fun updatePassword(password: String, confirmPassword: String): Result<Unit, DataError.Remote> {
@@ -46,7 +51,7 @@ class TeacherAuthRepositoryImpl(
     override suspend fun logout(): Result<Unit, DataError.Remote> {
         return remoteDataSource.logout().onSuccess {
             tokenRepository.clearTokens()
-            roleRepository.clearUserRole()
+            userRepository.clearUserDetails()
         }
     }
 }
