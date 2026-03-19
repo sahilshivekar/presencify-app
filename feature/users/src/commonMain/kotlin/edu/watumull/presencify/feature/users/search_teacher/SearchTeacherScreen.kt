@@ -36,12 +36,14 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.TeacherListItem
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -58,7 +60,6 @@ fun SearchTeacherScreen(
             initialValue = SheetValue.Hidden
         )
     )
-
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchTeacherAction.BackButtonClick) },
         topBarTitle = "Search Teachers",
@@ -68,14 +69,16 @@ fun SearchTeacherScreen(
             Box(modifier = Modifier.height(1.dp))
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchTeacherAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add teacher"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                FloatingActionButton(
+                    onClick = { onAction(SearchTeacherAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add teacher"
+                    )
+                }
             }
         }
     ) { paddingValues ->

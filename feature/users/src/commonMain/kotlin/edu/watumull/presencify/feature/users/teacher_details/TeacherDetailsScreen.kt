@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.design.systems.Res
 import edu.watumull.presencify.core.design.systems.baseline_account_circle_24
 import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
@@ -45,7 +48,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
+import edu.watumull.presencify.feature.users.student_details.StudentDetailsAction
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -137,38 +143,51 @@ private fun TeacherDetailsScreenContent(
                     .padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                PresencifyTextButton(
-                    onClick = { onAction(TeacherDetailsAction.EditTeacherDetailsClick) },
-                    enabled = !state.isRemovingTeacher
-                ) {
-                    Text(text = "Edit details", color = MaterialTheme.colorScheme.primary)
-                }
-                PresencifyTextButton(
-                    onClick = { onAction(TeacherDetailsAction.RemoveTeacherClick) },
-                    enabled = !state.isRemovingTeacher
-                ) {
-                    if (state.isRemovingTeacher) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                        )
-                    } else {
+                if (LocalUserRole.current == UserRole.ADMIN) {
+                    PresencifyTextButton(
+                        onClick = { onAction(TeacherDetailsAction.EditTeacherDetailsClick) },
+                        enabled = !state.isRemovingTeacher
+                    ) {
+                        Text(text = "Edit details", color = MaterialTheme.colorScheme.primary)
+                    }
+                    PresencifyTextButton(
+                        onClick = { onAction(TeacherDetailsAction.RemoveTeacherClick) },
+                        enabled = !state.isRemovingTeacher
+                    ) {
+                        if (state.isRemovingTeacher) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Text(
+                                text = "Remove teacher",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                } else if (LocalUserRole.current == UserRole.TEACHER && state.teacherId == LocalUserId.current) {
+                    PresencifyTextButton(
+                        onClick = { onAction(TeacherDetailsAction.LogoutClick) },
+                        isLoading = state.isLoggingOut,
+                        enabled = !state.isLoggingOut
+                    ) {
                         Text(
-                            text = "Remove teacher",
+                            "Logout",
                             color = MaterialTheme.colorScheme.error
                         )
                     }
                 }
             }
-
-            // Assign/Unassign Courses Action Bar
-            PresencifyActionBar(
-                text = "Assign / Unassign Courses",
-                onClick = { onAction(TeacherDetailsAction.AssignUnassignCoursesClick) },
-                leadingImageVector = Icons.Default.Edit,
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                PresencifyActionBar(
+                    text = "Assign / Unassign Courses",
+                    onClick = { onAction(TeacherDetailsAction.AssignUnassignCoursesClick) },
+                    leadingImageVector = Icons.Default.Edit,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -289,17 +308,19 @@ private fun TeacherImageContainer(
             fallback = painterResource(Res.drawable.baseline_account_circle_24)
         )
 
-        IconButton(
-            onClick = {
-                onAction(TeacherDetailsAction.ToggleImageDialog)
-            },
-            modifier = Modifier.align(alignment = Alignment.BottomEnd)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
+        if (LocalUserRole.current == UserRole.ADMIN) {
+            IconButton(
+                onClick = {
+                    onAction(TeacherDetailsAction.ToggleImageDialog)
+                },
+                modifier = Modifier.align(alignment = Alignment.BottomEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
     }
 }

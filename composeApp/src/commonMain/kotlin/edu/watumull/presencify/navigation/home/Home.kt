@@ -12,8 +12,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import edu.watumull.presencify.LocalUserId
-import edu.watumull.presencify.LocalUserRole
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
@@ -47,7 +47,6 @@ fun Home(
                     }
                 },
             )
-
         },
 
         bottomBar = {

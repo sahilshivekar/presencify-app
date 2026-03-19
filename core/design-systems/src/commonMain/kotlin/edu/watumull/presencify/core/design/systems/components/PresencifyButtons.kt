@@ -108,23 +108,27 @@ fun PresencifyTextButton(
         contentPadding = contentPadding,
         interactionSource = interactionSource,
         content = {
-            when {
-                content != null -> content()
-                else -> {
-                    if (isLoading == true) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                        )
-                    } else {
-                        Text(
-                            text ?: "",
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+//            when {
+//                content != null -> content()
+//                else -> {
+            if (isLoading == true) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                if (content != null) {
+                    content()
+                } else {
+                    Text(
+                        text ?: "",
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
+//                }
+//            }
         }
     )
 }

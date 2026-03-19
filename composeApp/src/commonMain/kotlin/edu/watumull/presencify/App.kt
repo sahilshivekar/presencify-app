@@ -31,6 +31,8 @@ import edu.watumull.presencify.core.design.systems.Res
 import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
 import edu.watumull.presencify.core.design.systems.theme.PresencifyTheme
 import edu.watumull.presencify.core.domain.model.auth.UserRole
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.global_snackbar.ObserveAsEvents
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.navigation.AppNavHost
@@ -38,9 +40,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
-// Define the CompositionLocal for UserRole
-val LocalUserRole = compositionLocalOf<UserRole?> { null }
-val LocalUserId = compositionLocalOf<String?> { null }
 
 @Composable
 fun App() {

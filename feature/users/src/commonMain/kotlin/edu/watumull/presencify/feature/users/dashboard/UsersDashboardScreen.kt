@@ -27,7 +27,9 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.edit_outlined
 import edu.watumull.presencify.core.design.systems.group_batch
 import edu.watumull.presencify.core.design.systems.group_division
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun UsersDashboardScreen(
@@ -68,51 +70,52 @@ fun UsersDashboardScreen(
                             )
                         }
                     }
+                    if (LocalUserRole.current == UserRole.ADMIN) {
+                        // Section 2: Assign Students
+                        DashboardSection(title = "Assign students") {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                PresencifyActionBar(
+                                    text = "Assign/Unassign Student to Semester",
+                                    leadingIcon = Res.drawable.add_to_semester,
+                                    onClick = { onAction(UsersDashboardAction.ClickAssignUnassignSemester) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                PresencifyActionBar(
+                                    text = "Assign/Unassign Student to Division",
+                                    leadingIcon = Res.drawable.group_division,
+                                    onClick = { onAction(UsersDashboardAction.ClickAssignUnassignDivision) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                PresencifyActionBar(
+                                    text = "Assign/Unassign Student to Batch",
+                                    leadingIcon = Res.drawable.group_batch,
+                                    onClick = { onAction(UsersDashboardAction.ClickAssignUnassignBatch) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                PresencifyActionBar(
+                                    text = "Modify Student's Division",
+                                    leadingIcon = Res.drawable.edit_outlined,
+                                    onClick = { onAction(UsersDashboardAction.ClickModifyDivision) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                PresencifyActionBar(
+                                    text = "Modify Student's Batch",
+                                    leadingIcon = Res.drawable.edit_outlined,
+                                    onClick = { onAction(UsersDashboardAction.ClickModifyBatch) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
 
-                    // Section 2: Assign Students
-                    DashboardSection(title = "Assign students") {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        // Section 3: Dropout
+                        DashboardSection(title = "Dropout students management") {
                             PresencifyActionBar(
-                                text = "Assign/Unassign Student to Semester",
-                                leadingIcon = Res.drawable.add_to_semester,
-                                onClick = { onAction(UsersDashboardAction.ClickAssignUnassignSemester) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            PresencifyActionBar(
-                                text = "Assign/Unassign Student to Division",
-                                leadingIcon = Res.drawable.group_division,
-                                onClick = { onAction(UsersDashboardAction.ClickAssignUnassignDivision) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            PresencifyActionBar(
-                                text = "Assign/Unassign Student to Batch",
-                                leadingIcon = Res.drawable.group_batch,
-                                onClick = { onAction(UsersDashboardAction.ClickAssignUnassignBatch) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            PresencifyActionBar(
-                                text = "Modify Student's Division",
-                                leadingIcon = Res.drawable.edit_outlined,
-                                onClick = { onAction(UsersDashboardAction.ClickModifyDivision) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            PresencifyActionBar(
-                                text = "Modify Student's Batch",
-                                leadingIcon = Res.drawable.edit_outlined,
-                                onClick = { onAction(UsersDashboardAction.ClickModifyBatch) },
+                                text = "Mark/Unmark Student as Dropout",
+                                leadingIcon = Res.drawable.baseline_person_remove_24,
+                                onClick = { onAction(UsersDashboardAction.ClickMarkUnmarkStudentAsDropout) },
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                    }
-
-                    // Section 3: Dropout
-                    DashboardSection(title = "Dropout students management") {
-                        PresencifyActionBar(
-                            text = "Mark/Unmark Student as Dropout",
-                            leadingIcon = Res.drawable.baseline_person_remove_24,
-                            onClick = { onAction(UsersDashboardAction.ClickMarkUnmarkStudentAsDropout) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
                 }
             }

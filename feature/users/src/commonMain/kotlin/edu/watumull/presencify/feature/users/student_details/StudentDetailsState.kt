@@ -21,6 +21,7 @@ data class StudentDetailsState(
     val studentDivisions: List<StudentDivision>? = null,
     val studentBatches: List<StudentBatch>? = null,
     val isRemovingStudent: Boolean = false,
+    val isLoggingOut: Boolean = false,
     val dropoutDetails: List<Dropout> = emptyList(),
     val areDropoutDetailsLoading: Boolean = false,
 ) {
@@ -43,4 +44,3 @@ enum class DialogIntention {
     GENERIC,
     CONFIRM_REMOVE_STUDENT,
 }
-

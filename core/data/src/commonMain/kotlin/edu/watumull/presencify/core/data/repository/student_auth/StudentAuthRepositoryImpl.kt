@@ -1,8 +1,7 @@
 package edu.watumull.presencify.core.data.repository.student_auth
 
-import edu.watumull.presencify.core.data.dto.auth.LoginStudentDto
 import edu.watumull.presencify.core.data.network.student_auth.RemoteStudentAuthDataSource
-import edu.watumull.presencify.core.data.repository.auth.UserRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
@@ -14,14 +13,14 @@ import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRe
 class StudentAuthRepositoryImpl(
     private val remoteDataSource: RemoteStudentAuthDataSource,
     private val tokenRepository: TokenRepository,
-    private val userRepository: UserRepository,
+    private val userRepositoryImpl: UserRepositoryImpl,
 ) : StudentAuthRepository {
 
     override suspend fun loginStudent(emailOrPRN: String, password: String): Result<Unit, DataError.Remote> {
         return remoteDataSource.loginStudent(emailOrPRN, password).onSuccess { loginStudentDto ->
             tokenRepository.saveAccessToken(loginStudentDto.accessToken)
             tokenRepository.saveRefreshToken(loginStudentDto.refreshToken)
-            userRepository.saveUserDetails(UserRole.STUDENT, loginStudentDto.student.id)
+            userRepositoryImpl.saveUserDetails(UserRole.STUDENT, loginStudentDto.student.id)
         }.map {}
     }
 
@@ -33,7 +32,7 @@ class StudentAuthRepositoryImpl(
         return remoteDataSource.verifyCode(email, code).onSuccess { loginStudentDto ->
             tokenRepository.saveAccessToken(loginStudentDto.accessToken)
             tokenRepository.saveRefreshToken(loginStudentDto.refreshToken)
-            userRepository.saveUserDetails(UserRole.STUDENT, loginStudentDto.student.id)
+            userRepositoryImpl.saveUserDetails(UserRole.STUDENT, loginStudentDto.student.id)
         }.map {}
     }
 
@@ -51,7 +50,7 @@ class StudentAuthRepositoryImpl(
     override suspend fun logout(): Result<Unit, DataError.Remote> {
         return remoteDataSource.logout().onSuccess {
             tokenRepository.clearTokens()
-            userRepository.clearUserDetails()
+            userRepositoryImpl.clearUserDetails()
         }
     }
 }

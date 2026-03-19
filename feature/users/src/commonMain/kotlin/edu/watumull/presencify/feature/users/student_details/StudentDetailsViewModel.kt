@@ -8,7 +8,9 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student.StudentDropoutRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
+import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController.sendEvent
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class StudentDetailsViewModel(
     private val studentRepository: StudentRepository,
+    private val studentAuthRepository: StudentAuthRepository,
     private val studentDropoutRepository: StudentDropoutRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<StudentDetailsState, StudentDetailsEvent, StudentDetailsAction>(
@@ -147,6 +150,20 @@ class StudentDetailsViewModel(
             is StudentDetailsAction.EditStudentDetailsClick -> {
                 sendEvent(StudentDetailsEvent.NavigateToEditStudent(state.studentId))
             }
+
+            is StudentDetailsAction.LogoutClick -> {
+                logoutStudent()
+            }
+        }
+    }
+
+    private fun logoutStudent() {
+        viewModelScope.launch {
+                updateState { it.copy(isLoggingOut = true) }
+                studentAuthRepository.logout()
+                // Navigation or state cleanup is handled by AppViewModel observing userRole/userId
+                updateState { it.copy(isLoggingOut = false) }
+
         }
     }
 

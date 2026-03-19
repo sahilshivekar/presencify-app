@@ -13,9 +13,11 @@ import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.users.navigation.UsersRoutes
 import kotlinx.coroutines.launch
+import edu.watumull.presencify.core.domain.repository.teacher_auth.TeacherAuthRepository
 
 class TeacherDetailsViewModel(
     private val teacherRepository: TeacherRepository,
+    private val teacherAuthRepository: TeacherAuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<TeacherDetailsState, TeacherDetailsEvent, TeacherDetailsAction>(
     initialState = TeacherDetailsState(
@@ -117,6 +119,19 @@ class TeacherDetailsViewModel(
             is TeacherDetailsAction.AssignUnassignCoursesClick -> {
                 sendEvent(TeacherDetailsEvent.NavigateToAssignUnassignCourses(state.teacherId))
             }
+
+            is TeacherDetailsAction.LogoutClick -> {
+                logoutTeacher()
+            }
+        }
+    }
+
+    private fun logoutTeacher() {
+        viewModelScope.launch {
+            println("Logging out teacher...")
+            updateState { it.copy(isLoggingOut = true) }
+            teacherAuthRepository.logout()
+            updateState { it.copy(isLoggingOut = false) }
         }
     }
 

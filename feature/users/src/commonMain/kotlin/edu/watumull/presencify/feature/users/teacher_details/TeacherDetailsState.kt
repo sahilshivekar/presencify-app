@@ -14,6 +14,7 @@ data class TeacherDetailsState(
     val isUpdatingImage: Boolean = false,
     val isRemovingImage: Boolean = false,
     val isRemovingTeacher: Boolean = false,
+    val isLoggingOut: Boolean = false,
 ) {
     sealed interface ViewState {
         data object Loading : ViewState
@@ -34,4 +35,3 @@ enum class DialogIntention {
     GENERIC,
     CONFIRM_REMOVE_TEACHER,
 }
-

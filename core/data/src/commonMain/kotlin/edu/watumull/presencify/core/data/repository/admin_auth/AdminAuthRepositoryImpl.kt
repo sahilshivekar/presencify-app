@@ -1,10 +1,8 @@
 package edu.watumull.presencify.core.data.repository.admin_auth
 
-import edu.watumull.presencify.core.data.dto.auth.LoginAdminDto
-import edu.watumull.presencify.core.data.dto.auth.LoginTeacherDto
 import edu.watumull.presencify.core.data.mapper.auth.toDomain
 import edu.watumull.presencify.core.data.network.admin_auth.RemoteAdminAuthDataSource
-import edu.watumull.presencify.core.data.repository.auth.UserRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
@@ -18,7 +16,7 @@ import edu.watumull.presencify.core.domain.repository.admin_auth.AdminAuthReposi
 class AdminAuthRepositoryImpl(
     private val remoteDataSource: RemoteAdminAuthDataSource,
     private val tokenRepository: TokenRepository,
-    private val userRepository: UserRepository,
+    private val userRepositoryImpl: UserRepositoryImpl,
 ) : AdminAuthRepository {
 
     override suspend fun login(
@@ -28,7 +26,7 @@ class AdminAuthRepositoryImpl(
         return remoteDataSource.login(emailOrUsername, password).onSuccess { loginAdminDto ->
             tokenRepository.saveAccessToken(loginAdminDto.accessToken)
             tokenRepository.saveRefreshToken(loginAdminDto.refreshToken)
-            userRepository.saveUserDetails(UserRole.ADMIN, loginAdminDto.admin.id)
+            userRepositoryImpl.saveUserDetails(UserRole.ADMIN, loginAdminDto.admin.id)
         }.map { it.toDomain() }
     }
 
@@ -41,7 +39,7 @@ class AdminAuthRepositoryImpl(
         return remoteDataSource.verifyCode(email, code).onSuccess { tokenDto ->
             tokenRepository.saveAccessToken(tokenDto.accessToken)
             tokenRepository.saveRefreshToken(tokenDto.refreshToken)
-            userRepository.saveUserDetails(UserRole.ADMIN, tokenDto.admin.id)
+            userRepositoryImpl.saveUserDetails(UserRole.ADMIN, tokenDto.admin.id)
         }.map {}
     }
 
@@ -66,7 +64,7 @@ class AdminAuthRepositoryImpl(
     override suspend fun logout(): Result<Unit, DataError.Remote> {
         return remoteDataSource.logout().onSuccess {
             tokenRepository.clearTokens()
-            userRepository.clearUserDetails()
+            userRepositoryImpl.clearUserDetails()
         }
     }
 

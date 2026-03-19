@@ -10,5 +10,5 @@ sealed interface StudentDetailsAction {
     data object RemoveStudentClick : StudentDetailsAction
     data object ConfirmRemoveStudent : StudentDetailsAction
     data object EditStudentDetailsClick : StudentDetailsAction
+    data object LogoutClick : StudentDetailsAction
 }
-

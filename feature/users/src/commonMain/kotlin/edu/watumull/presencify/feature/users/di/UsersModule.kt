@@ -35,12 +35,14 @@ val usersModule = module {
         StudentDetailsViewModel(
             studentRepository = get(),
             studentDropoutRepository = get(),
+            studentAuthRepository = get(),
             savedStateHandle = get()
         )
     }
     viewModel {
         TeacherDetailsViewModel(
             teacherRepository = get(),
+            teacherAuthRepository = get(),
             savedStateHandle = get()
         )
     }
@@ -94,4 +96,3 @@ val usersModule = module {
         MarkUnmarkStudentAsDropoutViewModel()
     }
 }
-

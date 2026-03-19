@@ -5,9 +5,11 @@ import edu.watumull.presencify.core.data.Constants
 import edu.watumull.presencify.core.data.local.NoOpStringCipher
 import edu.watumull.presencify.core.data.local.SettingsFactory
 import edu.watumull.presencify.core.data.local.StringCipher
-import edu.watumull.presencify.core.data.repository.auth.UserRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
+import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val storageModule = module {
@@ -23,7 +25,7 @@ val storageModule = module {
     single { TokenRepository(get(named(Constants.AUTH_SETTINGS_QUALIFIER))) }
 
     // RoleRepository for managing user role
-    single { UserRepository(get()) }
+    single { UserRepositoryImpl(get()) } bind UserRepository::class
 
     // Add local data sources here as they are implemented
 }

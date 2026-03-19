@@ -1,9 +1,10 @@
 package edu.watumull.presencify.core.data.network
 
 import edu.watumull.presencify.core.data.dto.auth.TokenDto
-import edu.watumull.presencify.core.data.repository.auth.UserRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import edu.watumull.presencify.core.domain.model.auth.UserRole
+import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
@@ -160,6 +161,10 @@ class HttpClientFactory(
 
             defaultRequest {
                 contentType(ContentType.Application.Json)
+                val token = tokenRepository.readAccessToken()
+                if (!token.isNullOrBlank()) {
+                    bearerAuth(token)
+                }
             }
         }
     }
