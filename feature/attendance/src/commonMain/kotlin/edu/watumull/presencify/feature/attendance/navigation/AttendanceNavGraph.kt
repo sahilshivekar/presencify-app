@@ -15,7 +15,8 @@ fun NavGraphBuilder.attendanceDashboard(
     onNavigateToStudentAttendanceAnalytics: () -> Unit,
     onNavigateToAggregateAttendanceAnalytics: () -> Unit,
     onNavigateToSearchAttendance: () -> Unit,
-    onNavigateToCreateAttendance: () -> Unit
+    onNavigateToCreateAttendance: () -> Unit,
+    onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
 ) {
     composableWithSlideTransitions<AttendanceRoutes.AttendanceDashboard> {
         AttendanceDashboardRoot(
@@ -24,6 +25,14 @@ fun NavGraphBuilder.attendanceDashboard(
             onNavigateToAggregateAttendanceAnalytics = onNavigateToAggregateAttendanceAnalytics,
             onNavigateToSearchAttendance = onNavigateToSearchAttendance,
             onNavigateToCreateAttendance = onNavigateToCreateAttendance
+        )
+    }
+
+    // for student dashboard when role is student
+    composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
+        StudentAttendanceAnalyticsRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
         )
     }
 }
@@ -50,7 +59,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 4. Individual Student Analytics
     composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
         StudentAttendanceAnalyticsRoot(
             onNavigateBack = onNavigateBack,

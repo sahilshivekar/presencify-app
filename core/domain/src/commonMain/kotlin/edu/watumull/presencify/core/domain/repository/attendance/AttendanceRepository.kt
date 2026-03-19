@@ -55,7 +55,7 @@ interface AttendanceRepository {
         academicEndYear: Int?,
         branchId: String?,
         schemeId: String?,
-    ): Result<AggregatedAttendance, DataError.Remote>
+    ): Result<AttendanceStudentAggregatedAndDetailed, DataError.Remote>
 
     suspend fun getAttendanceOfAllForSemesterDivisionBatchCourse(
         semesterId: String?,

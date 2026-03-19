@@ -135,12 +135,8 @@ class HttpClientFactory(
                         }
                     }
 
-                    sendWithoutRequest { request ->
-                        val isAuthEndpoint = request.url.pathSegments.contains("login") ||
-                                request.url.pathSegments.contains("register")
-
-                        // Return true to skip auth for these endpoints
-                        !isAuthEndpoint
+                    sendWithoutRequest {
+                        false
                     }
                 }
             }

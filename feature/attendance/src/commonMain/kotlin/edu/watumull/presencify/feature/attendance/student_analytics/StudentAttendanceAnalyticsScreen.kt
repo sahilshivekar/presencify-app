@@ -57,8 +57,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
 import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,9 +69,10 @@ fun StudentAttendanceAnalyticsScreen(
     state: StudentAttendanceAnalyticsState,
     onAction: (StudentAttendanceAnalyticsAction) -> Unit,
 ) {
+    val userRole = LocalUserRole.current
     PresencifyScaffold(
         backPress = { onAction(StudentAttendanceAnalyticsAction.BackButtonClick) },
-        topBarTitle = "Student Attendance Analytics",
+        topBarTitle = if (userRole == UserRole.STUDENT) null else "Student Attendance Analytics",
     ) { paddingValues ->
         when (state.viewState) {
             is StudentAttendanceAnalyticsState.ViewState.Loading -> {
@@ -148,7 +151,7 @@ private fun StudentAttendanceAnalyticsScreenContent(
             // Semesters List
             if (student.studentSemesters.isNullOrEmpty()) {
                 PresencifyNoResultsIndicator(
-                    text = "No semesters found for this student"
+                    text = "No attendance data available yet"
                 )
             } else {
                 LazyColumn(
@@ -319,6 +322,7 @@ private fun SemesterAttendanceItem(
                                 )
                             }
                         }
+
                         attendanceData.isEmpty() -> {
                             Text(
                                 text = "No attendance data available for this semester",
@@ -327,6 +331,7 @@ private fun SemesterAttendanceItem(
                                 modifier = Modifier.padding(16.dp)
                             )
                         }
+
                         else -> {
                             AttendanceCoursesGrid(
                                 attendanceData = attendanceData,
@@ -888,7 +893,7 @@ private fun WeeklyAttendanceTrendChart(
 
     // Create a stable key from courseIds + overall flag
     val courseKey = (if (showOverall) "overall," else "") +
-        attendanceData.joinToString(",") { it.courseId }
+            attendanceData.joinToString(",") { it.courseId }
 
     androidx.compose.runtime.key(courseKey) {
         val modelProducer = androidx.compose.runtime.remember { CartesianChartModelProducer() }

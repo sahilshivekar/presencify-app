@@ -14,6 +14,7 @@ import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ACT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCES
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_BY_ID
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_ALL
+import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_SELF
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_STUDENT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.REMOVE_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.SEND_ATTENDANCE_REPORT
@@ -41,7 +42,11 @@ class KtorRemoteAttendanceDataSource(
     }
 
 
-    override suspend fun updateStudentAttendance(attendanceId: String, studentId: String, newAttendanceStatus: Boolean): Result<AttendanceStudentDto, DataError.Remote> {
+    override suspend fun updateStudentAttendance(
+        attendanceId: String,
+        studentId: String,
+        newAttendanceStatus: Boolean
+    ): Result<AttendanceStudentDto, DataError.Remote> {
         return safeCall<AttendanceStudentDto> {
             httpClient.put(UPDATE_STUDENT_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
@@ -74,9 +79,18 @@ class KtorRemoteAttendanceDataSource(
     }
 
     override suspend fun getAttendanceOfAnyStudentForSpecificCourseInSemester(
-        studentId: String, courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
-        startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
-        branchId: String?, schemeId: String?
+        studentId: String,
+        courseId: String,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?
     ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote> {
         return safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
             httpClient.get(GET_ATTENDANCE_OF_STUDENT) {
@@ -97,12 +111,20 @@ class KtorRemoteAttendanceDataSource(
     }
 
     override suspend fun getAttendanceOfSelfForSpecificCourseInSemester(
-        courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
-        startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
-        branchId: String?, schemeId: String?
-    ): Result<AggregatedAttendanceDto, DataError.Remote> {
-        val result = safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
-            httpClient.get(GET_ATTENDANCE_OF_STUDENT) {
+        courseId: String,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?
+    ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote> {
+        return safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
+            httpClient.get(GET_ATTENDANCE_OF_SELF) {
                 parameter("courseId", courseId)
                 semesterId?.let { parameter("semesterId", it) }
                 divisionId?.let { parameter("divisionId", it) }
@@ -117,23 +139,32 @@ class KtorRemoteAttendanceDataSource(
             }
         }
 
-        return when (result) {
-            is Result.Success -> {
-                val aggregated = result.data.aggregatedAttendance.firstOrNull()
-                if (aggregated != null) {
-                    Result.Success(aggregated)
-                } else {
-                    // No attendance data for this course
-                    Result.Error(DataError.Remote.Unknown)
-                }
-            }
-            is Result.Error -> result
-        }
+//        return when (result) {
+//            is Result.Success -> {
+//                val aggregated = result.data.aggregatedAttendance.firstOrNull()
+//                if (aggregated != null) {
+//                    Result.Success(aggregated)
+//                } else {
+//                    // No attendance data for this course
+//                    Result.Error(DataError.Remote.Unknown)
+//                }
+//            }
+//            is Result.Error -> result
+//        }
     }
 
     override suspend fun getAttendanceOfAllForSemesterDivisionBatchCourse(
-        semesterId: String?, divisionId: String?, batchId: String?, courseId: String?, startDate: LocalDate?, endDate: LocalDate?,
-        semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?, branchId: String?, schemeId: String?
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        courseId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?
     ): Result<List<AttendanceSummaryDto>, DataError.Remote> {
         return safeCall<List<AttendanceSummaryDto>> {
             httpClient.get(GET_ATTENDANCE_OF_ALL) {
@@ -153,18 +184,24 @@ class KtorRemoteAttendanceDataSource(
     }
 
     override suspend fun sendAttendanceReport(
-        startDate: LocalDate?, endDate: LocalDate?, studentIds: List<String>?, courseIds: List<String>?, semesterId: String?
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        studentIds: List<String>?,
+        courseIds: List<String>?,
+        semesterId: String?
     ): Result<Map<String, Any>, DataError.Remote> {
         return safeCall<Map<String, Any>> {
             httpClient.post(SEND_ATTENDANCE_REPORT) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "startDate" to startDate,
-                    "endDate" to endDate,
-                    "studentIds" to studentIds,
-                    "courseIds" to courseIds,
-                    "semesterId" to semesterId
-                ))
+                setBody(
+                    mapOf(
+                        "startDate" to startDate,
+                        "endDate" to endDate,
+                        "studentIds" to studentIds,
+                        "courseIds" to courseIds,
+                        "semesterId" to semesterId
+                    )
+                )
             }
         }
     }
@@ -176,9 +213,19 @@ class KtorRemoteAttendanceDataSource(
     }
 
     override suspend fun getAttendances(
-        date: LocalDate?, classId: String?, studentId: String?, courseId: String?, semesterId: String?,
-        divisionId: String?, batchId: String?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
-        branchId: String?, page: Int, limit: Int
+        date: LocalDate?,
+        classId: String?,
+        studentId: String?,
+        courseId: String?,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        page: Int,
+        limit: Int
     ): Result<AttendanceWithTotalCountDto, DataError.Remote> {
         return safeCall<AttendanceWithTotalCountDto> {
             httpClient.get(GET_ATTENDANCES) {
@@ -199,7 +246,10 @@ class KtorRemoteAttendanceDataSource(
         }
     }
 
-    override suspend fun getActiveAttendanceSheet(studentId: String, divisionId: String): Result<List<AttendanceDto>, DataError.Remote> {
+    override suspend fun getActiveAttendanceSheet(
+        studentId: String,
+        divisionId: String
+    ): Result<List<AttendanceDto>, DataError.Remote> {
         return safeCall<List<AttendanceDto>> {
             httpClient.get(GET_ACTIVE_ATTENDANCE_SHEET) {
                 parameter("studentId", studentId)

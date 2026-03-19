@@ -12,6 +12,7 @@ data class StudentAttendanceAnalyticsState(
 
     // Student data
     val student: Student? = null,
+    val studentId: String? = null,
 
     // Expanded semester IDs to show attendance
     val expandedSemesterIds: Set<String> = emptySet(),

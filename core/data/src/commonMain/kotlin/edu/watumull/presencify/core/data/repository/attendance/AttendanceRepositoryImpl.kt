@@ -50,7 +50,7 @@ class AttendanceRepositoryImpl(
         courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
         startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
         branchId: String?, schemeId: String?
-    ): Result<AggregatedAttendance, DataError.Remote> {
+    ): Result<AttendanceStudentAggregatedAndDetailed, DataError.Remote> {
         return remoteDataSource.getAttendanceOfSelfForSpecificCourseInSemester(
             courseId, semesterId, divisionId, batchId, startDate, endDate, semesterNumber, academicStartYear, academicEndYear, branchId, schemeId
         ).map { it.toDomain() }

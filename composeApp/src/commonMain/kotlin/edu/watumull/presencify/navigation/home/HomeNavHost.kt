@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import edu.watumull.presencify.core.domain.model.auth.UserRole
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
 import edu.watumull.presencify.feature.academics.navigation.academicsDashboard
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
@@ -43,9 +45,14 @@ fun HomeNavHost(
     rootNavController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val attendanceTabRoute: NavRoute = if (LocalUserRole.current == UserRole.STUDENT) {
+        AttendanceRoutes.StudentAttendanceAnalytics()
+    } else {
+        AttendanceRoutes.AttendanceDashboard
+    }
     NavHost(
         navController = homeNavController,
-        startDestination = AttendanceRoutes.AttendanceDashboard,
+        startDestination = attendanceTabRoute,
         modifier = modifier
     ) {
         academicsDashboard(
@@ -94,6 +101,9 @@ fun HomeNavHost(
             },
             onNavigateToCreateAttendance = {
                 rootNavController.navigateToSearchClass(intention = "CREATE_ATTENDANCE_SHEET")
+            },
+            onNavigateToSearchAttendanceForCourseAndStudent = { courseId, studentId ->
+                rootNavController.navigateToSearchAttendance(courseId, studentId)
             }
         )
 
