@@ -34,9 +34,11 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.components.TimetableListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlin.time.ExperimentalTime
@@ -105,48 +107,49 @@ fun TimetableDetailsScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
-
                             Spacer(modifier = Modifier.height(16.dp))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                PresencifyTextButton(
-                                    onClick = { onAction(TimetableDetailsAction.AddClassClick) },
-                                    enabled = !state.isRemovingTimetable
+                            
+                            if (LocalUserRole.current == UserRole.ADMIN) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(
-                                        text = "Add class",
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-
-                                PresencifyTextButton(
-                                    onClick = { onAction(TimetableDetailsAction.EditTimetableClick) },
-                                    enabled = !state.isRemovingTimetable
-                                ) {
-                                    Text(
-                                        text = "Edit timetable",
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-
-                                PresencifyTextButton(
-                                    onClick = { onAction(TimetableDetailsAction.RemoveTimetableClick) },
-                                    enabled = !state.isRemovingTimetable
-                                ) {
-                                    if (state.isRemovingTimetable) {
-                                        CircularProgressIndicator(
-                                            color = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(20.dp),
-                                            strokeWidth = 2.dp,
-                                        )
-                                    } else {
+                                    PresencifyTextButton(
+                                        onClick = { onAction(TimetableDetailsAction.AddClassClick) },
+                                        enabled = !state.isRemovingTimetable
+                                    ) {
                                         Text(
-                                            text = "Remove timetable",
-                                            color = MaterialTheme.colorScheme.error
+                                            text = "Add class",
+                                            color = MaterialTheme.colorScheme.primary
                                         )
+                                    }
+
+//                                    PresencifyTextButton(
+//                                        onClick = { onAction(TimetableDetailsAction.EditTimetableClick) },
+//                                        enabled = !state.isRemovingTimetable
+//                                    ) {
+//                                        Text(
+//                                            text = "Edit timetable",
+//                                            color = MaterialTheme.colorScheme.primary
+//                                        )
+//                                    }
+
+                                    PresencifyTextButton(
+                                        onClick = { onAction(TimetableDetailsAction.RemoveTimetableClick) },
+                                        enabled = !state.isRemovingTimetable
+                                    ) {
+                                        if (state.isRemovingTimetable) {
+                                            CircularProgressIndicator(
+                                                color = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.size(20.dp),
+                                                strokeWidth = 2.dp,
+                                            )
+                                        } else {
+                                            Text(
+                                                text = "Remove timetable",
+                                                color = MaterialTheme.colorScheme.error
+                                            )
+                                        }
                                     }
                                 }
                             }

@@ -51,8 +51,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.TimetableListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -85,14 +87,17 @@ fun SearchTimetableScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchTimetableAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add timetable"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+
+                FloatingActionButton(
+                    onClick = { onAction(SearchTimetableAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add timetable"
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -225,7 +230,8 @@ private fun SearchTimetableScreenContent(
                         TimetableListItem(
                             branchAbbreviation = branch?.abbreviation ?: "Unknown Branch",
                             year = year,
-                            semesterNumber = semester?.semesterNumber ?: edu.watumull.presencify.core.domain.enums.SemesterNumber.SEMESTER_1,
+                            semesterNumber = semester?.semesterNumber
+                                ?: edu.watumull.presencify.core.domain.enums.SemesterNumber.SEMESTER_1,
                             semesterAcademicStartYear = semester?.academicStartYear ?: 0,
                             semesterAcademicEndYear = semester?.academicEndYear ?: 0,
                             divisionCode = division?.divisionCode ?: "Unknown Division",
@@ -411,6 +417,7 @@ private fun FilterSection(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+
             emptyMessage != null -> {
                 Text(
                     text = emptyMessage,
@@ -418,6 +425,7 @@ private fun FilterSection(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+
             else -> {
                 content()
             }

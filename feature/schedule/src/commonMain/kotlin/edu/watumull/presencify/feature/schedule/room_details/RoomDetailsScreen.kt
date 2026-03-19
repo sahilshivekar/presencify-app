@@ -23,8 +23,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.RoomListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun RoomDetailsScreen(
@@ -68,38 +70,40 @@ fun RoomDetailsScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
+                        if (LocalUserRole.current == UserRole.ADMIN) {
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PresencifyTextButton(
-                                onClick = { onAction(RoomDetailsAction.EditRoomClick) },
-                                enabled = !state.isRemovingRoom
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(
-                                    text = "Edit room",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            PresencifyTextButton(
-                                onClick = { onAction(RoomDetailsAction.RemoveRoomClick) },
-                                enabled = !state.isRemovingRoom
-                            ) {
-                                if (state.isRemovingRoom) {
-                                    CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
-                                    )
-                                } else {
+                                PresencifyTextButton(
+                                    onClick = { onAction(RoomDetailsAction.EditRoomClick) },
+                                    enabled = !state.isRemovingRoom
+                                ) {
                                     Text(
-                                        text = "Remove room",
-                                        color = MaterialTheme.colorScheme.error
+                                        text = "Edit room",
+                                        color = MaterialTheme.colorScheme.primary
                                     )
+                                }
+
+                                PresencifyTextButton(
+                                    onClick = { onAction(RoomDetailsAction.RemoveRoomClick) },
+                                    enabled = !state.isRemovingRoom
+                                ) {
+                                    if (state.isRemovingRoom) {
+                                        CircularProgressIndicator(
+                                            color = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        Text(
+                                            text = "Remove room",
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
                                 }
                             }
                         }
