@@ -21,8 +21,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.BranchListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun BranchDetailsScreen(
@@ -66,36 +68,37 @@ fun BranchDetailsScreen(
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PresencifyTextButton(
-                                onClick = { onAction(BranchDetailsAction.EditBranchClick) },
-                                enabled = !state.isRemovingBranch
+                        if (LocalUserRole.current == UserRole.ADMIN) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                androidx.compose.material3.Text(
-                                    text = "Edit branch",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            PresencifyTextButton(
-                                onClick = { onAction(BranchDetailsAction.RemoveBranchClick) },
-                                enabled = !state.isRemovingBranch
-                            ) {
-                                if (state.isRemovingBranch) {
-                                    androidx.compose.material3.CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
-                                    )
-                                } else {
+                                PresencifyTextButton(
+                                    onClick = { onAction(BranchDetailsAction.EditBranchClick) },
+                                    enabled = !state.isRemovingBranch
+                                ) {
                                     androidx.compose.material3.Text(
-                                        text = "Remove branch",
-                                        color = MaterialTheme.colorScheme.error
+                                        text = "Edit branch",
+                                        color = MaterialTheme.colorScheme.primary
                                     )
+                                }
+
+                                PresencifyTextButton(
+                                    onClick = { onAction(BranchDetailsAction.RemoveBranchClick) },
+                                    enabled = !state.isRemovingBranch
+                                ) {
+                                    if (state.isRemovingBranch) {
+                                        androidx.compose.material3.CircularProgressIndicator(
+                                            color = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        androidx.compose.material3.Text(
+                                            text = "Remove branch",
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
                                 }
                             }
                         }

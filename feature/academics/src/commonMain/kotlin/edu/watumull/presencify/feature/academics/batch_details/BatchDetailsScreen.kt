@@ -21,8 +21,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.BatchListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun BatchDetailsScreen(
@@ -67,7 +69,8 @@ fun BatchDetailsScreen(
                                     ?: edu.watumull.presencify.core.domain.enums.SemesterNumber.SEMESTER_1,
                                 semesterAcademicStartYear = sem?.academicStartYear ?: 0,
                                 semesterAcademicEndYear = sem?.academicEndYear ?: 0,
-                                branchAbbreviation = sem?.branch?.abbreviation ?: div?.semester?.branch?.abbreviation ?: "",
+                                branchAbbreviation = sem?.branch?.abbreviation ?: div?.semester?.branch?.abbreviation
+                                ?: "",
                                 onClick = null,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -76,36 +79,37 @@ fun BatchDetailsScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PresencifyTextButton(
-                                onClick = { onAction(BatchDetailsAction.EditBatchClick) },
-                                enabled = !state.isRemovingBatch
+                        if (LocalUserRole.current == UserRole.ADMIN) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                androidx.compose.material3.Text(
-                                    text = "Edit batch",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            PresencifyTextButton(
-                                onClick = { onAction(BatchDetailsAction.RemoveBatchClick) },
-                                enabled = !state.isRemovingBatch
-                            ) {
-                                if (state.isRemovingBatch) {
-                                    androidx.compose.material3.CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
-                                    )
-                                } else {
+                                PresencifyTextButton(
+                                    onClick = { onAction(BatchDetailsAction.EditBatchClick) },
+                                    enabled = !state.isRemovingBatch
+                                ) {
                                     androidx.compose.material3.Text(
-                                        text = "Remove batch",
-                                        color = MaterialTheme.colorScheme.error
+                                        text = "Edit batch",
+                                        color = MaterialTheme.colorScheme.primary
                                     )
+                                }
+
+                                PresencifyTextButton(
+                                    onClick = { onAction(BatchDetailsAction.RemoveBatchClick) },
+                                    enabled = !state.isRemovingBatch
+                                ) {
+                                    if (state.isRemovingBatch) {
+                                        androidx.compose.material3.CircularProgressIndicator(
+                                            color = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        androidx.compose.material3.Text(
+                                            text = "Remove batch",
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
                                 }
                             }
                         }

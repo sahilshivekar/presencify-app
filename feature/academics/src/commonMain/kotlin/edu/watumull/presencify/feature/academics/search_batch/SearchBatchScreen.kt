@@ -40,8 +40,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.BatchListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -73,14 +75,16 @@ fun SearchBatchScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchBatchAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add batch"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                FloatingActionButton(
+                    onClick = { onAction(SearchBatchAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add batch"
+                    )
+                }
             }
         }
     ) { paddingValues ->

@@ -40,8 +40,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.DivisionListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -75,14 +77,16 @@ fun SearchDivisionScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchDivisionAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add division"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                FloatingActionButton(
+                    onClick = { onAction(SearchDivisionAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add division"
+                    )
+                }
             }
         }
     ) { paddingValues ->

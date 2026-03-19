@@ -43,8 +43,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.CourseListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.feature.academics.navigation.SearchCourseIntention
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -84,14 +86,16 @@ fun SearchCourseScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchCourseAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add course"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                FloatingActionButton(
+                    onClick = { onAction(SearchCourseAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add course"
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -219,7 +223,10 @@ private fun SearchCourseScreenContent(
                                         // Check if course is linked to the branch+semester combination
                                         val isLinked = state.branchId?.let { bId ->
                                             state.semesterNumber?.let { semNum ->
-                                                val semesterEnum = edu.watumull.presencify.core.domain.enums.SemesterNumber.fromValue(semNum)
+                                                val semesterEnum =
+                                                    edu.watumull.presencify.core.domain.enums.SemesterNumber.fromValue(
+                                                        semNum
+                                                    )
                                                 course.branchCourseSemesters?.any {
                                                     it.branchId == bId && it.semesterNumber == semesterEnum
                                                 } == true

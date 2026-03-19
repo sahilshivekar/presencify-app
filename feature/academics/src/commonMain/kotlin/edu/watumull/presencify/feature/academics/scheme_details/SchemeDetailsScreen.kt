@@ -21,8 +21,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.SchemeListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun SchemeDetailsScreen(
@@ -53,7 +55,6 @@ fun SchemeDetailsScreen(
                 ) {
 
 
-
                     Column(
                         modifier = Modifier
                             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
@@ -69,30 +70,37 @@ fun SchemeDetailsScreen(
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PresencifyTextButton(
-                                onClick = { onAction(SchemeDetailsAction.EditSchemeClick) },
-                                enabled = !state.isRemovingScheme
+                        if (LocalUserRole.current == UserRole.ADMIN) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                androidx.compose.material3.Text(text = "Edit scheme", color = MaterialTheme.colorScheme.primary)
-                            }
-
-                            PresencifyTextButton(
-                                onClick = { onAction(SchemeDetailsAction.RemoveSchemeClick) },
-                                enabled = !state.isRemovingScheme
-                            ) {
-                                if (state.isRemovingScheme) {
-                                    androidx.compose.material3.CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
+                                PresencifyTextButton(
+                                    onClick = { onAction(SchemeDetailsAction.EditSchemeClick) },
+                                    enabled = !state.isRemovingScheme
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = "Edit scheme",
+                                        color = MaterialTheme.colorScheme.primary
                                     )
-                                } else {
-                                    androidx.compose.material3.Text(text = "Remove scheme", color = MaterialTheme.colorScheme.error)
+                                }
+
+                                PresencifyTextButton(
+                                    onClick = { onAction(SchemeDetailsAction.RemoveSchemeClick) },
+                                    enabled = !state.isRemovingScheme
+                                ) {
+                                    if (state.isRemovingScheme) {
+                                        androidx.compose.material3.CircularProgressIndicator(
+                                            color = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        androidx.compose.material3.Text(
+                                            text = "Remove scheme",
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
                                 }
                             }
                         }

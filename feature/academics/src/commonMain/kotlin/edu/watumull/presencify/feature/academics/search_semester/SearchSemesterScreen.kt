@@ -38,8 +38,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.SemesterListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -73,14 +75,16 @@ fun SearchSemesterScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchSemesterAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add semester"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                FloatingActionButton(
+                    onClick = { onAction(SearchSemesterAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add semester"
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -192,7 +196,8 @@ private fun SearchSemesterScreenContent(
                         items = state.semesters,
                         key = { it.id }
                     ) { semester ->
-                        val divisionCodes = semester.divisions?.map { it.divisionCode }?.toPersistentList() ?: kotlinx.collections.immutable.persistentListOf()
+                        val divisionCodes = semester.divisions?.map { it.divisionCode }?.toPersistentList()
+                            ?: kotlinx.collections.immutable.persistentListOf()
                         val batchCodes = semester.divisions?.flatMap { division ->
                             division.batches?.map { it.batchCode } ?: emptyList()
                         }?.distinct()?.toPersistentList() ?: kotlinx.collections.immutable.persistentListOf()

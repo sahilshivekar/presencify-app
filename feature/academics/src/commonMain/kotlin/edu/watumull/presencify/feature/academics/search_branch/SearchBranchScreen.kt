@@ -31,8 +31,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.BranchListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,14 +46,16 @@ fun SearchBranchScreen(
         backPress = { onAction(SearchBranchAction.BackButtonClick) },
         topBarTitle = "Search Branches",
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAction(SearchBranchAction.ClickFloatingActionButton) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add branch"
-                )
+            if (LocalUserRole.current == UserRole.ADMIN) {
+                FloatingActionButton(
+                    onClick = { onAction(SearchBranchAction.ClickFloatingActionButton) },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add branch"
+                    )
+                }
             }
         }
     ) { paddingValues ->

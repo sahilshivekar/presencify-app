@@ -26,7 +26,9 @@ import edu.watumull.presencify.core.design.systems.group_batch
 import edu.watumull.presencify.core.design.systems.group_division
 import edu.watumull.presencify.core.design.systems.round_menu_book_24
 import edu.watumull.presencify.core.design.systems.scheme_24
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun AcademicsDashboardScreen(
@@ -84,12 +86,14 @@ fun AcademicsDashboardScreen(
                                     modifier = Modifier.weight(1f)
                                 )
                             }
-                            PresencifyActionBar(
-                                text = "Link/Unlink Courses",
-                                leadingIcon = Res.drawable.round_menu_book_24,
-                                onClick = { onAction(AcademicsDashboardAction.ClickLinkUnlinkCourse) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            if (LocalUserRole.current == UserRole.ADMIN) {
+                                PresencifyActionBar(
+                                    text = "Link/Unlink Courses",
+                                    leadingIcon = Res.drawable.round_menu_book_24,
+                                    onClick = { onAction(AcademicsDashboardAction.ClickLinkUnlinkCourse) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
 

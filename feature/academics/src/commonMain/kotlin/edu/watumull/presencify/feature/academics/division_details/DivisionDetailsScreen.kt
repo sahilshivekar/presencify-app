@@ -21,8 +21,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.DivisionListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -70,42 +72,44 @@ fun DivisionDetailsScreen(
                                     semesterAcademicStartYear = semester.academicStartYear,
                                     semesterAcademicEndYear = semester.academicEndYear,
                                     branchAbbreviation = branch.abbreviation,
-                                    onClick = {  },
+                                    onClick = { },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PresencifyTextButton(
-                                onClick = { onAction(DivisionDetailsAction.EditDivisionClick) },
-                                enabled = !state.isRemovingDivision
+                        if (LocalUserRole.current == UserRole.ADMIN) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                androidx.compose.material3.Text(
-                                    text = "Edit division",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            PresencifyTextButton(
-                                onClick = { onAction(DivisionDetailsAction.RemoveDivisionClick) },
-                                enabled = !state.isRemovingDivision
-                            ) {
-                                if (state.isRemovingDivision) {
-                                    androidx.compose.material3.CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
-                                    )
-                                } else {
+                                PresencifyTextButton(
+                                    onClick = { onAction(DivisionDetailsAction.EditDivisionClick) },
+                                    enabled = !state.isRemovingDivision
+                                ) {
                                     androidx.compose.material3.Text(
-                                        text = "Remove division",
-                                        color = MaterialTheme.colorScheme.error
+                                        text = "Edit division",
+                                        color = MaterialTheme.colorScheme.primary
                                     )
+                                }
+
+                                PresencifyTextButton(
+                                    onClick = { onAction(DivisionDetailsAction.RemoveDivisionClick) },
+                                    enabled = !state.isRemovingDivision
+                                ) {
+                                    if (state.isRemovingDivision) {
+                                        androidx.compose.material3.CircularProgressIndicator(
+                                            color = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        androidx.compose.material3.Text(
+                                            text = "Remove division",
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
                                 }
                             }
                         }

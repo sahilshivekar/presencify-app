@@ -26,9 +26,11 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.CourseListItem
 import edu.watumull.presencify.core.presentation.components.SemesterListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -60,7 +62,6 @@ fun SemesterDetailsScreen(
                 ) {
 
 
-
                     Column(
                         modifier = Modifier
                             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
@@ -73,7 +74,8 @@ fun SemesterDetailsScreen(
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
                         state.semester?.let { semester ->
-                            val divisionCodes = semester.divisions?.map { it.divisionCode }?.toPersistentList() ?: kotlinx.collections.immutable.persistentListOf()
+                            val divisionCodes = semester.divisions?.map { it.divisionCode }?.toPersistentList()
+                                ?: kotlinx.collections.immutable.persistentListOf()
                             val batchCodes = semester.divisions?.flatMap { division ->
                                 division.batches?.map { it.batchCode } ?: emptyList()
                             }?.distinct()?.toPersistentList() ?: kotlinx.collections.immutable.persistentListOf()
@@ -91,31 +93,32 @@ fun SemesterDetailsScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            PresencifyTextButton(
-                                onClick = { onAction(SemesterDetailsAction.EditSemesterClick) },
-                                enabled = !state.isRemovingSemester
+                        if (LocalUserRole.current == UserRole.ADMIN) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = "Edit semester", color = MaterialTheme.colorScheme.primary)
-                            }
+                                PresencifyTextButton(
+                                    onClick = { onAction(SemesterDetailsAction.EditSemesterClick) },
+                                    enabled = !state.isRemovingSemester
+                                ) {
+                                    Text(text = "Edit semester", color = MaterialTheme.colorScheme.primary)
+                                }
 
-                            PresencifyTextButton(
-                                onClick = { onAction(SemesterDetailsAction.RemoveSemesterClick) },
-                                enabled = !state.isRemovingSemester
-                            ) {
-                                if (state.isRemovingSemester) {
-                                    CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
-                                    )
-                                } else {
-                                    Text(text = "Remove semester", color = MaterialTheme.colorScheme.error)
+                                PresencifyTextButton(
+                                    onClick = { onAction(SemesterDetailsAction.RemoveSemesterClick) },
+                                    enabled = !state.isRemovingSemester
+                                ) {
+                                    if (state.isRemovingSemester) {
+                                        CircularProgressIndicator(
+                                            color = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    } else {
+                                        Text(text = "Remove semester", color = MaterialTheme.colorScheme.error)
+                                    }
                                 }
                             }
                         }

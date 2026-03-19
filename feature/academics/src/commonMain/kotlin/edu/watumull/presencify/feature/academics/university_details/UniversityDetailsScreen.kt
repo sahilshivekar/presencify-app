@@ -30,8 +30,10 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.UniversityListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 
 @Composable
 fun UniversityDetailsScreen(
@@ -96,36 +98,43 @@ fun UniversityDetailsScreen(
                                 )
 
                                 Spacer(modifier = Modifier.height(8.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    PresencifyTextButton(
-                                        onClick = { onAction(UniversityDetailsAction.EditUniversityClick(university.id)) },
-                                        enabled = state.removingUniversityId != university.id
+                                if (LocalUserRole.current == UserRole.ADMIN) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
-                                            text = "Edit",
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-
-                                    PresencifyTextButton(
-                                        onClick = { onAction(UniversityDetailsAction.RemoveUniversityClick(university.id)) },
-                                        enabled = state.removingUniversityId != university.id
-                                    ) {
-                                        if (state.removingUniversityId == university.id) {
-                                            CircularProgressIndicator(
-                                                color = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.size(20.dp),
-                                                strokeWidth = 2.dp
-                                            )
-                                        } else {
+                                        PresencifyTextButton(
+                                            onClick = { onAction(UniversityDetailsAction.EditUniversityClick(university.id)) },
+                                            enabled = state.removingUniversityId != university.id
+                                        ) {
                                             Text(
-                                                text = "Delete",
-                                                color = MaterialTheme.colorScheme.error
+                                                text = "Edit",
+                                                color = MaterialTheme.colorScheme.primary
                                             )
+                                        }
+
+                                        PresencifyTextButton(
+                                            onClick = {
+                                                onAction(
+                                                    UniversityDetailsAction.RemoveUniversityClick(
+                                                        university.id
+                                                    )
+                                                )
+                                            },
+                                            enabled = state.removingUniversityId != university.id
+                                        ) {
+                                            if (state.removingUniversityId == university.id) {
+                                                CircularProgressIndicator(
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(20.dp),
+                                                    strokeWidth = 2.dp
+                                                )
+                                            } else {
+                                                Text(
+                                                    text = "Delete",
+                                                    color = MaterialTheme.colorScheme.error
+                                                )
+                                            }
                                         }
                                     }
                                 }
