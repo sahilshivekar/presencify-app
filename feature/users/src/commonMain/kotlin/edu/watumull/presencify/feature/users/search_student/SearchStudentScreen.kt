@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -43,6 +45,7 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSh
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
+import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.StudentListItem
@@ -421,7 +424,12 @@ private fun SearchStudentScreenContent(
                                                 Switch(
                                                     checked = isDropout,
                                                     onCheckedChange = {
-                                                        onAction(SearchStudentAction.ToggleStudentDropout(student.id, isDropout))
+                                                        onAction(
+                                                            SearchStudentAction.ToggleStudentDropout(
+                                                                student.id,
+                                                                isDropout
+                                                            )
+                                                        )
                                                     },
                                                     enabled = !isLoading,
                                                     thumbContent = if (isLoading) {
@@ -439,12 +447,21 @@ private fun SearchStudentScreenContent(
 
                                     SearchStudentIntention.VIEW_ATTENDANCE -> {
                                         {
-                                            Button(
+                                            PresencifyTextButton(
                                                 onClick = {
                                                     onAction(SearchStudentAction.StudentActionButtonClick(student.id))
                                                 }
                                             ) {
-                                                Text("View Attendance")
+                                                Row (
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+                                                    Text("View", color = MaterialTheme.colorScheme.primary)
+                                                    Icon(
+                                                        imageVector = Icons.Default.ChevronRight,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
                                             }
                                         }
                                     }

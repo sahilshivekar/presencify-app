@@ -51,9 +51,13 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSemesterDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentAttendanceAnalytics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentVerifyCode
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherVerifyCode
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 
@@ -220,9 +224,19 @@ fun AppNavHost(
             onNavigateToAdminDetails = rootNavController::navigateToAdminDetails,
         )
 
-        studentAuthNavGraph()
+        studentAuthNavGraph(
+            onNavigateToHome = rootNavController::navigateToHome,
+            onNavigateToForgotPassword = rootNavController::navigateToStudentForgotPassword,
+            onNavigateToVerifyCode = rootNavController::navigateToStudentVerifyCode,
+            onNavigateBack = { rootNavController.navigateUp() },
+        )
 
-        teacherAuthNavGraph()
+        teacherAuthNavGraph(
+            onNavigateToHome = rootNavController::navigateToHome,
+            onNavigateToForgotPassword = rootNavController::navigateToTeacherForgotPassword,
+            onNavigateToVerifyCode = rootNavController::navigateToTeacherVerifyCode,
+            onNavigateBack = { rootNavController.navigateUp() },
+        )
 
     }
 }

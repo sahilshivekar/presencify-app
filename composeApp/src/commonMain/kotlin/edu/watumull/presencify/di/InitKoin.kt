@@ -7,6 +7,8 @@ import edu.watumull.presencify.feature.admin.mgt.di.adminMgtModule
 import edu.watumull.presencify.feature.attendance.di.attendanceModule
 import edu.watumull.presencify.feature.onboarding.di.onboardingModule
 import edu.watumull.presencify.feature.schedule.di.scheduleModule
+import edu.watumull.presencify.feature.student.auth.di.studentAuthModule
+import edu.watumull.presencify.feature.teacher.auth.di.teacherAuthModule
 import edu.watumull.presencify.feature.users.di.usersModule
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModel
@@ -30,7 +32,9 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             usersModule,
             academicsModule,
             scheduleModule,
-            attendanceModule
+            attendanceModule,
+            teacherAuthModule,
+            studentAuthModule
         )
     }
 }

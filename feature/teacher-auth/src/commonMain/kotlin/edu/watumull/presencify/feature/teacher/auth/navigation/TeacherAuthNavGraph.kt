@@ -2,17 +2,35 @@ package edu.watumull.presencify.feature.teacher.auth.navigation
 
 import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.feature.teacher.auth.forgot_password.TeacherForgotPasswordRoot
+import edu.watumull.presencify.feature.teacher.auth.login.TeacherLoginRoot
+import edu.watumull.presencify.feature.teacher.auth.verify_code.TeacherVerifyCodeRoot
 
-fun NavGraphBuilder.teacherAuthNavGraph() {
+fun NavGraphBuilder.teacherAuthNavGraph(
+    onNavigateToHome: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit,
+    onNavigateToVerifyCode: (String) -> Unit,
+    onNavigateBack: () -> Unit,
+) {
 
     composableWithSlideTransitions<TeacherAuthRoutes.TeacherLogin> {
-        // TODO: Add screen content
+        TeacherLoginRoot(
+            onBackButtonClick = onNavigateBack,
+            onNavigateToHome = onNavigateToHome,
+            onNavigateToForgotPassword = onNavigateToForgotPassword
+        )
     }
     composableWithSlideTransitions<TeacherAuthRoutes.TeacherForgotPassword> {
-        // TODO: Add screen content
+        TeacherForgotPasswordRoot(
+            onBackButtonClick = onNavigateBack,
+            onNavigateToVerifyCode = { email -> onNavigateToVerifyCode(email) }
+        )
     }
     composableWithSlideTransitions<TeacherAuthRoutes.TeacherVerifyCode> {
-        // TODO: Add screen content
+        TeacherVerifyCodeRoot(
+            onBackButtonClick = onNavigateBack,
+            onCodeVerified = onNavigateToHome
+        )
     }
 
 }
