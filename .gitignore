@@ -18,3 +18,6 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 /old-android-app/
+
+# Secrets
+**/Secrets.kt

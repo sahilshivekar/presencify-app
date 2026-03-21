@@ -66,9 +66,10 @@ class DynamicQRViewModel(
         timerJob = viewModelScope.launch {
             while (isActive) {
                 val timestamp = ntpClock.getCurrentNtpTimeMs()
-                val qrContent = "$attendanceId|$timestamp"
+                val rawContent = "$attendanceId|$timestamp"
+                val qrContent = DynamicQRCipher.encrypt(rawContent)
                 updateState { it.copy(qrCodeContent = qrContent, isStopped = false) }
-                delay(2500L)
+                delay(2000L)
             }
         }
     }
