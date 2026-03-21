@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.admin_auth
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.auth.LoginAdminDto
 import edu.watumull.presencify.core.data.dto.auth.SendVerificationCodeDto
 import edu.watumull.presencify.core.data.dto.auth.TokenDto
@@ -19,12 +20,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteAdminAuthDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteAdminAuthDataSource {
+    
 
     override suspend fun login(emailOrUsername: String, password: String): Result<LoginAdminDto, DataError.Remote> {
         return safeCall<LoginAdminDto> {
-            httpClient.post(LOGIN) {
+            clientProvider.getClient().post(LOGIN) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("emailOrUsername" to emailOrUsername, "password" to password))
             }
@@ -33,7 +35,7 @@ class KtorRemoteAdminAuthDataSource(
 
     override suspend fun sendVerificationCodeToEmailForForgotPassword(email: String): Result<SendVerificationCodeDto, DataError.Remote> {
         return safeCall<SendVerificationCodeDto> {
-            httpClient.post(SEND_VERIFICATION_CODE_FORGOT) {
+            clientProvider.getClient().post(SEND_VERIFICATION_CODE_FORGOT) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email))
             }
@@ -42,7 +44,7 @@ class KtorRemoteAdminAuthDataSource(
 
     override suspend fun verifyCode(email: String, code: String): Result<LoginAdminDto, DataError.Remote> {
         return safeCall<LoginAdminDto> {
-            httpClient.post(VERIFY_CODE) {
+            clientProvider.getClient().post(VERIFY_CODE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "code" to code))
             }
@@ -51,7 +53,7 @@ class KtorRemoteAdminAuthDataSource(
 
     override suspend fun refreshTokens(refreshToken: String): Result<TokenDto, DataError.Remote> {
         return safeCall<TokenDto> {
-            httpClient.post(REFRESH_TOKENS) {
+            clientProvider.getClient().post(REFRESH_TOKENS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("refreshToken" to refreshToken))
             }
@@ -60,7 +62,7 @@ class KtorRemoteAdminAuthDataSource(
 
     override suspend fun verifyPassword(password: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.post(VERIFY_PASSWORD) {
+            clientProvider.getClient().post(VERIFY_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("password" to password))
             }
@@ -69,7 +71,7 @@ class KtorRemoteAdminAuthDataSource(
 
     override suspend fun updateAdminPassword(password: String, confirmPassword: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.put(UPDATE_ADMIN_PASSWORD) {
+            clientProvider.getClient().put(UPDATE_ADMIN_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("password" to password, "confirmPassword" to confirmPassword))
             }
@@ -78,13 +80,13 @@ class KtorRemoteAdminAuthDataSource(
 
     override suspend fun logout(): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.post(LOGOUT)
+            clientProvider.getClient().post(LOGOUT)
         }
     }
 
     override suspend fun sendVerificationCodeToEmail(): Result<SendVerificationCodeDto, DataError.Remote> {
         return safeCall<SendVerificationCodeDto> {
-            httpClient.get(SEND_VERIFICATION_CODE_EMAIL)
+            clientProvider.getClient().get(SEND_VERIFICATION_CODE_EMAIL)
         }
     }
 }

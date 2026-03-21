@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.schedule
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.schedule.TimetableDto
 import edu.watumull.presencify.core.data.dto.schedule.TimetableListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.request.AddTimetableRequest
@@ -18,8 +19,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteTimetableDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteTimetableDataSource {
+    
 
     override suspend fun getTimetables(
         semesterNumber: SemesterNumber?,
@@ -29,7 +31,7 @@ class KtorRemoteTimetableDataSource(
         limit: Int?
     ): Result<TimetableListWithTotalCountDto, DataError.Remote> {
         return safeCall<TimetableListWithTotalCountDto> {
-            httpClient.get(GET_TIMETABLES) {
+            clientProvider.getClient().get(GET_TIMETABLES) {
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
                 academicStartYearOfSemester?.let { parameter("academicStartYearOfSemester", it) }
                 academicEndYearOfSemester?.let { parameter("academicEndYearOfSemester", it) }
@@ -41,13 +43,13 @@ class KtorRemoteTimetableDataSource(
 
     override suspend fun getTimetableById(id: String): Result<TimetableDto, DataError.Remote> {
         return safeCall<TimetableDto> {
-            httpClient.get("$GET_TIMETABLE_BY_ID/$id")
+            clientProvider.getClient().get("$GET_TIMETABLE_BY_ID/$id")
         }
     }
 
     override suspend fun addTimetable(divisionId: String, timetableVersion: Int?): Result<TimetableDto, DataError.Remote> {
         return safeCall<TimetableDto> {
-            httpClient.post(ADD_TIMETABLE) {
+            clientProvider.getClient().post(ADD_TIMETABLE) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     AddTimetableRequest(
@@ -61,7 +63,7 @@ class KtorRemoteTimetableDataSource(
 
     override suspend fun updateTimetable(id: String, timetableVersion: Int): Result<TimetableDto, DataError.Remote> {
         return safeCall<TimetableDto> {
-            httpClient.put("$UPDATE_TIMETABLE/$id") {
+            clientProvider.getClient().put("$UPDATE_TIMETABLE/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(UpdateTimetableRequest(timetableVersion = timetableVersion))
             }
@@ -70,7 +72,7 @@ class KtorRemoteTimetableDataSource(
 
     override suspend fun removeTimetable(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_TIMETABLE/$id")
+            clientProvider.getClient().delete("$REMOVE_TIMETABLE/$id")
         }
     }
 }

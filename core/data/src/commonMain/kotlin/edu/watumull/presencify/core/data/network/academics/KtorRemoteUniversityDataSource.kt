@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.academics.UniversityDto
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.ADD_UNIVERSITY
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.GET_UNIVERSITIES
@@ -14,12 +15,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteUniversityDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteUniversityDataSource {
+    
 
     override suspend fun getUniversities(): Result<List<UniversityDto>, DataError.Remote> {
         return safeCall<List<UniversityDto>> {
-            httpClient.get(GET_UNIVERSITIES)
+            clientProvider.getClient().get(GET_UNIVERSITIES)
         }
     }
 
@@ -28,7 +30,7 @@ class KtorRemoteUniversityDataSource(
         abbreviation: String?
     ): Result<UniversityDto, DataError.Remote> {
         return safeCall<UniversityDto> {
-            httpClient.post(ADD_UNIVERSITY) {
+            clientProvider.getClient().post(ADD_UNIVERSITY) {
                 contentType(ContentType.Application.Json)
                 setBody(buildMap {
                     put("name", name)
@@ -40,7 +42,7 @@ class KtorRemoteUniversityDataSource(
 
     override suspend fun getUniversityById(id: String): Result<UniversityDto, DataError.Remote> {
         return safeCall<UniversityDto> {
-            httpClient.get("$GET_UNIVERSITY_BY_ID/$id")
+            clientProvider.getClient().get("$GET_UNIVERSITY_BY_ID/$id")
         }
     }
 
@@ -50,7 +52,7 @@ class KtorRemoteUniversityDataSource(
         abbreviation: String?
     ): Result<UniversityDto, DataError.Remote> {
         return safeCall<UniversityDto> {
-            httpClient.put("$UPDATE_UNIVERSITY/$id") {
+            clientProvider.getClient().put("$UPDATE_UNIVERSITY/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(buildMap {
                     name?.let { put("name", it) }
@@ -62,7 +64,7 @@ class KtorRemoteUniversityDataSource(
 
     override suspend fun removeUniversity(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_UNIVERSITY/$id")
+            clientProvider.getClient().delete("$REMOVE_UNIVERSITY/$id")
         }
     }
 }

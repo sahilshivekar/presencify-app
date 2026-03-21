@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.admin
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.admin.AdminDto
 import edu.watumull.presencify.core.data.network.admin.ApiEndpoints.ADD_ADMIN
 import edu.watumull.presencify.core.data.network.admin.ApiEndpoints.GET_ADMINS
@@ -16,12 +17,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteAdminDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteAdminDataSource {
+    
 
     override suspend fun addAdmin(email: String, username: String, password: String): Result<AdminDto, DataError.Remote> {
         return safeCall<AdminDto> {
-            httpClient.post(ADD_ADMIN) {
+            clientProvider.getClient().post(ADD_ADMIN) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "username" to username, "password" to password))
             }
@@ -30,7 +32,7 @@ class KtorRemoteAdminDataSource(
 
     override suspend fun updateAdminDetails(email: String, username: String): Result<AdminDto, DataError.Remote> {
         return safeCall<AdminDto> {
-            httpClient.put(UPDATE_ADMIN_DETAILS) {
+            clientProvider.getClient().put(UPDATE_ADMIN_DETAILS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "username" to username))
             }
@@ -39,13 +41,13 @@ class KtorRemoteAdminDataSource(
 
     override suspend fun removeAdmin(): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REMOVE_ADMIN)
+            clientProvider.getClient().delete(REMOVE_ADMIN)
         }
     }
 
     override suspend fun getAdmins(searchQuery: String?, sortBy: AdminSortBy, sortOrder: AdminSortOrder, page: Int, limit: Int): Result<List<AdminDto>, DataError.Remote> {
         return safeCall<List<AdminDto>> {
-            httpClient.get(GET_ADMINS) {
+            clientProvider.getClient().get(GET_ADMINS) {
                 parameter("searchQuery", searchQuery)
                 parameter("sortBy", sortBy)
                 parameter("sortOrder", sortOrder)
@@ -57,7 +59,7 @@ class KtorRemoteAdminDataSource(
 
     override suspend fun getAdminDetails(): Result<AdminDto, DataError.Remote> {
         return safeCall<AdminDto> {
-            httpClient.get(GET_ADMIN_DETAILS)
+            clientProvider.getClient().get(GET_ADMIN_DETAILS)
         }
     }
 }

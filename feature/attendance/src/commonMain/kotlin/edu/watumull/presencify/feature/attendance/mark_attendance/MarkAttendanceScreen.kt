@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -99,6 +100,12 @@ fun MarkAttendanceScreen(
                                 state.classSession?.let { classSession ->
                                     ClassDetailsSection(classSession = classSession, date = state.attendance?.date!!)
                                 }
+
+                                PresencifyActionBar(
+                                    text = "Mark attendance with Dynamic QR",
+                                    onClick = { onAction(MarkAttendanceAction.DynamicQRClick) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
 
                                 // Stats Cards Section
                                 AttendanceStatsSection(

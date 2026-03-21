@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.repository.admin_auth
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.mapper.auth.toDomain
 import edu.watumull.presencify.core.data.network.admin_auth.RemoteAdminAuthDataSource
 import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
@@ -17,6 +18,7 @@ class AdminAuthRepositoryImpl(
     private val remoteDataSource: RemoteAdminAuthDataSource,
     private val tokenRepository: TokenRepository,
     private val userRepositoryImpl: UserRepositoryImpl,
+    private val httpClientProvider: HttpClientProvider
 ) : AdminAuthRepository {
 
     override suspend fun login(
@@ -26,6 +28,7 @@ class AdminAuthRepositoryImpl(
         return remoteDataSource.login(emailOrUsername, password).onSuccess { loginAdminDto ->
             tokenRepository.saveAccessToken(loginAdminDto.accessToken)
             tokenRepository.saveRefreshToken(loginAdminDto.refreshToken)
+            httpClientProvider.recreateClient()
             userRepositoryImpl.saveUserDetails(UserRole.ADMIN, loginAdminDto.admin.id)
         }.map { it.toDomain() }
     }
@@ -39,6 +42,7 @@ class AdminAuthRepositoryImpl(
         return remoteDataSource.verifyCode(email, code).onSuccess { tokenDto ->
             tokenRepository.saveAccessToken(tokenDto.accessToken)
             tokenRepository.saveRefreshToken(tokenDto.refreshToken)
+            httpClientProvider.recreateClient()
             userRepositoryImpl.saveUserDetails(UserRole.ADMIN, tokenDto.admin.id)
         }.map {}
     }
@@ -47,6 +51,7 @@ class AdminAuthRepositoryImpl(
         return remoteDataSource.refreshTokens(refreshToken).onSuccess { tokenDto ->
             tokenRepository.saveAccessToken(tokenDto.accessToken)
             tokenRepository.saveRefreshToken(tokenDto.refreshToken)
+            httpClientProvider.recreateClient()
         }.map {}
     }
 
@@ -65,6 +70,7 @@ class AdminAuthRepositoryImpl(
         return remoteDataSource.logout().onSuccess {
             tokenRepository.clearTokens()
             userRepositoryImpl.clearUserDetails()
+            httpClientProvider.recreateClient()
         }
     }
 

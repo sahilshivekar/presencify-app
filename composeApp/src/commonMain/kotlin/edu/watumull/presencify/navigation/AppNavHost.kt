@@ -46,6 +46,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMar
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDynamicQR
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSemesterDetails
@@ -114,6 +115,7 @@ fun AppNavHost(
         attendanceNavGraph(
             onNavigateBack = { rootNavController.navigateUp() },
             onNavigateToMarkAttendance = rootNavController::navigateToMarkStudentAttendance,
+            onNavigateToDynamicQR = rootNavController::navigateToDynamicQR,
             onNavigateToAttendanceDetails = rootNavController::navigateToAttendanceDetails,
             onNavigateToSearchAttendanceForCourse = { courseId ->
                 rootNavController.navigateToSearchAttendance(courseId)

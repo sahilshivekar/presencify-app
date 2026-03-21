@@ -101,18 +101,21 @@ class HttpClientFactory(
                                         setBody(mapOf("refreshToken" to refreshToken))
                                     }.body<TokenDto>()
                                 }
+
                                 UserRole.TEACHER -> {
                                     basicClient.post(TeacherApiEndpoints.REFRESH_TOKENS) {
                                         contentType(ContentType.Application.Json)
                                         setBody(mapOf("refreshToken" to refreshToken))
                                     }.body<TokenDto>()
                                 }
+
                                 UserRole.ADMIN -> {
                                     basicClient.post(AdminApiEndpoints.REFRESH_TOKENS) {
                                         contentType(ContentType.Application.Json)
                                         setBody(mapOf("refreshToken" to refreshToken))
                                     }.body<TokenDto>()
                                 }
+
                                 else -> {
                                     throw IllegalStateException("Unknown user role: $userRole")
                                 }
@@ -134,9 +137,13 @@ class HttpClientFactory(
                             basicClient.close()
                         }
                     }
+                    // this means send the first request without tokens
+                    sendWithoutRequest { request ->
+                        val isAuthEndpoint = request.url.pathSegments.contains("login") ||
+                                request.url.pathSegments.contains("register")
 
-                    sendWithoutRequest {
-                        false
+                        // Return true to skip auth for these endpoints
+                        !isAuthEndpoint
                     }
                 }
             }
@@ -157,10 +164,6 @@ class HttpClientFactory(
 
             defaultRequest {
                 contentType(ContentType.Application.Json)
-                val token = tokenRepository.readAccessToken()
-                if (!token.isNullOrBlank()) {
-                    bearerAuth(token)
-                }
             }
         }
     }

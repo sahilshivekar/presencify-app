@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.repository.student_auth
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.network.student_auth.RemoteStudentAuthDataSource
 import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
@@ -14,12 +15,14 @@ class StudentAuthRepositoryImpl(
     private val remoteDataSource: RemoteStudentAuthDataSource,
     private val tokenRepository: TokenRepository,
     private val userRepositoryImpl: UserRepositoryImpl,
+    private val httpClientProvider: HttpClientProvider
 ) : StudentAuthRepository {
 
     override suspend fun loginStudent(emailOrPRN: String, password: String): Result<Unit, DataError.Remote> {
         return remoteDataSource.loginStudent(emailOrPRN, password).onSuccess { loginStudentDto ->
             tokenRepository.saveAccessToken(loginStudentDto.accessToken)
             tokenRepository.saveRefreshToken(loginStudentDto.refreshToken)
+            httpClientProvider.recreateClient()
             userRepositoryImpl.saveUserDetails(UserRole.STUDENT, loginStudentDto.student.id)
         }.map {}
     }
@@ -32,6 +35,7 @@ class StudentAuthRepositoryImpl(
         return remoteDataSource.verifyCode(email, code).onSuccess { loginStudentDto ->
             tokenRepository.saveAccessToken(loginStudentDto.accessToken)
             tokenRepository.saveRefreshToken(loginStudentDto.refreshToken)
+            httpClientProvider.recreateClient()
             userRepositoryImpl.saveUserDetails(UserRole.STUDENT, loginStudentDto.student.id)
         }.map {}
     }
@@ -44,6 +48,7 @@ class StudentAuthRepositoryImpl(
         return remoteDataSource.refreshTokens(refreshToken).onSuccess { tokenDto ->
             tokenRepository.saveAccessToken(tokenDto.accessToken)
             tokenRepository.saveRefreshToken(tokenDto.refreshToken)
+            httpClientProvider.recreateClient()
         }.map {}
     }
 
@@ -51,6 +56,7 @@ class StudentAuthRepositoryImpl(
         return remoteDataSource.logout().onSuccess {
             tokenRepository.clearTokens()
             userRepositoryImpl.clearUserDetails()
+            httpClientProvider.recreateClient()
         }
     }
 }

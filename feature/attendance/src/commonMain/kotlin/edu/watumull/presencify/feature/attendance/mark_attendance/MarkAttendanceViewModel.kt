@@ -27,6 +27,7 @@ class MarkAttendanceViewModel(
     override fun handleAction(action: MarkAttendanceAction) {
         when (action) {
             MarkAttendanceAction.BackButtonClick -> sendEvent(MarkAttendanceEvent.NavigateBack)
+            MarkAttendanceAction.DynamicQRClick -> sendEvent(MarkAttendanceEvent.NavigateToDynamicQR(attendanceId))
             is MarkAttendanceAction.ToggleStudentAttendance -> toggleStudentAttendance(
                 action.studentId,
                 action.currentStatus

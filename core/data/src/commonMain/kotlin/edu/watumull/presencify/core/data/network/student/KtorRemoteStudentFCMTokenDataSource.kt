@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.student
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.student.StudentFCMTokenDto
 import edu.watumull.presencify.core.data.dto.student.request.StudentFCMTokenRequest
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_FCM_TOKENS
@@ -13,15 +14,16 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteStudentFCMTokenDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteStudentFCMTokenDataSource {
+    
 
     override suspend fun addStudentFCMTokens(
         studentId: String,
         fcmToken: String
     ): Result<StudentFCMTokenDto, DataError.Remote> {
         return safeCall<StudentFCMTokenDto> {
-            httpClient.post(ADD_STUDENT_FCM_TOKENS) {
+            clientProvider.getClient().post(ADD_STUDENT_FCM_TOKENS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     StudentFCMTokenRequest(
@@ -38,7 +40,7 @@ class KtorRemoteStudentFCMTokenDataSource(
         fcmToken: String
     ): Result<StudentFCMTokenDto, DataError.Remote> {
         return safeCall<StudentFCMTokenDto> {
-            httpClient.put(UPDATE_STUDENT_FCM_TOKENS) {
+            clientProvider.getClient().put(UPDATE_STUDENT_FCM_TOKENS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     StudentFCMTokenRequest(
@@ -52,7 +54,7 @@ class KtorRemoteStudentFCMTokenDataSource(
 
     override suspend fun removeStudentFCMTokens(studentId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REMOVE_STUDENT_FCM_TOKENS) {
+            clientProvider.getClient().delete(REMOVE_STUDENT_FCM_TOKENS) {
                 parameter("studentId", studentId)
             }
         }

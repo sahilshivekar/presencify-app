@@ -35,12 +35,17 @@ okio = "3.9.0"
 settings = "1.2.0"
 securityCrypto = "1.1.0-alpha06"
 slf4j = "2.0.12"
+qrose = "1.0.1"
+kronos = "0.0.2"
 
 [libraries]
 # --- EXISTING ---
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
+
+qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
+kronos = { module = "io.github.softartdev:kronos", version.ref = "kronos" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }

@@ -86,6 +86,9 @@ kotlin {
                 // DateTime
                 implementation(libs.kotlinx.datetime)
 
+                // Kronos (NTP)
+                api(libs.kronos)
+
                 // Settings (multiplatform core)
                 implementation(libs.settings.core)
 

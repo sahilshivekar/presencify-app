@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.schedule
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.RoomDto
 import edu.watumull.presencify.core.data.dto.schedule.RoomListWithTotalCountDto
@@ -26,8 +27,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class KtorRemoteRoomDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteRoomDataSource {
+    
 
     override suspend fun getRooms(
         searchQuery: String?,
@@ -44,7 +46,7 @@ class KtorRemoteRoomDataSource(
         maxCapacity: Int?
     ): Result<RoomListWithTotalCountDto, DataError.Remote> {
         return safeCall<RoomListWithTotalCountDto> {
-            httpClient.get(GET_ROOMS) {
+            clientProvider.getClient().get(GET_ROOMS) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 sortBy?.let { parameter("sortBy", it.value) }
                 sortOrder?.let { parameter("sortOrder", it.value) }
@@ -72,7 +74,7 @@ class KtorRemoteRoomDataSource(
         type: RoomType?
     ): Result<RoomDto, DataError.Remote> {
         return safeCall<RoomDto> {
-            httpClient.post(ADD_ROOM) {
+            clientProvider.getClient().post(ADD_ROOM) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     AddRoomRequest(
@@ -88,7 +90,7 @@ class KtorRemoteRoomDataSource(
 
     override suspend fun getRoomById(id: String): Result<RoomDto, DataError.Remote> {
         return safeCall<RoomDto> {
-            httpClient.get("$GET_ROOM_BY_ID/$id")
+            clientProvider.getClient().get("$GET_ROOM_BY_ID/$id")
         }
     }
 
@@ -100,7 +102,7 @@ class KtorRemoteRoomDataSource(
         endTime: LocalTime
     ): Result<List<ClassDto>, DataError.Remote> {
         return safeCall<List<ClassDto>> {
-            httpClient.get("$GET_ROOM_SCHEDULE/$id") {
+            clientProvider.getClient().get("$GET_ROOM_SCHEDULE/$id") {
                 parameter("startDate", startDate.toString())
                 parameter("endDate", endDate.toString())
                 parameter("startTime", startTime.toApiTimeString())
@@ -117,7 +119,7 @@ class KtorRemoteRoomDataSource(
         type: RoomType?
     ): Result<RoomDto, DataError.Remote> {
         return safeCall<RoomDto> {
-            httpClient.put("$UPDATE_ROOM/$id") {
+            clientProvider.getClient().put("$UPDATE_ROOM/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateRoomRequest(
@@ -133,7 +135,7 @@ class KtorRemoteRoomDataSource(
 
     override suspend fun removeRoom(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_ROOM/$id")
+            clientProvider.getClient().delete("$REMOVE_ROOM/$id")
         }
     }
 }

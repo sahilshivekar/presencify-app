@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.di
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.network.HttpClientFactory
 import edu.watumull.presencify.core.data.network.academics.KtorRemoteBatchDataSource
 import edu.watumull.presencify.core.data.network.academics.KtorRemoteBranchDataSource
@@ -48,11 +49,16 @@ val networkModule: Module = module {
     // HttpClientFactory (depends on TokenRepository)
     single { HttpClientFactory(get(), get()) }
 
-    // HttpClient instance (depends on HttpClientFactory and HttpClientEngine)
+
     single {
-        val factory = get<HttpClientFactory>()
-        val engine = get<HttpClientEngine>()
-        factory.create(engine)
+        HttpClientProvider(
+            factory = get(),
+            engine = get()
+        )
+    }
+
+    single {
+        get<HttpClientProvider>().getClient()
     }
 
     // Academics Data Sources

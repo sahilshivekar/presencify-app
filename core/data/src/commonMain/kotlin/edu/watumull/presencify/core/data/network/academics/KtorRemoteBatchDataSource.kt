@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.academics.BatchDto
 import edu.watumull.presencify.core.data.dto.academics.BatchListWithTotalCountDto
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.ADD_BATCH
@@ -16,8 +17,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteBatchDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteBatchDataSource {
+    
 
     override suspend fun getBatches(
         semesterNumber: SemesterNumber?,
@@ -31,7 +33,7 @@ class KtorRemoteBatchDataSource(
         getAll: Boolean?
     ): Result<BatchListWithTotalCountDto, DataError.Remote> {
         return safeCall<BatchListWithTotalCountDto> {
-            httpClient.get(GET_BATCHES) {
+            clientProvider.getClient().get(GET_BATCHES) {
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
                 branchId?.let { parameter("branchId", it) }
                 divisionId?.let { parameter("divisionId", it) }
@@ -47,7 +49,7 @@ class KtorRemoteBatchDataSource(
 
     override suspend fun addBatch(batchCode: String, divisionId: String): Result<BatchDto, DataError.Remote> {
         return safeCall<BatchDto> {
-            httpClient.post(ADD_BATCH) {
+            clientProvider.getClient().post(ADD_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("batchCode" to batchCode, "divisionId" to divisionId))
             }
@@ -56,13 +58,13 @@ class KtorRemoteBatchDataSource(
 
     override suspend fun getBatchById(id: String): Result<BatchDto, DataError.Remote> {
         return safeCall<BatchDto> {
-            httpClient.get("$GET_BATCH_BY_ID/$id")
+            clientProvider.getClient().get("$GET_BATCH_BY_ID/$id")
         }
     }
 
     override suspend fun updateBatch(id: String, batchCode: String): Result<BatchDto, DataError.Remote> {
         return safeCall<BatchDto> {
-            httpClient.put("$UPDATE_BATCH/$id") {
+            clientProvider.getClient().put("$UPDATE_BATCH/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("batchCode" to batchCode))
             }
@@ -71,7 +73,7 @@ class KtorRemoteBatchDataSource(
 
     override suspend fun removeBatch(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_BATCH/$id")
+            clientProvider.getClient().delete("$REMOVE_BATCH/$id")
         }
     }
 }

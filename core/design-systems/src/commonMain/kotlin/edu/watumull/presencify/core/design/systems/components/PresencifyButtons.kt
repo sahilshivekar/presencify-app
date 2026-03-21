@@ -139,7 +139,12 @@ fun PresencifyOutlinedButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.outlinedShape,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(
+        containerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.primary,
+        disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+    ),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = BorderStroke(
         width = 1.dp,
@@ -147,9 +152,9 @@ fun PresencifyOutlinedButton(
     ),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
-    content: (@Composable RowScope.() -> Unit)? = null,
     text: String? = null,
     isLoading: Boolean? = null,
+    content: (@Composable RowScope.() -> Unit)? = null,
 ) {
     OutlinedButton(
         onClick = onClick,

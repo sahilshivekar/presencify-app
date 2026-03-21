@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.academics.CourseDto
 import edu.watumull.presencify.core.data.dto.academics.CourseListWithTotalCountDto
 import edu.watumull.presencify.core.data.network.BaseApiEndpoints.API_V1
@@ -21,8 +22,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteCourseDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteCourseDataSource {
+    
 
     override suspend fun getCourses(
         searchQuery: String?,
@@ -36,7 +38,7 @@ class KtorRemoteCourseDataSource(
         getAll: Boolean?
     ): Result<CourseListWithTotalCountDto, DataError.Remote> {
         return safeCall<CourseListWithTotalCountDto> {
-            httpClient.get(GET_COURSES) {
+            clientProvider.getClient().get(GET_COURSES) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 branchId?.let { parameter("branchId", it) }
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
@@ -61,7 +63,7 @@ class KtorRemoteCourseDataSource(
         schemeId: String
     ): Result<CourseDto, DataError.Remote> {
         return safeCall<CourseDto> {
-            httpClient.post(ADD_COURSE) {
+            clientProvider.getClient().post(ADD_COURSE) {
                 contentType(ContentType.Application.Json)
                 setBody(buildMap {
                     put("code", code)
@@ -75,7 +77,7 @@ class KtorRemoteCourseDataSource(
 
     override suspend fun getCourseById(id: String): Result<CourseDto, DataError.Remote> {
         return safeCall<CourseDto> {
-            httpClient.get("$GET_COURSE_BY_ID/$id")
+            clientProvider.getClient().get("$GET_COURSE_BY_ID/$id")
         }
     }
 
@@ -87,7 +89,7 @@ class KtorRemoteCourseDataSource(
         schemeId: String?
     ): Result<CourseDto, DataError.Remote> {
         return safeCall<CourseDto> {
-            httpClient.put("$UPDATE_COURSE/$id") {
+            clientProvider.getClient().put("$UPDATE_COURSE/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(buildMap {
                     code?.let { put("code", it) }
@@ -101,7 +103,7 @@ class KtorRemoteCourseDataSource(
 
     override suspend fun removeCourse(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_COURSE/$id")
+            clientProvider.getClient().delete("$REMOVE_COURSE/$id")
         }
     }
 
@@ -111,7 +113,7 @@ class KtorRemoteCourseDataSource(
         semesterNumber: SemesterNumber,
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.post("$PRESENCIFY_BASE_URL/$API_V1/courses/branch") {
+            clientProvider.getClient().post("$PRESENCIFY_BASE_URL/$API_V1/courses/branch") {
                 contentType(ContentType.Application.Json)
                 setBody(buildMap {
                     put("courseId", courseId)
@@ -126,13 +128,13 @@ class KtorRemoteCourseDataSource(
         branchCourseSemesterId: String
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$PRESENCIFY_BASE_URL/$API_V1/courses/branch/$branchCourseSemesterId")
+            clientProvider.getClient().delete("$PRESENCIFY_BASE_URL/$API_V1/courses/branch/$branchCourseSemesterId")
         }
     }
 
     override suspend fun bulkCreateCourses(courses: List<Map<String, Any>>): Result<List<CourseDto>, DataError.Remote> {
         return safeCall<List<CourseDto>> {
-            httpClient.post(BULK_CREATE_COURSES) {
+            clientProvider.getClient().post(BULK_CREATE_COURSES) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("courses" to courses))
             }
@@ -141,7 +143,7 @@ class KtorRemoteCourseDataSource(
 
     override suspend fun bulkDeleteCourses(courseIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(BULK_DELETE_COURSES) {
+            clientProvider.getClient().delete(BULK_DELETE_COURSES) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("courseIds" to courseIds))
             }
@@ -150,7 +152,7 @@ class KtorRemoteCourseDataSource(
 
     override suspend fun bulkCreateCoursesFromCSV(csvData: String): Result<List<CourseDto>, DataError.Remote> {
         return safeCall<List<CourseDto>> {
-            httpClient.post(BULK_CREATE_COURSES_FROM_CSV) {
+            clientProvider.getClient().post(BULK_CREATE_COURSES_FROM_CSV) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("csvData" to csvData))
             }

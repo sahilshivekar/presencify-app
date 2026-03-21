@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.schedule
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.schedule.CancelledClassDto
 import edu.watumull.presencify.core.data.dto.schedule.CancelledClassListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
@@ -31,8 +32,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class KtorRemoteClassSessionDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteClassSessionDataSource {
+    
 
     override suspend fun getClasses(
         searchQuery: String?,
@@ -59,7 +61,7 @@ class KtorRemoteClassSessionDataSource(
         getAll: Boolean?
     ): Result<ClassListWithTotalCountDto, DataError.Remote> {
         return safeCall<ClassListWithTotalCountDto> {
-            httpClient.get(GET_CLASSES) {
+            clientProvider.getClient().get(GET_CLASSES) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 timetableId?.let { parameter("timetableId", it) }
                 divisionId?.let { parameter("divisionId", it) }
@@ -100,7 +102,7 @@ class KtorRemoteClassSessionDataSource(
         timetableId: String
     ): Result<ClassDto, DataError.Remote> {
         return safeCall<ClassDto> {
-            httpClient.post(ADD_CLASS) {
+            clientProvider.getClient().post(ADD_CLASS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     AddClassRequest(
@@ -123,7 +125,7 @@ class KtorRemoteClassSessionDataSource(
 
     override suspend fun getClassById(classId: String): Result<ClassDto, DataError.Remote> {
         return safeCall<ClassDto> {
-            httpClient.get("$GET_CLASS_BY_ID/$classId")
+            clientProvider.getClient().get("$GET_CLASS_BY_ID/$classId")
         }
     }
 
@@ -133,7 +135,7 @@ class KtorRemoteClassSessionDataSource(
         newActiveTill: LocalDate
     ): Result<ClassDto, DataError.Remote> {
         return safeCall<ClassDto> {
-            httpClient.put("$EDIT_ACTIVE_DATES/$classId") {
+            clientProvider.getClient().put("$EDIT_ACTIVE_DATES/$classId") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     EditActiveDatesRequest(
@@ -147,7 +149,7 @@ class KtorRemoteClassSessionDataSource(
 
     override suspend fun removeClass(classId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_CLASS/$classId")
+            clientProvider.getClient().delete("$REMOVE_CLASS/$classId")
         }
     }
 
@@ -165,7 +167,7 @@ class KtorRemoteClassSessionDataSource(
         timetableId: String
     ): Result<ClassDto, DataError.Remote> {
         return safeCall<ClassDto> {
-            httpClient.post(ADD_EXTRA_CLASS) {
+            clientProvider.getClient().post(ADD_EXTRA_CLASS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     AddClassRequest(
@@ -195,7 +197,7 @@ class KtorRemoteClassSessionDataSource(
         getAll: Boolean?
     ): Result<CancelledClassListWithTotalCountDto, DataError.Remote> {
         return safeCall<CancelledClassListWithTotalCountDto> {
-            httpClient.get(GET_CANCELLED_CLASSES) {
+            clientProvider.getClient().get(GET_CANCELLED_CLASSES) {
                 divisionId?.let { parameter("divisionId", it) }
                 batchId?.let { parameter("batchId", it) }
                 date?.let { parameter("date", it.toString()) }
@@ -212,7 +214,7 @@ class KtorRemoteClassSessionDataSource(
         reason: String?
     ): Result<CancelledClassDto, DataError.Remote> {
         return safeCall<CancelledClassDto> {
-            httpClient.post(CANCEL_CLASS) {
+            clientProvider.getClient().post(CANCEL_CLASS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     CancelClassRequest(
@@ -227,7 +229,7 @@ class KtorRemoteClassSessionDataSource(
 
 //    override suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassDto>, DataError.Remote> {
 //        return safeCall<List<ClassDto>> {
-//            httpClient.post(BULK_CREATE_CLASSES) {
+//            clientProvider.getClient().post(BULK_CREATE_CLASSES) {
 //                contentType(ContentType.Application.Json)
 //                setBody(BulkCreateClassesRequest(classes = classes))
 //            }
@@ -236,7 +238,7 @@ class KtorRemoteClassSessionDataSource(
 
     override suspend fun bulkDeleteClasses(classIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(BULK_DELETE_CLASSES) {
+            clientProvider.getClient().delete(BULK_DELETE_CLASSES) {
                 contentType(ContentType.Application.Json)
                 setBody(BulkDeleteClassesRequest(classIds = classIds))
             }
@@ -245,7 +247,7 @@ class KtorRemoteClassSessionDataSource(
 
     override suspend fun bulkCreateClassesFromCSV(): Result<List<ClassDto>, DataError.Remote> {
         return safeCall<List<ClassDto>> {
-            httpClient.post(BULK_CREATE_CLASSES_FROM_CSV) {
+            clientProvider.getClient().post(BULK_CREATE_CLASSES_FROM_CSV) {
                 // File upload handled by middleware
             }
         }

@@ -123,3 +123,7 @@ fun NavController.navigateToSearchAttendance(
 fun NavController.navigateToAttendanceDetails(attendanceId: String) {
     navigate(AttendanceRoutes.AttendanceDetails(attendanceId = attendanceId))
 }
+
+fun NavController.navigateToDynamicQR(attendanceId: String) {
+    navigate(AttendanceRoutes.DynamicQR(attendanceId = attendanceId))
+}

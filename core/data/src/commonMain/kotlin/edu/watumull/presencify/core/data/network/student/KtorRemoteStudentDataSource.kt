@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.student
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.student.StudentBatchDto
 import edu.watumull.presencify.core.data.dto.student.StudentDivisionDto
 import edu.watumull.presencify.core.data.dto.student.StudentDto
@@ -47,8 +48,9 @@ import io.ktor.http.*
 import kotlinx.datetime.LocalDate
 
 class KtorRemoteStudentDataSource(
-    private val httpClient: HttpClient,
+    private val clientProvider: HttpClientProvider,
 ) : RemoteStudentDataSource {
+    
 
     override suspend fun getStudents(
         searchQuery: String?,
@@ -75,7 +77,7 @@ class KtorRemoteStudentDataSource(
         intention: String?,
     ): Result<StudentListWithTotalCountDto, DataError.Remote> {
         return safeCall<StudentListWithTotalCountDto> {
-            httpClient.get(GET_STUDENTS) {
+            clientProvider.getClient().get(GET_STUDENTS) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 // Send array parameters - each item individually with same parameter name
                 branchIds?.forEach { parameter("branchIds", it) }
@@ -123,7 +125,7 @@ class KtorRemoteStudentDataSource(
 
 
         return safeCall<StudentDto> {
-            httpClient.post(ADD_STUDENT) {
+            clientProvider.getClient().post(ADD_STUDENT) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
@@ -161,7 +163,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun getStudentById(id: String): Result<StudentDto, DataError.Remote> {
         return safeCall<StudentDto> {
-            httpClient.get("${GET_STUDENT_BY_ID}/$id")
+            clientProvider.getClient().get("${GET_STUDENT_BY_ID}/$id")
         }
     }
 
@@ -182,7 +184,7 @@ class KtorRemoteStudentDataSource(
         admissionType: AdmissionType?,
     ): Result<StudentDto, DataError.Remote> {
         return safeCall<StudentDto> {
-            httpClient.put(UPDATE_STUDENT_DETAILS) {
+            clientProvider.getClient().put(UPDATE_STUDENT_DETAILS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateStudentDetailsRequest(
@@ -212,7 +214,7 @@ class KtorRemoteStudentDataSource(
         confirmPassword: String,
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.put(UPDATE_STUDENT_PASSWORD) {
+            clientProvider.getClient().put(UPDATE_STUDENT_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateStudentPasswordRequest(
@@ -231,7 +233,7 @@ class KtorRemoteStudentDataSource(
     ): Result<StudentDto, DataError.Remote> {
 
         return safeCall<StudentDto> {
-            httpClient.put(UPDATE_STUDENT_IMAGE) {
+            clientProvider.getClient().put(UPDATE_STUDENT_IMAGE) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
@@ -256,7 +258,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun removeStudentImage(studentId: String): Result<StudentDto, DataError.Remote> {
         return safeCall<StudentDto> {
-            httpClient.delete(REMOVE_STUDENT_IMAGE) {
+            clientProvider.getClient().delete(REMOVE_STUDENT_IMAGE) {
                 parameter("studentId", studentId)
             }
         }
@@ -264,13 +266,13 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun removeStudent(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("${REMOVE_STUDENT}/$id")
+            clientProvider.getClient().delete("${REMOVE_STUDENT}/$id")
         }
     }
 
     override suspend fun getStudentSemesters(id: String): Result<List<StudentSemesterDto>, DataError.Remote> {
         return safeCall<List<StudentSemesterDto>> {
-            httpClient.get("${GET_STUDENT_SEMESTERS}/$id/semesters")
+            clientProvider.getClient().get("${GET_STUDENT_SEMESTERS}/$id/semesters")
         }
     }
 
@@ -279,7 +281,7 @@ class KtorRemoteStudentDataSource(
         semesterId: String,
     ): Result<StudentSemesterDto, DataError.Remote> {
         return safeCall<StudentSemesterDto> {
-            httpClient.post(ADD_STUDENT_TO_SEMESTER) {
+            clientProvider.getClient().post(ADD_STUDENT_TO_SEMESTER) {
                 contentType(ContentType.Application.Json)
                 setBody(AddStudentToSemesterRequest(studentId = studentId, semesterId = semesterId))
             }
@@ -288,7 +290,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun removeStudentFromSemester(studentSemesterId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REMOVE_STUDENT_FROM_SEMESTER) {
+            clientProvider.getClient().delete(REMOVE_STUDENT_FROM_SEMESTER) {
                 parameter("studentSemesterId", studentSemesterId)
             }
         }
@@ -299,7 +301,7 @@ class KtorRemoteStudentDataSource(
         semesterNumber: SemesterNumber?,
     ): Result<List<StudentDivisionDto>, DataError.Remote> {
         return safeCall<List<StudentDivisionDto>> {
-            httpClient.get("${GET_STUDENT_DIVISIONS}/$id/divisions") {
+            clientProvider.getClient().get("${GET_STUDENT_DIVISIONS}/$id/divisions") {
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
             }
         }
@@ -310,7 +312,7 @@ class KtorRemoteStudentDataSource(
         divisionId: String,
     ): Result<StudentDivisionDto, DataError.Remote> {
         return safeCall<StudentDivisionDto> {
-            httpClient.post(ADD_STUDENT_TO_DIVISION) {
+            clientProvider.getClient().post(ADD_STUDENT_TO_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(AddStudentToDivisionRequest(divisionId = divisionId, studentId = studentId))
             }
@@ -323,7 +325,7 @@ class KtorRemoteStudentDataSource(
         newDivisionStartDate: LocalDate,
     ): Result<StudentDivisionDto, DataError.Remote> {
         return safeCall<StudentDivisionDto> {
-            httpClient.put(CHANGE_STUDENT_DIVISION) {
+            clientProvider.getClient().put(CHANGE_STUDENT_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     ChangeStudentDivisionRequest(
@@ -338,7 +340,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun revertAddStudentToDivision(studentDivisionId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REVERT_ADD_STUDENT_TO_DIVISION) {
+            clientProvider.getClient().delete(REVERT_ADD_STUDENT_TO_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(RevertAddStudentToDivisionRequest(studentDivisionId = studentDivisionId))
             }
@@ -347,7 +349,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun revertChangeStudentDivision(newStudentDivisionId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REVERT_CHANGE_STUDENT_DIVISION) {
+            clientProvider.getClient().delete(REVERT_CHANGE_STUDENT_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("newStudentDivisionId" to newStudentDivisionId))
             }
@@ -359,7 +361,7 @@ class KtorRemoteStudentDataSource(
         semesterNumber: SemesterNumber?,
     ): Result<List<StudentBatchDto>, DataError.Remote> {
         return safeCall<List<StudentBatchDto>> {
-            httpClient.get("${GET_STUDENT_BATCHES}/$id/batches") {
+            clientProvider.getClient().get("${GET_STUDENT_BATCHES}/$id/batches") {
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
             }
         }
@@ -370,7 +372,7 @@ class KtorRemoteStudentDataSource(
         batchId: String,
     ): Result<StudentBatchDto, DataError.Remote> {
         return safeCall<StudentBatchDto> {
-            httpClient.post(ADD_STUDENT_TO_BATCH) {
+            clientProvider.getClient().post(ADD_STUDENT_TO_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("batchId" to batchId, "studentId" to studentId))
             }
@@ -383,7 +385,7 @@ class KtorRemoteStudentDataSource(
         newBatchStartDate: LocalDate,
     ): Result<StudentBatchDto, DataError.Remote> {
         return safeCall<StudentBatchDto> {
-            httpClient.put(CHANGE_STUDENT_BATCH) {
+            clientProvider.getClient().put(CHANGE_STUDENT_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     ChangeStudentBatchRequest(
@@ -398,7 +400,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun revertAddStudentToBatch(studentBatchId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REVERT_ADD_STUDENT_TO_BATCH) {
+            clientProvider.getClient().delete(REVERT_ADD_STUDENT_TO_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("studentBatchId" to studentBatchId))
             }
@@ -407,7 +409,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun revertChangeStudentBatch(newStudentBatchId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REVERT_CHANGE_STUDENT_BATCH) {
+            clientProvider.getClient().delete(REVERT_CHANGE_STUDENT_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("newStudentBatchId" to newStudentBatchId))
             }
@@ -416,7 +418,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun bulkCreateStudents(students: List<Map<String, Any?>>): Result<List<StudentDto>, DataError.Remote> {
         return safeCall<List<StudentDto>> {
-            httpClient.post(ApiEndpoints.BULK_CREATE_STUDENTS) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_CREATE_STUDENTS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("students" to students))
             }
@@ -425,7 +427,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun bulkDeleteStudents(studentIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(ApiEndpoints.BULK_DELETE_STUDENTS) {
+            clientProvider.getClient().delete(ApiEndpoints.BULK_DELETE_STUDENTS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("studentIds" to studentIds))
             }
@@ -437,7 +439,7 @@ class KtorRemoteStudentDataSource(
         semesterId: String,
     ): Result<List<StudentSemesterDto>, DataError.Remote> {
         return safeCall<List<StudentSemesterDto>> {
-            httpClient.post(ApiEndpoints.BULK_ADD_STUDENTS_TO_SEMESTER) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_ADD_STUDENTS_TO_SEMESTER) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("studentIds" to studentIds, "semesterId" to semesterId))
             }
@@ -449,7 +451,7 @@ class KtorRemoteStudentDataSource(
         divisionId: String,
     ): Result<List<StudentDivisionDto>, DataError.Remote> {
         return safeCall<List<StudentDivisionDto>> {
-            httpClient.post(ApiEndpoints.BULK_ADD_STUDENTS_TO_DIVISION) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_ADD_STUDENTS_TO_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("studentIds" to studentIds, "divisionId" to divisionId))
             }
@@ -461,7 +463,7 @@ class KtorRemoteStudentDataSource(
         batchId: String,
     ): Result<List<StudentBatchDto>, DataError.Remote> {
         return safeCall<List<StudentBatchDto>> {
-            httpClient.post(ApiEndpoints.BULK_ADD_STUDENTS_TO_BATCH) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_ADD_STUDENTS_TO_BATCH) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("studentIds" to studentIds, "batchId" to batchId))
             }
@@ -470,7 +472,7 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<List<StudentDto>, DataError.Remote> {
         return safeCall<List<StudentDto>> {
-            httpClient.post(ApiEndpoints.BULK_CREATE_STUDENTS_FROM_CSV) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_CREATE_STUDENTS_FROM_CSV) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {

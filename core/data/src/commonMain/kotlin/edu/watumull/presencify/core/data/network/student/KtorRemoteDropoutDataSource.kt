@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.student
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.student.DropoutDto
 import edu.watumull.presencify.core.data.dto.student.request.AddStudentToDropoutRequest
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_DROPOUT
@@ -14,8 +15,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteDropoutDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteDropoutDataSource {
+    
 
     override suspend fun addStudentToDropout(
         studentId: String,
@@ -23,7 +25,7 @@ class KtorRemoteDropoutDataSource(
         academicEndYear: Int
     ): Result<DropoutDto, DataError.Remote> {
         return safeCall<DropoutDto> {
-            httpClient.post(ADD_STUDENT_TO_DROPOUT) {
+            clientProvider.getClient().post(ADD_STUDENT_TO_DROPOUT) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     AddStudentToDropoutRequest(
@@ -42,7 +44,7 @@ class KtorRemoteDropoutDataSource(
         academicEndYear: Int
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REMOVE_STUDENT_FROM_DROPOUT) {
+            clientProvider.getClient().delete(REMOVE_STUDENT_FROM_DROPOUT) {
                 parameter("studentId", studentId)
                 parameter("academicStartYear", academicStartYear)
                 parameter("academicEndYear", academicEndYear)
@@ -52,13 +54,13 @@ class KtorRemoteDropoutDataSource(
 
     override suspend fun getDropoutById(id: String): Result<DropoutDto, DataError.Remote> {
         return safeCall<DropoutDto> {
-            httpClient.get("${GET_DROPOUT_BY_ID}/$id")
+            clientProvider.getClient().get("${GET_DROPOUT_BY_ID}/$id")
         }
     }
 
     override suspend fun getDropoutDetailsOfStudent(studentId: String): Result<List<DropoutDto>, DataError.Remote> {
         return safeCall<List<DropoutDto>> {
-            httpClient.get(GET_DROPOUT_DETAILS_OF_STUDENT) {
+            clientProvider.getClient().get(GET_DROPOUT_DETAILS_OF_STUDENT) {
                 parameter("studentId", studentId)
             }
         }

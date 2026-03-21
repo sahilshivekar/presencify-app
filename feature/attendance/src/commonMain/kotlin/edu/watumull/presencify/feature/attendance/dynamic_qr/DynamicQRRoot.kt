@@ -1,4 +1,4 @@
-package edu.watumull.presencify.feature.attendance.mark_attendance
+package edu.watumull.presencify.feature.attendance.dynamic_qr
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,21 +7,21 @@ import edu.watumull.presencify.core.presentation.utils.EventsEffect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MarkAttendanceRoot(
+fun DynamicQRRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToDynamicQR: (String) -> Unit
+    onNavigateToDetails: (String) -> Unit
 ) {
-    val viewModel = koinViewModel<MarkAttendanceViewModel>()
+    val viewModel = koinViewModel<DynamicQRViewModel>()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            MarkAttendanceEvent.NavigateBack -> onNavigateBack()
-            is MarkAttendanceEvent.NavigateToDynamicQR -> onNavigateToDynamicQR(event.attendanceId)
+            DynamicQREvent.NavigateBack -> onNavigateBack()
+            is DynamicQREvent.NavigateToDetails -> onNavigateToDetails(event.attendanceId)
         }
     }
 
-    MarkAttendanceScreen(
+    DynamicQRScreen(
         state = state,
         onAction = viewModel::trySendAction
     )

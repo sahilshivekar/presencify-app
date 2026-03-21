@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.attendance
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.attendance.AggregatedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentAggregatedAndDetailedAttendanceDto
@@ -29,12 +30,13 @@ import io.ktor.http.*
 import kotlinx.datetime.LocalDate
 
 class KtorRemoteAttendanceDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteAttendanceDataSource {
+    
 
     override suspend fun createAttendance(classId: String, date: LocalDate): Result<AttendanceDto, DataError.Remote> {
         return safeCall<AttendanceDto> {
-            httpClient.post(CREATE_ATTENDANCE) {
+            clientProvider.getClient().post(CREATE_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
                 setBody(CreateAttendanceRequestDto(classId = classId, date = date))
             }
@@ -48,7 +50,7 @@ class KtorRemoteAttendanceDataSource(
         newAttendanceStatus: Boolean
     ): Result<AttendanceStudentDto, DataError.Remote> {
         return safeCall<AttendanceStudentDto> {
-            httpClient.put(UPDATE_STUDENT_ATTENDANCE) {
+            clientProvider.getClient().put(UPDATE_STUDENT_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateStudentAttendanceRequestDto(
@@ -63,7 +65,7 @@ class KtorRemoteAttendanceDataSource(
 
     override suspend fun bulkUpdateStudentAttendance(attendanceUpdates: List<Map<String, Any>>): Result<Map<String, Any>, DataError.Remote> {
         return safeCall<Map<String, Any>> {
-            httpClient.put(BULK_UPDATE_STUDENT_ATTENDANCE) {
+            clientProvider.getClient().put(BULK_UPDATE_STUDENT_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("attendanceUpdates" to attendanceUpdates))
             }
@@ -72,7 +74,7 @@ class KtorRemoteAttendanceDataSource(
 
     override suspend fun removeAttendance(attendanceId: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(REMOVE_ATTENDANCE) {
+            clientProvider.getClient().delete(REMOVE_ATTENDANCE) {
                 parameter("attendanceId", attendanceId)
             }
         }
@@ -93,7 +95,7 @@ class KtorRemoteAttendanceDataSource(
         schemeId: String?
     ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote> {
         return safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
-            httpClient.get(GET_ATTENDANCE_OF_STUDENT) {
+            clientProvider.getClient().get(GET_ATTENDANCE_OF_STUDENT) {
                 parameter("studentId", studentId)
                 parameter("courseId", courseId)
                 semesterId?.let { parameter("semesterId", it) }
@@ -124,7 +126,7 @@ class KtorRemoteAttendanceDataSource(
         schemeId: String?
     ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote> {
         return safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
-            httpClient.get(GET_ATTENDANCE_OF_SELF) {
+            clientProvider.getClient().get(GET_ATTENDANCE_OF_SELF) {
                 parameter("courseId", courseId)
                 semesterId?.let { parameter("semesterId", it) }
                 divisionId?.let { parameter("divisionId", it) }
@@ -167,7 +169,7 @@ class KtorRemoteAttendanceDataSource(
         schemeId: String?
     ): Result<List<AttendanceSummaryDto>, DataError.Remote> {
         return safeCall<List<AttendanceSummaryDto>> {
-            httpClient.get(GET_ATTENDANCE_OF_ALL) {
+            clientProvider.getClient().get(GET_ATTENDANCE_OF_ALL) {
                 semesterId?.let { parameter("semesterId", it) }
                 divisionId?.let { parameter("divisionId", it) }
                 batchId?.let { parameter("batchId", it) }
@@ -191,7 +193,7 @@ class KtorRemoteAttendanceDataSource(
         semesterId: String?
     ): Result<Map<String, Any>, DataError.Remote> {
         return safeCall<Map<String, Any>> {
-            httpClient.post(SEND_ATTENDANCE_REPORT) {
+            clientProvider.getClient().post(SEND_ATTENDANCE_REPORT) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     mapOf(
@@ -208,7 +210,7 @@ class KtorRemoteAttendanceDataSource(
 
     override suspend fun getAttendanceById(attendanceId: String): Result<AttendanceDto, DataError.Remote> {
         return safeCall<AttendanceDto> {
-            httpClient.get("$GET_ATTENDANCE_BY_ID/$attendanceId")
+            clientProvider.getClient().get("$GET_ATTENDANCE_BY_ID/$attendanceId")
         }
     }
 
@@ -228,7 +230,7 @@ class KtorRemoteAttendanceDataSource(
         limit: Int
     ): Result<AttendanceWithTotalCountDto, DataError.Remote> {
         return safeCall<AttendanceWithTotalCountDto> {
-            httpClient.get(GET_ATTENDANCES) {
+            clientProvider.getClient().get(GET_ATTENDANCES) {
                 date?.let { parameter("date", it) }
                 classId?.let { parameter("classId", it) }
                 studentId?.let { parameter("studentId", it) }
@@ -251,7 +253,7 @@ class KtorRemoteAttendanceDataSource(
         divisionId: String
     ): Result<List<AttendanceDto>, DataError.Remote> {
         return safeCall<List<AttendanceDto>> {
-            httpClient.get(GET_ACTIVE_ATTENDANCE_SHEET) {
+            clientProvider.getClient().get(GET_ACTIVE_ATTENDANCE_SHEET) {
                 parameter("studentId", studentId)
                 parameter("divisionId", divisionId)
             }

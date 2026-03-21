@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.student_auth
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.auth.LoginStudentDto
 import edu.watumull.presencify.core.data.dto.auth.TokenDto
 import edu.watumull.presencify.core.data.network.student_auth.ApiEndpoints.LOGIN_STUDENT
@@ -16,12 +17,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteStudentAuthDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteStudentAuthDataSource {
+    
 
     override suspend fun loginStudent(emailOrPRN: String, password: String): Result<LoginStudentDto, DataError.Remote> {
         return safeCall<LoginStudentDto> {
-            httpClient.post(LOGIN_STUDENT) {
+            clientProvider.getClient().post(LOGIN_STUDENT) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("emailOrPRN" to emailOrPRN, "password" to password))
             }
@@ -30,7 +32,7 @@ class KtorRemoteStudentAuthDataSource(
 
     override suspend fun sendVerificationCodeToEmail(email: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.post(SEND_VERIFICATION_CODE) {
+            clientProvider.getClient().post(SEND_VERIFICATION_CODE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email))
             }
@@ -39,7 +41,7 @@ class KtorRemoteStudentAuthDataSource(
 
     override suspend fun verifyCode(email: String, code: String): Result<LoginStudentDto, DataError.Remote> {
         return safeCall<LoginStudentDto> {
-            httpClient.post(VERIFY_CODE) {
+            clientProvider.getClient().post(VERIFY_CODE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("email" to email, "code" to code))
             }
@@ -48,7 +50,7 @@ class KtorRemoteStudentAuthDataSource(
 
     override suspend fun updatePassword(password: String, confirmPassword: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.put(UPDATE_PASSWORD) {
+            clientProvider.getClient().put(UPDATE_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("password" to password, "confirmPassword" to confirmPassword))
             }
@@ -57,7 +59,7 @@ class KtorRemoteStudentAuthDataSource(
 
     override suspend fun refreshTokens(refreshToken: String): Result<TokenDto, DataError.Remote> {
         return safeCall<TokenDto> {
-            httpClient.post(REFRESH_TOKENS) {
+            clientProvider.getClient().post(REFRESH_TOKENS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("refreshToken" to refreshToken))
             }
@@ -66,7 +68,7 @@ class KtorRemoteStudentAuthDataSource(
 
     override suspend fun logout(): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.post(LOGOUT)
+            clientProvider.getClient().post(LOGOUT)
         }
     }
 }

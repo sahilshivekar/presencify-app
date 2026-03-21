@@ -53,7 +53,7 @@ val repositoryModule: Module = module {
 
     // Admin Repositories
     single { AdminRepositoryImpl(get()) } bind AdminRepository::class
-    single { AdminAuthRepositoryImpl(get(), get(), get()) } bind AdminAuthRepository::class
+    single { AdminAuthRepositoryImpl(get(), get(), get(), get()) } bind AdminAuthRepository::class
 
     // Attendance Repositories
     single { AttendanceRepositoryImpl(get()) } bind AttendanceRepository::class
@@ -66,9 +66,9 @@ val repositoryModule: Module = module {
     // Student Repositories
     single { StudentRepositoryImpl(get()) } bind StudentRepository::class
     single { StudentDropoutRepositoryImpl(get()) } bind StudentDropoutRepository::class
-    single { StudentAuthRepositoryImpl(get(), get(), get()) } bind StudentAuthRepository::class
+    single { StudentAuthRepositoryImpl(get(), get(), get(), get()) } bind StudentAuthRepository::class
 
     // Teacher Repositories
     single { TeacherRepositoryImpl(get()) } bind TeacherRepository::class
-    single { TeacherAuthRepositoryImpl(get(), get(), get()) } bind TeacherAuthRepository::class
+    single { TeacherAuthRepositoryImpl(get(), get(), get(), get()) } bind TeacherAuthRepository::class
 }

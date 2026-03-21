@@ -67,7 +67,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":core:presentation"))
+
+        implementation(libs.qrose)
+        implementation(project(":core:presentation"))
+
                 implementation(project(":core:design-systems"))
                 implementation(project(":core:domain"))
                 // Presentation/UI

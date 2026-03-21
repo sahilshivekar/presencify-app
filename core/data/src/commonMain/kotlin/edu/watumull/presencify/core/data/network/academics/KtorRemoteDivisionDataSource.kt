@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.academics.DivisionDto
 import edu.watumull.presencify.core.data.dto.academics.DivisionListWithTotalCountDto
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.ADD_DIVISION
@@ -16,8 +17,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteDivisionDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteDivisionDataSource {
+    
 
     override suspend fun getDivisions(
         searchQuery: String?,
@@ -31,7 +33,7 @@ class KtorRemoteDivisionDataSource(
         getAll: Boolean?
     ): Result<DivisionListWithTotalCountDto, DataError.Remote> {
         return safeCall<DivisionListWithTotalCountDto> {
-            httpClient.get(GET_DIVISIONS) {
+            clientProvider.getClient().get(GET_DIVISIONS) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
                 branchId?.let { parameter("branchId", it) }
@@ -50,7 +52,7 @@ class KtorRemoteDivisionDataSource(
         semesterId: String
     ): Result<DivisionDto, DataError.Remote> {
         return safeCall<DivisionDto> {
-            httpClient.post(ADD_DIVISION) {
+            clientProvider.getClient().post(ADD_DIVISION) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf(
                     "divisionCode" to divisionCode,
@@ -62,7 +64,7 @@ class KtorRemoteDivisionDataSource(
 
     override suspend fun getDivisionById(id: String): Result<DivisionDto, DataError.Remote> {
         return safeCall<DivisionDto> {
-            httpClient.get("$GET_DIVISION_BY_ID/$id")
+            clientProvider.getClient().get("$GET_DIVISION_BY_ID/$id")
         }
     }
 
@@ -71,7 +73,7 @@ class KtorRemoteDivisionDataSource(
         divisionCode: String
     ): Result<DivisionDto, DataError.Remote> {
         return safeCall<DivisionDto> {
-            httpClient.put("$UPDATE_DIVISION/$id") {
+            clientProvider.getClient().put("$UPDATE_DIVISION/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf(
                     "divisionCode" to divisionCode
@@ -82,7 +84,7 @@ class KtorRemoteDivisionDataSource(
 
     override suspend fun removeDivision(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_DIVISION/$id")
+            clientProvider.getClient().delete("$REMOVE_DIVISION/$id")
         }
     }
 }

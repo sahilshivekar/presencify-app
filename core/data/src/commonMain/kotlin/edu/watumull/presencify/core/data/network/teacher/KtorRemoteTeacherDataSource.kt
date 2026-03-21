@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.teacher
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.teacher.TeacherDto
 import edu.watumull.presencify.core.data.dto.teacher.TeacherListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.teacher.TeacherTeachesCourseDto
@@ -27,7 +28,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 
 class KtorRemoteTeacherDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteTeacherDataSource {
 
     override suspend fun getTeachers(
@@ -38,7 +39,7 @@ class KtorRemoteTeacherDataSource(
         getAll: Boolean?
     ): Result<TeacherListWithTotalCountDto, DataError.Remote> {
         return safeCall<TeacherListWithTotalCountDto> {
-            httpClient.get(GET_TEACHERS) {
+            clientProvider.getClient().get(GET_TEACHERS) {
                 searchQuery?.let { parameter("searchQuery", it) }
                 courseId?.let { parameter("courseId", it) }
                 page?.let { parameter("page", it) }
@@ -63,7 +64,7 @@ class KtorRemoteTeacherDataSource(
 
 
         return safeCall<TeacherDto> {
-            httpClient.post(ADD_TEACHER) {
+            clientProvider.getClient().post(ADD_TEACHER) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
@@ -93,7 +94,7 @@ class KtorRemoteTeacherDataSource(
 
     override suspend fun getTeacherById(id: String): Result<TeacherDto, DataError.Remote> {
         return safeCall<TeacherDto> {
-            httpClient.get("$GET_TEACHER_BY_ID/$id")
+            clientProvider.getClient().get("$GET_TEACHER_BY_ID/$id")
         }
     }
 
@@ -109,7 +110,7 @@ class KtorRemoteTeacherDataSource(
         phoneNumber: String?,
     ): Result<TeacherDto, DataError.Remote> {
         return safeCall<TeacherDto> {
-            httpClient.put(UPDATE_TEACHER_DETAILS) {
+            clientProvider.getClient().put(UPDATE_TEACHER_DETAILS) {
                 contentType(ContentType.Application.Json)
                 setBody(buildMap {
                     put("id", id)
@@ -132,7 +133,7 @@ class KtorRemoteTeacherDataSource(
         confirmPassword: String
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.put(UPDATE_TEACHER_PASSWORD) {
+            clientProvider.getClient().put(UPDATE_TEACHER_PASSWORD) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("password" to password, "confirmPassword" to confirmPassword))
             }
@@ -145,7 +146,7 @@ class KtorRemoteTeacherDataSource(
     ): Result<TeacherDto, DataError.Remote> {
 
         return safeCall<TeacherDto> {
-            httpClient.put(UPDATE_TEACHER_IMAGE) {
+            clientProvider.getClient().put(UPDATE_TEACHER_IMAGE) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
@@ -167,19 +168,19 @@ class KtorRemoteTeacherDataSource(
 
     override suspend fun removeTeacherImage(id: String): Result<TeacherDto, DataError.Remote> {
         return safeCall<TeacherDto> {
-            httpClient.delete("$REMOVE_TEACHER_IMAGE/$id")
+            clientProvider.getClient().delete("$REMOVE_TEACHER_IMAGE/$id")
         }
     }
 
     override suspend fun removeTeacher(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_TEACHER/$id")
+            clientProvider.getClient().delete("$REMOVE_TEACHER/$id")
         }
     }
 
     override suspend fun getTeachingCourses(teacherId: String): Result<List<TeacherTeachesCourseDto>, DataError.Remote> {
         return safeCall<List<TeacherTeachesCourseDto>> {
-            httpClient.get(GET_TEACHING_COURSES) {
+            clientProvider.getClient().get(GET_TEACHING_COURSES) {
                 parameter("teacherId", teacherId)
             }
         }
@@ -190,7 +191,7 @@ class KtorRemoteTeacherDataSource(
         courseId: String
     ): Result<TeacherTeachesCourseDto, DataError.Remote> {
         return safeCall<TeacherTeachesCourseDto> {
-            httpClient.post(ADD_TEACHING_SUBJECT) {
+            clientProvider.getClient().post(ADD_TEACHING_SUBJECT) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("teacherId" to teacherId, "courseId" to courseId))
             }
@@ -201,14 +202,14 @@ class KtorRemoteTeacherDataSource(
         teacherTeachesCourseId: String
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_TEACHING_SUBJECT/$teacherTeachesCourseId")
+            clientProvider.getClient().delete("$REMOVE_TEACHING_SUBJECT/$teacherTeachesCourseId")
         }
     }
 
 
     override suspend fun bulkCreateTeachers(teachers: List<Map<String, Any>>): Result<List<TeacherDto>, DataError.Remote> {
         return safeCall<List<TeacherDto>> {
-            httpClient.post(ApiEndpoints.BULK_CREATE_TEACHERS) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_CREATE_TEACHERS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("teachers" to teachers))
             }
@@ -217,7 +218,7 @@ class KtorRemoteTeacherDataSource(
 
     override suspend fun bulkDeleteTeachers(teacherIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(ApiEndpoints.BULK_DELETE_TEACHERS) {
+            clientProvider.getClient().delete(ApiEndpoints.BULK_DELETE_TEACHERS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("teacherIds" to teacherIds))
             }
@@ -226,7 +227,7 @@ class KtorRemoteTeacherDataSource(
 
     override suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<List<TeacherDto>, DataError.Remote> {
         return safeCall<List<TeacherDto>> {
-            httpClient.post(ApiEndpoints.BULK_CREATE_TEACHERS_FROM_CSV) {
+            clientProvider.getClient().post(ApiEndpoints.BULK_CREATE_TEACHERS_FROM_CSV) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {

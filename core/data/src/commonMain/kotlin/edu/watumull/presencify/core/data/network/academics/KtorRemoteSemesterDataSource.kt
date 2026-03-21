@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.academics.AddSemesterRequestDto
 import edu.watumull.presencify.core.data.dto.academics.CourseDto
 import edu.watumull.presencify.core.data.dto.academics.SemesterDto
@@ -23,8 +24,9 @@ import io.ktor.http.*
 import kotlinx.datetime.LocalDate
 
 class KtorRemoteSemesterDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteSemesterDataSource {
+    
 
     override suspend fun getSemesters(
         semesterNumber: SemesterNumber?,
@@ -39,7 +41,7 @@ class KtorRemoteSemesterDataSource(
         isOdd: Boolean?
     ): Result<SemesterListWithTotalCountDto, DataError.Remote> {
         return safeCall<SemesterListWithTotalCountDto> {
-            httpClient.get(GET_SEMESTERS) {
+            clientProvider.getClient().get(GET_SEMESTERS) {
                 semesterNumber?.value?.let { parameter("semesterNumber", it) }
                 academicStartYear?.let { parameter("academicStartYear", it) }
                 academicEndYear?.let { parameter("academicEndYear", it) }
@@ -65,7 +67,7 @@ class KtorRemoteSemesterDataSource(
         optionalCourseIds: List<String>?
     ): Result<SemesterDto, DataError.Remote> {
         return safeCall<SemesterDto> {
-            httpClient.post(ADD_SEMESTER) {
+            clientProvider.getClient().post(ADD_SEMESTER) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     AddSemesterRequestDto(
@@ -85,7 +87,7 @@ class KtorRemoteSemesterDataSource(
 
     override suspend fun getSemesterById(id: String): Result<SemesterDto, DataError.Remote> {
         return safeCall<SemesterDto> {
-            httpClient.get("$GET_SEMESTER_BY_ID/$id")
+            clientProvider.getClient().get("$GET_SEMESTER_BY_ID/$id")
         }
     }
 
@@ -96,7 +98,7 @@ class KtorRemoteSemesterDataSource(
         optionalCourseIds: List<String>?
     ): Result<SemesterDto, DataError.Remote> {
         return safeCall<SemesterDto> {
-            httpClient.put("$UPDATE_SEMESTER/$id") {
+            clientProvider.getClient().put("$UPDATE_SEMESTER/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateSemesterRequestDto(
@@ -111,13 +113,13 @@ class KtorRemoteSemesterDataSource(
 
     override suspend fun removeSemester(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_SEMESTER/$id")
+            clientProvider.getClient().delete("$REMOVE_SEMESTER/$id")
         }
     }
 
     override suspend fun getCoursesOfSemester(semesterId: String): Result<List<edu.watumull.presencify.core.data.dto.academics.CourseDto>, DataError.Remote> {
         return safeCall<List<CourseDto>> {
-            httpClient.get(GET_COURSES_OF_SEMESTER) {
+            clientProvider.getClient().get(GET_COURSES_OF_SEMESTER) {
                 parameter("semesterId", semesterId)
             }
         }
@@ -125,7 +127,7 @@ class KtorRemoteSemesterDataSource(
 
     override suspend fun bulkCreateSemesters(semesters: List<Map<String, Any>>): Result<List<SemesterDto>, DataError.Remote> {
         return safeCall<List<SemesterDto>> {
-            httpClient.post(BULK_CREATE_SEMESTERS) {
+            clientProvider.getClient().post(BULK_CREATE_SEMESTERS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("semesters" to semesters))
             }
@@ -134,7 +136,7 @@ class KtorRemoteSemesterDataSource(
 
     override suspend fun bulkDeleteSemesters(semesterIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete(BULK_DELETE_SEMESTERS) {
+            clientProvider.getClient().delete(BULK_DELETE_SEMESTERS) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("semesterIds" to semesterIds))
             }

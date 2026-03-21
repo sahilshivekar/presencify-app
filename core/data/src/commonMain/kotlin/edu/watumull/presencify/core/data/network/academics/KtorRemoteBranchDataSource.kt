@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
+import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.academics.BranchDto
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.ADD_BRANCH
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.GET_BRANCHES
@@ -14,12 +15,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class KtorRemoteBranchDataSource(
-    private val httpClient: HttpClient
+    private val clientProvider: HttpClientProvider
 ) : RemoteBranchDataSource {
+    
 
     override suspend fun getBranches(searchQuery: String?): Result<List<BranchDto>, DataError.Remote> {
         return safeCall<List<BranchDto>> {
-            httpClient.get(GET_BRANCHES) {
+            clientProvider.getClient().get(GET_BRANCHES) {
                 searchQuery?.let { parameter("searchQuery", it) }
             }
         }
@@ -27,7 +29,7 @@ class KtorRemoteBranchDataSource(
 
     override suspend fun addBranch(name: String, abbreviation: String): Result<BranchDto, DataError.Remote> {
         return safeCall<BranchDto> {
-            httpClient.post(ADD_BRANCH) {
+            clientProvider.getClient().post(ADD_BRANCH) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("name" to name, "abbreviation" to abbreviation))
             }
@@ -36,7 +38,7 @@ class KtorRemoteBranchDataSource(
 
     override suspend fun getBranchById(id: String): Result<BranchDto, DataError.Remote> {
         return safeCall<BranchDto> {
-            httpClient.get("$GET_BRANCH_BY_ID/$id")
+            clientProvider.getClient().get("$GET_BRANCH_BY_ID/$id")
         }
     }
 
@@ -45,7 +47,7 @@ class KtorRemoteBranchDataSource(
         name?.let { body["name"] = it }
         abbreviation?.let { body["abbreviation"] = it }
         return safeCall<BranchDto> {
-            httpClient.put("$UPDATE_BRANCH/$id") {
+            clientProvider.getClient().put("$UPDATE_BRANCH/$id") {
                 contentType(ContentType.Application.Json)
                 setBody(body)
             }
@@ -54,7 +56,7 @@ class KtorRemoteBranchDataSource(
 
     override suspend fun removeBranch(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            httpClient.delete("$REMOVE_BRANCH/$id")
+            clientProvider.getClient().delete("$REMOVE_BRANCH/$id")
         }
     }
 }

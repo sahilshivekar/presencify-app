@@ -7,4 +7,5 @@ val coreDataModule = module {
     includes(storageModule)
     includes(networkModule)
     includes(repositoryModule)
+    includes(clockModule)
 }
