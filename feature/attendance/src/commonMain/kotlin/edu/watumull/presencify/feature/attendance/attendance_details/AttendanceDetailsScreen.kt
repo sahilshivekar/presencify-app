@@ -38,7 +38,6 @@ import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.components.StudentListItem
-import edu.watumull.presencify.core.presentation.utils.ShareUtils
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
 

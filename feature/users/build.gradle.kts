@@ -19,7 +19,7 @@ kotlin {
         namespace = "edu.watumull.presencify.feature.users"
         compileSdk = 36
         minSdk = 24
-
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         withHostTestBuilder {
         }
 
@@ -99,8 +99,8 @@ kotlin {
                 implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 // Database (Room) & Storage
-               // implementation(libs.room.runtime)
-               // implementation(libs.sqlite.bundled)
+                // implementation(libs.room.runtime)
+                // implementation(libs.sqlite.bundled)
                 implementation(libs.datastore.preferences)
                 // Image Loading (Coil)
                 implementation(libs.coil.compose)

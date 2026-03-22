@@ -10,6 +10,8 @@ import edu.watumull.presencify.feature.attendance.mark_attendance.MarkAttendance
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceRoot
 import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsRoot
 import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
+import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
+import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
 
 fun NavGraphBuilder.attendanceDashboard(
     onNavigateBack: () -> Unit,
@@ -18,6 +20,7 @@ fun NavGraphBuilder.attendanceDashboard(
     onNavigateToSearchAttendance: () -> Unit,
     onNavigateToCreateAttendance: () -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
+    onNavigateToScanQr: () -> Unit,
 ) {
     composableWithSlideTransitions<AttendanceRoutes.AttendanceDashboard> {
         AttendanceDashboardRoot(
@@ -34,6 +37,7 @@ fun NavGraphBuilder.attendanceDashboard(
         StudentAttendanceAnalyticsRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
+            onNavigateToScanQr = onNavigateToScanQr
         )
     }
 }
@@ -45,6 +49,8 @@ fun NavGraphBuilder.attendanceNavGraph(
     onNavigateToAttendanceDetails: (String) -> Unit,
     onNavigateToSearchAttendanceForCourse: (String) -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
+    onNavigateToRecognizeStudent: (String) -> Unit,
+    onNavigateToScanQr: () -> Unit,
 ) {
     // 2. Create/Update Sheet
     composableWithSlideTransitions<AttendanceRoutes.CreateAttendanceSheet> {
@@ -74,6 +80,7 @@ fun NavGraphBuilder.attendanceNavGraph(
         StudentAttendanceAnalyticsRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
+            onNavigateToScanQr = onNavigateToScanQr
         )
     }
 
@@ -98,6 +105,23 @@ fun NavGraphBuilder.attendanceNavGraph(
         AttendanceDetailsRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToEditAttendance = onNavigateToMarkAttendance
+        )
+    }
+
+    // 8. Scan QR
+    composableWithSlideTransitions<AttendanceRoutes.ScanQr> {
+        ScanQrRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToRecognizeStudent = { attendanceId ->
+                onNavigateToRecognizeStudent(attendanceId)
+            }
+        )
+    }
+
+    // 9. Face Scan
+    composableWithSlideTransitions<AttendanceRoutes.RecognizeStudent> {
+        RecognizeStudentRoot(
+            onNavigateBack = onNavigateBack
         )
     }
 }

@@ -34,6 +34,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTeacher
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUniversityDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -103,8 +104,12 @@ fun HomeNavHost(
                 rootNavController.navigateToSearchClass(intention = "CREATE_ATTENDANCE_SHEET")
             },
             onNavigateToSearchAttendanceForCourseAndStudent = { courseId, studentId ->
-                rootNavController.navigateToSearchAttendance(courseId, studentId)
-            }
+                rootNavController.navigateToSearchAttendance(
+                    courseId = courseId,
+                    studentId = studentId
+                )
+            },
+            onNavigateToScanQr = rootNavController::navigateToScanQr
         )
 
         usersDashboard(
@@ -133,4 +138,3 @@ fun NavHostController.navigateToHome() {
         }
     }
 }
-

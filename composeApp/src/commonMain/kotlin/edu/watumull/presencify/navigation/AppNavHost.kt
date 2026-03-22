@@ -61,6 +61,8 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherVerifyCode
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 
 @Composable
 fun AppNavHost(
@@ -122,7 +124,11 @@ fun AppNavHost(
             },
             onNavigateToSearchAttendanceForCourseAndStudent = { courseId, studentId ->
                 rootNavController.navigateToSearchAttendance(courseId, studentId)
-            }
+            },
+            onNavigateToRecognizeStudent = { attendanceId ->
+                rootNavController.navigateToRecognizeStudent(attendanceId)
+            },
+            onNavigateToScanQr = rootNavController::navigateToScanQr
         )
 
         usersNavGraph(

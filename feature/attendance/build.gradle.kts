@@ -19,7 +19,7 @@ kotlin {
         namespace = "edu.watumull.presencify.feature.attendance"
         compileSdk = 36
         minSdk = 24
-
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         withHostTestBuilder {
         }
 
@@ -99,6 +99,8 @@ kotlin {
                 implementation(libs.compose.material.icons.extended)
                 implementation(libs.vico.multiplatform)
                 implementation(libs.vico.multiplatform.m3)
+                api(libs.qr.kit)
+                implementation(libs.kermit)
             }
             dependencies {
                 implementation(libs.kotlin.stdlib)
@@ -150,4 +152,11 @@ kotlin {
         }
     }
 
+}
+
+configurations.all {
+    attributes.attribute(
+        org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.attribute,
+        org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+    )
 }

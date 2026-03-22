@@ -10,6 +10,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun StudentAttendanceAnalyticsRoot(
     onNavigateBack: () -> Unit,
     onNavigateToSearchAttendanceForCourse: (courseId: String, studentId: String) -> Unit,
+    onNavigateToScanQr: () -> Unit,
 ) {
     val viewModel: StudentAttendanceAnalyticsViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -19,8 +20,10 @@ fun StudentAttendanceAnalyticsRoot(
             is StudentAttendanceAnalyticsEvent.NavigateBack -> onNavigateBack()
             is StudentAttendanceAnalyticsEvent.NavigateToSearchAttendanceForCourse ->
                 onNavigateToSearchAttendanceForCourse(event.courseId, event.studentId)
+            StudentAttendanceAnalyticsEvent.NavigateToScanQr -> onNavigateToScanQr()
         }
     }
+
 
     StudentAttendanceAnalyticsScreen(
         state = state,

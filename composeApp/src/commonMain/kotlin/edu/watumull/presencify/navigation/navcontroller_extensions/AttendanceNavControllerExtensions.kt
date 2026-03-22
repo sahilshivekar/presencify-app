@@ -127,3 +127,11 @@ fun NavController.navigateToAttendanceDetails(attendanceId: String) {
 fun NavController.navigateToDynamicQR(attendanceId: String) {
     navigate(AttendanceRoutes.DynamicQR(attendanceId = attendanceId))
 }
+
+fun NavController.navigateToScanQr() {
+    navigate(AttendanceRoutes.ScanQr)
+}
+
+fun NavController.navigateToRecognizeStudent(attendanceId: String) {
+    navigate(AttendanceRoutes.RecognizeStudent(attendanceId))
+}

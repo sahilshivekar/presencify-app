@@ -6,4 +6,5 @@ sealed interface StudentAttendanceAnalyticsEvent {
         val courseId: String,
         val studentId: String,
     ) : StudentAttendanceAnalyticsEvent
+    data object NavigateToScanQr : StudentAttendanceAnalyticsEvent
 }

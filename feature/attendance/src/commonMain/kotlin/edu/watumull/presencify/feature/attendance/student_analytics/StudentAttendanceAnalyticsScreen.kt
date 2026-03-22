@@ -52,6 +52,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import edu.watumull.presencify.core.design.systems.components.DonutGraph
+import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
@@ -145,6 +146,14 @@ private fun StudentAttendanceAnalyticsScreenContent(
                 branch = student.branch?.abbreviation ?: "N/A",
                 year = student.studentSemesters?.firstOrNull()?.semester?.semesterNumber?.toAcademicYear()
             )
+
+            if (LocalUserRole.current == UserRole.STUDENT) {
+                Spacer(modifier = Modifier.height(16.dp))
+                PresencifyActionBar(
+                    text = "Scan QR for attendance",
+                    onClick = { onAction(StudentAttendanceAnalyticsAction.ScanQrClick) }
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

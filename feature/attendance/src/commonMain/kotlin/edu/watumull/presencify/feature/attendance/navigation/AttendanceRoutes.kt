@@ -58,6 +58,12 @@ sealed interface AttendanceRoutes : NavRoute {
     ) : AttendanceRoutes
 
     @Serializable
+    data object ScanQr : AttendanceRoutes
+
+    @Serializable
+    data class RecognizeStudent(val attendanceId: String) : AttendanceRoutes
+
+    @Serializable
     data class DynamicQR(val attendanceId: String) : AttendanceRoutes
 
     @Serializable

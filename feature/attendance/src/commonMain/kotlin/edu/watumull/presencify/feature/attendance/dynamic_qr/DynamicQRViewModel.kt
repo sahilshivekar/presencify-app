@@ -69,7 +69,7 @@ class DynamicQRViewModel(
                 val rawContent = "$attendanceId|$timestamp"
                 val qrContent = DynamicQRCipher.encrypt(rawContent)
                 updateState { it.copy(qrCodeContent = qrContent, isStopped = false) }
-                delay(2000L)
+                delay(1000L)
             }
         }
     }

@@ -19,7 +19,7 @@ kotlin {
         namespace = "edu.watumull.presencify.core.presentation"
         compileSdk = 36
         minSdk = 24
-
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         withHostTestBuilder {
         }
 
