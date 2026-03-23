@@ -82,7 +82,8 @@ fun NavGraphBuilder.usersNavGraph(
     ) -> Unit,
     onNavigateToTeacherDetails: (String) -> Unit,
     onNavigateToAddEditTeacher: (String?) -> Unit,
-    onNavigateToAssignUnassignCourses: (String) -> Unit
+    onNavigateToAssignUnassignCourses: (String) -> Unit,
+    onNavigateToAddStudentBiometrics: (String) -> Unit // New callback
 ) {
 
     composableWithSlideTransitions<UsersRoutes.AddEditStudent> {
@@ -95,7 +96,8 @@ fun NavGraphBuilder.usersNavGraph(
             onNavigateBack = onNavigateBack,
             onNavigateToStudentDetails = onNavigateToStudentDetails,
             onNavigateToAddEditStudent = onNavigateToAddEditStudent,
-            onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics
+            onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics,
+            onNavigateToAddStudentBiometrics = onNavigateToAddStudentBiometrics // Pass callback
         )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToSemester> {

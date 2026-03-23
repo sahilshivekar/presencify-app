@@ -12,6 +12,7 @@ import edu.watumull.presencify.core.data.dto.attendance.UpdateStudentAttendanceR
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.BULK_UPDATE_STUDENT_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.CREATE_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ACTIVE_ATTENDANCE_SHEET
+import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.MARK_MY_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCES
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_BY_ID
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_ALL
@@ -76,6 +77,15 @@ class KtorRemoteAttendanceDataSource(
         return safeCall<Unit> {
             clientProvider.getClient().delete(REMOVE_ATTENDANCE) {
                 parameter("attendanceId", attendanceId)
+            }
+        }
+    }
+
+    override suspend fun markAttendance(attendanceId: String, studentId: String): Result<AttendanceStudentDto, DataError.Remote> {
+        return safeCall<AttendanceStudentDto> {
+            clientProvider.getClient().post(MARK_MY_ATTENDANCE) {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf("attendanceId" to attendanceId, "studentId" to studentId))
             }
         }
     }

@@ -32,5 +32,6 @@ fun StudentDto.toDomain(): Student = Student(
     studentSemesters = studentSemesters?.map { it.toDomain() },
     studentDivisions = studentDivisions?.map { it.toDomain() },
     studentBatches = studentBatches?.map { it.toDomain() },
-    attendanceStudents = attendanceStudents?.map { it.toDomain() }
+    attendanceStudents = attendanceStudents?.map { it.toDomain() },
+    faceDescriptor = faceDescriptor
 )

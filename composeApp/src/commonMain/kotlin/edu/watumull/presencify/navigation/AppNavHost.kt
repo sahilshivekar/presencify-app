@@ -31,6 +31,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdd
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTeacher
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditUniversity
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddStudentBiometrics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminLogin
@@ -63,6 +64,15 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTim
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentForgotPassword
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentVerifyCode
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherForgotPassword
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherLogin
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherVerifyCode
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 
 @Composable
 fun AppNavHost(
@@ -139,6 +149,9 @@ fun AppNavHost(
                 rootNavController.navigateToStudentAttendanceAnalytics(
                     studentId = studentId
                 )
+            },
+            onNavigateToAddStudentBiometrics = { studentId ->
+                rootNavController.navigateToAddStudentBiometrics(studentId)
             },
             onNavigateToSearchStudentForAssignUnassignSemester = { semesterId, branchId ->
                 rootNavController.navigateToSearchStudent(

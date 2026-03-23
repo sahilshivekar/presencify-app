@@ -28,6 +28,8 @@ interface RemoteAttendanceDataSource {
 
     suspend fun removeAttendance(attendanceId: String): Result<Unit, DataError.Remote>
 
+    suspend fun markAttendance(attendanceId: String, studentId: String): Result<AttendanceStudentDto, DataError.Remote>
+
     suspend fun getAttendanceOfAnyStudentForSpecificCourseInSemester(
         studentId: String,
         courseId: String,

@@ -296,4 +296,11 @@ class StudentRepositoryImpl(
             list.map { it.toDomain() }
         }
     }
+
+    override suspend fun enrollStudentFace(
+        studentId: String,
+        images: List<ByteArray>
+    ): Result<Unit, DataError.Remote> {
+        return remoteDataSource.enrollStudentFace(studentId, images)
+    }
 }

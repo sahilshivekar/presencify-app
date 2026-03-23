@@ -28,6 +28,8 @@ interface AttendanceRepository {
     
     suspend fun removeAttendance(attendanceId: String): Result<Unit, DataError.Remote>
 
+    suspend fun markAttendance(attendanceId: String, studentId: String): Result<AttendanceStudent, DataError.Remote>
+
     suspend fun getAttendanceOfAnyStudentForSpecificCourseInSemester(
         studentId: String,
         courseId: String,

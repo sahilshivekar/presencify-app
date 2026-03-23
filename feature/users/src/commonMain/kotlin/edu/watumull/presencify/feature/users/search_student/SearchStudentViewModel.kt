@@ -107,6 +107,10 @@ class SearchStudentViewModel(
             SearchStudentIntention.DEFAULT -> {
                 // No validation needed
             }
+
+            SearchStudentIntention.ADD_STUDENT_BIOMETRIC -> {
+                // No validation needed
+            }
         }
 
         SearchStudentState(
@@ -426,6 +430,10 @@ class SearchStudentViewModel(
 
             SearchStudentIntention.VIEW_ATTENDANCE -> {
                 sendEvent(SearchStudentEvent.NavigateToStudentAttendanceAnalytics(studentId))
+            }
+
+            SearchStudentIntention.ADD_STUDENT_BIOMETRIC -> {
+                sendEvent(SearchStudentEvent.NavigateToAddStudentBiometrics(studentId))
             }
 
             SearchStudentIntention.DEFAULT -> {

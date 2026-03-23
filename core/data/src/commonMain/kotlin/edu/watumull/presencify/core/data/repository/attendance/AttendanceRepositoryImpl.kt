@@ -36,6 +36,10 @@ class AttendanceRepositoryImpl(
         return remoteDataSource.removeAttendance(attendanceId)
     }
 
+    override suspend fun markAttendance(attendanceId: String, studentId: String): Result<AttendanceStudent, DataError.Remote> {
+        return remoteDataSource.markAttendance(attendanceId, studentId).map { it.toDomain() }
+    }
+
     override suspend fun getAttendanceOfAnyStudentForSpecificCourseInSemester(
         studentId: String, courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
         startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,

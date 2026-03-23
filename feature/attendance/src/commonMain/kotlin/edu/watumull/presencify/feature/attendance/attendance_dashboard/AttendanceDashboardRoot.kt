@@ -13,6 +13,7 @@ fun AttendanceDashboardRoot(
     onNavigateToAggregateAttendanceAnalytics: () -> Unit,
     onNavigateToSearchAttendance: () -> Unit,
     onNavigateToCreateAttendance: () -> Unit,
+    onNavigateToSearchStudentForBiometrics: () -> Unit,
     viewModel: AttendanceDashboardViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -24,6 +25,7 @@ fun AttendanceDashboardRoot(
             AttendanceDashboardEvent.NavigateToAggregateAttendanceAnalytics -> onNavigateToAggregateAttendanceAnalytics()
             AttendanceDashboardEvent.NavigateToSearchAttendance -> onNavigateToSearchAttendance()
             AttendanceDashboardEvent.NavigateToCreateAttendance -> onNavigateToCreateAttendance()
+            AttendanceDashboardEvent.NavigateToSearchStudentForBiometrics -> onNavigateToSearchStudentForBiometrics()
         }
     }
 

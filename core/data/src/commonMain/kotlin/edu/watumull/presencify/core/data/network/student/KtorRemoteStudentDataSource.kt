@@ -17,8 +17,10 @@ import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDEN
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_BATCH
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_DIVISION
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDENT_TO_SEMESTER
+import edu.watumull.presencify.core.data.network.student.ApiEndpoints.BULK_CREATE_STUDENTS_FROM_CSV
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.CHANGE_STUDENT_BATCH
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.CHANGE_STUDENT_DIVISION
+import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ENROLL_STUDENT_FACE
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENTS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_BATCHES
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_BY_ID
@@ -472,19 +474,45 @@ class KtorRemoteStudentDataSource(
 
     override suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<List<StudentDto>, DataError.Remote> {
         return safeCall<List<StudentDto>> {
-            clientProvider.getClient().post(ApiEndpoints.BULK_CREATE_STUDENTS_FROM_CSV) {
+            clientProvider.getClient().post(BULK_CREATE_STUDENTS_FROM_CSV) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
-                            append("csvFile", csvData, io.ktor.http.Headers.build {
-                                append(io.ktor.http.HttpHeaders.ContentType, "text/csv")
-                                append(
-                                    io.ktor.http.HttpHeaders.ContentDisposition,
-                                    "filename=\"students.csv\""
-                                )
+                            append("file", csvData, Headers.build {
+                                append(HttpHeaders.ContentType, "text/csv")
+                                append(HttpHeaders.ContentDisposition, "filename=\"students.csv\"")
                             })
                         }
-                    ))
+                    )
+                )
+            }
+        }
+    }
+
+    override suspend fun enrollStudentFace(
+        studentId: String,
+        images: List<ByteArray>
+    ): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
+            clientProvider.getClient().post(ENROLL_STUDENT_FACE) {
+                setBody(
+                    MultiPartFormDataContent(
+                        formData {
+                            append("studentId", studentId)
+                            images.forEachIndexed { index, imageBytes ->
+                                val mimeType = FileMimeUtils.getMimeType(imageBytes)
+                                val extension = FileMimeUtils.getExtensionFromMime(mimeType) ?: "jpg"
+                                append("faceImages", imageBytes, Headers.build {
+                                    append(HttpHeaders.ContentType, mimeType)
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=\"face_$index.$extension\""
+                                    )
+                                })
+                            }
+                        }
+                    )
+                )
             }
         }
     }

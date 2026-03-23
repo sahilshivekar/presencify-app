@@ -1,7 +1,12 @@
 package edu.watumull.presencify.feature.attendance.navigation
 
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.toRoute
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.feature.attendance.add_student_biometrics.AddStudentBiometricsRoot
 import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsRoot
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardRoot
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsRoot
@@ -12,6 +17,7 @@ import edu.watumull.presencify.feature.attendance.student_analytics.StudentAtten
 import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
 import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
+import kotlinx.coroutines.flow.firstOrNull
 
 fun NavGraphBuilder.attendanceDashboard(
     onNavigateBack: () -> Unit,
@@ -21,6 +27,7 @@ fun NavGraphBuilder.attendanceDashboard(
     onNavigateToCreateAttendance: () -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToScanQr: () -> Unit,
+    onNavigateToSearchStudentForBiometrics: () -> Unit // New callback
 ) {
     composableWithSlideTransitions<AttendanceRoutes.AttendanceDashboard> {
         AttendanceDashboardRoot(
@@ -28,7 +35,8 @@ fun NavGraphBuilder.attendanceDashboard(
             onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics,
             onNavigateToAggregateAttendanceAnalytics = onNavigateToAggregateAttendanceAnalytics,
             onNavigateToSearchAttendance = onNavigateToSearchAttendance,
-            onNavigateToCreateAttendance = onNavigateToCreateAttendance
+            onNavigateToCreateAttendance = onNavigateToCreateAttendance,
+            onNavigateToSearchStudentForBiometrics = onNavigateToSearchStudentForBiometrics // Pass callback
         )
     }
 
@@ -119,8 +127,15 @@ fun NavGraphBuilder.attendanceNavGraph(
     }
 
     // 9. Face Scan
-    composableWithSlideTransitions<AttendanceRoutes.RecognizeStudent> {
-        RecognizeStudentRoot(
+    composableWithSlideTransitions<AttendanceRoutes.RecognizeStudent> { backStackEntry ->
+         RecognizeStudentRoot(
+            onNavigateBack = onNavigateBack,
+            onSuccess = onNavigateBack
+        )
+    }
+
+    composableWithSlideTransitions<AttendanceRoutes.AddStudentBiometrics> { backStackEntry ->
+        AddStudentBiometricsRoot(
             onNavigateBack = onNavigateBack
         )
     }

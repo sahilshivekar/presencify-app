@@ -158,4 +158,9 @@ interface RemoteStudentDataSource {
     ): Result<List<StudentBatchDto>, DataError.Remote>
 
     suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<List<StudentDto>, DataError.Remote>
+
+    suspend fun enrollStudentFace(
+        studentId: String,
+        images: List<ByteArray>
+    ): Result<Unit, DataError.Remote>
 }

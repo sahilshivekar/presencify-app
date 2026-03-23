@@ -83,6 +83,7 @@ fun SearchStudentScreen(
         SearchStudentIntention.MODIFY_STUDENT_BATCH -> "Modify Student Batch"
         SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> "Mark/Unmark Student as Dropout"
         SearchStudentIntention.VIEW_ATTENDANCE -> "Select Student"
+        SearchStudentIntention.ADD_STUDENT_BIOMETRIC -> "Select Student"
     }
 
     PresencifyBottomSheetScaffold(
@@ -302,6 +303,17 @@ private fun SearchStudentScreenContent(
                                                     } else null
                                                 )
                                             }
+                                        }
+                                    }
+
+                                    SearchStudentIntention.ADD_STUDENT_BIOMETRIC -> {
+                                        {
+                                            edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton(
+                                                text = "Select",
+                                                onClick = {
+                                                    onAction(SearchStudentAction.StudentActionButtonClick(student.id))
+                                                }
+                                            )
                                         }
                                     }
 

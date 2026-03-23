@@ -8,5 +8,6 @@ sealed interface SearchStudentEvent {
     data object NavigateToAddEditStudent : SearchStudentEvent
 
     data class NavigateToStudentAttendanceAnalytics(val studentId: String) : SearchStudentEvent
-}
 
+    data class NavigateToAddStudentBiometrics(val studentId: String) : SearchStudentEvent
+}

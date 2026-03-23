@@ -42,5 +42,6 @@ data class StudentDto(
     @SerialName("StudentBatches")
     val studentBatches: List<StudentBatchDto>? = null,
     @SerialName("AttendanceStudents")
-    val attendanceStudents: List<AttendanceStudentDto>? = null
+    val attendanceStudents: List<AttendanceStudentDto>? = null,
+    val faceDescriptor: List<Float>? = null
 )

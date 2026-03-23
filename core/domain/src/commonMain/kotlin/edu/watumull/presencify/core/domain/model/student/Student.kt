@@ -33,5 +33,6 @@ data class Student(
     val studentSemesters: List<StudentSemester>? = null,
     val studentDivisions: List<StudentDivision>? = null,
     val studentBatches: List<StudentBatch>? = null,
-    val attendanceStudents: List<AttendanceStudent>? = null
+    val attendanceStudents: List<AttendanceStudent>? = null,
+    val faceDescriptor: List<Float>? = null
 )

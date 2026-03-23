@@ -95,6 +95,9 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
 
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
+
                 implementation(libs.compose.material.icons.core)
                 implementation(libs.compose.material.icons.extended)
                 implementation(libs.vico.multiplatform)
@@ -121,6 +124,17 @@ kotlin {
                 // dependencies declared in commonMain.
                 implementation(libs.compose.material.icons.core)
                 implementation(libs.compose.material.icons.extended)
+
+                // CameraX
+                implementation(libs.androidx.camera.core)
+                implementation(libs.androidx.camera.camera2)
+                implementation(libs.androidx.camera.lifecycle)
+                implementation(libs.androidx.camera.view)
+
+                // ML Kit & TensorFlow Lite
+                implementation(libs.mlkit.face.detection)
+                implementation(libs.tensorflow.lite)
+                implementation(libs.tensorflow.lite.support)
             }
         }
 

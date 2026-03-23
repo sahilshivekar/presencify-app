@@ -14,6 +14,8 @@ enum class SearchStudentIntention {
 
     VIEW_ATTENDANCE,
 
+    ADD_STUDENT_BIOMETRIC,
+
     DEFAULT
 
 }

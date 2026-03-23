@@ -133,5 +133,12 @@ fun NavController.navigateToScanQr() {
 }
 
 fun NavController.navigateToRecognizeStudent(attendanceId: String) {
-    navigate(AttendanceRoutes.RecognizeStudent(attendanceId))
+    navigate(AttendanceRoutes.RecognizeStudent(attendanceId = attendanceId))
+}
+
+/**
+ * Navigate to Add Student Biometrics screen
+ */
+fun NavController.navigateToAddStudentBiometrics(studentId: String) {
+    navigate(AttendanceRoutes.AddStudentBiometrics(studentId = studentId))
 }
