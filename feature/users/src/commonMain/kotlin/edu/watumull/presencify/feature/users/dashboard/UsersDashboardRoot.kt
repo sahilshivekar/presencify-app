@@ -16,6 +16,8 @@ fun UsersDashboardRoot(
     onNavigateToModifyDivision: () -> Unit,
     onNavigateToModifyBatch: () -> Unit,
     onNavigateToMarkUnmarkStudentAsDropout: () -> Unit,
+    onNavigateToImportStudents: () -> Unit,
+    onNavigateToImportTeachers: () -> Unit,
     viewModel: UsersDashboardViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -33,6 +35,8 @@ fun UsersDashboardRoot(
             UsersDashboardEvent.NavigateToModifyBatch -> onNavigateToModifyBatch()
 
             UsersDashboardEvent.NavigateToMarkUnmarkStudentAsDropout -> onNavigateToMarkUnmarkStudentAsDropout()
+            UsersDashboardEvent.NavigateToImportStudents -> onNavigateToImportStudents()
+            UsersDashboardEvent.NavigateToImportTeachers -> onNavigateToImportTeachers()
         }
     }
 

@@ -239,7 +239,7 @@ Presencify/
  - **List Rows:** Prefer `ListItem` or cards with ripple for entity items.
  - **Color Usage:** Always explicitly specify colors for all Composables (Text, Column background, Surface, etc.) using `MaterialTheme.colorScheme.<color>` except when using Presencify design-system components which already have appropriate theming applied. Never use hardcoded color values or Color.Unspecified.
  - **Design System Components:** Strictly use only Presencify-prefixed components for:
-   - Buttons: `PresencifyPrimaryButton`, `PresencifySecondaryButton`, `PresencifyTextButton`, etc.
+   - Buttons: `PresencifyButton`, `PresencifySecondaryButton`, `PresencifyTextButton`, etc.
    - Text Fields: `PresencifyTextField`, `PresencifyPasswordField`, etc.
    - Cards: `PresencifyCard`, `PresencifyOutlinedCard`, etc.
    - Dropdown: `PresencifyDropdownBox`

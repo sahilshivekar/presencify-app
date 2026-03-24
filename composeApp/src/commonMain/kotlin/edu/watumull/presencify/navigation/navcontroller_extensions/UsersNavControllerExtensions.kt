@@ -213,3 +213,17 @@ fun NavController.navigateToUnassignCourseToTeacher() {
 fun NavController.navigateToTeacherDetails(teacherId: String) {
     navigate(UsersRoutes.TeacherDetails(teacherId = teacherId))
 }
+
+/**
+ * Navigate to Import Students screen
+ */
+fun NavController.navigateToImportStudents() {
+    navigate(UsersRoutes.ImportStudents)
+}
+
+/**
+ * Navigate to Import Teachers screen
+ */
+fun NavController.navigateToImportTeachers() {
+    navigate(UsersRoutes.ImportTeachers)
+}

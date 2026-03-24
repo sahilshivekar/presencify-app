@@ -138,7 +138,9 @@ object CsvUtils {
         val startIndex = if (skipHeader) 1 else 0
         
         return lines.drop(startIndex).map { line ->
-            line.split(delimiter).map { it.trim() }
+            line.split(delimiter).map {
+                it.trim().removeSurrounding("\"").trim()
+            }
         }
     }
 }

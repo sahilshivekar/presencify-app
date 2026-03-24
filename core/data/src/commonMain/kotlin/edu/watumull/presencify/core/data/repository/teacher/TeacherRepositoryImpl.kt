@@ -127,9 +127,7 @@ class TeacherRepositoryImpl(
         return remoteDataSource.bulkDeleteTeachers(teacherIds)
     }
 
-    override suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<List<Teacher>, DataError.Remote> {
-        return remoteDataSource.bulkCreateTeachersFromCSV(csvData).map { list ->
-            list.map { it.toDomain() }
-        }
+    override suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote> {
+        return remoteDataSource.bulkCreateTeachersFromCSV(csvData)
     }
 }

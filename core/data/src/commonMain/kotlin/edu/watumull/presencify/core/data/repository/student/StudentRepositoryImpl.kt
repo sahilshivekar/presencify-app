@@ -291,10 +291,8 @@ class StudentRepositoryImpl(
         }
     }
 
-    override suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<List<Student>, DataError.Remote> {
-        return remoteDataSource.bulkCreateStudentsFromCSV(csvData).map { list ->
-            list.map { it.toDomain() }
-        }
+    override suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote> {
+        return remoteDataSource.bulkCreateStudentsFromCSV(csvData)
     }
 
     override suspend fun enrollStudentFace(

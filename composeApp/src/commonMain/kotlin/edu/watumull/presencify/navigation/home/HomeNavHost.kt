@@ -17,6 +17,8 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAgg
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToDivision
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToSemester
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToImportStudents
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToImportTeachers
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToLinkUnlinkCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkUnmarkStudentAsDropout
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentBatch
@@ -125,7 +127,9 @@ fun HomeNavHost(
             onNavigateToAssignUnassignBatch = rootNavController::navigateToAssignUnassignStudentToBatch,
             onNavigateToModifyDivision = rootNavController::navigateToModifyStudentDivision,
             onNavigateToModifyBatch = rootNavController::navigateToModifyStudentBatch,
-            onNavigateToMarkUnmarkStudentAsDropout = rootNavController::navigateToMarkUnmarkStudentAsDropout
+            onNavigateToMarkUnmarkStudentAsDropout = rootNavController::navigateToMarkUnmarkStudentAsDropout,
+            onNavigateToImportStudents = rootNavController::navigateToImportStudents,
+            onNavigateToImportTeachers = rootNavController::navigateToImportTeachers
         )
 
         scheduleDashboard(

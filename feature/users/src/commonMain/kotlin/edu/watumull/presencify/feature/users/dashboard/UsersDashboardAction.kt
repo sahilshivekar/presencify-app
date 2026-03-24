@@ -15,4 +15,8 @@ sealed interface UsersDashboardAction {
 
     // Dropout
     data object ClickMarkUnmarkStudentAsDropout : UsersDashboardAction
+
+    // Import
+    data object ClickImportStudents : UsersDashboardAction
+    data object ClickImportTeachers : UsersDashboardAction
 }

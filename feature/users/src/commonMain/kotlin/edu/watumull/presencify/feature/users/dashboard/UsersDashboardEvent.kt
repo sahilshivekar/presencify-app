@@ -12,4 +12,7 @@ sealed interface UsersDashboardEvent {
     data object NavigateToModifyBatch : UsersDashboardEvent
 
     data object NavigateToMarkUnmarkStudentAsDropout : UsersDashboardEvent
+
+    data object NavigateToImportStudents : UsersDashboardEvent
+    data object NavigateToImportTeachers : UsersDashboardEvent
 }

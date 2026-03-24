@@ -76,5 +76,5 @@ interface TeacherRepository {
 
     suspend fun bulkDeleteTeachers(teacherIds: List<String>): Result<Unit, DataError.Remote>
 
-    suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<List<Teacher>, DataError.Remote>
+    suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote>
 }

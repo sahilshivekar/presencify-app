@@ -35,6 +35,12 @@ sealed interface UsersRoutes : NavRoute {
     data class AddEditStudent(val studentId: String? = null) : UsersRoutes
 
     @Serializable
+    data object ImportStudents : UsersRoutes
+
+    @Serializable
+    data object ImportTeachers : UsersRoutes
+
+    @Serializable
     data class SearchStudent(
 
         val searchQuery: String? = null,

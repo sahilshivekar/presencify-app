@@ -225,8 +225,8 @@ class KtorRemoteTeacherDataSource(
         }
     }
 
-    override suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<List<TeacherDto>, DataError.Remote> {
-        return safeCall<List<TeacherDto>> {
+    override suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
             clientProvider.getClient().post(ApiEndpoints.BULK_CREATE_TEACHERS_FROM_CSV) {
                 setBody(
                     MultiPartFormDataContent(

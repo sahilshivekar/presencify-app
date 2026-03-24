@@ -74,5 +74,5 @@ interface RemoteTeacherDataSource {
 
     suspend fun bulkDeleteTeachers(teacherIds: List<String>): Result<Unit, DataError.Remote>
 
-    suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<List<TeacherDto>, DataError.Remote>
+    suspend fun bulkCreateTeachersFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote>
 }

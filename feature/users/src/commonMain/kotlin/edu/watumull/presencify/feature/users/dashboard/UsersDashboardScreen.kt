@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -115,6 +116,24 @@ fun UsersDashboardScreen(
                                 onClick = { onAction(UsersDashboardAction.ClickMarkUnmarkStudentAsDropout) },
                                 modifier = Modifier.fillMaxWidth()
                             )
+                        }
+
+                        // Section 4: Import
+                        DashboardSection(title = "Import from CSV") {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                PresencifyActionBar(
+                                    text = "Import Students from CSV",
+                                    leadingImageVector = Icons.Default.Description,
+                                    onClick = { onAction(UsersDashboardAction.ClickImportStudents) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                PresencifyActionBar(
+                                    text = "Import Teachers from CSV",
+                                    leadingImageVector = Icons.Default.Description,
+                                    onClick = { onAction(UsersDashboardAction.ClickImportTeachers) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }

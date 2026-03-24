@@ -18,6 +18,8 @@ class UsersDashboardViewModel : BaseViewModel<UsersDashboardState, UsersDashboar
             UsersDashboardAction.ClickModifyBatch -> sendEvent(UsersDashboardEvent.NavigateToModifyBatch)
 
             UsersDashboardAction.ClickMarkUnmarkStudentAsDropout -> sendEvent(UsersDashboardEvent.NavigateToMarkUnmarkStudentAsDropout)
+            UsersDashboardAction.ClickImportStudents -> sendEvent(UsersDashboardEvent.NavigateToImportStudents)
+            UsersDashboardAction.ClickImportTeachers -> sendEvent(UsersDashboardEvent.NavigateToImportTeachers)
         }
     }
 }

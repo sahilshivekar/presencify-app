@@ -13,6 +13,8 @@ import edu.watumull.presencify.feature.users.search_student.SearchStudentViewMod
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherViewModel
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsViewModel
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsViewModel
+import edu.watumull.presencify.feature.users.import_students.ImportStudentsViewModel
+import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -46,6 +48,8 @@ val usersModule = module {
             savedStateHandle = get()
         )
     }
+    viewModel { ImportStudentsViewModel(get()) }
+    viewModel { ImportTeachersViewModel(get()) }
     viewModel {
         AddEditStudentViewModel(
             studentRepository = get(),

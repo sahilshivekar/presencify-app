@@ -472,13 +472,13 @@ class KtorRemoteStudentDataSource(
         }
     }
 
-    override suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<List<StudentDto>, DataError.Remote> {
-        return safeCall<List<StudentDto>> {
+    override suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
             clientProvider.getClient().post(BULK_CREATE_STUDENTS_FROM_CSV) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
-                            append("file", csvData, Headers.build {
+                            append("csvFile", csvData, Headers.build {
                                 append(HttpHeaders.ContentType, "text/csv")
                                 append(HttpHeaders.ContentDisposition, "filename=\"students.csv\"")
                             })

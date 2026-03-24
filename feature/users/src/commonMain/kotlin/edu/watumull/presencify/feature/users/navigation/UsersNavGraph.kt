@@ -15,6 +15,8 @@ import edu.watumull.presencify.feature.users.search_student.SearchStudentRoot
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherRoot
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsRoot
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsRoot
+import edu.watumull.presencify.feature.users.import_students.ImportStudentsRoot
+import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersRoot
 
 fun NavGraphBuilder.usersDashboard(
     onNavigateToSearchStudents: () -> Unit,
@@ -25,6 +27,8 @@ fun NavGraphBuilder.usersDashboard(
     onNavigateToModifyDivision: () -> Unit,
     onNavigateToModifyBatch: () -> Unit,
     onNavigateToMarkUnmarkStudentAsDropout: () -> Unit,
+    onNavigateToImportStudents: () -> Unit,
+    onNavigateToImportTeachers: () -> Unit,
 ) {
     composableWithSlideTransitions<UsersRoutes.UsersDashboard> {
         UsersDashboardRoot(
@@ -35,7 +39,9 @@ fun NavGraphBuilder.usersDashboard(
             onNavigateToAssignUnassignBatch = onNavigateToAssignUnassignBatch,
             onNavigateToModifyDivision = onNavigateToModifyDivision,
             onNavigateToModifyBatch = onNavigateToModifyBatch,
-            onNavigateToMarkUnmarkStudentAsDropout = onNavigateToMarkUnmarkStudentAsDropout
+            onNavigateToMarkUnmarkStudentAsDropout = onNavigateToMarkUnmarkStudentAsDropout,
+            onNavigateToImportStudents = onNavigateToImportStudents,
+            onNavigateToImportTeachers = onNavigateToImportTeachers,
         )
     }
 }
@@ -85,6 +91,18 @@ fun NavGraphBuilder.usersNavGraph(
     onNavigateToAssignUnassignCourses: (String) -> Unit,
     onNavigateToAddStudentBiometrics: (String) -> Unit // New callback
 ) {
+
+    composableWithSlideTransitions<UsersRoutes.ImportStudents> {
+        ImportStudentsRoot(
+            onNavigateBack = onNavigateBack
+        )
+    }
+
+    composableWithSlideTransitions<UsersRoutes.ImportTeachers> {
+        ImportTeachersRoot(
+            onNavigateBack = onNavigateBack
+        )
+    }
 
     composableWithSlideTransitions<UsersRoutes.AddEditStudent> {
         AddEditStudentRoot(

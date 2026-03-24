@@ -139,7 +139,7 @@ interface StudentRepository {
 
     suspend fun bulkAddStudentsToBatch(studentIds: List<String>, batchId: String): Result<List<StudentBatch>, DataError.Remote>
 
-    suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<List<Student>, DataError.Remote>
+    suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote>
 
     suspend fun enrollStudentFace(
         studentId: String,
