@@ -1,7 +1,7 @@
 package edu.watumull.presencify.core.data.network
 
 object BaseApiEndpoints {
-    private const val LOCAL_IP = "192.168.0.233" // samsung galaxy ip
+    private const val LOCAL_IP = "192.168.1.101" // samsung galaxy ip
     private const val LOCAL_PORT = "4444"
 
     const val PRESENCIFY_BASE_URL = "http://$LOCAL_IP:$LOCAL_PORT" // use if using on android app

@@ -41,8 +41,10 @@ fun RecognizeStudentScreen(
                 },
                 onEmbeddingExtracted = { embedding ->
                     onAction(RecognizeStudentAction.OnRecognitionSuccess(embedding))
+                    onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
                 },
                 isLivenessComplete = state.isLivenessComplete,
+                shouldCaptureEmbedding = state.shouldCaptureEmbedding,
                 cameraPermissionGranted = state.cameraPermissionGranted,
                 onPermissionResult = { isGranted ->
                     onAction(RecognizeStudentAction.OnPermissionResult(isGranted))

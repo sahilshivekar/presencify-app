@@ -12,6 +12,7 @@ data class RecognizeStudentState(
     val currentStep: Int = 0,
     val isLivenessComplete: Boolean = false,
     val isRecognizing: Boolean = false,
+    val shouldCaptureEmbedding: Boolean = false,
     val cameraPermissionGranted: Boolean = false,
     val error: UiText? = null,
     val isLoading: Boolean = false

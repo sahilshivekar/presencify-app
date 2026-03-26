@@ -133,8 +133,13 @@ fun NavController.navigateToScanQr() {
 }
 
 fun NavController.navigateToRecognizeStudent(attendanceId: String) {
-    navigate(AttendanceRoutes.RecognizeStudent(attendanceId = attendanceId))
+    navigate(AttendanceRoutes.RecognizeStudent(attendanceId = attendanceId)) {
+        popUpTo(AttendanceRoutes.ScanQr) {
+            inclusive = true
+        }
+    }
 }
+
 
 /**
  * Navigate to Add Student Biometrics screen

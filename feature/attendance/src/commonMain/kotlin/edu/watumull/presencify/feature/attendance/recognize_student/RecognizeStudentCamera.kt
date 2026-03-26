@@ -9,6 +9,7 @@ expect fun RecognizeStudentCamera(
     onFaceDetected: (Float) -> Unit,
     onEmbeddingExtracted: (FloatArray) -> Unit,
     isLivenessComplete: Boolean,
+    shouldCaptureEmbedding: Boolean,
     cameraPermissionGranted: Boolean,
     onPermissionResult: (Boolean) -> Unit
 )

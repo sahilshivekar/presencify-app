@@ -10,4 +10,5 @@ sealed interface RecognizeStudentAction {
     data class OnRecognitionSuccess(val embedding: FloatArray) : RecognizeStudentAction
     data class OnFailure(val message: UiText) : RecognizeStudentAction
     data class OnPermissionResult(val isGranted: Boolean) : RecognizeStudentAction
+    data object OnEmbeddingCaptureConsumed : RecognizeStudentAction
 }

@@ -68,6 +68,7 @@ class RecognizeStudentViewModel(
                 currentStep = 0,
                 isLivenessComplete = false,
                 isRecognizing = false,
+                shouldCaptureEmbedding = false,
                 isLoading = false,
                 error = null
             )
@@ -113,8 +114,11 @@ class RecognizeStudentViewModel(
             is RecognizeStudentAction.OnRecognitionSuccess -> {
                 compareFaceEmbedding(action.embedding)
             }
-           is RecognizeStudentAction.OnFailure -> {
+            is RecognizeStudentAction.OnFailure -> {
                 updateState { it.copy(error = action.message) }
+            }
+            is RecognizeStudentAction.OnEmbeddingCaptureConsumed -> {
+                updateState { it.copy(shouldCaptureEmbedding = false) }
             }
         }
     }
@@ -139,9 +143,13 @@ class RecognizeStudentViewModel(
         if (isCorrect) {
             val nextStep = state.currentStep + 1
             if (nextStep >= state.livenessSequence.size) {
-                 updateState { it.copy(currentStep = nextStep, isLivenessComplete = true, isRecognizing = true) }
-                 viewModelScope.launch {
-                     // The UI should react to isLivenessComplete and capture frame for recognition
+                 updateState {
+                     it.copy(
+                         currentStep = nextStep,
+                         isLivenessComplete = true,
+                         isRecognizing = true,
+                         shouldCaptureEmbedding = true
+                     )
                  }
             } else {
                 updateState { it.copy(currentStep = nextStep) }
@@ -172,7 +180,7 @@ class RecognizeStudentViewModel(
     private fun compareFaceEmbedding(embedding: FloatArray) {
         val stored = storedFaceDescriptor
         if (stored == null) {
-             updateState { it.copy(error = UiText.DynamicString("No face registered")) }
+             updateState { it.copy(error = UiText.DynamicString("No face registered"), isRecognizing = false, shouldCaptureEmbedding = false) }
              return
         }
 
@@ -187,6 +195,7 @@ class RecognizeStudentViewModel(
                  it.copy(
                      isRecognizing = false,
                      isLivenessComplete = false,
+                     shouldCaptureEmbedding = false,
                      error = UiText.DynamicString("Face not recognized. Try again.")
                  )
              }
@@ -206,6 +215,13 @@ class RecognizeStudentViewModel(
                                 message = "Attendance marked successfully!"
                             )
                         )
+                        updateState {
+                            it.copy(
+                                isRecognizing = false,
+                                isLivenessComplete = true,
+                                shouldCaptureEmbedding = false
+                            )
+                        }
                         sendEvent(RecognizeStudentEvent.MapsToSuccess)
                     }
                     .onError { error ->
@@ -219,13 +235,14 @@ class RecognizeStudentViewModel(
                          updateState {
                              it.copy(
                                  isRecognizing = false,
-                                 isLivenessComplete = false
+                                 isLivenessComplete = false,
+                                 shouldCaptureEmbedding = false
                              )
                          }
                          restartLivenessCheck()
                     }
             } else {
-                updateState { it.copy(error = UiText.DynamicString("User not logged in")) }
+                updateState { it.copy(error = UiText.DynamicString("User not logged in"), isRecognizing = false, shouldCaptureEmbedding = false) }
             }
         }
     }
