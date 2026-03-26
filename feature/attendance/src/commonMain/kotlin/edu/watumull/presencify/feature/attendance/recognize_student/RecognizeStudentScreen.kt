@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentAction.OnCheatingDetected
 
 @Composable
 fun RecognizeStudentScreen(
@@ -33,14 +35,14 @@ fun RecognizeStudentScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Camera logic: Render even if not granted so it can request permission internally
             RecognizeStudentCamera(
                 modifier = Modifier.fillMaxSize(),
                 onFaceDetected = { yaw ->
                     onAction(RecognizeStudentAction.OnFaceDetected(yaw))
                 },
-                onEmbeddingExtracted = { embedding ->
-                    onAction(RecognizeStudentAction.OnRecognitionSuccess(embedding))
+                onEmbeddingExtracted = { original, mirrored ->
+                    // Pass both embeddings to the ViewModel via a new action
+                    onAction(RecognizeStudentAction.OnRecognitionSuccessWithMirror(original, mirrored))
                     onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
                 },
                 isLivenessComplete = state.isLivenessComplete,
@@ -48,6 +50,9 @@ fun RecognizeStudentScreen(
                 cameraPermissionGranted = state.cameraPermissionGranted,
                 onPermissionResult = { isGranted ->
                     onAction(RecognizeStudentAction.OnPermissionResult(isGranted))
+                },
+                onCheatingDetected = {
+                    onAction(OnCheatingDetected)
                 }
             )
 

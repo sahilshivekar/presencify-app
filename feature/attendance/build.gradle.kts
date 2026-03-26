@@ -162,6 +162,8 @@ kotlin {
             dependencies {
                 implementation(libs.compose.material.icons.core.desktop)
                 implementation(libs.compose.material.icons.extended.desktop)
+                // TensorFlow Lite for JVM (desktop)
+                implementation(libs.tensorflow.lite)
             }
         }
     }

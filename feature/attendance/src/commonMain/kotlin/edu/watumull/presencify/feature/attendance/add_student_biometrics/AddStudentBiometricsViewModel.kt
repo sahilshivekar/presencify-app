@@ -14,9 +14,12 @@ import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 
 class AddStudentBiometricsViewModel(
     private val studentRepository: StudentRepository,
+    private val faceEmbeddingExtractor: FaceEmbeddingExtractor,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<AddStudentBiometricsState, AddStudentBiometricsEvent, AddStudentBiometricsAction>(
     initialState = AddStudentBiometricsState(
@@ -63,9 +66,31 @@ class AddStudentBiometricsViewModel(
 
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
+
+            val embeddings = state.images.map { imageBytes ->
+                async { faceEmbeddingExtractor.extractEmbedding(imageBytes) }
+            }.awaitAll().filterNotNull()
+
+            if (embeddings.isEmpty()) {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        dialogState = AddStudentBiometricsState.DialogState(
+                            dialogType = DialogType.ERROR,
+                            title = "Face Detection Failed",
+                            message = UiText.DynamicString("Could not detect any face in the provided images. Please try again with clearer images.")
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            val centroid = calculateCentroid(embeddings)
+
             val result = studentRepository.enrollStudentFace(
                 studentId = state.studentId,
-                images = state.images
+                images = state.images,
+                faceDescriptor = centroid
             )
             updateState { it.copy(isLoading = false) }
 
@@ -88,5 +113,21 @@ class AddStudentBiometricsViewModel(
 
     private fun dismissDialog() {
         updateState { it.copy(dialogState = null) }
+    }
+
+    private fun calculateCentroid(embeddings: List<FloatArray>): FloatArray {
+        if (embeddings.isEmpty()) return FloatArray(0)
+
+        val dimension = embeddings[0].size
+        val sum = FloatArray(dimension)
+
+        for (embedding in embeddings) {
+            for (i in 0 until dimension) {
+                sum[i] += embedding[i]
+            }
+        }
+
+        val count = embeddings.size
+        return FloatArray(dimension) { i -> sum[i] / count }
     }
 }

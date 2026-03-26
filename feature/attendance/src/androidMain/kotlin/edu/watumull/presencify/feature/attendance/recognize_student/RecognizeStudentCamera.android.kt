@@ -20,40 +20,39 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import edu.watumull.presencify.feature.attendance.add_student_biometrics.FaceEmbeddingExtractor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.tensorflow.lite.Interpreter
-import presencify.feature.attendance.generated.resources.Res
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.concurrent.Executors
 
-private const val TAG = "[CameraX-Debug]"
+private const val TAG = "RecognizeStudentCam"
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 actual fun RecognizeStudentCamera(
     modifier: Modifier,
     onFaceDetected: (Float) -> Unit,
-    onEmbeddingExtracted: (FloatArray) -> Unit,
+    onEmbeddingExtracted: (FloatArray, FloatArray) -> Unit,
     isLivenessComplete: Boolean,
     shouldCaptureEmbedding: Boolean,
     cameraPermissionGranted: Boolean,
-    onPermissionResult: (Boolean) -> Unit
+    onPermissionResult: (Boolean) -> Unit,
+    onCheatingDetected: () -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    Log.d(TAG, "RecognizeStudentCamera RECOMPOSED. Perm: $cameraPermissionGranted | Liveness: $isLivenessComplete | Capture: $shouldCaptureEmbedding")
 
     val currentOnFaceDetected by rememberUpdatedState(onFaceDetected)
     val currentOnEmbeddingExtracted by rememberUpdatedState(onEmbeddingExtracted)
@@ -63,7 +62,6 @@ actual fun RecognizeStudentCamera(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        Log.d(TAG, "Permission request result: $isGranted")
         onPermissionResult(isGranted)
     }
 
@@ -71,10 +69,8 @@ actual fun RecognizeStudentCamera(
         if (!cameraPermissionGranted) {
             val permission = Manifest.permission.CAMERA
             if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Camera permission already granted at Launch")
                 onPermissionResult(true)
             } else {
-                Log.d(TAG, "Launching permission request")
                 launcher.launch(permission)
             }
         }
@@ -86,21 +82,23 @@ actual fun RecognizeStudentCamera(
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
                 try {
-                    Log.d(TAG, "Starting to read MobileFaceNet.tflite...")
-                    val modelBytes = Res.readBytes("files/MobileFaceNet.tflite")
-                    Log.d(TAG, "Successfully read tflite model. Size: ${modelBytes.size} bytes")
-
+                    val extractor = FaceEmbeddingExtractor()
                     val newAnalyzer = FaceAnalyzer(
-                        modelBytes = modelBytes,
+                        faceEmbeddingExtractor = extractor,
                         onFaceDetected = { currentOnFaceDetected(it) },
-                        onEmbeddingExtracted = { currentOnEmbeddingExtracted(it) },
+                        onEmbeddingExtracted = { arr1, arr2 ->
+                            currentOnEmbeddingExtracted(arr1, arr2)
+                        },
                         isLivenessCompleteProvider = { currentIsLivenessComplete },
-                        shouldCaptureEmbeddingProvider = { currentShouldCaptureEmbedding }
+                        shouldCaptureEmbeddingProvider = { currentShouldCaptureEmbedding },
+                        onFaceMissingDuringCriticalStep = {
+                            // We can't call ViewModel directly here, but we can signal via yaw=0
+                            // and let VM interpret if needed, or handle in a dedicated action.
+                        }
                     )
-                    Log.d(TAG, "FaceAnalyzer instance created successfully")
                     analyzerState.value = newAnalyzer
                 } catch (e: Exception) {
-                    Log.e(TAG, "FATAL: Failed to read tflite file or init FaceAnalyzer", e)
+                    Log.e(TAG, "FaceAnalyzer init failed", e)
                 }
             }
         }
@@ -109,16 +107,8 @@ actual fun RecognizeStudentCamera(
 
         if (analyzer != null) {
             AndroidView(
-                modifier = modifier.onGloballyPositioned { logs ->
-                    // Logs only if size changes to avoid spamming, but catches the initial layout
-                    if (logs.size.width > 0 && logs.size.height > 0) {
-                        Log.d(TAG, "PreviewView globally positioned. Size: ${logs.size.width} x ${logs.size.height}")
-                    } else {
-                        Log.w(TAG, "PreviewView globally positioned but size is 0x0!")
-                    }
-                },
+                modifier = modifier,
                 factory = { ctx ->
-                    Log.d(TAG, "AndroidView Factory executing...")
                     val previewView = PreviewView(ctx).apply {
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -130,108 +120,92 @@ actual fun RecognizeStudentCamera(
 
                     val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
 
-                    cameraProviderFuture.addListener({
-                        Log.d(TAG, "CameraProviderFuture listener triggered")
-                        try {
-                            val cameraProvider = cameraProviderFuture.get()
+                    val observer = LifecycleEventObserver { _, event ->
+                        val cameraProvider = cameraProviderFuture.get()
 
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            Log.d(TAG, "ON_RESUME: Binding Camera")
                             val preview = Preview.Builder().build().also {
                                 it.setSurfaceProvider(previewView.surfaceProvider)
                             }
-
                             val imageAnalyzer = ImageAnalysis.Builder()
                                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                                 .build()
-                                .also { analysisUseCase ->
-                                    analysisUseCase.setAnalyzer(
-                                        Executors.newSingleThreadExecutor(),
-                                        analyzer
-                                    )
+                                .also {
+                                    it.setAnalyzer(Executors.newSingleThreadExecutor(), analyzer)
                                 }
 
-                            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-
-                            Log.d(TAG, "Unbinding previous camera use cases...")
+                            try {
+                                cameraProvider.unbindAll()
+                                cameraProvider.bindToLifecycle(
+                                    lifecycleOwner,
+                                    CameraSelector.DEFAULT_FRONT_CAMERA,
+                                    preview,
+                                    imageAnalyzer
+                                )
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Binding failed", e)
+                            }
+                        } else if (event == Lifecycle.Event.ON_PAUSE) {
+                            Log.d(TAG, "ON_PAUSE: Unbinding Camera")
                             cameraProvider.unbindAll()
-
-                            Log.d(TAG, "Attempting to bindToLifecycle...")
-                            val camera = cameraProvider.bindToLifecycle(
-                                lifecycleOwner,
-                                cameraSelector,
-                                preview,
-                                imageAnalyzer
-                            )
-                            Log.d(TAG, "SUCCESS: Camera bound to lifecycle. Camera state: ${camera.cameraInfo.cameraState.value?.type}")
-
-                        } catch (e: Exception) {
-                            Log.e(TAG, "ERROR: Camera binding failed", e)
                         }
-                    }, ContextCompat.getMainExecutor(ctx))
+                    }
 
+                    lifecycleOwner.lifecycle.addObserver(observer)
                     previewView
+                },
+                onRelease = {
+                    val cameraProvider = ProcessCameraProvider.getInstance(context).get()
+                    cameraProvider.unbindAll()
                 }
             )
-        } else {
-            Log.d(TAG, "Waiting for Analyzer to initialize...")
         }
     }
 }
 
 class FaceAnalyzer(
-    private val modelBytes: ByteArray,
+    private val faceEmbeddingExtractor: FaceEmbeddingExtractor,
     private val onFaceDetected: (Float) -> Unit,
-    private val onEmbeddingExtracted: (FloatArray) -> Unit,
+    private val onEmbeddingExtracted: (FloatArray, FloatArray) -> Unit,
     private val isLivenessCompleteProvider: () -> Boolean,
-    private val shouldCaptureEmbeddingProvider: () -> Boolean
+    private val shouldCaptureEmbeddingProvider: () -> Boolean,
+    private val onFaceMissingDuringCriticalStep: () -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private val faceDetector = FaceDetection.getClient(
         FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
             .enableTracking()
             .build()
     )
 
-    private var interpreter: Interpreter? = null
-    @Volatile private var isProcessing = false
-    private var frameCount = 0
+    @Volatile
+    private var isProcessing = false
 
-    init {
-        loadModelAndInitInterpreter()
-    }
-
-    private fun loadModelAndInitInterpreter() {
-        try {
-            Log.d(TAG, "Allocating direct ByteBuffer for TFLite...")
-            val buffer = ByteBuffer.allocateDirect(modelBytes.size)
-            buffer.order(ByteOrder.nativeOrder())
-            buffer.put(modelBytes)
-            buffer.rewind()
-
-            interpreter = Interpreter(buffer)
-            Log.d(TAG, "TFLite Interpreter initialized successfully")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error initializing TFLite Interpreter", e)
-        }
-    }
+    @Volatile
+    private var hasCaptured = false
+    private var lastLivenessReportTime = 0L
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
-        frameCount++
-        if (frameCount % 30 == 0) { // Log every ~1 second to prove feed is alive
-            Log.d(TAG, "Analyze called. Frame #$frameCount. isProcessing=$isProcessing")
+        val shouldCapture = shouldCaptureEmbeddingProvider()
+
+        if (!shouldCapture) {
+            hasCaptured = false
         }
 
-        if (isProcessing) {
+        if (isProcessing || hasCaptured) {
             imageProxy.close()
             return
         }
 
-        val mediaImage = imageProxy.image
-        if (mediaImage != null) {
-            val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+        try {
+            val bitmap = imageProxy.toBitmap()
+            val image = InputImage.fromBitmap(bitmap, 0)
 
             faceDetector.process(image)
                 .addOnSuccessListener { faces ->
@@ -239,76 +213,83 @@ class FaceAnalyzer(
                         val face = faces.first()
                         val yaw = face.headEulerAngleY
 
-                        // Log only periodically to avoid spam, unless a capture is triggered
-                        if (frameCount % 30 == 0) {
-                            Log.d(TAG, "Face detected. Yaw: $yaw. LivenessComplete: ${isLivenessCompleteProvider()}, ShouldCapture: ${shouldCaptureEmbeddingProvider()}")
-                        }
-
                         if (!isLivenessCompleteProvider()) {
-                            onFaceDetected(yaw)
-                        } else if (shouldCaptureEmbeddingProvider()) {
-                            Log.d(TAG, "CAPTURE TRIGGERED! Processing embedding...")
-                            isProcessing = true
-                            try {
-                                if (interpreter != null) {
-                                    val bitmap = imageProxy.toBitmap()
-                                    val faceBitmap = cropFace(bitmap, face.boundingBox)
-                                    val scaledBitmap = Bitmap.createScaledBitmap(faceBitmap, 112, 112, true)
-                                    val input = preprocess(scaledBitmap)
-                                    val output = Array(1) { FloatArray(128) }
-
-                                    Log.d(TAG, "Running TFLite inference...")
-                                    interpreter?.run(input, output)
-                                    Log.d(TAG, "Inference successful. Extracting embedding...")
-                                    onEmbeddingExtracted(output[0])
-                                } else {
-                                    Log.e(TAG, "Interpreter is NULL during capture!")
-                                }
-                            } catch (e: Exception) {
-                                Log.e(TAG, "Error during embedding extraction", e)
-                            } finally {
-                                isProcessing = false
+                            val currentTime = System.currentTimeMillis()
+                            if (currentTime - lastLivenessReportTime > 400) {
+                                lastLivenessReportTime = currentTime
+                                onFaceDetected(yaw)
                             }
+                        } else if (shouldCapture && !hasCaptured) {
+                            Log.d(
+                                "RecognizeStudentCam",
+                                "Capture triggered. Processing embedding via shared extractor (original + mirrored)..."
+                            )
+                            isProcessing = true
+                            hasCaptured = true
+
+                            GlobalScope.launch(Dispatchers.IO) {
+                                try {
+                                    // Crop face once
+                                    val faceBitmap = cropFace(bitmap, face.boundingBox)
+
+                                    // Original orientation embedding
+                                    val originalEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(faceBitmap)
+
+                                    // Mirrored orientation embedding
+                                    val mirroredBitmap = faceEmbeddingExtractor.mirrorBitmap(faceBitmap)
+                                    val mirroredEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(mirroredBitmap)
+
+                                    if (originalEmbedding != null && mirroredEmbedding != null) {
+                                        Log.d(
+                                            "RecognizeStudentCam",
+                                            "Embeddings extracted. Original size=${originalEmbedding.size}, Mirrored size=${mirroredEmbedding.size}"
+                                        )
+                                        onEmbeddingExtracted(originalEmbedding, mirroredEmbedding)
+                                    } else {
+                                        Log.e(
+                                            "RecognizeStudentCam",
+                                            "Embedding extraction returned null (original or mirrored)"
+                                        )
+                                        hasCaptured = false
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("RecognizeStudentCam", "Embedding Extraction Crash", e)
+                                    hasCaptured = false
+                                } finally {
+                                    isProcessing = false
+                                    imageProxy.close()
+                                }
+                            }
+                            return@addOnSuccessListener
+                        }
+                    } else {
+                        // No faces detected in this frame. If we are in critical liveness steps,
+                        // invoke callback so VM can treat it as cheating.
+                        if (!isLivenessCompleteProvider()) {
+                            onFaceMissingDuringCriticalStep()
                         }
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e(TAG, "ML Kit Face Detection failed", e)
+                    Log.e("RecognizeStudentCam", "Face detection failed", e)
                 }
                 .addOnCompleteListener {
-                    imageProxy.close()
+                    if (!isProcessing) {
+                        imageProxy.close()
+                    }
                 }
-        } else {
-            Log.w(TAG, "mediaImage is null for frame #$frameCount")
+        } catch (e: Exception) {
+            Log.e("RecognizeStudentCam", "Failed to process image frame", e)
             imageProxy.close()
         }
     }
 
     private fun cropFace(bitmap: Bitmap, box: android.graphics.Rect): Bitmap {
-        val x = box.left.coerceAtLeast(0)
-        val y = box.top.coerceAtLeast(0)
-        val width = box.width().coerceAtMost(bitmap.width - x)
-        val height = box.height().coerceAtMost(bitmap.height - y)
+        val padding = 10
+        val x = (box.left - padding).coerceAtLeast(0)
+        val y = (box.top - padding).coerceAtLeast(0)
+        val width = (box.width() + padding * 2).coerceAtMost(bitmap.width - x)
+        val height = (box.height() + padding * 2).coerceAtMost(bitmap.height - y)
         return Bitmap.createBitmap(bitmap, x, y, width, height)
-    }
-
-    private fun preprocess(bitmap: Bitmap): ByteBuffer {
-        val inputSize = 112
-        val buffer = ByteBuffer.allocateDirect(1 * inputSize * inputSize * 3 * 4)
-        buffer.order(ByteOrder.nativeOrder())
-
-        val intValues = IntArray(inputSize * inputSize)
-        bitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
-
-        for (pixel in intValues) {
-            val r = (pixel shr 16 and 0xFF)
-            val g = (pixel shr 8 and 0xFF)
-            val b = (pixel and 0xFF)
-
-            buffer.putFloat((r - 127.5f) / 128.0f)
-            buffer.putFloat((g - 127.5f) / 128.0f)
-            buffer.putFloat((b - 127.5f) / 128.0f)
-        }
-        return buffer
     }
 }

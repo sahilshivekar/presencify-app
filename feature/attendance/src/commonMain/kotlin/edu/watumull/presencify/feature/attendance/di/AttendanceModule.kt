@@ -1,5 +1,7 @@
 package edu.watumull.presencify.feature.attendance.di
 
+import edu.watumull.presencify.feature.attendance.add_student_biometrics.AddStudentBiometricsViewModel
+import edu.watumull.presencify.feature.attendance.add_student_biometrics.FaceEmbeddingExtractor
 import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsViewModel
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardViewModel
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsViewModel
@@ -10,7 +12,6 @@ import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrViewModel
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceViewModel
 import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsViewModel
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentViewModel
-import edu.watumull.presencify.feature.attendance.add_student_biometrics.AddStudentBiometricsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -25,5 +26,6 @@ val attendanceModule = module {
     viewModel { AttendanceDetailsViewModel(get(), get()) }
     viewModel { StudentAttendanceAnalyticsViewModel(get(), get(), get(), get(), get()) }
     viewModel { AggregateAttendanceAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { AddStudentBiometricsViewModel(get(), get()) }
+    single { FaceEmbeddingExtractor() }
+    viewModel { AddStudentBiometricsViewModel(get(), get(), get()) }
 }

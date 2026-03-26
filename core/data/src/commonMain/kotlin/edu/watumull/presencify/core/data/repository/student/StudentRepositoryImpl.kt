@@ -297,8 +297,9 @@ class StudentRepositoryImpl(
 
     override suspend fun enrollStudentFace(
         studentId: String,
-        images: List<ByteArray>
+        images: List<ByteArray>,
+        faceDescriptor: FloatArray
     ): Result<Unit, DataError.Remote> {
-        return remoteDataSource.enrollStudentFace(studentId, images)
+        return remoteDataSource.enrollStudentFace(studentId, images, faceDescriptor)
     }
 }

@@ -15,5 +15,7 @@ data class RecognizeStudentState(
     val shouldCaptureEmbedding: Boolean = false,
     val cameraPermissionGranted: Boolean = false,
     val error: UiText? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    // New: flag suspicious behavior when face leaves camera during critical steps
+    val isCheatingSuspected: Boolean = false
 )

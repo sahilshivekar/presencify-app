@@ -10,11 +10,12 @@ import androidx.compose.ui.Alignment
 actual fun RecognizeStudentCamera(
     modifier: Modifier,
     onFaceDetected: (Float) -> Unit,
-    onEmbeddingExtracted: (FloatArray) -> Unit,
+    onEmbeddingExtracted: (FloatArray, FloatArray) -> Unit,
     isLivenessComplete: Boolean,
     shouldCaptureEmbedding: Boolean,
     cameraPermissionGranted: Boolean,
-    onPermissionResult: (Boolean) -> Unit
+    onPermissionResult: (Boolean) -> Unit,
+    onCheatingDetected: () -> Unit
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Text("Camera Not Implemented on iOS")
