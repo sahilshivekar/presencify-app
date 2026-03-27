@@ -43,6 +43,7 @@ qrose = "1.0.1"
 kronos = "0.0.2"
 qr-kit = "3.1.3"
 kermit = "2.0.3"
+onnxruntime = "1.24.3"
 
 
 [libraries]
@@ -153,6 +154,9 @@ compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.r
 vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatform", version.ref = "vico" }
 # Use 'multiplatform-m3' instead of 'compose-m3'
 vico-multiplatform-m3 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m3", version.ref = "vico" }
+
+onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

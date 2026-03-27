@@ -19,6 +19,7 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.firstOrNull
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -143,10 +144,6 @@ class RecognizeStudentViewModel(
             }
 
             is RecognizeStudentAction.OnRecognitionSuccess -> {
-                compareFaceEmbedding(action.embedding)
-            }
-
-            is RecognizeStudentAction.OnRecognitionSuccessWithMirror -> {
                 compareFaceEmbeddingWithMirror(action.original, action.mirrored)
             }
 
@@ -190,29 +187,9 @@ class RecognizeStudentViewModel(
         }
     }
 
-    private fun showErrorDialog(message: UiText, isCheating: Boolean = false) {
-        // Stop the current liveness run; a new one will start when user taps Retry
-        timeoutActive = false
-
-        updateState {
-            it.copy(
-                isRecognizing = false,
-                shouldCaptureEmbedding = false,
-                isLivenessComplete = false,
-                isCheatingSuspected = isCheating,
-                error = null,
-                dialogState = RecognizeStudentDialogState(
-                    isVisible = true,
-                    dialogType = DialogType.ERROR,
-                    title = if (isCheating) "Cheating Suspected" else "Face Not Recognized",
-                    message = message,
-                )
-            )
-        }
-    }
-
     private fun validateMovement(yaw: Float) {
-        if (state.isLivenessComplete) return
+        // FIX 1: Completely ignore camera frames if a dialog is showing or liveness is done
+        if (state.isLivenessComplete || state.dialogState != null) return
 
         val currentTime = nowMillis()
         Logger.d(TAG) {
@@ -262,55 +239,25 @@ class RecognizeStudentViewModel(
         }
     }
 
-    private fun compareFaceEmbedding(cameraEmbedding: FloatArray) {
-        val stored = storedFaceDescriptor
-        if (stored == null) {
-            Logger.e(TAG) { "FATAL: compareFaceEmbedding called but storedFaceDescriptor is NULL." }
-            showErrorDialog(UiText.DynamicString("No face registered"))
-            return
-        }
+    private fun showErrorDialog(message: UiText, isCheating: Boolean = false) {
+        // Stop the current liveness run; a new one will start when user taps Retry
+        timeoutActive = false
 
-        val dbArray = stored.toFloatArray()
-
-        Logger.d(TAG) {
-            "Comparing Arrays -> Camera Model Output Size: ${cameraEmbedding.size} | Database Output Size: ${dbArray.size}"
-        }
-        Logger.d(TAG) { "Camera Array Start: ${cameraEmbedding.take(5)}" }
-        Logger.d(TAG) { "DB Array Start: ${dbArray.take(5)}" }
-
-        // Size Mismatch Check
-        if (cameraEmbedding.size != dbArray.size) {
-            val errorMsg =
-                "CRITICAL AI MISMATCH: Camera generated ${cameraEmbedding.size} values, but Database has ${dbArray.size} values."
-            Logger.e(TAG) { errorMsg }
-            showErrorDialog(UiText.DynamicString(errorMsg))
-            startLivenessCheck()
-            return
-        }
-
-        try {
-            val normCamera = l2Normalize(cameraEmbedding)
-            val normDb = l2Normalize(dbArray)
-            val distance = euclideanDistance(normCamera, normDb)
-
-            Logger.d(TAG) { "Math Calculation Complete. Normalized Distance: $distance" }
-
-            if (distance < 0.9f) {
-                Logger.d(TAG) { "Distance < 0.9! Marking attendance..." }
-                markAttendance()
-            } else {
-                Logger.d(TAG) { "Distance >= 0.9. Recognition Failed." }
-                showErrorDialog(
-                    UiText.DynamicString(
-                        "Face not recognized (Distance: ${distance.toString().take(4)}). Try again."
-                    )
+        updateState {
+            it.copy(
+                isRecognizing = false,
+                shouldCaptureEmbedding = false,
+                isLivenessComplete = false,
+                isCheatingSuspected = isCheating,
+                error = null,
+                currentStep = 0, // FIX 2: Hard-reset the step counter so they can't resume
+                dialogState = RecognizeStudentDialogState(
+                    isVisible = true,
+                    dialogType = DialogType.ERROR,
+                    title = if (isCheating) "Cheating Suspected" else "Face Not Recognized",
+                    message = message,
                 )
-                startLivenessCheck()
-            }
-        } catch (e: Exception) {
-            Logger.e(TAG, e) { "Math crash in euclideanDistance" }
-            showErrorDialog(UiText.DynamicString("Math Error: ${e.message}"))
-            startLivenessCheck()
+            )
         }
     }
 
@@ -338,35 +285,58 @@ class RecognizeStudentViewModel(
         }
 
         try {
-            val normOriginal = l2Normalize(originalEmbedding)
-            val normMirrored = l2Normalize(mirroredEmbedding)
-            val normDb = l2Normalize(dbArray)
-            Logger.d(TAG) { "Original Camera Array: ${originalEmbedding.take(5)}" }
-            Logger.d(TAG) { "Mirrored Camera Array: ${mirroredEmbedding.take(5)}" }
-            Logger.d(TAG) { "Database Array: ${dbArray.take(5)}" }
-            val distOriginal = euclideanDistance(normOriginal, normDb)
-            val distMirrored = euclideanDistance(normMirrored, normDb)
-            val bestDist = min(distOriginal, distMirrored)
+            // NOTE: Redundant l2Normalize calls removed. The ONNX extractor and
+            // the Node.js backend already guarantee perfectly normalized arrays.
 
-            Logger.d(TAG) { "Mirror-aware distance: original=$distOriginal, mirrored=$distMirrored, best=$bestDist" }
+            Logger.d(TAG) { "Original Camera Array: ${originalEmbedding.take(5).joinToString(", ")}" }
+            Logger.d(TAG) { "Mirrored Camera Array: ${mirroredEmbedding.take(5).joinToString(", ")}" }
+            Logger.d(TAG) { "Database Array: ${dbArray.take(5).joinToString(", ")}" }
 
-            if (bestDist < 0.9f) {
-                Logger.d(TAG) { "Best distance < 0.9 Marking attendance..." }
+            val simOriginal = cosineSimilarity(originalEmbedding, dbArray)
+            val simMirrored = cosineSimilarity(mirroredEmbedding, dbArray)
+
+            // For Cosine Similarity, HIGHER is better. We want the MAX similarity.
+            val bestSim = max(simOriginal, simMirrored)
+
+            Logger.d(TAG) { "Mirror-aware Cosine Similarity: original=$simOriginal, mirrored=$simMirrored, best=$bestSim" }
+
+            // The official OpenCV SFace Cosine Similarity Threshold is 0.363
+            if (bestSim >= 0.363f) {
+                Logger.d(TAG) { "Best similarity >= 0.363 Marking attendance..." }
                 markAttendance()
             } else {
-                Logger.d(TAG) { "Best distance >= 0.9. Recognition Failed." }
+                Logger.d(TAG) { "Best similarity < 0.363. Recognition Failed." }
+
+                val score = (bestSim * 100).toInt().coerceAtLeast(0)
                 showErrorDialog(
                     UiText.DynamicString(
-                        "Face not recognized (Distance: ${bestDist.toString().take(4)}). Try again."
+                        "Face not recognized (Score: $score). Try again."
                     )
                 )
                 startLivenessCheck()
             }
         } catch (e: Exception) {
-            Logger.e(TAG, e) { "Math crash in euclideanDistance (mirror-aware)" }
+            Logger.e(TAG, e) { "Math crash in cosineSimilarity (mirror-aware)" }
             showErrorDialog(UiText.DynamicString("Math Error: ${e.message}"))
             startLivenessCheck()
         }
+    }
+
+    /**
+     * Calculates Cosine Similarity.
+     * Returns a value between -1.0 and 1.0 (Higher means more similar).
+     */
+    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
+        if (a.size != b.size) return -1f
+        var dotProduct = 0f
+        var normA = 0f
+        var normB = 0f
+        for (i in a.indices) {
+            dotProduct += a[i] * b[i]
+            normA += a[i] * a[i]
+            normB += b[i] * b[i]
+        }
+        return if (normA == 0f || normB == 0f) 0f else (dotProduct / (sqrt(normA) * sqrt(normB)))
     }
 
     private fun markAttendance() {
@@ -409,20 +379,5 @@ class RecognizeStudentViewModel(
                 }
             }
         }
-    }
-
-    private fun l2Normalize(v: FloatArray): FloatArray {
-        val norm = sqrt(v.fold(0f) { acc, next -> acc + (next * next) })
-        return if (norm != 0f) v.map { it / norm }.toFloatArray() else v
-    }
-
-    private fun euclideanDistance(a: FloatArray, b: FloatArray): Float {
-        if (a.size != b.size) return Float.MAX_VALUE
-        var sum = 0f
-        for (i in a.indices) {
-            val diff = a[i] - b[i]
-            sum += diff * diff
-        }
-        return sqrt(sum)
     }
 }

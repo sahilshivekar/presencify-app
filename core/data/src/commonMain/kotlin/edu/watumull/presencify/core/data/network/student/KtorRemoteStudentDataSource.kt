@@ -493,7 +493,6 @@ class KtorRemoteStudentDataSource(
     override suspend fun enrollStudentFace(
         studentId: String,
         images: List<ByteArray>,
-        faceDescriptor: FloatArray
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
             clientProvider.getClient().post(ENROLL_STUDENT_FACE) {
@@ -501,7 +500,6 @@ class KtorRemoteStudentDataSource(
                     MultiPartFormDataContent(
                         formData {
                             append("studentId", studentId)
-                            append("faceDescriptor", Json.encodeToString(faceDescriptor.toList()))
                             images.forEachIndexed { index, imageBytes ->
                                 val mimeType = FileMimeUtils.getMimeType(imageBytes)
                                 val extension = FileMimeUtils.getExtensionFromMime(mimeType) ?: "jpg"

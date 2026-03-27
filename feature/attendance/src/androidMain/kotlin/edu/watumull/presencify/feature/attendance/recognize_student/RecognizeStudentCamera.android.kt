@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.attendance.recognize_student
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,6 +15,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,17 +31,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import edu.watumull.presencify.feature.attendance.add_student_biometrics.FaceEmbeddingExtractor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import java.util.concurrent.Executors
 
 private const val TAG = "RecognizeStudentCam"
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 actual fun RecognizeStudentCamera(
     modifier: Modifier,
@@ -79,11 +78,23 @@ actual fun RecognizeStudentCamera(
     if (cameraPermissionGranted) {
         val analyzerState = remember { mutableStateOf<FaceAnalyzer?>(null) }
 
+        val extractor = remember { FaceEmbeddingExtractor() }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                Log.d(TAG, "Disposing Camera Composable. Cleaning up ONNX and ML Kit memory.")
+                extractor.close()
+                analyzerState.value?.close()
+            }
+        }
+
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
                 try {
-                    Log.d(TAG, "Initializing FaceEmbeddingExtractor...")
-                    val extractor = FaceEmbeddingExtractor()
+                    Log.d(TAG, "Initializing FaceEmbeddingExtractor (ONNX Runtime)...")
+                    extractor.initialize(context)
+                    Log.d(TAG, "ONNX Environment and Sessions Initialized Successfully.")
+
                     val newAnalyzer = FaceAnalyzer(
                         faceEmbeddingExtractor = extractor,
                         onFaceDetected = { currentOnFaceDetected(it) },
@@ -92,10 +103,7 @@ actual fun RecognizeStudentCamera(
                         },
                         isLivenessCompleteProvider = { currentIsLivenessComplete },
                         shouldCaptureEmbeddingProvider = { currentShouldCaptureEmbedding },
-                        onFaceMissingDuringCriticalStep = {
-                            // We can't call ViewModel directly here, but we can signal via yaw=0
-                            // and let VM interpret if needed, or handle in a dedicated action.
-                        }
+                        onFaceMissingDuringCriticalStep = { onCheatingDetected() }
                     )
                     analyzerState.value = newAnalyzer
                     Log.d(TAG, "FaceAnalyzer initialization complete.")
@@ -132,8 +140,6 @@ actual fun RecognizeStudentCamera(
                             }
                             val imageAnalyzer = ImageAnalysis.Builder()
                                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-//                                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-//                                .setTargetResolution(android.util.Size(1280, 720)) // High Res!
                                 .build()
                                 .also {
                                     it.setAnalyzer(Executors.newSingleThreadExecutor(), analyzer)
@@ -147,9 +153,9 @@ actual fun RecognizeStudentCamera(
                                     preview,
                                     imageAnalyzer
                                 )
-                                Log.d(TAG, "Camera bound successfully.")
+                                Log.d(TAG, "Camera bound successfully to DEFAULT_FRONT_CAMERA.")
                             } catch (e: Exception) {
-                                Log.e(TAG, "Binding failed", e)
+                                Log.e(TAG, "Camera Binding failed", e)
                             }
                         } else if (event == Lifecycle.Event.ON_PAUSE) {
                             Log.d(TAG, "ON_PAUSE: Unbinding Camera")
@@ -161,6 +167,7 @@ actual fun RecognizeStudentCamera(
                     previewView
                 },
                 onRelease = {
+                    Log.d(TAG, "Releasing AndroidView. Unbinding Camera.")
                     val cameraProvider = ProcessCameraProvider.getInstance(context).get()
                     cameraProvider.unbindAll()
                 }
@@ -194,6 +201,8 @@ class FaceAnalyzer(
     private var hasCaptured = false
     private var lastLivenessReportTime = 0L
 
+    private val analyzerScope = CoroutineScope(Dispatchers.IO)
+
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
         val shouldCapture = shouldCaptureEmbeddingProvider()
@@ -208,10 +217,20 @@ class FaceAnalyzer(
         }
 
         try {
-            val bitmap = imageProxy.toBitmap()
-            val safeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            val baseBitmap = imageProxy.toBitmap()
+            val rotationDegrees = imageProxy.imageInfo.rotationDegrees.toFloat()
 
-            val image = InputImage.fromBitmap(safeBitmap, 0) // Use safeBitmap here
+            // Rotate bitmap so ONNX receives an upright image
+            val uprightBitmap = if (rotationDegrees != 0f) {
+                val matrix = Matrix().apply { postRotate(rotationDegrees) }
+                Bitmap.createBitmap(baseBitmap, 0, 0, baseBitmap.width, baseBitmap.height, matrix, true)
+            } else {
+                baseBitmap.copy(Bitmap.Config.ARGB_8888, true)
+            }
+
+            // Pass upright bitmap with 0 rotation to ML Kit
+            val image = InputImage.fromBitmap(uprightBitmap, 0)
+
             faceDetector.process(image)
                 .addOnSuccessListener { faces ->
                     if (faces.isNotEmpty()) {
@@ -226,57 +245,54 @@ class FaceAnalyzer(
                             }
                         } else if (shouldCapture && !hasCaptured) {
 
-                            // SYNC FIX: Relaxed back to -12..12 so it matches Liveness state perfectly.
                             if (yaw in -12f..12f) {
-                                Log.d(
-                                    TAG,
-                                    "Head stable (Yaw: $yaw). Capture triggered. Proceeding to crop and extract..."
-                                )
+                                Log.d(TAG, "---------------------------------------------------")
+                                Log.d(TAG, "Head stable (Yaw: $yaw). Liveness Complete!")
+                                Log.d(TAG, "Triggering ONNX Handoff. Image Size: ${uprightBitmap.width}x${uprightBitmap.height}")
+                                Log.d(TAG, "---------------------------------------------------")
+
                                 isProcessing = true
                                 hasCaptured = true
 
-                                GlobalScope.launch(Dispatchers.IO) {
+                                analyzerScope.launch {
                                     try {
-                                        Log.d(TAG, "Full Camera Frame Size: ${safeBitmap.width}x${safeBitmap.height}, MLKit Face Box: ${face.boundingBox}")
+                                        // 1. Original Embedding
+                                        Log.d(TAG, "Starting ONNX extraction for ORIGINAL embedding...")
+                                        val originalEmbedding = faceEmbeddingExtractor.generateSingleDescriptor(uprightBitmap)
 
-                                        // Crop face once using the new dynamic padding
-                                        val faceBitmap = faceEmbeddingExtractor.cropFace(safeBitmap, face.boundingBox)
-                                        Log.d(TAG, "Cropped Face Bitmap Size: ${faceBitmap.width}x${faceBitmap.height}")
-
-                                        // Original orientation embedding
-                                        Log.d(TAG, "Starting extraction for ORIGINAL embedding...")
-                                        val originalEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(faceBitmap)
                                         if (originalEmbedding != null) {
-                                            Log.d(TAG, "SUCCESS: Original Embedding Extracted. Array Sum: ${originalEmbedding.sum()} | First 3: ${originalEmbedding.take(3)}")
+                                            Log.d(TAG, "SUCCESS: Original Extracted. Array Sum: ${originalEmbedding.sum()} | First 3: ${originalEmbedding.take(3).joinToString(", ")}")
                                         } else {
-                                            Log.e(TAG, "FAILED: Original Embedding came back null.")
+                                            Log.e(TAG, "FAILED: ONNX Original Embedding came back null. (No face detected by BlazeFace)")
                                         }
 
-                                        // Mirrored orientation embedding
-                                        Log.d(TAG, "Starting extraction for MIRRORED embedding...")
-                                        val mirroredBitmap = faceEmbeddingExtractor.mirrorBitmap(faceBitmap)
-                                        val mirroredEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(mirroredBitmap)
+                                        // 2. Mirrored Embedding
+                                        Log.d(TAG, "Creating mirrored bitmap and starting MIRRORED extraction...")
+                                        val mirrorMatrix = Matrix().apply { preScale(-1.0f, 1.0f) }
+                                        val mirroredBitmap = Bitmap.createBitmap(
+                                            uprightBitmap, 0, 0,
+                                            uprightBitmap.width, uprightBitmap.height,
+                                            mirrorMatrix, false
+                                        )
+
+                                        val mirroredEmbedding = faceEmbeddingExtractor.generateSingleDescriptor(mirroredBitmap)
+
                                         if (mirroredEmbedding != null) {
-                                            Log.d(TAG, "SUCCESS: Mirrored Embedding Extracted. Array Sum: ${mirroredEmbedding.sum()} | First 3: ${mirroredEmbedding.take(3)}")
+                                            Log.d(TAG, "SUCCESS: Mirrored Extracted. Array Sum: ${mirroredEmbedding.sum()} | First 3: ${mirroredEmbedding.take(3).joinToString(", ")}")
                                         } else {
-                                            Log.e(TAG, "FAILED: Mirrored Embedding came back null.")
+                                            Log.e(TAG, "FAILED: ONNX Mirrored Embedding came back null.")
                                         }
 
+                                        // 3. Final Handoff
                                         if (originalEmbedding != null && mirroredEmbedding != null) {
-                                            Log.d(
-                                                TAG,
-                                                "Both embeddings extracted successfully. Passing to ViewModel..."
-                                            )
+                                            Log.d(TAG, "Both ONNX embeddings extracted successfully. Passing to ViewModel...")
                                             onEmbeddingExtracted(originalEmbedding, mirroredEmbedding)
                                         } else {
-                                            Log.e(
-                                                TAG,
-                                                "One or both embeddings returned null. Resetting capture flag."
-                                            )
+                                            Log.e(TAG, "One or both ONNX embeddings returned null. Resetting capture flag.")
                                             hasCaptured = false
                                         }
                                     } catch (e: Exception) {
-                                        Log.e(TAG, "Embedding Extraction Pipeline Crash", e)
+                                        Log.e(TAG, "FATAL: ONNX Embedding Extraction Pipeline Crashed", e)
                                         hasCaptured = false
                                     } finally {
                                         isProcessing = false
@@ -285,7 +301,8 @@ class FaceAnalyzer(
                                 }
                                 return@addOnSuccessListener
                             } else {
-                                Log.d(TAG, "Waiting for head to stabilize... Current Yaw: $yaw")
+                                // Optional trace logging, usually too noisy but helpful if it gets stuck
+                                // Log.v(TAG, "Waiting for head to stabilize... Current Yaw: $yaw")
                             }
                         }
                     } else {
@@ -295,7 +312,7 @@ class FaceAnalyzer(
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e(TAG, "Face detection failed", e)
+                    Log.e(TAG, "ML Kit Face detection failed", e)
                 }
                 .addOnCompleteListener {
                     if (!isProcessing) {
@@ -306,5 +323,9 @@ class FaceAnalyzer(
             Log.e(TAG, "Failed to process image frame", e)
             imageProxy.close()
         }
+    }
+
+    fun close() {
+        faceDetector.close()
     }
 }

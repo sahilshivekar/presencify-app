@@ -38,7 +38,7 @@ fun RecognizeStudentScreen(
                     onAction(RecognizeStudentAction.OnFaceDetected(yaw))
                 },
                 onEmbeddingExtracted = { original, mirrored ->
-                    onAction(RecognizeStudentAction.OnRecognitionSuccessWithMirror(original, mirrored))
+                    onAction(RecognizeStudentAction.OnRecognitionSuccess(original, mirrored))
                     onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
                 },
                 isLivenessComplete = state.isLivenessComplete,

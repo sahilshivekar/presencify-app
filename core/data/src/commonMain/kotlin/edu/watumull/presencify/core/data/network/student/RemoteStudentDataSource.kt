@@ -162,6 +162,5 @@ interface RemoteStudentDataSource {
     suspend fun enrollStudentFace(
         studentId: String,
         images: List<ByteArray>,
-        faceDescriptor: FloatArray
     ): Result<Unit, DataError.Remote>
 }

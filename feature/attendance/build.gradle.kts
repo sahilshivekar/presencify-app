@@ -68,8 +68,8 @@ kotlin {
         commonMain {
             dependencies {
 
-        implementation(libs.qrose)
-        implementation(project(":core:presentation"))
+                implementation(libs.qrose)
+                implementation(project(":core:presentation"))
 
                 implementation(project(":core:design-systems"))
                 implementation(project(":core:domain"))
@@ -133,8 +133,9 @@ kotlin {
 
                 // ML Kit & TensorFlow Lite
                 implementation(libs.mlkit.face.detection)
-                implementation(libs.tensorflow.lite)
-                implementation(libs.tensorflow.lite.support)
+//                implementation(libs.tensorflow.lite)
+//                implementation(libs.tensorflow.lite.support)
+                implementation(libs.onnxruntime.android)
             }
         }
 
@@ -163,7 +164,7 @@ kotlin {
                 implementation(libs.compose.material.icons.core.desktop)
                 implementation(libs.compose.material.icons.extended.desktop)
                 // TensorFlow Lite for JVM (desktop)
-                implementation(libs.tensorflow.lite)
+//                implementation(libs.tensorflow.lite)
             }
         }
     }

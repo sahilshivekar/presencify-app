@@ -19,7 +19,6 @@ import kotlinx.coroutines.awaitAll
 
 class AddStudentBiometricsViewModel(
     private val studentRepository: StudentRepository,
-    private val faceEmbeddingExtractor: FaceEmbeddingExtractor,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<AddStudentBiometricsState, AddStudentBiometricsEvent, AddStudentBiometricsAction>(
     initialState = AddStudentBiometricsState(
@@ -67,30 +66,9 @@ class AddStudentBiometricsViewModel(
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
 
-            val embeddings = state.images.map { imageBytes ->
-                async { faceEmbeddingExtractor.extractEmbedding(imageBytes) }
-            }.awaitAll().filterNotNull()
-
-            if (embeddings.isEmpty()) {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        dialogState = AddStudentBiometricsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Face Detection Failed",
-                            message = UiText.DynamicString("Could not detect any face in the provided images. Please try again with clearer images.")
-                        )
-                    )
-                }
-                return@launch
-            }
-
-            val centroid = calculateCentroid(embeddings)
-
             val result = studentRepository.enrollStudentFace(
                 studentId = state.studentId,
                 images = state.images,
-                faceDescriptor = centroid
             )
             updateState { it.copy(isLoading = false) }
 
