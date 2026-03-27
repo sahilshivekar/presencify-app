@@ -15,8 +15,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -43,7 +47,18 @@ fun MarkAttendanceScreen(
 ) {
     PresencifyScaffold(
         backPress = { onAction(MarkAttendanceAction.BackButtonClick) },
-        topBarTitle = "Mark Attendance"
+        topBarTitle = "Mark Attendance",
+        actions = {
+            if (state.viewState == MarkAttendanceState.ViewState.Content && state.attendance != null) {
+                IconButton(onClick = { onAction(MarkAttendanceAction.ShareAttendanceSummary) }) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share attendance details",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -100,12 +115,23 @@ fun MarkAttendanceScreen(
                                 state.classSession?.let { classSession ->
                                     ClassDetailsSection(classSession = classSession, date = state.attendance?.date!!)
                                 }
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
 
-                                PresencifyActionBar(
-                                    text = "Mark attendance with Dynamic QR",
-                                    onClick = { onAction(MarkAttendanceAction.DynamicQRClick) },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                    PresencifyActionBar(
+                                        text = "Mark attendance with Dynamic QR",
+                                        onClick = { onAction(MarkAttendanceAction.DynamicQRClick) },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    PresencifyActionBar(
+                                        text = "Group photo scan",
+                                        onClick = { onAction(MarkAttendanceAction.GroupPhotoScanClick) },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
 
                                 // Stats Cards Section
                                 AttendanceStatsSection(

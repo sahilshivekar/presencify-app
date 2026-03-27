@@ -9,6 +9,7 @@ import edu.watumull.presencify.feature.academics.navigation.SearchCourseIntentio
 import edu.watumull.presencify.feature.academics.navigation.academicsNavGraph
 import edu.watumull.presencify.feature.admin.auth.navigation.adminAuthNavGraph
 import edu.watumull.presencify.feature.admin.mgt.navigation.adminMgtNavGraph
+import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.feature.attendance.navigation.attendanceNavGraph
 import edu.watumull.presencify.feature.onboarding.navigation.onboardingNavGraph
 import edu.watumull.presencify.feature.schedule.navigation.scheduleNavGraph
@@ -126,19 +127,18 @@ fun AppNavHost(
 
         attendanceNavGraph(
             onNavigateBack = { rootNavController.navigateUp() },
-            onNavigateToMarkAttendance = rootNavController::navigateToMarkStudentAttendance,
-            onNavigateToDynamicQR = rootNavController::navigateToDynamicQR,
-            onNavigateToAttendanceDetails = rootNavController::navigateToAttendanceDetails,
+            onNavigateToMarkAttendance = { attendanceId -> rootNavController.navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId)) },
+            onNavigateToDynamicQR = { attendanceId -> rootNavController.navigate(AttendanceRoutes.DynamicQR(attendanceId)) },
+            onNavigateToAttendanceDetails = { attendanceId -> rootNavController.navigate(AttendanceRoutes.AttendanceDetails(attendanceId)) },
             onNavigateToSearchAttendanceForCourse = { courseId ->
                 rootNavController.navigateToSearchAttendance(courseId)
             },
             onNavigateToSearchAttendanceForCourseAndStudent = { courseId, studentId ->
                 rootNavController.navigateToSearchAttendance(courseId, studentId)
             },
-            onNavigateToRecognizeStudent = { attendanceId ->
-                rootNavController.navigateToRecognizeStudent(attendanceId)
-            },
-            onNavigateToScanQr = rootNavController::navigateToScanQr
+            onNavigateToRecognizeStudent = { attendanceId -> rootNavController.navigate(AttendanceRoutes.RecognizeStudent(attendanceId)) },
+            onNavigateToScanQr = { rootNavController.navigate(AttendanceRoutes.ScanQr) },
+            onNavigateToGroupPhotoScan = { attendanceId -> rootNavController.navigate(AttendanceRoutes.GroupPhotoScan(attendanceId)) },
         )
 
         usersNavGraph(

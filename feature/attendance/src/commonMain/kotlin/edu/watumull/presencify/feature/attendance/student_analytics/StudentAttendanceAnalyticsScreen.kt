@@ -62,6 +62,7 @@ import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
+import edu.watumull.presencify.core.presentation.isDesktopPlatform
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,7 +148,7 @@ private fun StudentAttendanceAnalyticsScreenContent(
                 year = student.studentSemesters?.firstOrNull()?.semester?.semesterNumber?.toAcademicYear()
             )
 
-            if (LocalUserRole.current == UserRole.STUDENT) {
+            if (LocalUserRole.current == UserRole.STUDENT && !isDesktopPlatform()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 PresencifyActionBar(
                     text = "Scan QR for attendance",

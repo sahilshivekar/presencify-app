@@ -11,6 +11,7 @@ import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrViewModel
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceViewModel
 import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsViewModel
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentViewModel
+import edu.watumull.presencify.feature.attendance.group_photo_scan.GroupPhotoScanViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -26,4 +27,5 @@ val attendanceModule = module {
     viewModel { StudentAttendanceAnalyticsViewModel(get(), get(), get(), get(), get()) }
     viewModel { AggregateAttendanceAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { AddStudentBiometricsViewModel(get(),  get()) }
+    viewModel { GroupPhotoScanViewModel(get(), get()) }
 }

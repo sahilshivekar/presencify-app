@@ -6,6 +6,7 @@ import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentAggrega
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.attendance.GroupPhotoScanResponseDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
@@ -105,4 +106,9 @@ interface RemoteAttendanceDataSource {
         studentId: String,
         divisionId: String,
     ): Result<List<AttendanceDto>, DataError.Remote>
+
+    suspend fun groupPhotoScan(
+        attendanceId: String,
+        images: List<ByteArray>,
+    ): Result<GroupPhotoScanResponseDto, DataError.Remote>
 }

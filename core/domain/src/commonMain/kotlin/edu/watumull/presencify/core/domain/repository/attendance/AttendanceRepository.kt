@@ -9,6 +9,7 @@ import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudentAggregatedAndDetailed
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceSummary
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceWithTotalCount
+import edu.watumull.presencify.core.domain.model.attendance.GroupPhotoScanResult
 import kotlinx.datetime.LocalDate
 
 interface AttendanceRepository {
@@ -105,4 +106,9 @@ interface AttendanceRepository {
         studentId: String,
         divisionId: String,
     ): Result<List<Attendance>, DataError.Remote>
+
+    suspend fun groupPhotoScan(
+        attendanceId: String,
+        images: List<ByteArray>,
+    ): Result<GroupPhotoScanResult, DataError.Remote>
 }

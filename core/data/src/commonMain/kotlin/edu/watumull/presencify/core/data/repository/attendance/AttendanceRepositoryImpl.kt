@@ -12,6 +12,7 @@ import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudentAggregatedAndDetailed
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceSummary
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceWithTotalCount
+import edu.watumull.presencify.core.domain.model.attendance.GroupPhotoScanResult
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
 import kotlinx.datetime.LocalDate
 
@@ -91,5 +92,9 @@ class AttendanceRepositoryImpl(
 
     override suspend fun getActiveAttendanceSheet(studentId: String, divisionId: String): Result<List<Attendance>, DataError.Remote> {
         return remoteDataSource.getActiveAttendanceSheet(studentId, divisionId).map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun groupPhotoScan(attendanceId: String, images: List<ByteArray>): Result<GroupPhotoScanResult, DataError.Remote> {
+        return remoteDataSource.groupPhotoScan(attendanceId, images).map { it.toDomain() }
     }
 }

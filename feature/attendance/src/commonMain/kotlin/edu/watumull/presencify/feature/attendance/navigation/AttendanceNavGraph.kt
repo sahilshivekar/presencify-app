@@ -17,6 +17,7 @@ import edu.watumull.presencify.feature.attendance.student_analytics.StudentAtten
 import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
 import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
+import edu.watumull.presencify.feature.attendance.group_photo_scan.GroupPhotoScanRoot
 import kotlinx.coroutines.flow.firstOrNull
 
 fun NavGraphBuilder.attendanceDashboard(
@@ -59,6 +60,7 @@ fun NavGraphBuilder.attendanceNavGraph(
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToRecognizeStudent: (String) -> Unit,
     onNavigateToScanQr: () -> Unit,
+    onNavigateToGroupPhotoScan: (String) -> Unit,
 ) {
     // 2. Create/Update Sheet
     composableWithSlideTransitions<AttendanceRoutes.CreateAttendanceSheet> {
@@ -72,7 +74,8 @@ fun NavGraphBuilder.attendanceNavGraph(
     composableWithSlideTransitions<AttendanceRoutes.MarkStudentAttendance> {
         MarkAttendanceRoot(
             onNavigateBack = onNavigateBack,
-            onNavigateToDynamicQR = onNavigateToDynamicQR
+            onNavigateToDynamicQR = onNavigateToDynamicQR,
+            onNavigateToGroupPhotoScan = onNavigateToGroupPhotoScan,
         )
     }
 
@@ -137,6 +140,13 @@ fun NavGraphBuilder.attendanceNavGraph(
     composableWithSlideTransitions<AttendanceRoutes.AddStudentBiometrics> { backStackEntry ->
         AddStudentBiometricsRoot(
             onNavigateBack = onNavigateBack
+        )
+    }
+
+    // 10. Group Photo Scan
+    composableWithSlideTransitions<AttendanceRoutes.GroupPhotoScan> {
+        GroupPhotoScanRoot(
+            onNavigateBack = onNavigateBack,
         )
     }
 }

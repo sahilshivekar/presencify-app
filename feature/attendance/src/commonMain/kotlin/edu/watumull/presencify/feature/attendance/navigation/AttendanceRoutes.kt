@@ -71,4 +71,7 @@ sealed interface AttendanceRoutes : NavRoute {
 
     @Serializable
     data class AddStudentBiometrics(val studentId: String) : AttendanceRoutes
+
+    @Serializable
+    data class GroupPhotoScan(val attendanceId: String) : AttendanceRoutes
 }
