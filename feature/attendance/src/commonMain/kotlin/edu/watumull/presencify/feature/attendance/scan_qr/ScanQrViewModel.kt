@@ -89,6 +89,13 @@ class ScanQrViewModel(
             val diff = abs(currentNtpTime - timestamp)
 
             if (diff <= 1000) { // 1 second
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        lastScannedContent = decryptedContent,
+                        isQrScanSuccessful = true
+                    )
+                }
                 // Success
                 sendEvent(ScanQrEvent.NavigateToRecognizeStudent(attendanceId))
                 // Keep loading state until navigation occurs

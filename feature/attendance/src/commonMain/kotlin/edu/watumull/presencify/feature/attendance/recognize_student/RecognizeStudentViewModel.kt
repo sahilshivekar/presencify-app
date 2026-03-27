@@ -16,9 +16,10 @@ import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
-import kotlinx.coroutines.flow.firstOrNull
+import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import kotlinx.coroutines.launch
-import kotlin.math.max
+import kotlinx.coroutines.flow.firstOrNull
+import kotlin.math.min
 import kotlin.math.sqrt
 
 class RecognizeStudentViewModel(
@@ -36,8 +37,10 @@ class RecognizeStudentViewModel(
     private var startTimeMillis: Long = 0
     private var lastStepCompletedTime: Long = 0
     private var storedFaceDescriptor: List<Float>? = null
+    private var timeoutActive: Boolean = false
 
     init {
+        Logger.d(TAG) { "VM init: loading student data for attendanceId=$attendanceId" }
         loadStudentData()
     }
 
@@ -45,6 +48,7 @@ class RecognizeStudentViewModel(
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
             val studentId = userRepository.getUserId().firstOrNull()
+            Logger.d(TAG) { "loadStudentData(): userId=$studentId" }
             if (studentId == null) {
                 updateState { it.copy(isLoading = false, error = UiText.DynamicString("User not logged in")) }
                 return@launch
@@ -57,19 +61,30 @@ class RecognizeStudentViewModel(
                     Logger.d(TAG) { "Student profile has no Face Descriptor registered!" }
                     updateState { it.copy(isLoading = false, error = UiText.DynamicString("Face not registered in database.")) }
                 } else {
-                    Logger.d(TAG) { "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}" }
+                    Logger.d(TAG) {
+                        "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}"
+                    }
                     startLivenessCheck()
                 }
             }.onError { error ->
+                Logger.e(TAG) { "loadStudentData(): error=$error" }
                 updateState { it.copy(isLoading = false, error = error.toUiText()) }
             }
         }
     }
 
+    /**
+     * Local helper for liveness timing. If you later introduce a true monotonic
+     * clock abstraction, you can replace this implementation there.
+     */
+    private fun nowMillis(): Long = ntpClock.getCurrentNtpTimeMs()
+
     private fun startLivenessCheck() {
         val sequence = generateLivenessSequence()
-        startTimeMillis = ntpClock.getCurrentNtpTimeMs()
+        startTimeMillis = nowMillis()
         lastStepCompletedTime = startTimeMillis
+        timeoutActive = true
+        Logger.d(TAG) { "startLivenessCheck(): sequence=$sequence, startTimeMillis=$startTimeMillis" }
 
         updateState {
             it.copy(
@@ -79,7 +94,6 @@ class RecognizeStudentViewModel(
                 isRecognizing = false,
                 shouldCaptureEmbedding = false,
                 isLoading = false,
-                // Keep the error so the UI can display it during the restart
                 error = it.error
             )
         }
@@ -125,42 +139,77 @@ class RecognizeStudentViewModel(
                 compareFaceEmbeddingWithMirror(action.original, action.mirrored)
             }
             is RecognizeStudentAction.OnFailure -> {
-                updateState { it.copy(error = action.message) }
+                // Instead of showing raw error text on camera, route it through dialog
+                showErrorDialog(action.message)
             }
             is RecognizeStudentAction.OnEmbeddingCaptureConsumed -> {
                 updateState { it.copy(shouldCaptureEmbedding = false) }
             }
             is RecognizeStudentAction.OnCheatingDetected -> {
-                // Only treat as cheating if we are in later liveness steps (3rd or 4th),
-                // where a friend might try to swap in a photo.
                 val stepIndex = state.currentStep
                 if (stepIndex >= 2 && !state.isLivenessComplete) {
                     Logger.d(TAG) { "Cheating suspected: face left camera during critical liveness steps (stepIndex=$stepIndex)." }
-                    updateState {
-                        it.copy(
-                            isCheatingSuspected = true,
-                            isRecognizing = false,
-                            isLivenessComplete = false,
-                            shouldCaptureEmbedding = false,
-                            error = UiText.DynamicString("Cheating suspected. Please retry the liveness check without leaving the camera.")
-                        )
-                    }
-                    startLivenessCheck()
+                    showErrorDialog(
+                        UiText.DynamicString("Cheating suspected. Please retry the liveness check without leaving the camera."),
+                        isCheating = true
+                    )
                 }
             }
+            is RecognizeStudentAction.OnDismissDialog -> {
+                updateState { it.copy(dialogState = null) }
+            }
+            is RecognizeStudentAction.OnRetryFromDialog -> {
+                updateState {
+                    it.copy(
+                        dialogState = null,
+                        isRecognizing = false,
+                        isLivenessComplete = false,
+                        shouldCaptureEmbedding = false,
+                        isCheatingSuspected = false,
+                        error = null,
+                    )
+                }
+                startLivenessCheck()
+            }
+        }
+    }
+
+    private fun showErrorDialog(message: UiText, isCheating: Boolean = false) {
+        // Stop the current liveness run; a new one will start when user taps Retry
+        timeoutActive = false
+
+        updateState {
+            it.copy(
+                isRecognizing = false,
+                shouldCaptureEmbedding = false,
+                isLivenessComplete = false,
+                isCheatingSuspected = isCheating,
+                error = null,
+                dialogState = RecognizeStudentDialogState(
+                    isVisible = true,
+                    dialogType = DialogType.ERROR,
+                    title = if (isCheating) "Cheating Suspected" else "Face Not Recognized",
+                    message = message,
+                )
+            )
         }
     }
 
     private fun validateMovement(yaw: Float) {
         if (state.isLivenessComplete || state.error != null) return
 
-        val currentTime = ntpClock.getCurrentNtpTimeMs()
+        val currentTime = nowMillis()
+        Logger.d(TAG) {
+            "validateMovement(): yaw=$yaw, currentTime=$currentTime, startTimeMillis=$startTimeMillis, elapsed=${currentTime - startTimeMillis}, lastStepCompletedTime=$lastStepCompletedTime"
+        }
 
-        // 15s timeout
-        if (currentTime - startTimeMillis > 15000) {
+        // 15s timeout, only if a liveness run is active
+        if (timeoutActive && currentTime - startTimeMillis > 15000) {
             Logger.d(TAG) { "Liveness timeout reached." }
-            updateState { it.copy(error = UiText.DynamicString("Liveness timeout. Try again.")) }
+            // Immediately reset steps back to 1 for the next trial
             startLivenessCheck()
+            // Show dialog explaining what happened; user can retry
+            showErrorDialog(UiText.DynamicString("Liveness timeout. Try again."))
             return
         }
 
@@ -175,6 +224,8 @@ class RecognizeStudentViewModel(
             HeadMovement.RIGHT -> yaw < -15f
             HeadMovement.STRAIGHT -> yaw in -12f..12f
         }
+
+        Logger.d(TAG) { "validateMovement(): required=$requiredMovement, isCorrect=$isCorrect, step=${state.currentStep}" }
 
         if (isCorrect) {
             lastStepCompletedTime = currentTime
@@ -201,63 +252,47 @@ class RecognizeStudentViewModel(
         val stored = storedFaceDescriptor
         if (stored == null) {
             Logger.e(TAG) { "FATAL: compareFaceEmbedding called but storedFaceDescriptor is NULL." }
-            updateState {
-                it.copy(error = UiText.DynamicString("No face registered"), isRecognizing = false, shouldCaptureEmbedding = false)
-            }
+            showErrorDialog(UiText.DynamicString("No face registered"))
             return
         }
 
         val dbArray = stored.toFloatArray()
 
-        Logger.d(TAG) { "Comparing Arrays -> Camera Model Output Size: ${cameraEmbedding.size} | Database Output Size: ${dbArray.size}" }
+        Logger.d(TAG) {
+            "Comparing Arrays -> Camera Model Output Size: ${cameraEmbedding.size} | Database Output Size: ${dbArray.size}"
+        }
 
         // Size Mismatch Check
         if (cameraEmbedding.size != dbArray.size) {
             val errorMsg = "CRITICAL AI MISMATCH: Camera generated ${cameraEmbedding.size} values, but Database has ${dbArray.size} values."
             Logger.e(TAG) { errorMsg }
-            updateState {
-                it.copy(
-                    isRecognizing = false,
-                    isLivenessComplete = false,
-                    shouldCaptureEmbedding = false,
-                    error = UiText.DynamicString(errorMsg)
-                )
-            }
+            showErrorDialog(UiText.DynamicString(errorMsg))
             startLivenessCheck()
             return
         }
 
-        // Perform Math
         try {
-            val similarity = cosineSimilarity(cameraEmbedding, dbArray)
-            Logger.d(TAG) { "Math Calculation Complete. Cosine Similarity Score: $similarity" }
+            val normCamera = l2Normalize(cameraEmbedding)
+            val normDb = l2Normalize(dbArray)
+            val distance = euclideanDistance(normCamera, normDb)
 
-            // THRESHOLD
-            if (similarity >= 0.7f) {
-                Logger.d(TAG) { "Score >= 0.7! Marking attendance..." }
+            Logger.d(TAG) { "Math Calculation Complete. Normalized Distance: $distance" }
+
+            if (distance < 0.9f) {
+                Logger.d(TAG) { "Distance < 0.9! Marking attendance..." }
                 markAttendance()
             } else {
-                Logger.d(TAG) { "Score < 0.7. Recognition Failed." }
-                updateState {
-                    it.copy(
-                        isRecognizing = false,
-                        isLivenessComplete = false,
-                        shouldCaptureEmbedding = false,
-                        error = UiText.DynamicString("Face not recognized (Score: ${similarity.toString().take(4)}). Try again.")
+                Logger.d(TAG) { "Distance >= 0.9. Recognition Failed." }
+                showErrorDialog(
+                    UiText.DynamicString(
+                        "Face not recognized (Distance: ${distance.toString().take(4)}). Try again."
                     )
-                }
+                )
                 startLivenessCheck()
             }
         } catch (e: Exception) {
-            Logger.e(TAG, e) { "Math crash in cosineSimilarity" }
-            updateState {
-                it.copy(
-                    isRecognizing = false,
-                    isLivenessComplete = false,
-                    shouldCaptureEmbedding = false,
-                    error = UiText.DynamicString("Math Error: ${e.message}")
-                )
-            }
+            Logger.e(TAG, e) { "Math crash in euclideanDistance" }
+            showErrorDialog(UiText.DynamicString("Math Error: ${e.message}"))
             startLivenessCheck()
         }
     }
@@ -266,9 +301,7 @@ class RecognizeStudentViewModel(
         val stored = storedFaceDescriptor
         if (stored == null) {
             Logger.e(TAG) { "FATAL: compareFaceEmbeddingWithMirror called but storedFaceDescriptor is NULL." }
-            updateState {
-                it.copy(error = UiText.DynamicString("No face registered"), isRecognizing = false, shouldCaptureEmbedding = false)
-            }
+            showErrorDialog(UiText.DynamicString("No face registered"))
             return
         }
 
@@ -282,53 +315,37 @@ class RecognizeStudentViewModel(
         if (originalEmbedding.size != dbArray.size || mirroredEmbedding.size != dbArray.size) {
             val errorMsg = "CRITICAL AI MISMATCH: Embedding sizes do not match database descriptor."
             Logger.e(TAG) { errorMsg }
-            updateState {
-                it.copy(
-                    isRecognizing = false,
-                    isLivenessComplete = false,
-                    shouldCaptureEmbedding = false,
-                    error = UiText.DynamicString(errorMsg)
-                )
-            }
+            showErrorDialog(UiText.DynamicString(errorMsg))
             startLivenessCheck()
             return
         }
 
         try {
-            val simOriginal = cosineSimilarity(originalEmbedding, dbArray)
-            val simMirrored = cosineSimilarity(mirroredEmbedding, dbArray)
-            val bestSim = max(simOriginal, simMirrored)
+            val normOriginal = l2Normalize(originalEmbedding)
+            val normMirrored = l2Normalize(mirroredEmbedding)
+            val normDb = l2Normalize(dbArray)
 
-            Logger.d(TAG) { "Mirror-aware similarity: original=$simOriginal, mirrored=$simMirrored, best=$bestSim" }
+            val distOriginal = euclideanDistance(normOriginal, normDb)
+            val distMirrored = euclideanDistance(normMirrored, normDb)
+            val bestDist = min(distOriginal, distMirrored)
 
-            // THRESHOLD
-            if (bestSim >= 0.7f) {
-                Logger.d(TAG) { "Best score >= 0.7! Marking attendance..." }
+            Logger.d(TAG) { "Mirror-aware distance: original=$distOriginal, mirrored=$distMirrored, best=$bestDist" }
+
+            if (bestDist < 0.9f) {
+                Logger.d(TAG) { "Best distance < 0.9! Marking attendance..." }
                 markAttendance()
             } else {
-                Logger.d(TAG) { "Best score < 0.7. Recognition Failed." }
-                updateState {
-                    it.copy(
-                        isRecognizing = false,
-                        isLivenessComplete = false,
-                        shouldCaptureEmbedding = false,
-                        error = UiText.DynamicString(
-                            "Face not recognized (Score: ${bestSim.toString().take(4)}). Try again."
-                        )
+                Logger.d(TAG) { "Best distance >= 0.9. Recognition Failed." }
+                showErrorDialog(
+                    UiText.DynamicString(
+                        "Face not recognized (Distance: ${bestDist.toString().take(4)}). Try again."
                     )
-                }
+                )
                 startLivenessCheck()
             }
         } catch (e: Exception) {
-            Logger.e(TAG, e) { "Math crash in cosineSimilarity (mirror-aware)" }
-            updateState {
-                it.copy(
-                    isRecognizing = false,
-                    isLivenessComplete = false,
-                    shouldCaptureEmbedding = false,
-                    error = UiText.DynamicString("Math Error: ${e.message}")
-                )
-            }
+            Logger.e(TAG, e) { "Math crash in euclideanDistance (mirror-aware)" }
+            showErrorDialog(UiText.DynamicString("Math Error: ${e.message}"))
             startLivenessCheck()
         }
     }
@@ -371,20 +388,18 @@ class RecognizeStudentViewModel(
         }
     }
 
-    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
-        if (a.size != b.size) return 0f
-        var dotProduct = 0f
-        var normA = 0f
-        var normB = 0f
+    private fun l2Normalize(v: FloatArray): FloatArray {
+        val norm = sqrt(v.fold(0f) { acc, next -> acc + (next * next) })
+        return if (norm != 0f) v.map { it / norm }.toFloatArray() else v
+    }
+
+    private fun euclideanDistance(a: FloatArray, b: FloatArray): Float {
+        if (a.size != b.size) return Float.MAX_VALUE
+        var sum = 0f
         for (i in a.indices) {
-            dotProduct += a[i] * b[i]
-            normA += a[i] * a[i]
-            normB += b[i] * b[i]
+            val diff = a[i] - b[i]
+            sum += diff * diff
         }
-        return if (normA > 0 && normB > 0) {
-            dotProduct / (sqrt(normA) * sqrt(normB))
-        } else {
-            0f
-        }
+        return sqrt(sum)
     }
 }

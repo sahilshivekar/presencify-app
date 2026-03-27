@@ -13,4 +13,6 @@ sealed interface RecognizeStudentAction {
     data class OnPermissionResult(val isGranted: Boolean) : RecognizeStudentAction
     data object OnEmbeddingCaptureConsumed : RecognizeStudentAction
     data object OnCheatingDetected : RecognizeStudentAction // New: triggered when face disappears from camera during critical liveness steps
+    data object OnDismissDialog : RecognizeStudentAction
+    data object OnRetryFromDialog : RecognizeStudentAction
 }

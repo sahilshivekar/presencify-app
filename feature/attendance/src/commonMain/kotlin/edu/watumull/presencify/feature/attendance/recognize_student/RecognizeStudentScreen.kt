@@ -14,12 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.presentation.UiText
-import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentAction.OnCheatingDetected
+import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 
 @Composable
 fun RecognizeStudentScreen(
@@ -41,7 +38,6 @@ fun RecognizeStudentScreen(
                     onAction(RecognizeStudentAction.OnFaceDetected(yaw))
                 },
                 onEmbeddingExtracted = { original, mirrored ->
-                    // Pass both embeddings to the ViewModel via a new action
                     onAction(RecognizeStudentAction.OnRecognitionSuccessWithMirror(original, mirrored))
                     onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
                 },
@@ -52,7 +48,7 @@ fun RecognizeStudentScreen(
                     onAction(RecognizeStudentAction.OnPermissionResult(isGranted))
                 },
                 onCheatingDetected = {
-                    onAction(OnCheatingDetected)
+                    onAction(RecognizeStudentAction.OnCheatingDetected)
                 }
             )
 
@@ -84,25 +80,23 @@ fun RecognizeStudentScreen(
                     }
                 }
             }
-
-            // Error Overlay
-            if (state.error != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.7f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = state.error.asString(),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
         }
+    }
+
+    // Dialog for face not recognized / cheating / generic errors
+    state.dialogState?.let { dialogState ->
+        PresencifyAlertDialog(
+            isVisible = dialogState.isVisible,
+            dialogType = dialogState.dialogType,
+            title = dialogState.title,
+            message = dialogState.message.asString(),
+            onConfirm = {
+                onAction(RecognizeStudentAction.OnRetryFromDialog)
+            },
+            onDismiss = {
+                onAction(RecognizeStudentAction.OnDismissDialog)
+            }
+        )
     }
 }
 
