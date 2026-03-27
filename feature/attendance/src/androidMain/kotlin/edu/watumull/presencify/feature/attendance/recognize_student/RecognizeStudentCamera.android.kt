@@ -82,6 +82,7 @@ actual fun RecognizeStudentCamera(
         LaunchedEffect(Unit) {
             withContext(Dispatchers.IO) {
                 try {
+                    Log.d(TAG, "Initializing FaceEmbeddingExtractor...")
                     val extractor = FaceEmbeddingExtractor()
                     val newAnalyzer = FaceAnalyzer(
                         faceEmbeddingExtractor = extractor,
@@ -97,6 +98,7 @@ actual fun RecognizeStudentCamera(
                         }
                     )
                     analyzerState.value = newAnalyzer
+                    Log.d(TAG, "FaceAnalyzer initialization complete.")
                 } catch (e: Exception) {
                     Log.e(TAG, "FaceAnalyzer init failed", e)
                 }
@@ -130,7 +132,8 @@ actual fun RecognizeStudentCamera(
                             }
                             val imageAnalyzer = ImageAnalysis.Builder()
                                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+//                                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+//                                .setTargetResolution(android.util.Size(1280, 720)) // High Res!
                                 .build()
                                 .also {
                                     it.setAnalyzer(Executors.newSingleThreadExecutor(), analyzer)
@@ -144,6 +147,7 @@ actual fun RecognizeStudentCamera(
                                     preview,
                                     imageAnalyzer
                                 )
+                                Log.d(TAG, "Camera bound successfully.")
                             } catch (e: Exception) {
                                 Log.e(TAG, "Binding failed", e)
                             }
@@ -176,7 +180,7 @@ class FaceAnalyzer(
 
     private val faceDetector = FaceDetection.getClient(
         FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
             .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
             .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
             .enableTracking()
@@ -205,8 +209,9 @@ class FaceAnalyzer(
 
         try {
             val bitmap = imageProxy.toBitmap()
-            val image = InputImage.fromBitmap(bitmap, 0)
+            val safeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
+            val image = InputImage.fromBitmap(safeBitmap, 0) // Use safeBitmap here
             faceDetector.process(image)
                 .addOnSuccessListener { faces ->
                     if (faces.isNotEmpty()) {
@@ -220,58 +225,77 @@ class FaceAnalyzer(
                                 onFaceDetected(yaw)
                             }
                         } else if (shouldCapture && !hasCaptured) {
-                            Log.d(
-                                "RecognizeStudentCam",
-                                "Capture triggered. Processing embedding via shared extractor (original + mirrored)..."
-                            )
-                            isProcessing = true
-                            hasCaptured = true
 
-                            GlobalScope.launch(Dispatchers.IO) {
-                                try {
-                                    // Crop face once
-                                    val faceBitmap = cropFace(bitmap, face.boundingBox)
+                            // SYNC FIX: Relaxed back to -12..12 so it matches Liveness state perfectly.
+                            if (yaw in -12f..12f) {
+                                Log.d(
+                                    TAG,
+                                    "Head stable (Yaw: $yaw). Capture triggered. Proceeding to crop and extract..."
+                                )
+                                isProcessing = true
+                                hasCaptured = true
 
-                                    // Original orientation embedding
-                                    val originalEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(faceBitmap)
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    try {
+                                        Log.d(TAG, "Full Camera Frame Size: ${safeBitmap.width}x${safeBitmap.height}, MLKit Face Box: ${face.boundingBox}")
 
-                                    // Mirrored orientation embedding
-                                    val mirroredBitmap = faceEmbeddingExtractor.mirrorBitmap(faceBitmap)
-                                    val mirroredEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(mirroredBitmap)
+                                        // Crop face once using the new dynamic padding
+                                        val faceBitmap = faceEmbeddingExtractor.cropFace(safeBitmap, face.boundingBox)
+                                        Log.d(TAG, "Cropped Face Bitmap Size: ${faceBitmap.width}x${faceBitmap.height}")
 
-                                    if (originalEmbedding != null && mirroredEmbedding != null) {
-                                        Log.d(
-                                            "RecognizeStudentCam",
-                                            "Embeddings extracted. Original size=${originalEmbedding.size}, Mirrored size=${mirroredEmbedding.size}"
-                                        )
-                                        onEmbeddingExtracted(originalEmbedding, mirroredEmbedding)
-                                    } else {
-                                        Log.e(
-                                            "RecognizeStudentCam",
-                                            "Embedding extraction returned null (original or mirrored)"
-                                        )
+                                        // Original orientation embedding
+                                        Log.d(TAG, "Starting extraction for ORIGINAL embedding...")
+                                        val originalEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(faceBitmap)
+                                        if (originalEmbedding != null) {
+                                            Log.d(TAG, "SUCCESS: Original Embedding Extracted. Array Sum: ${originalEmbedding.sum()} | First 3: ${originalEmbedding.take(3)}")
+                                        } else {
+                                            Log.e(TAG, "FAILED: Original Embedding came back null.")
+                                        }
+
+                                        // Mirrored orientation embedding
+                                        Log.d(TAG, "Starting extraction for MIRRORED embedding...")
+                                        val mirroredBitmap = faceEmbeddingExtractor.mirrorBitmap(faceBitmap)
+                                        val mirroredEmbedding = faceEmbeddingExtractor.extractFromFaceBitmap(mirroredBitmap)
+                                        if (mirroredEmbedding != null) {
+                                            Log.d(TAG, "SUCCESS: Mirrored Embedding Extracted. Array Sum: ${mirroredEmbedding.sum()} | First 3: ${mirroredEmbedding.take(3)}")
+                                        } else {
+                                            Log.e(TAG, "FAILED: Mirrored Embedding came back null.")
+                                        }
+
+                                        if (originalEmbedding != null && mirroredEmbedding != null) {
+                                            Log.d(
+                                                TAG,
+                                                "Both embeddings extracted successfully. Passing to ViewModel..."
+                                            )
+                                            onEmbeddingExtracted(originalEmbedding, mirroredEmbedding)
+                                        } else {
+                                            Log.e(
+                                                TAG,
+                                                "One or both embeddings returned null. Resetting capture flag."
+                                            )
+                                            hasCaptured = false
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e(TAG, "Embedding Extraction Pipeline Crash", e)
                                         hasCaptured = false
+                                    } finally {
+                                        isProcessing = false
+                                        imageProxy.close()
                                     }
-                                } catch (e: Exception) {
-                                    Log.e("RecognizeStudentCam", "Embedding Extraction Crash", e)
-                                    hasCaptured = false
-                                } finally {
-                                    isProcessing = false
-                                    imageProxy.close()
                                 }
+                                return@addOnSuccessListener
+                            } else {
+                                Log.d(TAG, "Waiting for head to stabilize... Current Yaw: $yaw")
                             }
-                            return@addOnSuccessListener
                         }
                     } else {
-                        // No faces detected in this frame. If we are in critical liveness steps,
-                        // invoke callback so VM can treat it as cheating.
                         if (!isLivenessCompleteProvider()) {
                             onFaceMissingDuringCriticalStep()
                         }
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("RecognizeStudentCam", "Face detection failed", e)
+                    Log.e(TAG, "Face detection failed", e)
                 }
                 .addOnCompleteListener {
                     if (!isProcessing) {
@@ -279,17 +303,8 @@ class FaceAnalyzer(
                     }
                 }
         } catch (e: Exception) {
-            Log.e("RecognizeStudentCam", "Failed to process image frame", e)
+            Log.e(TAG, "Failed to process image frame", e)
             imageProxy.close()
         }
-    }
-
-    private fun cropFace(bitmap: Bitmap, box: android.graphics.Rect): Bitmap {
-        val padding = 10
-        val x = (box.left - padding).coerceAtLeast(0)
-        val y = (box.top - padding).coerceAtLeast(0)
-        val width = (box.width() + padding * 2).coerceAtMost(bitmap.width - x)
-        val height = (box.height() + padding * 2).coerceAtMost(bitmap.height - y)
-        return Bitmap.createBitmap(bitmap, x, y, width, height)
     }
 }

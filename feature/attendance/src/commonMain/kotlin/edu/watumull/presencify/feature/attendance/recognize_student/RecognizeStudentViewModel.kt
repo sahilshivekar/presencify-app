@@ -59,7 +59,12 @@ class RecognizeStudentViewModel(
                 storedFaceDescriptor = student.faceDescriptor
                 if (storedFaceDescriptor == null) {
                     Logger.d(TAG) { "Student profile has no Face Descriptor registered!" }
-                    updateState { it.copy(isLoading = false, error = UiText.DynamicString("Face not registered in database.")) }
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            error = UiText.DynamicString("Face not registered in database.")
+                        )
+                    }
                 } else {
                     Logger.d(TAG) {
                         "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}"
@@ -125,26 +130,35 @@ class RecognizeStudentViewModel(
             is RecognizeStudentAction.NavigateBack -> {
                 viewModelScope.launch { sendEvent(RecognizeStudentEvent.NavigateBack) }
             }
+
             is RecognizeStudentAction.OnPermissionResult -> {
                 updateState { it.copy(cameraPermissionGranted = action.isGranted) }
             }
+
             is RecognizeStudentAction.OnFaceDetected -> {
                 validateMovement(action.yaw)
             }
-            is RecognizeStudentAction.OnLivenessSuccess -> { /* Handled implicitly */ }
+
+            is RecognizeStudentAction.OnLivenessSuccess -> { /* Handled implicitly */
+            }
+
             is RecognizeStudentAction.OnRecognitionSuccess -> {
                 compareFaceEmbedding(action.embedding)
             }
+
             is RecognizeStudentAction.OnRecognitionSuccessWithMirror -> {
                 compareFaceEmbeddingWithMirror(action.original, action.mirrored)
             }
+
             is RecognizeStudentAction.OnFailure -> {
                 // Instead of showing raw error text on camera, route it through dialog
                 showErrorDialog(action.message)
             }
+
             is RecognizeStudentAction.OnEmbeddingCaptureConsumed -> {
                 updateState { it.copy(shouldCaptureEmbedding = false) }
             }
+
             is RecognizeStudentAction.OnCheatingDetected -> {
                 val stepIndex = state.currentStep
                 if (stepIndex >= 2 && !state.isLivenessComplete) {
@@ -155,9 +169,11 @@ class RecognizeStudentViewModel(
                     )
                 }
             }
+
             is RecognizeStudentAction.OnDismissDialog -> {
                 updateState { it.copy(dialogState = null) }
             }
+
             is RecognizeStudentAction.OnRetryFromDialog -> {
                 updateState {
                     it.copy(
@@ -196,7 +212,7 @@ class RecognizeStudentViewModel(
     }
 
     private fun validateMovement(yaw: Float) {
-        if (state.isLivenessComplete || state.error != null) return
+        if (state.isLivenessComplete) return
 
         val currentTime = nowMillis()
         Logger.d(TAG) {
@@ -206,19 +222,17 @@ class RecognizeStudentViewModel(
         // 15s timeout, only if a liveness run is active
         if (timeoutActive && currentTime - startTimeMillis > 15000) {
             Logger.d(TAG) { "Liveness timeout reached." }
-            // Immediately reset steps back to 1 for the next trial
             startLivenessCheck()
-            // Show dialog explaining what happened; user can retry
             showErrorDialog(UiText.DynamicString("Liveness timeout. Try again."))
             return
         }
 
-        // 400ms Cooldown
+        // 400ms Cooldown between step completions
         if (currentTime - lastStepCompletedTime < 400) return
 
         val requiredMovement = state.livenessSequence.getOrNull(state.currentStep) ?: return
 
-        // Mirrored Front Camera Logic
+        // Mirrored Front Camera Logic with slightly more forgiving thresholds
         val isCorrect = when (requiredMovement) {
             HeadMovement.LEFT -> yaw > 15f
             HeadMovement.RIGHT -> yaw < -15f
@@ -239,7 +253,7 @@ class RecognizeStudentViewModel(
                         isLivenessComplete = true,
                         isRecognizing = true,
                         shouldCaptureEmbedding = true,
-                        error = null // Clear errors on success
+                        error = null
                     )
                 }
             } else {
@@ -261,10 +275,13 @@ class RecognizeStudentViewModel(
         Logger.d(TAG) {
             "Comparing Arrays -> Camera Model Output Size: ${cameraEmbedding.size} | Database Output Size: ${dbArray.size}"
         }
+        Logger.d(TAG) { "Camera Array Start: ${cameraEmbedding.take(5)}" }
+        Logger.d(TAG) { "DB Array Start: ${dbArray.take(5)}" }
 
         // Size Mismatch Check
         if (cameraEmbedding.size != dbArray.size) {
-            val errorMsg = "CRITICAL AI MISMATCH: Camera generated ${cameraEmbedding.size} values, but Database has ${dbArray.size} values."
+            val errorMsg =
+                "CRITICAL AI MISMATCH: Camera generated ${cameraEmbedding.size} values, but Database has ${dbArray.size} values."
             Logger.e(TAG) { errorMsg }
             showErrorDialog(UiText.DynamicString(errorMsg))
             startLivenessCheck()
@@ -324,7 +341,9 @@ class RecognizeStudentViewModel(
             val normOriginal = l2Normalize(originalEmbedding)
             val normMirrored = l2Normalize(mirroredEmbedding)
             val normDb = l2Normalize(dbArray)
-
+            Logger.d(TAG) { "Original Camera Array: ${originalEmbedding.take(5)}" }
+            Logger.d(TAG) { "Mirrored Camera Array: ${mirroredEmbedding.take(5)}" }
+            Logger.d(TAG) { "Database Array: ${dbArray.take(5)}" }
             val distOriginal = euclideanDistance(normOriginal, normDb)
             val distMirrored = euclideanDistance(normMirrored, normDb)
             val bestDist = min(distOriginal, distMirrored)
@@ -332,7 +351,7 @@ class RecognizeStudentViewModel(
             Logger.d(TAG) { "Mirror-aware distance: original=$distOriginal, mirrored=$distMirrored, best=$bestDist" }
 
             if (bestDist < 0.9f) {
-                Logger.d(TAG) { "Best distance < 0.9! Marking attendance..." }
+                Logger.d(TAG) { "Best distance < 0.9 Marking attendance..." }
                 markAttendance()
             } else {
                 Logger.d(TAG) { "Best distance >= 0.9. Recognition Failed." }
@@ -370,7 +389,7 @@ class RecognizeStudentViewModel(
                     }
                     .onError { error ->
                         Logger.e(TAG) { "Network Call: Failed to mark attendance: $error" }
-                        SnackbarController.sendEvent(SnackbarEvent(message = "Network Error: Failed to mark attendance"))
+                        SnackbarController.sendEvent(SnackbarEvent(message = "Failed to mark attendance"))
                         updateState {
                             it.copy(
                                 isRecognizing = false,
@@ -382,7 +401,11 @@ class RecognizeStudentViewModel(
                     }
             } else {
                 updateState {
-                    it.copy(error = UiText.DynamicString("User not logged in"), isRecognizing = false, shouldCaptureEmbedding = false)
+                    it.copy(
+                        error = UiText.DynamicString("User not logged in"),
+                        isRecognizing = false,
+                        shouldCaptureEmbedding = false
+                    )
                 }
             }
         }
