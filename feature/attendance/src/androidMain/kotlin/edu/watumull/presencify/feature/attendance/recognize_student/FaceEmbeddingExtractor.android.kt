@@ -7,6 +7,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.LongBuffer
 import kotlin.math.roundToInt
@@ -44,7 +46,11 @@ actual class FaceEmbeddingExtractor actual constructor() {
         val width = bitmap.width
         val height = bitmap.height
         val size = width * height
-        val floatBuffer = FloatBuffer.allocate(3 * size)
+//        val floatBuffer = FloatBuffer.allocate(3 * size)
+        // Replace FloatBuffer.allocate(3 * size) with:
+        val byteBuffer = ByteBuffer.allocateDirect(3 * size * 4) // 4 bytes per float
+        byteBuffer.order(ByteOrder.nativeOrder())
+        val floatBuffer = byteBuffer.asFloatBuffer()
         val pixels = IntArray(size)
 
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
@@ -65,7 +71,12 @@ actual class FaceEmbeddingExtractor actual constructor() {
         val width = bitmap.width
         val height = bitmap.height
         val size = width * height
-        val floatBuffer = FloatBuffer.allocate(3 * size)
+
+        // ✅ DIRECT NATIVE MEMORY ALLOCATION (Replaced FloatBuffer.allocate)
+        val byteBuffer = ByteBuffer.allocateDirect(3 * size * 4) // 4 bytes per float
+        byteBuffer.order(ByteOrder.nativeOrder())
+        val floatBuffer = byteBuffer.asFloatBuffer()
+
         val pixels = IntArray(size)
 
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
@@ -117,12 +128,13 @@ actual class FaceEmbeddingExtractor actual constructor() {
         if (boxesBuffer == null || boxesBuffer.capacity() < 4) return null
 
         // 4. Extract Face Coordinates
-        var x1 = boxesBuffer.get(0)
-        var y1 = boxesBuffer.get(1)
-        var x2 = boxesBuffer.get(2)
-        var y2 = boxesBuffer.get(3)
 
-        // FIX: Normalize absolute coords to 0.0 - 1.0 percentages
+        var x1 = boxesBuffer.get(0) // xmin
+        var y1 = boxesBuffer.get(1) // ymin
+        var x2 = boxesBuffer.get(2) // xmax
+        var y2 = boxesBuffer.get(3) // ymax
+
+        // Normalize absolute coords to 0.0 - 1.0 percentages
         if (x2 > 1.0f || y2 > 1.0f) {
             x1 /= 128.0f
             y1 /= 128.0f
@@ -173,18 +185,28 @@ actual class FaceEmbeddingExtractor actual constructor() {
         val cx = absX + absW / 2f
         val cy = absY + absH / 2f
 
-        var size = maxOf(absW, absH) * 1.4f
+        var size = maxOf(absW, absH) * 1.1f
 
-        val newX = maxOf(0f, cx - size / 2f)
-        val newY = maxOf(0f, cy - size / 2f)
+        // 1. Guarantee the crop box is never larger than the image itself
+        size = minOf(size, imgW, imgH)
 
-        size = minOf(size, imgW - newX, imgH - newY)
+        var newX = cx - size / 2f
+        var newY = cy - size / 2f
+
+        // 2. Shift the bounding box back into frame
+        if (newX < 0f) newX = 0f
+        if (newY < 0f) newY = 0f
+        if (newX + size > imgW) newX = imgW - size
+        if (newY + size > imgH) newY = imgH - size
 
         val roundedX = newX.roundToInt()
         val roundedY = newY.roundToInt()
         val roundedSize = size.roundToInt()
 
-        Log.d("RecognizeStudentCam", "Actual Crop Execution: X=$roundedX, Y=$roundedY, Size=$roundedSize on Image ${image.width}x${image.height}")
+        Log.d(
+            "RecognizeStudentCam",
+            "Actual Crop Execution: X=$roundedX, Y=$roundedY, Size=$roundedSize on Image ${image.width}x${image.height}"
+        )
 
         if (roundedSize <= 0) {
             Log.e("RecognizeStudentCam", "FATAL CROP ERROR: Calculated size is <= 0. Returning full uncropped image!")

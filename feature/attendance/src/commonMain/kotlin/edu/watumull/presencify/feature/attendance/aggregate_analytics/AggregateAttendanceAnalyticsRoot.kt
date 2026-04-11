@@ -9,7 +9,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AggregateAttendanceAnalyticsRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToSearchAttendanceForCourse: (String) -> Unit,
+    onNavigateToSearchAttendanceForCourse: (String, String?) -> Unit,
 ) {
     val viewModel: AggregateAttendanceAnalyticsViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -18,7 +18,7 @@ fun AggregateAttendanceAnalyticsRoot(
         when (event) {
             is AggregateAttendanceAnalyticsEvent.NavigateBack -> onNavigateBack()
             is AggregateAttendanceAnalyticsEvent.NavigateToSearchAttendanceForCourse ->
-                onNavigateToSearchAttendanceForCourse(event.courseId)
+                onNavigateToSearchAttendanceForCourse(event.courseId, event.divisionId)
         }
     }
 

@@ -247,23 +247,23 @@ private fun FilterSection(
                 )
 
                 // Batch Dropdown
-                PresencifyDropDownMenuBox<Batch>(
-                    value = state.selectedBatch?.batchCode ?: "All Batches",
-                    options = state.batchOptions,
-                    onSelectItem = { onAction(AggregateAttendanceAnalyticsAction.SelectBatch(it)) },
-                    label = "Batch (Optional)",
-                    itemToString = { it.batchCode },
-                    expanded = state.isBatchDropdownOpen,
-                    onDropDownVisibilityChanged = {
-                        onAction(
-                            AggregateAttendanceAnalyticsAction.ChangeBatchDropDownVisibility(
-                                it
-                            )
-                        )
-                    },
-                    enabled = !state.areBatchesLoading && !state.isLoadingAttendance,
-                    modifier = Modifier.fillMaxWidth()
-                )
+//                PresencifyDropDownMenuBox<Batch>(
+//                    value = state.selectedBatch?.batchCode ?: "All Batches",
+//                    options = state.batchOptions,
+//                    onSelectItem = { onAction(AggregateAttendanceAnalyticsAction.SelectBatch(it)) },
+//                    label = "Batch (Optional)",
+//                    itemToString = { it.batchCode },
+//                    expanded = state.isBatchDropdownOpen,
+//                    onDropDownVisibilityChanged = {
+//                        onAction(
+//                            AggregateAttendanceAnalyticsAction.ChangeBatchDropDownVisibility(
+//                                it
+//                            )
+//                        )
+//                    },
+//                    enabled = !state.areBatchesLoading && !state.isLoadingAttendance,
+//                    modifier = Modifier.fillMaxWidth()
+//                )
             }
         }
     }

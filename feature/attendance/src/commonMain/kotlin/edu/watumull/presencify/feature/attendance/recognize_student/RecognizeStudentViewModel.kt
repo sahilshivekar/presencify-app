@@ -302,10 +302,10 @@ class RecognizeStudentViewModel(
 
             // The official OpenCV SFace Cosine Similarity Threshold is 0.363
             if (bestSim >= 0.363f) {
-                Logger.d(TAG) { "Best similarity >= 0.363 Marking attendance..." }
+                Logger.d(TAG) { "Best similarity >= 0.363f Marking attendance..." }
                 markAttendance()
             } else {
-                Logger.d(TAG) { "Best similarity < 0.363. Recognition Failed." }
+                Logger.d(TAG) { "Best similarity < 0.363f. Recognition Failed." }
 
                 val score = (bestSim * 100).toInt().coerceAtLeast(0)
                 showErrorDialog(

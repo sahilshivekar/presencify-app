@@ -56,7 +56,7 @@ fun NavGraphBuilder.attendanceNavGraph(
     onNavigateToMarkAttendance: (String) -> Unit,
     onNavigateToDynamicQR: (String) -> Unit,
     onNavigateToAttendanceDetails: (String) -> Unit,
-    onNavigateToSearchAttendanceForCourse: (String) -> Unit,
+    onNavigateToSearchAttendanceForCourse: (String, String?) -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToRecognizeStudent: (String) -> Unit,
     onNavigateToScanQr: () -> Unit,

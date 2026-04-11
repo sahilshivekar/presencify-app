@@ -244,9 +244,8 @@ fun TimetableDetailsScreen(
 
                                             // Build division or batch text
                                             val batch = classSession.batch
-                                            val divisionOrBatchText = when {
+                                            val batchText = when {
                                                 batch?.batchCode != null -> batch.batchCode
-                                                division?.divisionCode != null -> division.divisionCode
                                                 else -> null
                                             }
 
@@ -259,7 +258,8 @@ fun TimetableDetailsScreen(
                                                 isExtraClass = classSession.isExtraClass,
                                                 roomNumber = classSession.room?.roomNumber,
                                                 onClick = { onAction(TimetableDetailsAction.ClassClick(classSession.id)) },
-                                                modifier = Modifier.fillMaxWidth()
+                                                modifier = Modifier.fillMaxWidth(),
+                                                divisionOrBatchText = batchText
                                             )
                                         }
                                     }

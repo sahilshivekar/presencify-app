@@ -267,7 +267,7 @@ class AggregateAttendanceAnalyticsViewModel(
                 updateState { it.copy(dialogState = null) }
             }
             is AggregateAttendanceAnalyticsAction.DonutCourseClick -> {
-                sendEvent(AggregateAttendanceAnalyticsEvent.NavigateToSearchAttendanceForCourse(action.courseId))
+                sendEvent(AggregateAttendanceAnalyticsEvent.NavigateToSearchAttendanceForCourse(action.courseId, state.selectedDivision?.id))
             }
             is AggregateAttendanceAnalyticsAction.SelectSemesterNumber -> {
                 updateState { it.copy(selectedSemesterNumber = action.semesterNumber) }

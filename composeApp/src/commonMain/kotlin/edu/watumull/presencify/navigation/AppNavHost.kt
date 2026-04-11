@@ -130,8 +130,8 @@ fun AppNavHost(
             onNavigateToMarkAttendance = { attendanceId -> rootNavController.navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId)) },
             onNavigateToDynamicQR = { attendanceId -> rootNavController.navigate(AttendanceRoutes.DynamicQR(attendanceId)) },
             onNavigateToAttendanceDetails = { attendanceId -> rootNavController.navigate(AttendanceRoutes.AttendanceDetails(attendanceId)) },
-            onNavigateToSearchAttendanceForCourse = { courseId ->
-                rootNavController.navigateToSearchAttendance(courseId)
+            onNavigateToSearchAttendanceForCourse = { courseId, divisionId ->
+                rootNavController.navigateToSearchAttendance(courseId = courseId, divisionId = divisionId)
             },
             onNavigateToSearchAttendanceForCourseAndStudent = { courseId, studentId ->
                 rootNavController.navigateToSearchAttendance(courseId, studentId)
