@@ -63,6 +63,7 @@ import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
+import kotlin.collections.filter
 
 @Composable
 fun StudentDetailsScreen(
@@ -709,7 +710,7 @@ private fun DivisionItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Division ${studentDivision.division?.divisionCode ?: ""}",
+            text = "Division ${studentDivision.division?.divisionCode ?: ""} [Roll no - ${studentDivision.rollNo}]",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -765,7 +766,18 @@ private fun DivisionItem(
 
             // Past batches
             val pastBatches = studentBatches
-                ?.filter { it.batch?.divisionId == studentDivision.division?.id }
+                ?.filter {
+                    it.batch?.divisionId == studentDivision.division?.id &&
+                            it.startDate >= studentDivision.startDate &&
+                            (
+                                    (it.endDate == null && studentDivision.endDate == null) ||
+                                            (studentDivision.endDate?.let { divEnd ->
+                                                it.endDate?.let { batchEnd ->
+                                                    batchEnd <= divEnd
+                                                }
+                                            } == true)
+                                    )
+                }
                 ?.sortedBy { it.startDate }
 
             pastBatches?.forEach { studentBatch ->

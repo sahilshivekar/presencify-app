@@ -7,6 +7,7 @@ data class StudentDivision(
     val id: String,
     val studentId: String,
     val divisionId: String,
+    val rollNo: Int,
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val student: Student? = null,

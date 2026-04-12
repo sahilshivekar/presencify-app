@@ -45,9 +45,11 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.AttendanceListItem
 import edu.watumull.presencify.core.presentation.components.CourseListItem
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -242,7 +244,7 @@ private fun SearchAttendanceScreenContent(
                                 totalCount = attendance.attendanceStudents?.size
                                 presentCount = attendance.attendanceStudents?.count { it.attendanceStatus }
                             }
-
+                            val currentUser = LocalUserRole.current
                             AttendanceListItem(
                                 attendanceDate = attendance.date.toReadableString(),
                                 courseName = if (state.routeCourseId == null) classSession.course?.name else null,
@@ -251,7 +253,10 @@ private fun SearchAttendanceScreenContent(
                                 startTime = classSession.startTime.toReadableString(),
                                 endTime = classSession.endTime.toReadableString(),
                                 dayOfWeek = classSession.dayOfWeek.toDisplayLabel(),
-                                onClick = { onAction(SearchAttendanceAction.AttendanceCardClick(attendance.id)) },
+                                onClick = {
+                                    if (currentUser != UserRole.STUDENT)
+                                        onAction(SearchAttendanceAction.AttendanceCardClick(attendance.id))
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                                 isPresent = isPresent,
                                 totalCount = totalCount,

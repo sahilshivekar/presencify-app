@@ -462,7 +462,7 @@ private fun DivisionDetailsItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Division ${studentDivision.division?.divisionCode ?: ""}",
+            text = "Division ${studentDivision.division?.divisionCode ?: ""} [Roll no - ${studentDivision.rollNo}]",
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -518,7 +518,18 @@ private fun DivisionDetailsItem(
 
             // Batches
             val pastBatches = studentBatches
-                ?.filter { it.batch?.divisionId == studentDivision.division?.id }
+                ?.filter {
+                    it.batch?.divisionId == studentDivision.division?.id &&
+                            it.startDate >= studentDivision.startDate &&
+                            (
+                                    (it.endDate == null && studentDivision.endDate == null) ||
+                                            (studentDivision.endDate?.let { divEnd ->
+                                                it.endDate?.let { batchEnd ->
+                                                    batchEnd <= divEnd
+                                                }
+                                            } == true)
+                                    )
+                }
                 ?.sortedBy { it.startDate }
 
             pastBatches?.forEach { studentBatch ->

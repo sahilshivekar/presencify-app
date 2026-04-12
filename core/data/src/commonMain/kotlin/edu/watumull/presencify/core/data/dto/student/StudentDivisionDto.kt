@@ -10,6 +10,7 @@ data class StudentDivisionDto(
     val id: String,
     val studentId: String,
     val divisionId: String,
+    val rollNo: Int,
     val startDate: LocalDate,
     val endDate: LocalDate? = null,
     val createdAt: String,

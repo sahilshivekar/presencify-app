@@ -9,6 +9,7 @@ fun StudentDivisionDto.toDomain(): StudentDivision =
         id = id,
         studentId = studentId,
         divisionId = divisionId,
+        rollNo = rollNo,
         startDate = startDate,
         endDate = endDate,
         student = student?.toDomain(),
