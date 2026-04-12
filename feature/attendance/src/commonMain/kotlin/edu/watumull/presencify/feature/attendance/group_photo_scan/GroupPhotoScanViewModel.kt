@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -60,13 +61,33 @@ class GroupPhotoScanViewModel(
         viewModelScope.launch {
             attendanceRepository.groupPhotoScan(attendanceId, currentImages)
                 .onSuccess { result ->
-                    updateState { it.copy(isLoading = false) }
-                    launch {
-                        SnackbarController.sendEvent(
-                            SnackbarEvent(message = "Attendance for ${result.presentCount} students marked successfully!")
+
+                    // 🔥 Build detailed message
+                    val message = buildString {
+                        append("Attendance Scan Completed\n\n")
+
+                        append("👥 Total Faces Detected: ${result.totalFacesDetected}\n")
+                        append("✅ Present Students: ${result.presentCount}\n")
+                        append("❓ Unknown Faces: ${result.unknownFacesCount}\n")
+
+                        // Optional insight
+                        if (result.totalFacesDetected == 0) {
+                            append("\n⚠️ No faces detected. Please try again.")
+                        } else if (result.presentCount == 0) {
+                            append("\n⚠️ No registered students recognized.")
+                        }
+                    }
+
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            dialogState = GroupPhotoScanState.DialogState(
+                                dialogType = DialogType.SUCCESS, // 🔥 always show dialog
+                                title = "Scan Result",
+                                message = UiText.DynamicString(message)
+                            )
                         )
                     }
-                    sendEvent(GroupPhotoScanEvent.NavigateBack)
                 }
                 .onError { error ->
                     updateState {
