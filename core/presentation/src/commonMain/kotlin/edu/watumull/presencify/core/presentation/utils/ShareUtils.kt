@@ -48,6 +48,7 @@ enum class MimeType {
     PDF,
     TEXT,
     IMAGE,
+    CSV
 }
 
 /**

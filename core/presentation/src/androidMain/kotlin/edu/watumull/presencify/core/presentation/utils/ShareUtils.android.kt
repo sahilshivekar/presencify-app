@@ -185,6 +185,7 @@ actual object ShareUtils {
         MimeType.PDF -> "application/pdf"
         MimeType.TEXT -> "text/plain"
         MimeType.IMAGE -> "image/*"
+        MimeType.CSV -> "text/csv"
     }
 
     /**

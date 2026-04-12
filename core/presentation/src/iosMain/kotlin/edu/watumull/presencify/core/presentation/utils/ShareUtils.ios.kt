@@ -130,4 +130,16 @@ actual object ShareUtils {
             imageFormat = ImageFormat.PNG,
         )
     }
+
+    /**
+     * Maps [MimeType] to a corresponding iOS UTI string.
+     *
+     * @return iOS-compatible UTI string.
+     */
+    private fun MimeType.toIosUti(): String = when (this) {
+        MimeType.PDF -> "com.adobe.pdf"
+        MimeType.TEXT -> "public.plain-text"
+        MimeType.IMAGE -> "public.image"
+        MimeType.CSV -> "public.comma-separated-values-text"
+    }
 }

@@ -16,5 +16,6 @@ sealed interface DefaultersAction {
     data class ChangeCourseDropDownVisibility(val isVisible: Boolean) : DefaultersAction
 
     data object GetDefaulters : DefaultersAction
+    data object ExportCsv : DefaultersAction
     data object DismissDialog : DefaultersAction
 }

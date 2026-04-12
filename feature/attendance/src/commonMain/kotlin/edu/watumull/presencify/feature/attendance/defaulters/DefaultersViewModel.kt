@@ -10,6 +10,10 @@ import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.utils.ShareFileModel
+import edu.watumull.presencify.core.presentation.utils.MimeType
+import edu.watumull.presencify.core.presentation.utils.ShareUtils
+import edu.watumull.presencify.core.presentation.utils.CsvUtils
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -29,36 +33,54 @@ class DefaultersViewModel(
     override fun handleAction(action: DefaultersAction) {
         when (action) {
             is DefaultersAction.SelectSemesterNumber -> {
-                updateState { it.copy(selectedSemesterNumber = action.semesterNumber, isSemesterNumberDropdownOpen = false) }
+                updateState {
+                    it.copy(
+                        selectedSemesterNumber = action.semesterNumber,
+                        isSemesterNumberDropdownOpen = false
+                    )
+                }
                 tryResolveSemesterAndLoadCourses()
             }
+
             is DefaultersAction.ChangeSemesterNumberDropDownVisibility -> {
                 updateState { it.copy(isSemesterNumberDropdownOpen = action.isVisible) }
             }
+
             is DefaultersAction.UpdateAcademicStartYear -> {
                 updateState { it.copy(academicStartYear = action.year) }
                 tryResolveSemesterAndLoadCourses()
             }
+
             is DefaultersAction.UpdateAcademicEndYear -> {
                 updateState { it.copy(academicEndYear = action.year) }
                 tryResolveSemesterAndLoadCourses()
             }
+
             is DefaultersAction.SelectBranch -> {
                 updateState { it.copy(selectedBranch = action.branch, isBranchDropdownOpen = false) }
                 tryResolveSemesterAndLoadCourses()
             }
+
             is DefaultersAction.ChangeBranchDropDownVisibility -> {
                 updateState { it.copy(isBranchDropdownOpen = action.isVisible) }
             }
+
             is DefaultersAction.SelectCourse -> {
                 updateState { it.copy(selectedCourse = action.course, isCourseDropdownOpen = false) }
             }
+
             is DefaultersAction.ChangeCourseDropDownVisibility -> {
                 updateState { it.copy(isCourseDropdownOpen = action.isVisible) }
             }
+
             DefaultersAction.GetDefaulters -> {
                 getStudents()
             }
+
+            DefaultersAction.ExportCsv -> {
+                exportCsv()
+            }
+
             DefaultersAction.DismissDialog -> {
                 updateState { it.copy(dialogState = null) }
             }
@@ -73,6 +95,7 @@ class DefaultersViewModel(
                     showError(result.error.toUiText())
                     updateState { it.copy(areBranchesLoading = false) }
                 }
+
                 is Result.Success -> {
                     updateState {
                         it.copy(
@@ -120,6 +143,7 @@ class DefaultersViewModel(
                 is Result.Error -> {
                     updateState { it.copy(areCoursesLoading = false) }
                 }
+
                 is Result.Success -> {
                     updateState {
                         it.copy(
@@ -147,7 +171,17 @@ class DefaultersViewModel(
         }
 
         viewModelScope.launch {
-            updateState { it.copy(isLoadingStudents = true, students = emptyList(), studentAttendanceMap = emptyMap(), studentCourseAttendanceMap = emptyMap(), studentAttendanceNumbersMap = emptyMap(), studentCourseAttendanceNumbersMap = emptyMap(), isAttendanceLoadingMap = emptyMap()) }
+            updateState {
+                it.copy(
+                    isLoadingStudents = true,
+                    students = emptyList(),
+                    studentAttendanceMap = emptyMap(),
+                    studentCourseAttendanceMap = emptyMap(),
+                    studentAttendanceNumbersMap = emptyMap(),
+                    studentCourseAttendanceNumbersMap = emptyMap(),
+                    isAttendanceLoadingMap = emptyMap()
+                )
+            }
 
             when (val result = studentRepository.getStudents(
                 semesterNumbers = listOf(currentState.selectedSemesterNumber.value),
@@ -160,6 +194,7 @@ class DefaultersViewModel(
                     showError(result.error.toUiText())
                     updateState { it.copy(isLoadingStudents = false) }
                 }
+
                 is Result.Success -> {
                     val students = result.data.students
                     updateState {
@@ -324,6 +359,93 @@ class DefaultersViewModel(
                     message = message
                 )
             )
+        }
+    }
+
+    private fun exportCsv() {
+        val currentState = state
+
+        if (currentState.students.isEmpty() || currentState.courseOptions.isEmpty()) {
+            showError(UiText.DynamicString("No data available to export"))
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val csvBuilder = StringBuilder()
+
+                val semesterName = currentState.selectedSemesterNumber?.toDisplayLabel() ?: "N/A"
+                val academicYear = "${currentState.academicStartYear}-${currentState.academicEndYear}"
+                val branchName = currentState.selectedBranch?.name ?: "N/A"
+
+                csvBuilder.append("Semester Details\n")
+                csvBuilder.append("Semester Number,Academic Year,Branch\n")
+                csvBuilder.append("$semesterName,$academicYear,$branchName\n")
+                csvBuilder.append("\n")
+
+                val courses = currentState.courseOptions
+
+                val headerColumns = mutableListOf("PRN", "Roll No", "Full Name")
+                courses.forEach { course ->
+                    val safeName = course.name.replace(",", " ")
+                    headerColumns.add(safeName)
+                }
+                headerColumns.add("Overall Status")
+
+                csvBuilder.append(headerColumns.joinToString(",")).append("\n")
+
+                val sortedStudents = currentState.students.sortedBy { student ->
+                    student.studentDivisions?.firstOrNull { it.endDate == null }?.rollNo ?: Int.MAX_VALUE
+                }
+
+                sortedStudents.forEach { student ->
+                    val rowColumns = mutableListOf<String>()
+                    rowColumns.add(student.prn)
+
+                    val rollNo = student.studentDivisions?.firstOrNull { it.endDate == null }?.rollNo?.toString() ?: "N/A"
+                    rowColumns.add(rollNo)
+
+                    val safeFullName = "${student.firstName} ${student.lastName}".replace(",", " ")
+                    rowColumns.add(safeFullName)
+
+                    var isDefaulter = false
+
+                    courses.forEach { course ->
+                        val numbers = currentState.studentCourseAttendanceNumbersMap[student.id]?.get(course.id)
+                        val percentage = currentState.studentCourseAttendanceMap[student.id]?.get(course.id)
+
+                        val cellValue = if (numbers != null && percentage != null) {
+                            if (percentage < 75.0f) {
+                                isDefaulter = true
+                            }
+                            // Encapsulating the entire string inside ="..." prevents Excel from parsing it as a formula or date
+                            "=\"${numbers.first}/${numbers.second} - ${percentage.toInt()}%\""
+                        } else {
+                            "N/A"
+                        }
+
+                        rowColumns.add(cellValue)
+                    }
+
+                    val overallStatus = if (isDefaulter) "Defaulter" else ""
+                    rowColumns.add(overallStatus)
+
+                    csvBuilder.append(rowColumns.joinToString(",")).append("\n")
+                }
+
+                val csvBytes = CsvUtils.stringToBytes(csvBuilder.toString())
+
+                ShareUtils.shareFile(
+                    ShareFileModel(
+                        mime = MimeType.CSV,
+                        fileName = "Defaulters_${branchName}_${academicYear}.csv",
+                        bytes = csvBytes
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                showError(UiText.DynamicString("Failed to generate CSV: ${e.message}"))
+            }
         }
     }
 }
