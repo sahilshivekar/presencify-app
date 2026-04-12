@@ -14,4 +14,11 @@ sealed interface RecognizeStudentAction {
     data object OnCheatingDetected : RecognizeStudentAction // New: triggered when face disappears from camera during critical liveness steps
     data object OnDismissDialog : RecognizeStudentAction
     data object OnRetryFromDialog : RecognizeStudentAction
+
+    // Screen lifecycle hooks to start/cancel global timeout
+    data object OnScreenStarted : RecognizeStudentAction
+    data object OnScreenStopped : RecognizeStudentAction
+
+    // Internal: fired when the 90s timeout job completes
+    data object OnGlobalTimeoutElapsed : RecognizeStudentAction
 }

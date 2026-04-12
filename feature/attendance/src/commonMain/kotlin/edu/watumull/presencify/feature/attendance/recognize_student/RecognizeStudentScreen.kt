@@ -11,10 +11,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 
@@ -23,6 +26,18 @@ fun RecognizeStudentScreen(
     state: RecognizeStudentState,
     onAction: (RecognizeStudentAction) -> Unit
 ) {
+    // Notify ViewModel when screen becomes visible so it can start the 90s timeout
+    LaunchedEffect(Unit) {
+        onAction(RecognizeStudentAction.OnScreenStarted)
+    }
+
+    // Ensure we cancel the timeout when screen is disposed/navigated away
+    DisposableEffect(Unit) {
+        onDispose {
+            onAction(RecognizeStudentAction.OnScreenStopped)
+        }
+    }
+
     PresencifyScaffold(
         topBarTitle = "Face Verification",
         backPress = { onAction(RecognizeStudentAction.NavigateBack) }

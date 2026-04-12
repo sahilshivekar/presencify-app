@@ -19,9 +19,9 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.firstOrNull
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 
 class RecognizeStudentViewModel(
     savedStateHandle: SavedStateHandle,
@@ -39,6 +39,9 @@ class RecognizeStudentViewModel(
     private var lastStepCompletedTime: Long = 0
     private var storedFaceDescriptor: List<Float>? = null
     private var timeoutActive: Boolean = false
+
+    // Global 90s timeout job; scoped to screen lifetime
+    private var globalTimeoutJob: Job? = null
 
     init {
         Logger.d(TAG) { "VM init: loading student data for attendanceId=$attendanceId" }
@@ -63,9 +66,9 @@ class RecognizeStudentViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            error = UiText.DynamicString("Face not registered in database.")
                         )
                     }
+                    showErrorDialog(UiText.DynamicString("Face not registered yet."))
                 } else {
                     Logger.d(TAG) {
                         "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}"
@@ -129,6 +132,8 @@ class RecognizeStudentViewModel(
     override fun handleAction(action: RecognizeStudentAction) {
         when (action) {
             is RecognizeStudentAction.NavigateBack -> {
+                // Cancel global timeout when user leaves screen manually
+                cancelGlobalTimeout()
                 viewModelScope.launch { sendEvent(RecognizeStudentEvent.NavigateBack) }
             }
 
@@ -184,6 +189,81 @@ class RecognizeStudentViewModel(
                 }
                 startLivenessCheck()
             }
+
+            // Screen lifecycle: start/cancel the 90s global timeout
+            is RecognizeStudentAction.OnScreenStarted -> {
+                startGlobalTimeoutIfNeeded()
+            }
+
+            is RecognizeStudentAction.OnScreenStopped -> {
+                cancelGlobalTimeout()
+            }
+
+            is RecognizeStudentAction.OnGlobalTimeoutElapsed -> {
+                handleGlobalTimeoutElapsed()
+            }
+        }
+    }
+
+    // Start a 90-second timeout tied to this screen. Only start once per entry.
+    private fun startGlobalTimeoutIfNeeded() {
+        if (state.isGlobalTimeoutActive || state.hasGlobalTimeoutFired) return
+
+        Logger.d(TAG) { "Starting global 90s timeout for RecognizeStudent screen" }
+        updateState { it.copy(isGlobalTimeoutActive = true) }
+
+        globalTimeoutJob?.cancel()
+        globalTimeoutJob = viewModelScope.launch {
+            delay(90_000L)
+
+            // If liveness already succeeded or timeout already handled, do nothing
+            if (state.isLivenessComplete || state.hasGlobalTimeoutFired) {
+                Logger.d(TAG) { "Global timeout job finished but liveness already completed or timeout handled." }
+                return@launch
+            }
+
+            Logger.d(TAG) { "Global 90s timeout elapsed; sending OnGlobalTimeoutElapsed action" }
+            updateState {
+                it.copy(
+                    isGlobalTimeoutActive = false,
+                    hasGlobalTimeoutFired = true,
+                )
+            }
+            // Route through normal MVI action handling
+            trySendAction(RecognizeStudentAction.OnGlobalTimeoutElapsed)
+        }
+    }
+
+    private fun cancelGlobalTimeout() {
+        if (globalTimeoutJob == null && !state.isGlobalTimeoutActive) return
+        Logger.d(TAG) { "Cancelling global 90s timeout job" }
+        globalTimeoutJob?.cancel()
+        globalTimeoutJob = null
+        updateState { it.copy(isGlobalTimeoutActive = false) }
+    }
+
+    private fun handleGlobalTimeoutElapsed() {
+        Logger.d(TAG) { "Handling global timeout: backing out and showing snackbar" }
+
+        // Stop any ongoing liveness and prevent further recognition
+        updateState {
+            it.copy(
+                isRecognizing = false,
+                shouldCaptureEmbedding = false,
+                isLivenessComplete = false,
+                dialogState = null,
+            )
+        }
+
+        viewModelScope.launch {
+            // Show a global snackbar so user understands why they were navigated back
+            SnackbarController.sendEvent(
+                SnackbarEvent(
+                    message = "Liveness verification timed out. Please try again.",
+                )
+            )
+            // Then navigate back using the existing NavigateBack event
+            sendEvent(RecognizeStudentEvent.NavigateBack)
         }
     }
 
@@ -381,3 +461,4 @@ class RecognizeStudentViewModel(
         }
     }
 }
+

@@ -28,4 +28,7 @@ data class RecognizeStudentState(
     val isCheatingSuspected: Boolean = false,
     // Add a nullable dialogState property
     val dialogState: RecognizeStudentDialogState? = null,
+    // Global screen-level timeout (90s) bookkeeping
+    val isGlobalTimeoutActive: Boolean = false,
+    val hasGlobalTimeoutFired: Boolean = false,
 )
