@@ -140,6 +140,10 @@ fun NavController.navigateToRecognizeStudent(attendanceId: String) {
     }
 }
 
+fun NavController.navigateToGroupPhotoScan(attendanceId: String) {
+    navigate(AttendanceRoutes.GroupPhotoScan(attendanceId = attendanceId))
+}
+
 
 /**
  * Navigate to Add Student Biometrics screen

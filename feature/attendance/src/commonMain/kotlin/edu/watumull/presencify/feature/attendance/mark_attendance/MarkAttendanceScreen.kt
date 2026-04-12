@@ -125,12 +125,12 @@ fun MarkAttendanceScreen(
                                         onClick = { onAction(MarkAttendanceAction.DynamicQRClick) },
                                         modifier = Modifier.fillMaxWidth()
                                     )
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    PresencifyActionBar(
-                                        text = "Group photo scan",
-                                        onClick = { onAction(MarkAttendanceAction.GroupPhotoScanClick) },
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
+//                                    Spacer(modifier = Modifier.height(12.dp))
+//                                    PresencifyActionBar(
+//                                        text = "Group photo scan",
+//                                        onClick = { onAction(MarkAttendanceAction.GroupPhotoScanClick) },
+//                                        modifier = Modifier.fillMaxWidth()
+//                                    )
                                 }
 
                                 // Stats Cards Section

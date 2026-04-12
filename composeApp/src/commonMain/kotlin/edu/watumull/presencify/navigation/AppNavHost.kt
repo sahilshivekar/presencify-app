@@ -49,6 +49,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoo
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDynamicQR
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToGroupPhotoScan
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSemesterDetails
@@ -65,15 +66,6 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTim
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentForgotPassword
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentVerifyCode
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherForgotPassword
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherLogin
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherVerifyCode
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 
 @Composable
 fun AppNavHost(
@@ -127,18 +119,26 @@ fun AppNavHost(
 
         attendanceNavGraph(
             onNavigateBack = { rootNavController.navigateUp() },
-            onNavigateToMarkAttendance = { attendanceId -> rootNavController.navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId)) },
-            onNavigateToDynamicQR = { attendanceId -> rootNavController.navigate(AttendanceRoutes.DynamicQR(attendanceId)) },
-            onNavigateToAttendanceDetails = { attendanceId -> rootNavController.navigate(AttendanceRoutes.AttendanceDetails(attendanceId)) },
+            onNavigateToMarkAttendance = { attendanceId ->
+                rootNavController.navigateToMarkStudentAttendance(attendanceId)
+            },
+            onNavigateToDynamicQR = { attendanceId -> rootNavController.navigateToDynamicQR(attendanceId) },
+            onNavigateToAttendanceDetails = { attendanceId ->
+                rootNavController.navigateToAttendanceDetails(attendanceId)
+            },
             onNavigateToSearchAttendanceForCourse = { courseId, divisionId ->
                 rootNavController.navigateToSearchAttendance(courseId = courseId, divisionId = divisionId)
             },
             onNavigateToSearchAttendanceForCourseAndStudent = { courseId, studentId ->
                 rootNavController.navigateToSearchAttendance(courseId, studentId)
             },
-            onNavigateToRecognizeStudent = { attendanceId -> rootNavController.navigate(AttendanceRoutes.RecognizeStudent(attendanceId)) },
-            onNavigateToScanQr = { rootNavController.navigate(AttendanceRoutes.ScanQr) },
-            onNavigateToGroupPhotoScan = { attendanceId -> rootNavController.navigate(AttendanceRoutes.GroupPhotoScan(attendanceId)) },
+            onNavigateToRecognizeStudent = { attendanceId ->
+                rootNavController.navigateToRecognizeStudent(attendanceId)
+            },
+            onNavigateToScanQr = { rootNavController.navigateToScanQr() },
+            onNavigateToGroupPhotoScan = { attendanceId ->
+                rootNavController.navigateToGroupPhotoScan(attendanceId)
+            },
         )
 
         usersNavGraph(
