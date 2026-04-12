@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -87,6 +88,13 @@ fun AttendanceDashboardScreen(
                     text = "Add Student Biometrics",
                     onClick = { onAction(AttendanceDashboardAction.NavigateToSearchStudentForBiometrics) },
                     leadingImageVector = Icons.Default.Face,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                PresencifyActionBar(
+                    text = "Defaulters",
+                    onClick = { onAction(AttendanceDashboardAction.NavigateToDefaulters) },
+                    leadingImageVector = Icons.Default.Warning,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

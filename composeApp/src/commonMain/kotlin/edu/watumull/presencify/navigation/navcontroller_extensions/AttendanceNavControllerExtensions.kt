@@ -144,6 +144,13 @@ fun NavController.navigateToGroupPhotoScan(attendanceId: String) {
     navigate(AttendanceRoutes.GroupPhotoScan(attendanceId = attendanceId))
 }
 
+/**
+ * Navigate to Defaulters screen
+ */
+fun NavController.navigateToDefaulters() {
+    navigate(AttendanceRoutes.Defaulters)
+}
+
 
 /**
  * Navigate to Add Student Biometrics screen

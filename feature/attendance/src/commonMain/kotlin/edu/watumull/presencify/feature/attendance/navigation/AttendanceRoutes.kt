@@ -74,4 +74,7 @@ sealed interface AttendanceRoutes : NavRoute {
 
     @Serializable
     data class GroupPhotoScan(val attendanceId: String) : AttendanceRoutes
+
+    @Serializable
+    data object Defaulters : AttendanceRoutes
 }

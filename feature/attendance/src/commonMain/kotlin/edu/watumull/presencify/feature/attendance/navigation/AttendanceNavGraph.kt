@@ -18,6 +18,7 @@ import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
 import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
 import edu.watumull.presencify.feature.attendance.group_photo_scan.GroupPhotoScanRoot
+import edu.watumull.presencify.feature.attendance.defaulters.DefaultersRoot
 import kotlinx.coroutines.flow.firstOrNull
 
 fun NavGraphBuilder.attendanceDashboard(
@@ -28,7 +29,8 @@ fun NavGraphBuilder.attendanceDashboard(
     onNavigateToCreateAttendance: () -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToScanQr: () -> Unit,
-    onNavigateToSearchStudentForBiometrics: () -> Unit // New callback
+    onNavigateToSearchStudentForBiometrics: () -> Unit,
+    onNavigateToDefaulters: () -> Unit, // New callback
 ) {
     composableWithSlideTransitions<AttendanceRoutes.AttendanceDashboard> {
         AttendanceDashboardRoot(
@@ -37,7 +39,8 @@ fun NavGraphBuilder.attendanceDashboard(
             onNavigateToAggregateAttendanceAnalytics = onNavigateToAggregateAttendanceAnalytics,
             onNavigateToSearchAttendance = onNavigateToSearchAttendance,
             onNavigateToCreateAttendance = onNavigateToCreateAttendance,
-            onNavigateToSearchStudentForBiometrics = onNavigateToSearchStudentForBiometrics // Pass callback
+            onNavigateToSearchStudentForBiometrics = onNavigateToSearchStudentForBiometrics,
+            onNavigateToDefaulters = onNavigateToDefaulters, // Pass callback
         )
     }
 
@@ -146,6 +149,13 @@ fun NavGraphBuilder.attendanceNavGraph(
     // 10. Group Photo Scan
     composableWithSlideTransitions<AttendanceRoutes.GroupPhotoScan> {
         GroupPhotoScanRoot(
+            onNavigateBack = onNavigateBack,
+        )
+    }
+
+    // 11. Defaulters
+    composableWithSlideTransitions<AttendanceRoutes.Defaulters> {
+        DefaultersRoot(
             onNavigateBack = onNavigateBack,
         )
     }

@@ -7,4 +7,5 @@ sealed interface AttendanceDashboardEvent {
     data object NavigateToSearchAttendance : AttendanceDashboardEvent
     data object NavigateToCreateAttendance : AttendanceDashboardEvent
     data object NavigateToSearchStudentForBiometrics : AttendanceDashboardEvent
+    data object NavigateToDefaulters : AttendanceDashboardEvent
 }

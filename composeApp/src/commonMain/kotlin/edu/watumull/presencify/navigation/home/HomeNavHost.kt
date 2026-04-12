@@ -17,6 +17,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAgg
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToDivision
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToSemester
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDefaulters
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToImportStudents
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToImportTeachers
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToLinkUnlinkCourse
@@ -116,7 +117,8 @@ fun HomeNavHost(
                 rootNavController.navigateToSearchStudent(
                     intention = SearchStudentIntention.ADD_STUDENT_BIOMETRIC.name
                 )
-            }
+            },
+            onNavigateToDefaulters = rootNavController::navigateToDefaulters
         )
 
         usersDashboard(
@@ -133,9 +135,9 @@ fun HomeNavHost(
         )
 
         scheduleDashboard(
-            onNavigateToSearchRoom = rootNavController::navigateToSearchRoom,
             onNavigateToSearchClass = rootNavController::navigateToSearchClass,
-            onNavigateToSearchTimetable = rootNavController::navigateToSearchTimetable
+            onNavigateToSearchTimetable = rootNavController::navigateToSearchTimetable,
+            onNavigateToSearchRoom = rootNavController::navigateToSearchRoom
         )
     }
 }
