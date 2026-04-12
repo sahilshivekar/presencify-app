@@ -31,7 +31,7 @@ actual class FaceEmbeddingExtractor actual constructor() {
         }
 
         if (detectorSession == null) {
-            val detectorModelBytes = androidContext.assets.open("blaze.onnx").readBytes()
+            val detectorModelBytes = androidContext.assets.open("face_detection_yunet_2023mar.onnx").readBytes()
             detectorSession = ortEnvironment?.createSession(detectorModelBytes)
         }
 
@@ -41,30 +41,6 @@ actual class FaceEmbeddingExtractor actual constructor() {
         }
     }
 
-    private fun imageToBlazeTensor(bitmap: Bitmap): OnnxTensor {
-        val env = ortEnvironment ?: throw IllegalStateException("OrtEnvironment not initialized")
-        val width = bitmap.width
-        val height = bitmap.height
-        val size = width * height
-//        val floatBuffer = FloatBuffer.allocate(3 * size)
-        // Replace FloatBuffer.allocate(3 * size) with:
-        val byteBuffer = ByteBuffer.allocateDirect(3 * size * 4) // 4 bytes per float
-        byteBuffer.order(ByteOrder.nativeOrder())
-        val floatBuffer = byteBuffer.asFloatBuffer()
-        val pixels = IntArray(size)
-
-        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
-
-        for (i in 0 until size) {
-            val pixel = pixels[i]
-            // BlazeFace: RGB Order, Normalized to [-1, 1]
-            floatBuffer.put(i, (Color.red(pixel) / 127.5f) - 1.0f)
-            floatBuffer.put(size + i, (Color.green(pixel) / 127.5f) - 1.0f)
-            floatBuffer.put(size * 2 + i, (Color.blue(pixel) / 127.5f) - 1.0f)
-        }
-        floatBuffer.rewind()
-        return OnnxTensor.createTensor(env, floatBuffer, longArrayOf(1, 3, height.toLong(), width.toLong()))
-    }
 
     private fun imageToSFaceTensor(bitmap: Bitmap): OnnxTensor {
         val env = ortEnvironment ?: throw IllegalStateException("OrtEnvironment not initialized")
@@ -93,64 +69,117 @@ actual class FaceEmbeddingExtractor actual constructor() {
     }
 
     actual fun generateSingleDescriptor(image: PlatformImage): FloatArray? {
+
         val env = ortEnvironment ?: throw IllegalStateException("ONNX Env not initialized")
         val detector = detectorSession ?: throw IllegalStateException("Detector not initialized")
         val recognizer = recognizerSession ?: throw IllegalStateException("Recognizer not initialized")
 
-        // 1. Resize for Detection (128x128)
-        val detectScaledImage = Bitmap.createScaledBitmap(image, 128, 128, true)
-        val detectTensor = imageToBlazeTensor(detectScaledImage) // Make sure you are using the BlazeTensor method!
+        val DETECT_SIZE = 640
+        val detectScaledImage = Bitmap.createScaledBitmap(image, DETECT_SIZE, DETECT_SIZE, true)
 
-        // 2. Prepare Detector Configuration Tensors
-        val confTensor = OnnxTensor.createTensor(env, FloatBuffer.wrap(floatArrayOf(0.75f)), longArrayOf(1))
-        val iouTensor = OnnxTensor.createTensor(env, FloatBuffer.wrap(floatArrayOf(0.3f)), longArrayOf(1))
-        val maxDetTensor = OnnxTensor.createTensor(env, LongBuffer.wrap(longArrayOf(1L)), longArrayOf(1))
+        val detectTensor = imageToSFaceTensor(detectScaledImage)
 
-        val detectorInputs = mapOf(
-            "image" to detectTensor,
-            "conf_threshold" to confTensor,
-            "iou_threshold" to iouTensor,
-            "max_detections" to maxDetTensor
-        )
+        val inputName = detector.inputNames.iterator().next()
+        val detectorResults = detector.run(mapOf(inputName to detectTensor))
 
-        // 3. Run Detection
-        val detectorResults = detector.run(detectorInputs)
+        val outputs = detectorResults
 
-        val boxesTensor = detectorResults.get(0) as? OnnxTensor
-        val boxesBuffer = boxesTensor?.floatBuffer
+        fun get(name: String): OnnxTensor {
+            val optional = outputs.get(name)
+                ?: throw IllegalStateException("Output $name not found")
 
-        detectTensor.close()
-        confTensor.close()
-        iouTensor.close()
-        maxDetTensor.close()
-        detectorResults.close()
+            if (!optional.isPresent) {
+                throw IllegalStateException("Output $name is empty")
+            }
 
-        if (boxesBuffer == null || boxesBuffer.capacity() < 4) return null
-
-        // 4. Extract Face Coordinates
-
-        var x1 = boxesBuffer.get(0) // xmin
-        var y1 = boxesBuffer.get(1) // ymin
-        var x2 = boxesBuffer.get(2) // xmax
-        var y2 = boxesBuffer.get(3) // ymax
-
-        // Normalize absolute coords to 0.0 - 1.0 percentages
-        if (x2 > 1.0f || y2 > 1.0f) {
-            x1 /= 128.0f
-            y1 /= 128.0f
-            x2 /= 128.0f
-            y2 /= 128.0f
+            return optional.get() as OnnxTensor
         }
 
-        val faceBox = FaceBoundingBox(x1, y1, x2 - x1, y2 - y1)
-        Log.d("RecognizeStudentCam", "BlazeFace Box (Normalized): X=$x1, Y=$y1, W=${faceBox.w}, H=${faceBox.h}")
+        val scales = listOf(8, 16, 32)
 
-        // 5. Crop and Align
-        val croppedFace = alignAndCrop(image, faceBox)
+        var bestScore = 0f
+        var bestBox: FloatArray? = null
+        var bestLandmarks: FloatArray? = null
 
-        // 6. Recognition
-        val recognizeTensor = imageToSFaceTensor(croppedFace) // Make sure you are using the SFace method!
+        for (s in scales) {
+
+            val cls = get("cls_$s").floatBuffer
+            val obj = get("obj_$s").floatBuffer
+            val bbox = get("bbox_$s").floatBuffer
+            val kps = get("kps_$s").floatBuffer
+
+            cls.rewind()
+            obj.rewind()
+            bbox.rewind()
+            kps.rewind()
+
+            val count = cls.capacity()
+
+            for (i in 0 until count) {
+
+                val score = cls.get(i) * obj.get(i)
+
+                if (score > bestScore) {
+                    bestScore = score
+
+                    val bOffset = i * 4
+                    val kOffset = i * 10
+
+                    val cx = bbox.get(bOffset + 0)
+                    val cy = bbox.get(bOffset + 1)
+                    val w = bbox.get(bOffset + 2)
+                    val h = bbox.get(bOffset + 3)
+
+                    val landmarks = floatArrayOf(
+                        kps.get(kOffset + 0), kps.get(kOffset + 1), // left eye
+                        kps.get(kOffset + 2), kps.get(kOffset + 3), // right eye
+                        kps.get(kOffset + 4), kps.get(kOffset + 5), // nose
+                        kps.get(kOffset + 6), kps.get(kOffset + 7), // mouth left
+                        kps.get(kOffset + 8), kps.get(kOffset + 9)  // mouth right
+                    )
+
+                    bestBox = floatArrayOf(cx, cy, w, h)
+                    bestLandmarks = landmarks
+                }
+            }
+        }
+
+        if (bestBox == null || bestLandmarks == null || bestScore < 0.5f) {
+            detectorResults.close()
+            detectTensor.close()
+            return null
+        }
+
+        val cx = bestBox[0]
+        val cy = bestBox[1]
+        val w = bestBox[2]
+        val h = bestBox[3]
+
+        val scaleFactor = DETECT_SIZE.toFloat()
+
+        val x = (cx - w / 2f) * scaleFactor
+        val y = (cy - h / 2f) * scaleFactor
+        val width = w * scaleFactor
+        val height = h * scaleFactor
+
+        val faceBox = FaceBoundingBox(
+            x / image.width,
+            y / image.height,
+            width / image.width,
+            height / image.height
+        )
+
+        Log.d("RecognizeStudentCam", "Best score: $bestScore")
+
+        detectorResults.close()
+        detectTensor.close()
+
+        // 🔥 IMPORTANT: pass landmarks
+        val croppedFace = alignAndCrop(image, faceBox, bestLandmarks)
+
+        val recognizeTensor = imageToSFaceTensor(croppedFace)
         val recognizeInputName = recognizer.inputNames.iterator().next()
+
         val recognizerResults = recognizer.run(mapOf(recognizeInputName to recognizeTensor))
 
         val embeddingTensor = recognizerResults.get(0) as? OnnxTensor
@@ -164,16 +193,48 @@ actual class FaceEmbeddingExtractor actual constructor() {
         val embeddingArray = FloatArray(embeddingBuffer.capacity())
         embeddingBuffer.get(embeddingArray)
 
-        // 7. L2 Normalization
         var sumSq = 0.0f
         for (v in embeddingArray) sumSq += v * v
         val norm = kotlin.math.sqrt(sumSq)
-        for (i in embeddingArray.indices) embeddingArray[i] = embeddingArray[i] / norm
+
+        for (i in embeddingArray.indices) {
+            embeddingArray[i] = embeddingArray[i] / norm
+        }
 
         return embeddingArray
     }
 
-    actual fun alignAndCrop(image: PlatformImage, face: FaceBoundingBox): PlatformImage {
+    actual fun alignAndCrop(image: Bitmap, face: FaceBoundingBox, landmarks: FloatArray): Bitmap {
+
+        val leftEyeX = landmarks[0]
+        val leftEyeY = landmarks[1]
+        val rightEyeX = landmarks[2]
+        val rightEyeY = landmarks[3]
+
+        val dx = rightEyeX - leftEyeX
+        val dy = rightEyeY - leftEyeY
+
+        val angle = Math.toDegrees(Math.atan2(dy.toDouble(), dx.toDouble())).toFloat()
+
+        val matrix = android.graphics.Matrix()
+        matrix.postRotate(-angle)
+
+        val rotated = Bitmap.createBitmap(
+            image,
+            0,
+            0,
+            image.width,
+            image.height,
+            matrix,
+            true
+        )
+
+        // 👉 call NORMAL crop function (your old one)
+        return cropOnly(rotated, face)
+    }
+
+    fun cropOnly(image: Bitmap, face: FaceBoundingBox): Bitmap {
+
         val imgW = image.width.toFloat()
         val imgH = image.height.toFloat()
 
@@ -185,15 +246,15 @@ actual class FaceEmbeddingExtractor actual constructor() {
         val cx = absX + absW / 2f
         val cy = absY + absH / 2f
 
-        var size = maxOf(absW, absH) * 1.1f
+        var size = maxOf(absW, absH) * 1.2f
 
-        // 1. Guarantee the crop box is never larger than the image itself
+        // Ensure crop does not exceed image bounds
         size = minOf(size, imgW, imgH)
 
         var newX = cx - size / 2f
         var newY = cy - size / 2f
 
-        // 2. Shift the bounding box back into frame
+        // Clamp inside image
         if (newX < 0f) newX = 0f
         if (newY < 0f) newY = 0f
         if (newX + size > imgW) newX = imgW - size
@@ -205,15 +266,16 @@ actual class FaceEmbeddingExtractor actual constructor() {
 
         Log.d(
             "RecognizeStudentCam",
-            "Actual Crop Execution: X=$roundedX, Y=$roundedY, Size=$roundedSize on Image ${image.width}x${image.height}"
+            "CropOnly: X=$roundedX, Y=$roundedY, Size=$roundedSize on Image ${image.width}x${image.height}"
         )
 
         if (roundedSize <= 0) {
-            Log.e("RecognizeStudentCam", "FATAL CROP ERROR: Calculated size is <= 0. Returning full uncropped image!")
+            Log.e("RecognizeStudentCam", "Crop error: size <= 0, fallback to full image")
             return Bitmap.createScaledBitmap(image, 112, 112, true)
         }
 
         val cropped = Bitmap.createBitmap(image, roundedX, roundedY, roundedSize, roundedSize)
+
         return Bitmap.createScaledBitmap(cropped, 112, 112, true)
     }
 

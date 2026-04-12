@@ -11,7 +11,7 @@ actual class FaceEmbeddingExtractor actual constructor() {
         // No-op for now
     }
 
-    actual fun alignAndCrop(image: PlatformImage, face: FaceBoundingBox): PlatformImage {
+    actual fun alignAndCrop(image: PlatformImage, face: FaceBoundingBox, landmarks: FloatArray): PlatformImage {
         throw NotImplementedError("FaceEmbeddingExtractor.alignAndCrop is not implemented on JVM")
     }
 

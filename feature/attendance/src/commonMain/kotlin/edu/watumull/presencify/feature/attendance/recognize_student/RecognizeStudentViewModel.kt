@@ -295,17 +295,17 @@ class RecognizeStudentViewModel(
             val simOriginal = cosineSimilarity(originalEmbedding, dbArray)
             val simMirrored = cosineSimilarity(mirroredEmbedding, dbArray)
 
-            // For Cosine Similarity, HIGHER is better. We want the MAX similarity.
-            val bestSim = max(simOriginal, simMirrored)
+            val bestSim = (simOriginal + simMirrored) / 2f
 
             Logger.d(TAG) { "Mirror-aware Cosine Similarity: original=$simOriginal, mirrored=$simMirrored, best=$bestSim" }
 
-            // The official OpenCV SFace Cosine Similarity Threshold is 0.363
-            if (bestSim >= 0.363f) {
-                Logger.d(TAG) { "Best similarity >= 0.363f Marking attendance..." }
+            // The official OpenCV SFace Cosine Similarity Threshold is 0.363, but they used RetinaFace model for detection and preprocessing and we are
+            // using a diff model yunet hence the threshold needs to be changed
+            if (bestSim >= 0.40f) {
+                Logger.d(TAG) { "Best similarity >= 0.48f Marking attendance..." }
                 markAttendance()
             } else {
-                Logger.d(TAG) { "Best similarity < 0.363f. Recognition Failed." }
+                Logger.d(TAG) { "Best similarity < 0.48f. Recognition Failed." }
 
                 val score = (bestSim * 100).toInt().coerceAtLeast(0)
                 showErrorDialog(
