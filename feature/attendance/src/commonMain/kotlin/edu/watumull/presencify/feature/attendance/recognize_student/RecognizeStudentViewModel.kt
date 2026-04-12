@@ -296,6 +296,45 @@ class RecognizeStudentViewModel(
             HeadMovement.STRAIGHT -> yaw in -12f..12f
         }
 
+        // --- Cheating / Spoofing Detection Logic ---
+        // Give a 1-second grace period at step 0 so users don't instantly fail if they start slightly askew
+        if (state.currentStep > 0 || currentTime - startTimeMillis > 1000) {
+            val previousMovement = if (state.currentStep > 0) {
+                state.livenessSequence[state.currentStep - 1]
+            } else {
+                HeadMovement.STRAIGHT
+            }
+
+            // Using 20f to be slightly more forgiving of natural bobbing/leaning before determining an intentional opposite look
+            val isCheating = when (requiredMovement) {
+                HeadMovement.LEFT -> {
+                    if (previousMovement == HeadMovement.STRAIGHT) yaw < -20f else false
+                }
+                HeadMovement.RIGHT -> {
+                    if (previousMovement == HeadMovement.STRAIGHT) yaw > 20f else false
+                }
+                HeadMovement.STRAIGHT -> {
+                    if (previousMovement == HeadMovement.LEFT) {
+                        yaw < -20f
+                    } else if (previousMovement == HeadMovement.RIGHT) {
+                        yaw > 20f
+                    } else {
+                        yaw > 20f || yaw < -20f
+                    }
+                }
+            }
+
+            if (isCheating) {
+                Logger.d(TAG) { "Cheating detected: opposite direction movement! req=$requiredMovement, prev=$previousMovement, yaw=$yaw" }
+                showErrorDialog(
+                    UiText.DynamicString("Cheating suspected: Incorrect head movement detected. Please follow the instructions."),
+                    isCheating = true
+                )
+                return
+            }
+        }
+        // --- END Cheating Detection ---
+
         Logger.d(TAG) { "validateMovement(): required=$requiredMovement, isCorrect=$isCorrect, step=${state.currentStep}" }
 
         if (isCorrect) {
