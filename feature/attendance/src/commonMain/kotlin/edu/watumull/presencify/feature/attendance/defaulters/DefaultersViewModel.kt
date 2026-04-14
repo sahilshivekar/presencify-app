@@ -14,6 +14,7 @@ import edu.watumull.presencify.core.presentation.utils.ShareFileModel
 import edu.watumull.presencify.core.presentation.utils.MimeType
 import edu.watumull.presencify.core.presentation.utils.ShareUtils
 import edu.watumull.presencify.core.presentation.utils.CsvUtils
+import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -71,6 +72,22 @@ class DefaultersViewModel(
 
             is DefaultersAction.ChangeCourseDropDownVisibility -> {
                 updateState { it.copy(isCourseDropdownOpen = action.isVisible) }
+            }
+
+            is DefaultersAction.SelectStartDate -> {
+                updateState { it.copy(startDate = action.date, showStartDatePicker = false) }
+            }
+
+            is DefaultersAction.ChangeStartDatePickerVisibility -> {
+                updateState { it.copy(showStartDatePicker = action.isVisible) }
+            }
+
+            is DefaultersAction.SelectEndDate -> {
+                updateState { it.copy(endDate = action.date, showEndDatePicker = false) }
+            }
+
+            is DefaultersAction.ChangeEndDatePickerVisibility -> {
+                updateState { it.copy(showEndDatePicker = action.isVisible) }
             }
 
             DefaultersAction.GetDefaulters -> {
@@ -137,6 +154,16 @@ class DefaultersViewModel(
             if (semesterId == null) {
                 updateState { it.copy(areCoursesLoading = false) }
                 return@launch
+            }
+
+            val fetchedSemester = (semesterResult as? Result.Success)?.data?.semesters?.firstOrNull()
+            if (fetchedSemester != null && currentState.startDate == null && currentState.endDate == null) {
+                updateState {
+                    it.copy(
+                        startDate = fetchedSemester.startDate,
+                        endDate = fetchedSemester.endDate
+                    )
+                }
             }
 
             when (val coursesResult = semesterRepository.getCoursesOfSemester(semesterId)) {
@@ -261,8 +288,8 @@ class DefaultersViewModel(
                                 semesterId = semesterId,
                                 divisionId = null,
                                 batchId = null,
-                                startDate = null,
-                                endDate = null,
+                                startDate = currentState.startDate,
+                                endDate = currentState.endDate,
                                 semesterNumber = currentState.selectedSemesterNumber,
                                 academicStartYear = startYear,
                                 academicEndYear = endYear,
@@ -377,10 +404,12 @@ class DefaultersViewModel(
                 val semesterName = currentState.selectedSemesterNumber?.toDisplayLabel() ?: "N/A"
                 val academicYear = "${currentState.academicStartYear}-${currentState.academicEndYear}"
                 val branchName = currentState.selectedBranch?.name ?: "N/A"
+                val startDateStr = if (currentState.startDate != null) "=\"${currentState.startDate.toReadableString()}\"" else "N/A"
+                val endDateStr = if (currentState.endDate != null) "=\"${currentState.endDate.toReadableString()}\"" else "N/A"
 
                 csvBuilder.append("Semester Details\n")
-                csvBuilder.append("Semester Number,Academic Year,Branch\n")
-                csvBuilder.append("$semesterName,$academicYear,$branchName\n")
+                csvBuilder.append("Semester Number,Academic Year,Branch,Start Date,End Date\n")
+                csvBuilder.append("$semesterName,$academicYear,$branchName,$startDateStr,$endDateStr\n")
                 csvBuilder.append("\n")
 
                 val courses = currentState.courseOptions
@@ -402,7 +431,8 @@ class DefaultersViewModel(
                     val rowColumns = mutableListOf<String>()
                     rowColumns.add(student.prn)
 
-                    val rollNo = student.studentDivisions?.firstOrNull { it.endDate == null }?.rollNo?.toString() ?: "N/A"
+                    val rollNoVal = student.studentDivisions?.firstOrNull { it.endDate == null }?.rollNo
+                    val rollNo = if (rollNoVal != null) "=\"$rollNoVal\"" else "N/A"
                     rowColumns.add(rollNo)
 
                     val safeFullName = "${student.firstName} ${student.lastName}".replace(",", " ")

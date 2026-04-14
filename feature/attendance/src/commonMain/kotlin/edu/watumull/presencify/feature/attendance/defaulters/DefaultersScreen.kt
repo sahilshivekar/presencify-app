@@ -11,11 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Clear
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
@@ -35,13 +42,23 @@ import edu.watumull.presencify.core.design.systems.components.DonutGraph
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.presentation.components.StudentListItem
+import edu.watumull.presencify.core.presentation.utils.toReadableString
+import kotlinx.datetime.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultersScreen(
     state: DefaultersState,
     onAction: (DefaultersAction) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
+    val startDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = state.startDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
+    )
+    val endDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = state.endDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
+    )
+
     PresencifyScaffold(
         topBarTitle = "Defaulters List",
         backPress = onNavigateBack,
@@ -78,7 +95,7 @@ fun DefaultersScreen(
                         FilterSection(state = state, onAction = onAction)
 
                         PresencifyButton(
-                            text = "Get Students",
+                            text = "Get Attendance",
                             onClick = { onAction(DefaultersAction.GetDefaulters) },
                             isLoading = state.isLoadingStudents,
                             modifier = Modifier.fillMaxWidth()
@@ -163,6 +180,67 @@ fun DefaultersScreen(
             onDismiss = { onAction(DefaultersAction.DismissDialog) }
         )
     }
+
+    if (state.showStartDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { onAction(DefaultersAction.ChangeStartDatePickerVisibility(false)) },
+            onConfirm = {
+                startDatePickerState.selectedDateMillis?.let { millis ->
+                    val epochDays = millis / (24 * 60 * 60 * 1000)
+                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
+                    onAction(DefaultersAction.SelectStartDate(selectedDate))
+                }
+                onAction(DefaultersAction.ChangeStartDatePickerVisibility(false))
+            }
+        ) {
+            DatePicker(state = startDatePickerState)
+        }
+    }
+
+    if (state.showEndDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { onAction(DefaultersAction.ChangeEndDatePickerVisibility(false)) },
+            onConfirm = {
+                endDatePickerState.selectedDateMillis?.let { millis ->
+                    val epochDays = millis / (24 * 60 * 60 * 1000)
+                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
+                    onAction(DefaultersAction.SelectEndDate(selectedDate))
+                }
+                onAction(DefaultersAction.ChangeEndDatePickerVisibility(false))
+            }
+        ) {
+            DatePicker(state = endDatePickerState)
+        }
+    }
+}
+
+@Composable
+private fun DatePickerDialog(
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text("Cancel")
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                content()
+            }
+        }
+    )
 }
 
 @Composable
@@ -241,6 +319,65 @@ private fun FilterSection(
                 },
                 enabled = !state.isLoadingStudents,
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            PresencifyTextField(
+                value = state.startDate?.toReadableString() ?: "",
+                onValueChange = { },
+                label = "Start Date",
+                readOnly = true,
+                leadingIcon = {
+                    IconButton(onClick = { onAction(DefaultersAction.ChangeStartDatePickerVisibility(true)) }) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Select start date"
+                        )
+                    }
+                },
+                trailingIcon = if (state.startDate != null) {
+                    {
+                        IconButton(onClick = { onAction(DefaultersAction.SelectStartDate(null)) }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear start date"
+                            )
+                        }
+                    }
+                } else null,
+                modifier = Modifier.weight(1f),
+                enabled = !state.isLoadingStudents
+            )
+
+            PresencifyTextField(
+                value = state.endDate?.toReadableString() ?: "",
+                onValueChange = { },
+                label = "End Date",
+                readOnly = true,
+                leadingIcon = {
+                    IconButton(onClick = { onAction(DefaultersAction.ChangeEndDatePickerVisibility(true)) }) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Select end date"
+                        )
+                    }
+                },
+                trailingIcon = if (state.endDate != null) {
+                    {
+                        IconButton(onClick = { onAction(DefaultersAction.SelectEndDate(null)) }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear end date"
+                            )
+                        }
+                    }
+                } else null,
+                modifier = Modifier.weight(1f),
+                enabled = !state.isLoadingStudents
             )
         }
     }

@@ -6,6 +6,7 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.presentation.UiText
+import kotlinx.datetime.LocalDate
 
 data class DefaultersState(
     val viewState: ViewState = ViewState.Content,
@@ -17,6 +18,10 @@ data class DefaultersState(
     val academicEndYear: String = "",
     val selectedBranch: Branch? = null,
     val selectedCourse: Course? = null,
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
+    val showStartDatePicker: Boolean = false,
+    val showEndDatePicker: Boolean = false,
 
     // Dropdown visibility
     val isSemesterNumberDropdownOpen: Boolean = false,

@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.attendance.defaulters
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Course
+import kotlinx.datetime.LocalDate
 
 sealed interface DefaultersAction {
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber) : DefaultersAction
@@ -14,6 +15,12 @@ sealed interface DefaultersAction {
 
     data class SelectCourse(val course: Course?) : DefaultersAction
     data class ChangeCourseDropDownVisibility(val isVisible: Boolean) : DefaultersAction
+
+    data class SelectStartDate(val date: LocalDate?) : DefaultersAction
+    data class ChangeStartDatePickerVisibility(val isVisible: Boolean) : DefaultersAction
+
+    data class SelectEndDate(val date: LocalDate?) : DefaultersAction
+    data class ChangeEndDatePickerVisibility(val isVisible: Boolean) : DefaultersAction
 
     data object GetDefaulters : DefaultersAction
     data object ExportCsv : DefaultersAction
