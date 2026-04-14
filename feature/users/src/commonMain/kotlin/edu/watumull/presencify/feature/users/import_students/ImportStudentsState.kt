@@ -9,6 +9,7 @@ data class ImportStudentsState(
     val selectedFileName: String? = null,
     val isSubmitting: Boolean = false,
     val error: UiText? = null,
+    val businessErrorText: String? = null,
     val dialogState: DialogState? = null
 ) {
     sealed interface ViewState {

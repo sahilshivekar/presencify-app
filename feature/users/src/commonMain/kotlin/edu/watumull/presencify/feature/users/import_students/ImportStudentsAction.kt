@@ -7,5 +7,6 @@ sealed interface ImportStudentsAction {
     data object ClickSelectCsvFile : ImportStudentsAction
     data class CsvFileSelected(val result: CsvPickerResult) : ImportStudentsAction
     data object ClickSubmit : ImportStudentsAction
+    data object ClickDownloadSampleFiles : ImportStudentsAction
     data object DismissDialog : ImportStudentsAction
 }

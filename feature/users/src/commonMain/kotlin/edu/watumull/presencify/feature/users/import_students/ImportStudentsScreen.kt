@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +51,14 @@ fun ImportStudentsScreen(
     PresencifyScaffold(
         backPress = { onAction(ImportStudentsAction.ClickBackButton) },
         topBarTitle = "Import Students",
+        actions = {
+            IconButton(onClick = { onAction(ImportStudentsAction.ClickDownloadSampleFiles) }) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Download Sample CSV and Rules"
+                )
+            }
+        }
     ) { paddingValues ->
         when (state.viewState) {
             is ImportStudentsState.ViewState.Loading -> {
@@ -104,13 +116,13 @@ private fun ImportStudentsScreenContent(
             modifier = Modifier
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                 .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+//            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
                 text = "Upload a CSV file containing student details to bulk import students.",
                 style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Left
             )
 
             // File Selection Box
@@ -177,6 +189,31 @@ private fun ImportStudentsScreenContent(
                 isLoading = state.isSubmitting,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            if (state.businessErrorText != null) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        Text(
+                            text = "Import Errors:",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    item {
+                        SelectionContainer {
+                            Text(
+                                text = state.businessErrorText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
