@@ -15,6 +15,7 @@ import edu.watumull.presencify.feature.users.student_details.StudentDetailsViewM
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsViewModel
 import edu.watumull.presencify.feature.users.import_students.ImportStudentsViewModel
 import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersViewModel
+import edu.watumull.presencify.feature.users.update_password.UpdateUserPasswordViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -98,5 +99,13 @@ val usersModule = module {
     }
     viewModel {
         MarkUnmarkStudentAsDropoutViewModel()
+    }
+
+    viewModel {
+        UpdateUserPasswordViewModel(
+            studentAuthRepository = get(),
+            teacherAuthRepository = get(),
+            userRepository = get(),
+        )
     }
 }

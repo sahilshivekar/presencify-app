@@ -11,6 +11,7 @@ fun TeacherDetailsRoot(
     onNavigateBack: () -> Unit,
     onNavigateToEditTeacher: (String) -> Unit,
     onNavigateToAssignUnassignCourses: (String) -> Unit,
+    onNavigateToUpdatePassword: () -> Unit,
 ) {
     val viewModel: TeacherDetailsViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -20,6 +21,7 @@ fun TeacherDetailsRoot(
             is TeacherDetailsEvent.NavigateBack -> onNavigateBack()
             is TeacherDetailsEvent.NavigateToEditTeacher -> onNavigateToEditTeacher(event.teacherId)
             is TeacherDetailsEvent.NavigateToAssignUnassignCourses -> onNavigateToAssignUnassignCourses(event.teacherId)
+            is TeacherDetailsEvent.NavigateToUpdatePassword -> onNavigateToUpdatePassword()
         }
     }
 
@@ -28,4 +30,3 @@ fun TeacherDetailsRoot(
         onAction = viewModel::trySendAction
     )
 }
-

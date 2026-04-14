@@ -154,8 +154,8 @@ fun NavController.navigateToMarkUnmarkStudentAsDropout() {
  *
  * @param studentId The ID of the student to view
  */
-fun NavController.navigateToStudentDetails(studentId: String) {
-    navigate(UsersRoutes.StudentDetails(studentId = studentId))
+fun NavController.navigateToStudentDetails(studentId: String, showSelfActions: Boolean = false) {
+    navigate(UsersRoutes.StudentDetails(studentId = studentId, showSelfActions = showSelfActions))
 }
 
 /**
@@ -210,8 +210,8 @@ fun NavController.navigateToUnassignCourseToTeacher() {
  *
  * @param teacherId The ID of the teacher to view
  */
-fun NavController.navigateToTeacherDetails(teacherId: String) {
-    navigate(UsersRoutes.TeacherDetails(teacherId = teacherId))
+fun NavController.navigateToTeacherDetails(teacherId: String, showSelfActions: Boolean = false) {
+    navigate(UsersRoutes.TeacherDetails(teacherId = teacherId, showSelfActions = showSelfActions))
 }
 
 /**
@@ -226,4 +226,11 @@ fun NavController.navigateToImportStudents() {
  */
 fun NavController.navigateToImportTeachers() {
     navigate(UsersRoutes.ImportTeachers)
+}
+
+/**
+ * Navigate to Update Password screen for logged-in Student/Teacher
+ */
+fun NavController.navigateToUpdateUserPassword() {
+    navigate(UsersRoutes.UpdateUserPassword)
 }

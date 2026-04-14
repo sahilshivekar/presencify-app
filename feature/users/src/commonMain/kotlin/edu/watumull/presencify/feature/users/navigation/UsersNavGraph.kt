@@ -17,6 +17,7 @@ import edu.watumull.presencify.feature.users.student_details.StudentDetailsRoot
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsRoot
 import edu.watumull.presencify.feature.users.import_students.ImportStudentsRoot
 import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersRoot
+import edu.watumull.presencify.feature.users.update_password.UpdateUserPasswordRoot
 
 fun NavGraphBuilder.usersDashboard(
     onNavigateToSearchStudents: () -> Unit,
@@ -89,7 +90,8 @@ fun NavGraphBuilder.usersNavGraph(
     onNavigateToTeacherDetails: (String) -> Unit,
     onNavigateToAddEditTeacher: (String?) -> Unit,
     onNavigateToAssignUnassignCourses: (String) -> Unit,
-    onNavigateToAddStudentBiometrics: (String) -> Unit // New callback
+    onNavigateToAddStudentBiometrics: (String) -> Unit,
+    onNavigateToUpdateUserPassword: () -> Unit,
 ) {
 
     composableWithSlideTransitions<UsersRoutes.ImportStudents> {
@@ -115,7 +117,7 @@ fun NavGraphBuilder.usersNavGraph(
             onNavigateToStudentDetails = onNavigateToStudentDetails,
             onNavigateToAddEditStudent = onNavigateToAddEditStudent,
             onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics,
-            onNavigateToAddStudentBiometrics = onNavigateToAddStudentBiometrics // Pass callback
+            onNavigateToAddStudentBiometrics = onNavigateToAddStudentBiometrics
         )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToSemester> {
@@ -175,7 +177,8 @@ fun NavGraphBuilder.usersNavGraph(
     composableWithSlideTransitions<UsersRoutes.StudentDetails> {
         StudentDetailsRoot(
             onNavigateBack = onNavigateBack,
-            onNavigateToEditStudent = onNavigateToAddEditStudent
+            onNavigateToEditStudent = onNavigateToAddEditStudent,
+            onNavigateToUpdatePassword = onNavigateToUpdateUserPassword
         )
     }
     composableWithSlideTransitions<UsersRoutes.AddEditTeacher> {
@@ -200,7 +203,15 @@ fun NavGraphBuilder.usersNavGraph(
         TeacherDetailsRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToEditTeacher = onNavigateToAddEditTeacher,
-            onNavigateToAssignUnassignCourses = onNavigateToAssignUnassignCourses
+            onNavigateToAssignUnassignCourses = onNavigateToAssignUnassignCourses,
+            onNavigateToUpdatePassword = onNavigateToUpdateUserPassword
+        )
+    }
+
+    composableWithSlideTransitions<UsersRoutes.UpdateUserPassword> {
+        UpdateUserPasswordRoot(
+            onBackButtonClick = onNavigateBack,
+            onNavigateToMyDetails = onNavigateBack,
         )
     }
 }

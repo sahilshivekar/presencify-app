@@ -11,5 +11,6 @@ sealed interface TeacherDetailsAction {
     data object ConfirmRemoveTeacher : TeacherDetailsAction
     data object EditTeacherDetailsClick : TeacherDetailsAction
     data object AssignUnassignCoursesClick : TeacherDetailsAction
+    data object ClickUpdatePassword : TeacherDetailsAction
     data object LogoutClick : TeacherDetailsAction
 }

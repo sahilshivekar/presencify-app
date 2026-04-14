@@ -196,16 +196,32 @@ private fun StudentDetailsScreenContent(
                                     )
                                 }
                             }
-                        } else if (LocalUserRole.current == UserRole.STUDENT && state.studentId == LocalUserId.current) {
-                            PresencifyTextButton(
-                                onClick = { onAction(StudentDetailsAction.LogoutClick) },
-                                isLoading = state.isLoggingOut,
-                                enabled = !state.isLoggingOut
-                            ) {
-                                Text(
-                                    "Logout",
-                                    color = MaterialTheme.colorScheme.error
-                                )
+                        } else if (
+                            state.showSelfActions &&
+                            LocalUserRole.current == UserRole.STUDENT &&
+                            state.studentId == LocalUserId.current
+                        ) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                PresencifyTextButton(
+                                    onClick = { onAction(StudentDetailsAction.ClickUpdatePassword) },
+                                    enabled = !state.isLoggingOut
+                                ) {
+                                    Text(
+                                        "Update password",
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                PresencifyTextButton(
+                                    onClick = { onAction(StudentDetailsAction.LogoutClick) },
+                                    isLoading = state.isLoggingOut,
+                                    enabled = !state.isLoggingOut
+                                ) {
+                                    Text(
+                                        "Logout",
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
                             }
                         }
                     }

@@ -20,9 +20,13 @@ class TeacherDetailsViewModel(
     private val teacherAuthRepository: TeacherAuthRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<TeacherDetailsState, TeacherDetailsEvent, TeacherDetailsAction>(
-    initialState = TeacherDetailsState(
-        teacherId = savedStateHandle.toRoute<UsersRoutes.TeacherDetails>().teacherId
-    )
+    initialState = run {
+        val route = savedStateHandle.toRoute<UsersRoutes.TeacherDetails>()
+        TeacherDetailsState(
+            teacherId = route.teacherId,
+            showSelfActions = route.showSelfActions
+        )
+    }
 ) {
 
     init {
@@ -122,6 +126,10 @@ class TeacherDetailsViewModel(
 
             is TeacherDetailsAction.LogoutClick -> {
                 logoutTeacher()
+            }
+
+            is TeacherDetailsAction.ClickUpdatePassword -> {
+                sendEvent(TeacherDetailsEvent.NavigateToUpdatePassword)
             }
         }
     }

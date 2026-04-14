@@ -41,8 +41,8 @@ fun Home(
                 onProfileIconButtonClick = {
                     when (userRole) {
                         UserRole.ADMIN -> rootNavController.navigateToAdminDetails()
-                        UserRole.TEACHER -> userId?.let { rootNavController.navigateToTeacherDetails(it) }
-                        UserRole.STUDENT -> userId?.let { rootNavController.navigateToStudentDetails(it) }
+                        UserRole.TEACHER -> userId?.let { rootNavController.navigateToTeacherDetails(it, showSelfActions = true) }
+                        UserRole.STUDENT -> userId?.let { rootNavController.navigateToStudentDetails(it, showSelfActions = true) }
                         null -> Unit
                     }
                 },

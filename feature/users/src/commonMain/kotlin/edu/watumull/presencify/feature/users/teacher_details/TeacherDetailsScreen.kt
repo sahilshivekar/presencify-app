@@ -167,16 +167,32 @@ private fun TeacherDetailsScreenContent(
                             )
                         }
                     }
-                } else if (LocalUserRole.current == UserRole.TEACHER && state.teacherId == LocalUserId.current) {
-                    PresencifyTextButton(
-                        onClick = { onAction(TeacherDetailsAction.LogoutClick) },
-                        isLoading = state.isLoggingOut,
-                        enabled = !state.isLoggingOut
-                    ) {
-                        Text(
-                            "Logout",
-                            color = MaterialTheme.colorScheme.error
-                        )
+                } else if (
+                    state.showSelfActions &&
+                    LocalUserRole.current == UserRole.TEACHER &&
+                    state.teacherId == LocalUserId.current
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        PresencifyTextButton(
+                            onClick = { onAction(TeacherDetailsAction.ClickUpdatePassword) },
+                            enabled = !state.isLoggingOut
+                        ) {
+                            Text(
+                                "Update password",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        PresencifyTextButton(
+                            onClick = { onAction(TeacherDetailsAction.LogoutClick) },
+                            isLoading = state.isLoggingOut,
+                            enabled = !state.isLoggingOut
+                        ) {
+                            Text(
+                                "Logout",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
             }
@@ -407,4 +423,3 @@ private fun DetailRow(
         )
     }
 }
-

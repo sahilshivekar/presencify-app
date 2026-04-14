@@ -115,7 +115,10 @@ sealed interface UsersRoutes : NavRoute {
     data object MarkUnmarkStudentAsDropout : UsersRoutes
 
     @Serializable
-    data class StudentDetails(val studentId: String) : UsersRoutes
+    data class StudentDetails(
+        val studentId: String,
+        val showSelfActions: Boolean = false,
+    ) : UsersRoutes
 
     @Serializable
     data class AddEditTeacher(val teacherId: String? = null) : UsersRoutes
@@ -140,6 +143,12 @@ sealed interface UsersRoutes : NavRoute {
     data object UnassignCourseToTeacher : UsersRoutes
 
     @Serializable
-    data class TeacherDetails(val teacherId: String) : UsersRoutes
+    data class TeacherDetails(
+        val teacherId: String,
+        val showSelfActions: Boolean = false,
+    ) : UsersRoutes
+
+    @Serializable
+    data object UpdateUserPassword : UsersRoutes
 
 }

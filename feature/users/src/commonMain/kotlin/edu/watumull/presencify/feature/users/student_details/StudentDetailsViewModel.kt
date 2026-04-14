@@ -23,9 +23,13 @@ class StudentDetailsViewModel(
     private val studentDropoutRepository: StudentDropoutRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<StudentDetailsState, StudentDetailsEvent, StudentDetailsAction>(
-    initialState = StudentDetailsState(
-        studentId = savedStateHandle.toRoute<UsersRoutes.StudentDetails>().studentId
-    )
+    initialState = run {
+        val route = savedStateHandle.toRoute<UsersRoutes.StudentDetails>()
+        StudentDetailsState(
+            studentId = route.studentId,
+            showSelfActions = route.showSelfActions
+        )
+    }
 ) {
 
     init {
@@ -153,6 +157,10 @@ class StudentDetailsViewModel(
 
             is StudentDetailsAction.LogoutClick -> {
                 logoutStudent()
+            }
+
+            is StudentDetailsAction.ClickUpdatePassword -> {
+                sendEvent(StudentDetailsEvent.NavigateToUpdatePassword)
             }
         }
     }
@@ -282,4 +290,3 @@ class StudentDetailsViewModel(
             }
     }
 }
-

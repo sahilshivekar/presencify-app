@@ -66,6 +66,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTim
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateUserPassword
 
 @Composable
 fun AppNavHost(
@@ -216,7 +217,8 @@ fun AppNavHost(
                     dropoutAcademicStartYear = dropoutAcademicStartYear,
                     dropoutAcademicEndYear = dropoutAcademicEndYear
                 )
-            }
+            },
+            onNavigateToUpdateUserPassword = { rootNavController.navigateToUpdateUserPassword() }
         )
 
         scheduleNavGraph(

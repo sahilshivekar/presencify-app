@@ -12,6 +12,7 @@ data class StudentDetailsState(
     val viewState: ViewState = ViewState.Loading,
     val dialogState: DialogState? = null,
     val studentId: String = "",
+    val showSelfActions: Boolean = false,
     val student: Student? = null,
     val isImageDialogVisible: Boolean = false,
     val newUploadedImageBytes: ByteArray? = null,
