@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -112,49 +113,35 @@ fun SearchStudentBottomSheetContent(
             // Academic Year of Semester Filter
             FilterSection(title = "Academic Year of Semester") {
                 Row(
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    state.academicYearOfSemesterOptions.forEach { year ->
-                        FilterChip(
-                            selected = state.selectedAcademicYearOfSemester == year,
-                            onClick = {
-                                val newYear = if (state.selectedAcademicYearOfSemester == year) null else year
-                                onAction(SearchStudentAction.SelectAcademicYearOfSemester(newYear))
-                            },
-                            label = { Text(year) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        )
-                    }
+                    PresencifyTextField(
+                        value = state.academicStartYear,
+                        onValueChange = { onAction(SearchStudentAction.UpdateAcademicStartYear(it)) },
+                        label = "Start Year *",
+                        modifier = Modifier.weight(1f)
+                    )
+                    PresencifyTextField(
+                        value = state.academicEndYear,
+                        onValueChange = { onAction(SearchStudentAction.UpdateAcademicEndYear(it)) },
+                        label = "End Year *",
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
 
             // Admission Year Filter
             FilterSection(title = "Admission Year") {
-                Row(
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    state.admissionYearOptions.forEach { year ->
-                        FilterChip(
-                            selected = state.selectedAdmissionYear == year,
-                            onClick = {
-                                val newYear = if (state.selectedAdmissionYear == year) null else year
-                                onAction(SearchStudentAction.SelectAdmissionYear(newYear))
-                            },
-                            label = { Text(year) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        )
-                    }
-                }
+                PresencifyTextField(
+                    value = state.admissionYear ?: "",
+                    onValueChange = { input ->
+                        val cleaned = input.filter { it.isDigit() }.take(4)
+                        onAction(SearchStudentAction.SelectAdmissionYear(cleaned.ifBlank { null }))
+                    },
+                    label = "Admission Year",
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             // Admission Type Filter
@@ -185,24 +172,21 @@ fun SearchStudentBottomSheetContent(
             // Dropout Year Filter
             FilterSection(title = "Dropout Year") {
                 Row(
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    state.dropoutYearOptions.forEach { year ->
-                        FilterChip(
-                            selected = state.selectedDropoutYear == year,
-                            onClick = {
-                                val newYear = if (state.selectedDropoutYear == year) null else year
-                                onAction(SearchStudentAction.SelectDropoutYear(newYear))
-                            },
-                            label = { Text(year) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        )
-                    }
+                    PresencifyTextField(
+                        value = state.dropoutStartYear,
+                        onValueChange = { onAction(SearchStudentAction.UpdateDropoutStartYear(it)) },
+                        label = "Start Year",
+                        modifier = Modifier.weight(1f)
+                    )
+                    PresencifyTextField(
+                        value = state.dropoutEndYear,
+                        onValueChange = { onAction(SearchStudentAction.UpdateDropoutEndYear(it)) },
+                        label = "End Year",
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
 
@@ -240,7 +224,8 @@ fun SearchStudentBottomSheetContent(
                 emptyMessage = when {
                     state.selectedSemesters.isEmpty() ||
                             state.selectedBranches.isEmpty() ||
-                            state.selectedAcademicYearOfSemester == null ->
+                            state.academicStartYear.isEmpty() ||
+                            state.academicEndYear.isEmpty() ->
                         "Select semester, branch, and academic year to load divisions"
                     state.divisionOptions.isEmpty() ->
                         "No divisions found for selected filters"
@@ -276,7 +261,8 @@ fun SearchStudentBottomSheetContent(
                 emptyMessage = when {
                     state.selectedSemesters.isEmpty() ||
                             state.selectedBranches.isEmpty() ||
-                            state.selectedAcademicYearOfSemester == null ->
+                            state.academicStartYear.isEmpty() ||
+                            state.academicEndYear.isEmpty() ->
                         "Select semester, branch, and academic year to load batches"
                     state.batchOptions.isEmpty() ->
                         "No batches found for selected filters"
@@ -361,4 +347,3 @@ private fun FilterSection(
         }
     }
 }
-

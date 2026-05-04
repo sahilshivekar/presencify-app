@@ -2,8 +2,8 @@ package edu.watumull.presencify.core.data.repository.student_auth
 
 import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.network.student_auth.RemoteStudentAuthDataSource
-import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.map

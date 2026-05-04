@@ -7,13 +7,13 @@ import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
+import edu.watumull.presencify.core.domain.repository.teacher_auth.TeacherAuthRepository
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.users.navigation.UsersRoutes
 import kotlinx.coroutines.launch
-import edu.watumull.presencify.core.domain.repository.teacher_auth.TeacherAuthRepository
 
 class TeacherDetailsViewModel(
     private val teacherRepository: TeacherRepository,

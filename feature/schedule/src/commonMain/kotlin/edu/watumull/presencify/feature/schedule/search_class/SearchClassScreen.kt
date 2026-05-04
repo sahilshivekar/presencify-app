@@ -22,39 +22,23 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberStandardBottomSheetState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,8 +60,6 @@ import edu.watumull.presencify.core.presentation.utils.toReadableString
 import edu.watumull.presencify.feature.schedule.navigation.SearchClassIntention
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -366,23 +348,21 @@ private fun SearchClassBottomSheetContent(
         // Academic Year of Semester Filter
         FilterSection(title = "Academic Year of Semester") {
             Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                state.academicYearOfSemesterOptions.forEach { year ->
-                    FilterChip(
-                        selected = state.selectedAcademicYearOfSemester == year,
-                        onClick = {
-                            val newYear = if (state.selectedAcademicYearOfSemester == year) null else year
-                            onAction(SearchClassAction.SelectAcademicYearOfSemester(newYear))
-                        },
-                        label = { Text(year) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    )
-                }
+                PresencifyTextField(
+                    value = state.academicStartYear,
+                    onValueChange = { onAction(SearchClassAction.UpdateAcademicStartYear(it)) },
+                    label = "Start Year *",
+                    modifier = Modifier.weight(1f)
+                )
+                PresencifyTextField(
+                    value = state.academicEndYear,
+                    onValueChange = { onAction(SearchClassAction.UpdateAcademicEndYear(it)) },
+                    label = "End Year *",
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 
@@ -393,7 +373,8 @@ private fun SearchClassBottomSheetContent(
             emptyMessage = when {
                 state.selectedSemesters.isEmpty() ||
                         state.selectedBranches.isEmpty() ||
-                        state.selectedAcademicYearOfSemester == null ->
+                        state.academicStartYear.isEmpty() ||
+                        state.academicEndYear.isEmpty() ->
                     "Select semester, branch, and academic year to load divisions"
                 state.divisionOptions.isEmpty() ->
                     "No divisions found for selected filters"
@@ -428,7 +409,8 @@ private fun SearchClassBottomSheetContent(
             emptyMessage = when {
                 state.selectedSemesters.isEmpty() ||
                         state.selectedBranches.isEmpty() ||
-                        state.selectedAcademicYearOfSemester == null ->
+                        state.academicStartYear.isEmpty() ||
+                        state.academicEndYear.isEmpty() ->
                     "Select semester, branch, and academic year to load batches"
                 state.batchOptions.isEmpty() ->
                     "No batches found for selected filters"

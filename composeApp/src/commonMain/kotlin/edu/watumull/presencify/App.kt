@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.Res
 import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
 import edu.watumull.presencify.core.design.systems.theme.PresencifyTheme
-import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.global_snackbar.ObserveAsEvents

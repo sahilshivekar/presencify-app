@@ -15,7 +15,8 @@ sealed interface SearchTimetableAction {
     // Filters - Branch, Semester, Academic Year
     data class ToggleBranch(val branch: Branch) : SearchTimetableAction
     data class ToggleSemester(val semester: SemesterNumber) : SearchTimetableAction
-    data class SelectAcademicYearOfSemester(val year: String?) : SearchTimetableAction
+    data class UpdateAcademicStartYear(val year: String) : SearchTimetableAction
+    data class UpdateAcademicEndYear(val year: String) : SearchTimetableAction
 
     data object ResetFilters : SearchTimetableAction
     data object ApplyFilters : SearchTimetableAction

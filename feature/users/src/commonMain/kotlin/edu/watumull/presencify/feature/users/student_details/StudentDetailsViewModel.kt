@@ -10,7 +10,6 @@ import edu.watumull.presencify.core.domain.repository.student.StudentDropoutRepo
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
-import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController.sendEvent
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel

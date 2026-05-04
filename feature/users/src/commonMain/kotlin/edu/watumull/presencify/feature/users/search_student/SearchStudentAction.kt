@@ -20,10 +20,12 @@ sealed interface SearchStudentAction {
     // Filters
     data class ToggleBranch(val branch: Branch) : SearchStudentAction
     data class ToggleSemester(val semester: SemesterNumber) : SearchStudentAction
-    data class SelectAcademicYearOfSemester(val year: String?) : SearchStudentAction
+    data class UpdateAcademicStartYear(val year: String) : SearchStudentAction
+    data class UpdateAcademicEndYear(val year: String) : SearchStudentAction
     data class ToggleAdmissionType(val admissionType: AdmissionType) : SearchStudentAction
     data class SelectAdmissionYear(val year: String?) : SearchStudentAction
-    data class SelectDropoutYear(val year: String?) : SearchStudentAction
+    data class UpdateDropoutStartYear(val year: String) : SearchStudentAction
+    data class UpdateDropoutEndYear(val year: String) : SearchStudentAction
     data class SelectScheme(val scheme: Scheme?) : SearchStudentAction
     data class SelectDivision(val division: Division?) : SearchStudentAction
     data class SelectBatch(val batch: Batch?) : SearchStudentAction

@@ -50,6 +50,7 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultL
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
+import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -350,23 +351,21 @@ private fun SearchTimetableBottomSheetContent(
         // Academic Year of Semester Filter
         FilterSection(title = "Academic Year of Semester") {
             Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                state.academicYearOfSemesterOptions.forEach { year ->
-                    FilterChip(
-                        selected = state.selectedAcademicYearOfSemester == year,
-                        onClick = {
-                            val newYear = if (state.selectedAcademicYearOfSemester == year) null else year
-                            onAction(SearchTimetableAction.SelectAcademicYearOfSemester(newYear))
-                        },
-                        label = { Text(year) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    )
-                }
+                PresencifyTextField(
+                    value = state.academicStartYear,
+                    onValueChange = { onAction(SearchTimetableAction.UpdateAcademicStartYear(it)) },
+                    label = "Start Year *",
+                    modifier = Modifier.weight(1f)
+                )
+                PresencifyTextField(
+                    value = state.academicEndYear,
+                    onValueChange = { onAction(SearchTimetableAction.UpdateAcademicEndYear(it)) },
+                    label = "End Year *",
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 

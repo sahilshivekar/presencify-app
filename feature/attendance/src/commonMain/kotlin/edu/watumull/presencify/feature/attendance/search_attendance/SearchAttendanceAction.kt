@@ -20,7 +20,8 @@ sealed interface SearchAttendanceAction {
     data class SelectDate(val date: LocalDate?) : SearchAttendanceAction
     data class ToggleBranch(val branch: Branch) : SearchAttendanceAction
     data class ToggleSemester(val semester: SemesterNumber) : SearchAttendanceAction
-    data class SelectAcademicYearOfSemester(val year: String?) : SearchAttendanceAction
+    data class UpdateAcademicStartYear(val year: String) : SearchAttendanceAction
+    data class UpdateAcademicEndYear(val year: String) : SearchAttendanceAction
     data class SelectDivision(val division: Division?) : SearchAttendanceAction
     data class SelectBatch(val batch: Batch?) : SearchAttendanceAction
     data class SelectCourse(val course: Course?) : SearchAttendanceAction

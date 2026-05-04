@@ -57,7 +57,8 @@ class SearchClassViewModel(
         },
         onRequest = { page ->
             val state = stateFlow.value
-            val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
+            val startYear = state.academicStartYear.toIntOrNull()
+            val endYear = state.academicEndYear.toIntOrNull()
 
             classSessionRepository.getClasses(
                 searchQuery = state.searchQuery.ifBlank { null },
@@ -71,8 +72,8 @@ class SearchClassViewModel(
                 teacherId = state.selectedTeacherIds.firstOrNull(),
                 branchId = state.selectedBranches.firstOrNull()?.id,
                 semesterNumber = state.selectedSemesters.firstOrNull()?.value,
-                academicStartYearOfSemester = academicYears?.getOrNull(0),
-                academicEndYearOfSemester = academicYears?.getOrNull(1),
+                academicStartYearOfSemester = startYear,
+                academicEndYearOfSemester = endYear,
                 divisionId = state.selectedDivision?.id,
                 batchId = state.selectedBatch?.id,
                 page = page,
@@ -152,12 +153,10 @@ class SearchClassViewModel(
 
         val semester = state.selectedSemesters.firstOrNull()
         val branchId = state.selectedBranches.firstOrNull()?.id
-        val academicYear = state.selectedAcademicYearOfSemester
+        val startYear = state.academicStartYear.toIntOrNull()
+        val endYear = state.academicEndYear.toIntOrNull()
 
-        if (semester != null && branchId != null && academicYear != null) {
-            val years = academicYear.split("-").map { it.trim().toInt() }
-            val startYear = years[0]
-            val endYear = years[1]
+        if (semester != null && branchId != null && startYear != null && endYear != null) {
 
             // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
@@ -415,8 +414,15 @@ class SearchClassViewModel(
                 }
             }
 
-            is SearchClassAction.SelectAcademicYearOfSemester -> {
-                updateState { it.copy(selectedAcademicYearOfSemester = action.year) }
+            is SearchClassAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+                viewModelScope.launch {
+                    loadDivisionsAndBatches()
+                }
+            }
+
+            is SearchClassAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
                 viewModelScope.launch {
                     loadDivisionsAndBatches()
                 }
@@ -514,7 +520,8 @@ class SearchClassViewModel(
                     it.copy(
                         selectedBranches = persistentListOf(),
                         selectedSemesters = persistentListOf(),
-                        selectedAcademicYearOfSemester = null,
+                        academicStartYear = "",
+                        academicEndYear = "",
                         selectedDivision = null,
                         selectedBatch = null,
                         selectedClassTypes = persistentListOf(),

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -90,24 +91,21 @@ fun SearchBatchBottomSheetContent(
             // Academic Year Filter
             FilterSection(title = "Academic Year") {
                 Row(
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    state.academicYearOptions.forEach { year ->
-                        FilterChip(
-                            selected = state.selectedAcademicYear == year,
-                            onClick = {
-                                val newYear = if (state.selectedAcademicYear == year) null else year
-                                onAction(SearchBatchAction.SelectAcademicYear(newYear))
-                            },
-                            label = { Text(year) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        )
-                    }
+                    PresencifyTextField(
+                        value = state.academicStartYear,
+                        onValueChange = { onAction(SearchBatchAction.UpdateAcademicStartYear(it)) },
+                        label = "Start Year *",
+                        modifier = Modifier.weight(1f)
+                    )
+                    PresencifyTextField(
+                        value = state.academicEndYear,
+                        onValueChange = { onAction(SearchBatchAction.UpdateAcademicEndYear(it)) },
+                        label = "End Year *",
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
 
@@ -145,7 +143,8 @@ fun SearchBatchBottomSheetContent(
                 emptyMessage = when {
                     state.selectedSemesterNumber == null ||
                             state.selectedBranch == null ||
-                            state.selectedAcademicYear == null ->
+                            state.academicStartYear.isEmpty() ||
+                            state.academicEndYear.isEmpty() ->
                         "Select semester, branch, and academic year to load divisions"
                     state.divisionOptions.isEmpty() ->
                         "No divisions found for selected filters"

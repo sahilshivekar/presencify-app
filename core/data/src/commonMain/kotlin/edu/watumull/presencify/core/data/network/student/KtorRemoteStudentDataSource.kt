@@ -43,12 +43,10 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.json.Json
 
 class KtorRemoteStudentDataSource(
     private val clientProvider: HttpClientProvider,

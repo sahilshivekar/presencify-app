@@ -1,19 +1,19 @@
 package edu.watumull.presencify.feature.users.import_teachers
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.domain.onSuccess
+import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
+import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
+import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.utils.CsvPickerResult
-import edu.watumull.presencify.core.presentation.utils.toCsvString
-import edu.watumull.presencify.core.presentation.utils.parseCsv
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
-import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.isValidCsv
+import edu.watumull.presencify.core.presentation.utils.parseCsv
+import edu.watumull.presencify.core.presentation.utils.toCsvString
 import kotlinx.coroutines.launch
 
 class ImportTeachersViewModel(

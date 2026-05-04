@@ -43,10 +43,8 @@ data class AddEditStudentState(
     val phoneNumberError: String? = null,
 
     // Academic Details
-    val admissionYear: Int? = null,
+    val admissionYear: String = "",
     val admissionYearError: String? = null,
-    val isAdmissionYearDropdownOpen: Boolean = false,
-    val admissionYearOptions: List<Int> = emptyList(),
     val admissionType: AdmissionType? = null,
     val admissionTypeError: String? = null,
     val isAdmissionTypeDropdownOpen: Boolean = false,
@@ -83,4 +81,3 @@ enum class StudentFormStep {
     CONTACT_DETAILS,
     ACADEMIC_DETAILS
 }
-

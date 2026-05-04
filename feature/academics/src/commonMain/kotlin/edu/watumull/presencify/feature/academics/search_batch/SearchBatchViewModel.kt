@@ -34,14 +34,15 @@ class SearchBatchViewModel(
         },
         onRequest = { page ->
             val state = stateFlow.value
-            val academicYears = state.selectedAcademicYear?.split("-")?.map { it.trim().toInt() }
+            val startYear = state.academicStartYear.toIntOrNull()
+            val endYear = state.academicEndYear.toIntOrNull()
 
             batchRepository.getBatches(
                 semesterNumber = state.selectedSemesterNumber,
                 branchId = state.selectedBranch?.id,
                 divisionId = state.selectedDivision?.id,
-                academicStartYear = academicYears?.getOrNull(0),
-                academicEndYear = academicYears?.getOrNull(1),
+                academicStartYear = startYear,
+                academicEndYear = endYear,
                 searchQuery = state.searchQuery.ifBlank { null },
                 page = page,
                 limit = 20
@@ -144,12 +145,10 @@ class SearchBatchViewModel(
 
         val semester = state.selectedSemesterNumber
         val branchId = state.selectedBranch?.id
-        val academicYear = state.selectedAcademicYear
+        val startYear = state.academicStartYear.toIntOrNull()
+        val endYear = state.academicEndYear.toIntOrNull()
 
-        if (semester != null && branchId != null && academicYear != null) {
-            val years = academicYear.split("-").map { it.trim().toInt() }
-            val startYear = years[0]
-            val endYear = years[1]
+        if (semester != null && branchId != null && startYear != null && endYear != null) {
 
             // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
@@ -224,8 +223,15 @@ class SearchBatchViewModel(
                 }
             }
 
-            is SearchBatchAction.SelectAcademicYear -> {
-                updateState { it.copy(selectedAcademicYear = action.year) }
+            is SearchBatchAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+                viewModelScope.launch {
+                    loadDivisions()
+                }
+            }
+
+            is SearchBatchAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
                 viewModelScope.launch {
                     loadDivisions()
                 }
@@ -246,10 +252,10 @@ class SearchBatchViewModel(
                 updateState {
                     it.copy(
                         selectedSemesterNumber = null,
-                        selectedAcademicYear = null,
+                        academicStartYear = "",
+                        academicEndYear = "",
                         selectedBranch = null,
-                        selectedDivision = null,
-                        divisionOptions = persistentListOf()
+                        selectedDivision = null
                     )
                 }
             }

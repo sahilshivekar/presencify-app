@@ -10,7 +10,6 @@ import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.domain.model.schedule.Room
 import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiText
-import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.feature.schedule.navigation.SearchClassIntention
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -44,8 +43,8 @@ data class SearchClassState(
     val selectedSemesters: PersistentList<SemesterNumber> = persistentListOf(),
 
     // Filter Options - Academic Year of Semester
-    val academicYearOfSemesterOptions: ImmutableList<String> = generateAcademicYears(),
-    val selectedAcademicYearOfSemester: String? = null,
+    val academicStartYear: String = "",
+    val academicEndYear: String = "",
 
     // Filter Options - Division (loaded based on branch + semester + academic year)
     val divisionOptions: PersistentList<Division> = persistentListOf(),
@@ -109,12 +108,4 @@ enum class DialogIntention {
     GENERIC,
 }
 
-private fun generateAcademicYears(): ImmutableList<String> {
-    val currentYear = DateTimeUtils.getCurrentDate().year
-    return (0..9).map { offset ->
-        val startYear = currentYear - offset - 1
-        val endYear = currentYear - offset
-        "$startYear - $endYear"
-    }.toImmutableList()
-}
 

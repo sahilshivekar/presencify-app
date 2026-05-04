@@ -2,13 +2,12 @@ package edu.watumull.presencify.feature.attendance.scan_qr
 
 import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.domain.NtpClock
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRCipher
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
-import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
-import edu.watumull.presencify.core.presentation.UiText
 
 class ScanQrViewModel(
     private val ntpClock: NtpClock

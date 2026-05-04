@@ -55,7 +55,8 @@ class SearchAttendanceViewModel(
         },
         onRequest = { page ->
             val state = stateFlow.value
-            val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
+            val startYear = state.academicStartYear.toIntOrNull()
+            val endYear = state.academicEndYear.toIntOrNull()
 
             attendanceRepository.getAttendances(
                 date = state.selectedDate,
@@ -66,8 +67,8 @@ class SearchAttendanceViewModel(
                 divisionId = state.selectedDivision?.id ?: state.divisionId,
                 batchId = state.selectedBatch?.id ?: state.batchId,
                 semesterNumber = state.selectedSemesters.firstOrNull(),
-                academicStartYear = academicYears?.getOrNull(0),
-                academicEndYear = academicYears?.getOrNull(1),
+                academicStartYear = startYear,
+                academicEndYear = endYear,
                 branchId = state.selectedBranch?.id,
                 page = page,
                 limit = 20
@@ -121,7 +122,16 @@ class SearchAttendanceViewModel(
             is SearchAttendanceAction.SelectDate -> updateState { it.copy(selectedDate = action.date) }
             is SearchAttendanceAction.ToggleBranch -> toggleBranch(action.branch)
             is SearchAttendanceAction.ToggleSemester -> toggleSemester(action.semester)
-            is SearchAttendanceAction.SelectAcademicYearOfSemester -> selectAcademicYear(action.year)
+            is SearchAttendanceAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+                loadDivisionsAndBatches()
+                fetchCoursesForSelectedSemester()
+            }
+            is SearchAttendanceAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
+                loadDivisionsAndBatches()
+                fetchCoursesForSelectedSemester()
+            }
             is SearchAttendanceAction.SelectDivision -> updateState { it.copy(selectedDivision = action.division) }
             is SearchAttendanceAction.SelectBatch -> updateState { it.copy(selectedBatch = action.batch) }
             is SearchAttendanceAction.SelectCourse -> updateState { it.copy(selectedCourse = action.course) }
@@ -236,21 +246,15 @@ class SearchAttendanceViewModel(
         fetchCoursesForSelectedSemester()
     }
 
-    private fun selectAcademicYear(year: String?) {
-        updateState { it.copy(selectedAcademicYearOfSemester = year) }
-        // Load divisions, batches, and courses when academic year changes
-        loadDivisionsAndBatches()
-        fetchCoursesForSelectedSemester()
-    }
-
 
     private fun loadDivisionsAndBatches() {
         val state = stateFlow.value
         val selectedSemester = state.selectedSemesters.firstOrNull()
-        val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
+        val startYear = state.academicStartYear.toIntOrNull()
+        val endYear = state.academicEndYear.toIntOrNull()
 
         // Early return if required filters are not selected
-        if (selectedSemester == null || academicYears == null || academicYears.size != 2) {
+        if (selectedSemester == null || startYear == null || endYear == null) {
             updateState {
                 it.copy(
                     divisionOptions = persistentListOf(),
@@ -268,8 +272,8 @@ class SearchAttendanceViewModel(
             divisionRepository.getDivisions(
                 branchId = state.selectedBranch?.id,
                 semesterNumber = state.selectedSemesters.firstOrNull(),
-                academicStartYear = academicYears?.getOrNull(0),
-                academicEndYear = academicYears?.getOrNull(1),
+                academicStartYear = startYear,
+                academicEndYear = endYear,
                 getAll = true
             ).onSuccess { divisionResult ->
                 updateState {
@@ -285,8 +289,8 @@ class SearchAttendanceViewModel(
             batchRepository.getBatches(
                 branchId = state.selectedBranch?.id,
                 semesterNumber = state.selectedSemesters.firstOrNull(),
-                academicStartYear = academicYears?.getOrNull(0),
-                academicEndYear = academicYears?.getOrNull(1),
+                academicStartYear = startYear,
+                academicEndYear = endYear,
                 getAll = true
             ).onSuccess { batchResult ->
                 updateState {
@@ -304,9 +308,10 @@ class SearchAttendanceViewModel(
     private fun fetchCoursesForSelectedSemester() {
         val state = stateFlow.value
         val selectedSemester = state.selectedSemesters.firstOrNull()
-        val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
+        val startYear = state.academicStartYear.toIntOrNull()
+        val endYear = state.academicEndYear.toIntOrNull()
 
-        if (selectedSemester == null || academicYears == null || academicYears.size != 2) {
+        if (selectedSemester == null || startYear == null || endYear == null) {
             updateState { it.copy(courseOptions = persistentListOf(), selectedCourse = null) }
             return
         }
@@ -317,8 +322,8 @@ class SearchAttendanceViewModel(
             // First get semester ID
             semesterRepository.getSemesters(
                 semesterNumber = selectedSemester,
-                academicStartYear = academicYears[0],
-                academicEndYear = academicYears[1],
+                academicStartYear = startYear,
+                academicEndYear = endYear,
                 branchId = state.selectedBranch?.id,
                 schemeId = null,
                 getAll = true
@@ -368,7 +373,8 @@ class SearchAttendanceViewModel(
                 selectedDate = null,
                 selectedBranch = null,
                 selectedSemesters = persistentListOf(),
-                selectedAcademicYearOfSemester = null,
+                academicStartYear = "",
+                academicEndYear = "",
                 selectedDivision = null,
                 selectedBatch = null,
                 selectedCourse = null,

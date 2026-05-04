@@ -13,7 +13,6 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
-import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.core.presentation.validation.validateAsDob
 import edu.watumull.presencify.core.presentation.validation.validateAsEmail
 import edu.watumull.presencify.core.presentation.validation.validateAsFirstName
@@ -93,9 +92,7 @@ class AddEditStudentViewModel(
     }
 
     private fun loadAdmissionYearOptions() {
-        val currentYear = DateTimeUtils.getCurrentDate().year
-        val years = (currentYear downTo currentYear - 10).toList()
-        updateState { it.copy(admissionYearOptions = years) }
+        // Admission year is now entered manually via text field.
     }
 
     private suspend fun loadStudentDetails(studentId: String) {
@@ -117,7 +114,7 @@ class AddEditStudentViewModel(
                         email = student.email,
                         parentEmail = student.parentEmail ?: "",
                         phoneNumber = student.phoneNumber,
-                        admissionYear = student.admissionYear,
+                        admissionYear = student.admissionYear?.toString().orEmpty(),
                         admissionType = student.admissionType,
                         selectedBranchId = student.branchId,
                         selectedSchemeId = student.schemeId,
@@ -215,7 +212,8 @@ class AddEditStudentViewModel(
 
             // Academic Details
             is AddEditStudentAction.UpdateAdmissionYear -> updateState {
-                it.copy(admissionYear = action.year, admissionYearError = null, isAdmissionYearDropdownOpen = false)
+                val cleaned = action.year.filter { it.isDigit() }.take(4)
+                it.copy(admissionYear = cleaned, admissionYearError = null)
             }
             is AddEditStudentAction.UpdateAdmissionType -> updateState {
                 it.copy(admissionType = action.type, admissionTypeError = null, isAdmissionTypeDropdownOpen = false)
@@ -225,9 +223,6 @@ class AddEditStudentViewModel(
             }
             is AddEditStudentAction.UpdateScheme -> updateState {
                 it.copy(selectedSchemeId = action.schemeId, schemeError = null, isSchemeDropdownOpen = false)
-            }
-            is AddEditStudentAction.ChangeAdmissionYearDropDownVisibility -> updateState {
-                it.copy(isAdmissionYearDropdownOpen = action.isVisible)
             }
             is AddEditStudentAction.ChangeAdmissionTypeDropDownVisibility -> updateState {
                 it.copy(isAdmissionTypeDropdownOpen = action.isVisible)
@@ -367,7 +362,13 @@ class AddEditStudentViewModel(
         val prnValidation = state.prn.validateAsPrn()
         val prnError = if (prnValidation.successful) null else prnValidation.errorMessage
 
-        val admissionYearError = if (state.admissionYear == null) "Admission year is required" else null
+        val admissionYearInt = state.admissionYear.toIntOrNull()
+        val admissionYearError = when {
+            state.admissionYear.isBlank() -> "Admission year is required"
+            admissionYearInt == null -> "Invalid admission year"
+            state.admissionYear.length != 4 -> "Admission year must be 4 digits"
+            else -> null
+        }
         val admissionTypeError = if (state.admissionType == null) "Admission type is required" else null
         val branchError = if (state.selectedBranchId.isBlank()) "Branch is required" else null
         val schemeError = if (state.selectedSchemeId.isBlank()) "Scheme is required" else null
@@ -437,7 +438,7 @@ class AddEditStudentViewModel(
         gender = state.gender!!,
         dob = state.dob?.toString(),
         schemeId = state.selectedSchemeId,
-        admissionYear = state.admissionYear!!,
+        admissionYear = state.admissionYear.toInt(),
         admissionType = state.admissionType!!,
         branchId = state.selectedBranchId,
         parentEmail = state.parentEmail.ifBlank { null },
@@ -457,8 +458,7 @@ class AddEditStudentViewModel(
         branchId = state.selectedBranchId,
         parentEmail = state.parentEmail.ifBlank { null },
         prn = state.prn,
-        admissionYear = state.admissionYear,
+        admissionYear = state.admissionYear.toIntOrNull(),
         admissionType = state.admissionType
     )
 }
-

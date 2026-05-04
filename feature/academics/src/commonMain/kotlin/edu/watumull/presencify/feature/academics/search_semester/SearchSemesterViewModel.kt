@@ -36,12 +36,13 @@ class SearchSemesterViewModel(
         },
         onRequest = { page ->
             val state = stateFlow.value
-            val academicYears = state.selectedAcademicYear?.split("-")?.map { it.trim().toInt() }
+            val startYear = state.academicStartYear.toIntOrNull()
+            val endYear = state.academicEndYear.toIntOrNull()
 
             semesterRepository.getSemesters(
                 semesterNumber = state.selectedSemesterNumber,
-                academicStartYear = academicYears?.getOrNull(0),
-                academicEndYear = academicYears?.getOrNull(1),
+                academicStartYear = startYear,
+                academicEndYear = endYear,
                 branchId = state.selectedBranches.firstOrNull()?.id,
                 schemeId = state.selectedScheme?.id,
                 page = page,
@@ -196,8 +197,12 @@ class SearchSemesterViewModel(
                 updateState { it.copy(selectedSemesterNumber = action.semesterNumber) }
             }
 
-            is SearchSemesterAction.SelectAcademicYear -> {
-                updateState { it.copy(selectedAcademicYear = action.year) }
+            is SearchSemesterAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+            }
+
+            is SearchSemesterAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
             }
 
             is SearchSemesterAction.ToggleBranch -> {
@@ -218,7 +223,8 @@ class SearchSemesterViewModel(
                 updateState {
                     it.copy(
                         selectedSemesterNumber = null,
-                        selectedAcademicYear = null,
+                        academicStartYear = "",
+                        academicEndYear = "",
                         selectedBranches = persistentListOf(),
                         selectedScheme = null
                     )

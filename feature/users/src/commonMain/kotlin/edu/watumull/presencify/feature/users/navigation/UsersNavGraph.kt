@@ -8,6 +8,8 @@ import edu.watumull.presencify.feature.users.assign_unassign_student_to_batch.As
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_division.AssignUnassignStudentToDivisionRoot
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_semester.AssignUnassignStudentToSemesterRoot
 import edu.watumull.presencify.feature.users.dashboard.UsersDashboardRoot
+import edu.watumull.presencify.feature.users.import_students.ImportStudentsRoot
+import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersRoot
 import edu.watumull.presencify.feature.users.mark_unmark_student_dropout.MarkUnmarkStudentAsDropoutRoot
 import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchRoot
 import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionRoot
@@ -15,8 +17,6 @@ import edu.watumull.presencify.feature.users.search_student.SearchStudentRoot
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherRoot
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsRoot
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsRoot
-import edu.watumull.presencify.feature.users.import_students.ImportStudentsRoot
-import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersRoot
 import edu.watumull.presencify.feature.users.update_password.UpdateUserPasswordRoot
 
 fun NavGraphBuilder.usersDashboard(

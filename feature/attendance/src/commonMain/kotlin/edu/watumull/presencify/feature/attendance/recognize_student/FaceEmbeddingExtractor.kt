@@ -1,7 +1,5 @@
 package edu.watumull.presencify.feature.attendance.recognize_student
 
-import coil3.Bitmap
-
 // 1. Create a platform-agnostic image type
 expect class PlatformImage
 

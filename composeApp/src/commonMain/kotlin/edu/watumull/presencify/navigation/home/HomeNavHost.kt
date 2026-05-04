@@ -11,8 +11,8 @@ import edu.watumull.presencify.feature.academics.navigation.academicsDashboard
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.feature.attendance.navigation.attendanceDashboard
 import edu.watumull.presencify.feature.schedule.navigation.scheduleDashboard
-import edu.watumull.presencify.feature.users.navigation.usersDashboard
 import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
+import edu.watumull.presencify.feature.users.navigation.usersDashboard
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAggregateAttendanceAnalytics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAssignUnassignStudentToDivision
@@ -24,6 +24,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToLin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkUnmarkStudentAsDropout
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentDivision
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchBranch
@@ -37,7 +38,6 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTeacher
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUniversityDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -3,7 +3,6 @@ package edu.watumull.presencify.core.domain.repository.attendance
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudent
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceStudentAggregatedAndDetailed

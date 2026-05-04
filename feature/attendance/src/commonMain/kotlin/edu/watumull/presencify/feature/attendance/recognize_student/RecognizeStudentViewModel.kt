@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import co.touchlab.kermit.Logger
+import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.NtpClock
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
@@ -11,17 +12,16 @@ import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepos
 import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
-import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
-import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.firstOrNull
-import kotlin.math.sqrt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import kotlin.math.sqrt
 
 class RecognizeStudentViewModel(
     savedStateHandle: SavedStateHandle,

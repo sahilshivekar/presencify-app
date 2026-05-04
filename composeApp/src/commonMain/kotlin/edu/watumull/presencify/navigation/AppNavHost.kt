@@ -9,7 +9,6 @@ import edu.watumull.presencify.feature.academics.navigation.SearchCourseIntentio
 import edu.watumull.presencify.feature.academics.navigation.academicsNavGraph
 import edu.watumull.presencify.feature.admin.auth.navigation.adminAuthNavGraph
 import edu.watumull.presencify.feature.admin.mgt.navigation.adminMgtNavGraph
-import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import edu.watumull.presencify.feature.attendance.navigation.attendanceNavGraph
 import edu.watumull.presencify.feature.onboarding.navigation.onboardingNavGraph
 import edu.watumull.presencify.feature.schedule.navigation.scheduleNavGraph
@@ -44,12 +43,14 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCla
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCourseDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCreateAttendanceSheet
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDivisionDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkStudentAttendance
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDynamicQR
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToGroupPhotoScan
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkStudentAttendance
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSemesterDetails
@@ -64,8 +65,6 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherVerifyCode
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateUserPassword
 
 @Composable

@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.import_students
 
-import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.presentation.UiText
 
 data class ImportStudentsState(
     val viewState: ViewState = ViewState.Content,

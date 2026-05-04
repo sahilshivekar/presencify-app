@@ -135,19 +135,21 @@ class SearchStudentViewModel(
         },
         onRequest = { page ->
             val state = stateFlow.value
-            val dropoutYears = state.selectedDropoutYear?.split("-")?.map { it.trim().toInt() }
-            val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
+            val academicStartYear = state.academicStartYear.toIntOrNull()
+            val academicEndYear = state.academicEndYear.toIntOrNull()
+            val dropoutStartYear = state.dropoutStartYear.toIntOrNull()
+            val dropoutEndYear = state.dropoutEndYear.toIntOrNull()
 
             studentRepository.getStudents(
                 searchQuery = state.searchQuery.ifBlank { null },
                 branchIds = state.selectedBranches.map { it.id }.ifEmpty { null },
                 semesterNumbers = state.selectedSemesters.map { it.value }.ifEmpty { null },
-                academicStartYearOfSemester = academicYears?.getOrNull(0),
-                academicEndYearOfSemester = academicYears?.getOrNull(1),
+                academicStartYearOfSemester = academicStartYear,
+                academicEndYearOfSemester = academicEndYear,
                 admissionTypes = state.selectedAdmissionTypes.ifEmpty { null },
-                admissionYear = state.selectedAdmissionYear?.toIntOrNull(),
-                dropoutAcademicStartYear = dropoutYears?.getOrNull(0),
-                dropoutAcademicEndYear = dropoutYears?.getOrNull(1),
+                admissionYear = state.admissionYear?.toIntOrNull(),
+                dropoutAcademicStartYear = dropoutStartYear,
+                dropoutAcademicEndYear = dropoutEndYear,
                 schemeId = state.selectedScheme?.id,
                 divisionId = state.selectedDivision?.id,
                 batchId = state.selectedBatch?.id,
@@ -217,15 +219,18 @@ class SearchStudentViewModel(
             }
         }
         if (routeParams.academicStartYear != null && routeParams.academicEndYear != null) {
-            val academicYear = "${routeParams.academicStartYear} - ${routeParams.academicEndYear}"
-            if (stateFlow.value.academicYearOfSemesterOptions.contains(academicYear)) {
-                updateState { it.copy(selectedAcademicYearOfSemester = academicYear) }
+            updateState {
+                it.copy(
+                    academicStartYear = routeParams.academicStartYear.toString(),
+                    academicEndYear = routeParams.academicEndYear.toString()
+                )
             }
         }
         val currentState = stateFlow.value
         if (currentState.selectedSemesters.isNotEmpty() &&
             currentState.selectedBranches.isNotEmpty() &&
-            currentState.selectedAcademicYearOfSemester != null
+            currentState.academicStartYear.isNotEmpty() &&
+            currentState.academicEndYear.isNotEmpty()
         ) {
             loadDivisionsAndBatches()
             if (
@@ -326,12 +331,10 @@ class SearchStudentViewModel(
 
         val semester = state.selectedSemesters.firstOrNull()
         val branchId = state.selectedBranches.firstOrNull()?.id
-        val academicYear = state.selectedAcademicYearOfSemester
+        val startYear = state.academicStartYear.toIntOrNull()
+        val endYear = state.academicEndYear.toIntOrNull()
 
-        if (semester != null && branchId != null && academicYear != null) {
-            val years = academicYear.split("-").map { it.trim().toInt() }
-            val startYear = years[0]
-            val endYear = years[1]
+        if (semester != null && branchId != null && startYear != null && endYear != null) {
 
             // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
@@ -1368,8 +1371,15 @@ class SearchStudentViewModel(
                 }
             }
 
-            is SearchStudentAction.SelectAcademicYearOfSemester -> {
-                updateState { it.copy(selectedAcademicYearOfSemester = action.year) }
+            is SearchStudentAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+                viewModelScope.launch {
+                    loadDivisionsAndBatches()
+                }
+            }
+
+            is SearchStudentAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
                 viewModelScope.launch {
                     loadDivisionsAndBatches()
                 }
@@ -1386,11 +1396,15 @@ class SearchStudentViewModel(
             }
 
             is SearchStudentAction.SelectAdmissionYear -> {
-                updateState { it.copy(selectedAdmissionYear = action.year) }
+                updateState { it.copy(admissionYear = action.year) }
             }
 
-            is SearchStudentAction.SelectDropoutYear -> {
-                updateState { it.copy(selectedDropoutYear = action.year) }
+            is SearchStudentAction.UpdateDropoutStartYear -> {
+                updateState { it.copy(dropoutStartYear = action.year) }
+            }
+
+            is SearchStudentAction.UpdateDropoutEndYear -> {
+                updateState { it.copy(dropoutEndYear = action.year) }
             }
 
             is SearchStudentAction.SelectScheme -> {
@@ -1410,10 +1424,12 @@ class SearchStudentViewModel(
                     it.copy(
                         selectedBranches = persistentListOf(),
                         selectedSemesters = persistentListOf(),
-                        selectedAcademicYearOfSemester = null,
+                        academicStartYear = "",
+                        academicEndYear = "",
                         selectedAdmissionTypes = persistentListOf(),
-                        selectedAdmissionYear = null,
-                        selectedDropoutYear = null,
+                        admissionYear = null,
+                        dropoutStartYear = "",
+                        dropoutEndYear = "",
                         selectedScheme = null,
                         selectedDivision = null,
                         selectedBatch = null

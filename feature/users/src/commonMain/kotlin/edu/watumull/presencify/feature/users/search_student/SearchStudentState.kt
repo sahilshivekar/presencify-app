@@ -63,19 +63,19 @@ data class SearchStudentState(
     val selectedSemesters: PersistentList<SemesterNumber> = persistentListOf(),
 
     // Filter Options - Academic Year of Semester
-    val academicYearOfSemesterOptions: ImmutableList<String> = generateAcademicYears(),
-    val selectedAcademicYearOfSemester: String? = null,
+    val academicStartYear: String = "",
+    val academicEndYear: String = "",
 
     // Filter Options - Admission
     val admissionTypeOptions: ImmutableList<AdmissionType> = AdmissionType.entries.toImmutableList(),
     val selectedAdmissionTypes: PersistentList<AdmissionType> = persistentListOf(),
 
     val admissionYearOptions: ImmutableList<String> = generateYears(),
-    val selectedAdmissionYear: String? = null,
+    val admissionYear: String? = null,
 
     // Filter Options - Dropout Year
-    val dropoutYearOptions: ImmutableList<String> = generateAcademicYears(),
-    val selectedDropoutYear: String? = null,
+    val dropoutStartYear: String = "",
+    val dropoutEndYear: String = "",
 
     // Filter Options - Scheme
     val schemeOptions: PersistentList<Scheme> = persistentListOf(),
@@ -115,14 +115,6 @@ enum class DialogIntention {
     GENERIC,
 }
 
-private fun generateAcademicYears(): ImmutableList<String> {
-    val currentYear = DateTimeUtils.getCurrentDate().year
-    return (0..9).map { offset ->
-        val startYear = currentYear - offset - 1
-        val endYear = currentYear - offset
-        "$startYear - $endYear"
-    }.toImmutableList()
-}
 
 private fun generateYears(): ImmutableList<String> {
     val currentYear = DateTimeUtils.getCurrentDate().year

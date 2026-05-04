@@ -2,8 +2,8 @@ package edu.watumull.presencify
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.domain.model.auth.UserRole
+import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
 import edu.watumull.presencify.feature.onboarding.navigation.OnboardingRoutes
 import edu.watumull.presencify.navigation.home.Home

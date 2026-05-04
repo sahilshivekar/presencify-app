@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,20 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -48,9 +36,9 @@ import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.presentation.UiConstants
-import edu.watumull.presencify.core.presentation.utils.toReadableString
-import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionAction
-import kotlinx.datetime.LocalDate
+import edu.watumull.presencify.feature.users.add_edit_student.StudentFormStep.ACADEMIC_DETAILS
+import edu.watumull.presencify.feature.users.add_edit_student.StudentFormStep.CONTACT_DETAILS
+import edu.watumull.presencify.feature.users.add_edit_student.StudentFormStep.PERSONAL_DETAILS
 
 @Composable
 fun AddEditStudentScreen(
@@ -94,9 +82,9 @@ fun AddEditStudentScreen(
                     }
                 ) { targetState ->
                     when (targetState) {
-                        StudentFormStep.PERSONAL_DETAILS -> PersonalDetailsStep(state, onAction)
-                        StudentFormStep.CONTACT_DETAILS -> ContactDetailsStep(state, onAction)
-                        StudentFormStep.ACADEMIC_DETAILS -> AcademicDetailsStep(state, onAction)
+                        PERSONAL_DETAILS -> PersonalDetailsStep(state, onAction)
+                        CONTACT_DETAILS -> ContactDetailsStep(state, onAction)
+                        ACADEMIC_DETAILS -> AcademicDetailsStep(state, onAction)
                     }
                 }
 
@@ -292,15 +280,15 @@ private fun AcademicDetailsStep(
 
         Spacer(Modifier.height(16.dp))
 
-        PresencifyDropDownMenuBox<Int>(
-            value = state.admissionYear?.toString() ?: "",
-            options = state.admissionYearOptions,
-            onSelectItem = { onAction(AddEditStudentAction.UpdateAdmissionYear(it)) },
+        PresencifyTextField(
+            value = state.admissionYear,
+            onValueChange = { input ->
+                val cleaned = input.filter { it.isDigit() }.take(4)
+                onAction(AddEditStudentAction.UpdateAdmissionYear(cleaned))
+            },
             label = "Admission Year *",
-            itemToString = { it.toString() },
-            expanded = state.isAdmissionYearDropdownOpen,
-            onDropDownVisibilityChanged = { onAction(AddEditStudentAction.ChangeAdmissionYearDropDownVisibility(it)) },
             supportingText = state.admissionYearError,
+            isError = state.admissionYearError != null,
             enabled = !state.isLoading && !state.isSubmitting,
             modifier = Modifier.fillMaxWidth()
         )

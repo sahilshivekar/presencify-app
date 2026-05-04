@@ -1,8 +1,8 @@
 package edu.watumull.presencify.core.data
 
 import edu.watumull.presencify.core.data.network.HttpClientFactory
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.*
+import io.ktor.client.engine.*
 
 class HttpClientProvider(
     private val factory: HttpClientFactory,

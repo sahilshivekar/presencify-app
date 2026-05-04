@@ -38,7 +38,6 @@ import edu.watumull.presencify.core.data.network.teacher.KtorRemoteTeacherDataSo
 import edu.watumull.presencify.core.data.network.teacher.RemoteTeacherDataSource
 import edu.watumull.presencify.core.data.network.teacher_auth.KtorRemoteTeacherAuthDataSource
 import edu.watumull.presencify.core.data.network.teacher_auth.RemoteTeacherAuthDataSource
-import io.ktor.client.engine.*
 import org.koin.core.module.Module
 import org.koin.dsl.module
 

@@ -20,11 +20,10 @@ sealed interface AddEditStudentAction {
     data class UpdatePhoneNumber(val phoneNumber: String) : AddEditStudentAction
 
     // Academic Details
-    data class UpdateAdmissionYear(val year: Int) : AddEditStudentAction
+    data class UpdateAdmissionYear(val year: String) : AddEditStudentAction
     data class UpdateAdmissionType(val type: edu.watumull.presencify.core.domain.enums.AdmissionType) : AddEditStudentAction
     data class UpdateBranch(val branchId: String) : AddEditStudentAction
     data class UpdateScheme(val schemeId: String) : AddEditStudentAction
-    data class ChangeAdmissionYearDropDownVisibility(val isVisible: Boolean) : AddEditStudentAction
     data class ChangeAdmissionTypeDropDownVisibility(val isVisible: Boolean) : AddEditStudentAction
     data class ChangeBranchDropDownVisibility(val isVisible: Boolean) : AddEditStudentAction
     data class ChangeSchemeDropDownVisibility(val isVisible: Boolean) : AddEditStudentAction
@@ -38,4 +37,3 @@ sealed interface AddEditStudentAction {
     data object BackStep : AddEditStudentAction
     data object SubmitClick : AddEditStudentAction
 }
-

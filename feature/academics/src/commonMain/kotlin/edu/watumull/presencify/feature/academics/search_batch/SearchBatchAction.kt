@@ -16,7 +16,8 @@ sealed interface SearchBatchAction {
 
     // Filters
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber?) : SearchBatchAction
-    data class SelectAcademicYear(val year: String?) : SearchBatchAction
+    data class UpdateAcademicStartYear(val year: String) : SearchBatchAction
+    data class UpdateAcademicEndYear(val year: String) : SearchBatchAction
     data class SelectBranch(val branch: Branch?) : SearchBatchAction
     data class SelectDivision(val division: Division?) : SearchBatchAction
 

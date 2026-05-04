@@ -1,6 +1,5 @@
 package edu.watumull.presencify.core.data.network.attendance
 
-import edu.watumull.presencify.core.data.dto.attendance.AggregatedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentAggregatedAndDetailedAttendanceDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto

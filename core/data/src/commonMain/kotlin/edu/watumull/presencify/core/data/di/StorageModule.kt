@@ -5,8 +5,8 @@ import edu.watumull.presencify.core.data.Constants
 import edu.watumull.presencify.core.data.local.NoOpStringCipher
 import edu.watumull.presencify.core.data.local.SettingsFactory
 import edu.watumull.presencify.core.data.local.StringCipher
-import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
+import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
 import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind

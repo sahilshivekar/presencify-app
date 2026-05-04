@@ -6,6 +6,8 @@ import edu.watumull.presencify.feature.users.assign_unassign_student_to_batch.As
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_division.AssignUnassignStudentToDivisionViewModel
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_semester.AssignUnassignStudentToSemesterViewModel
 import edu.watumull.presencify.feature.users.dashboard.UsersDashboardViewModel
+import edu.watumull.presencify.feature.users.import_students.ImportStudentsViewModel
+import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersViewModel
 import edu.watumull.presencify.feature.users.mark_unmark_student_dropout.MarkUnmarkStudentAsDropoutViewModel
 import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchViewModel
 import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionViewModel
@@ -13,8 +15,6 @@ import edu.watumull.presencify.feature.users.search_student.SearchStudentViewMod
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherViewModel
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsViewModel
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsViewModel
-import edu.watumull.presencify.feature.users.import_students.ImportStudentsViewModel
-import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersViewModel
 import edu.watumull.presencify.feature.users.update_password.UpdateUserPasswordViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module

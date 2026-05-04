@@ -17,7 +17,6 @@ import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 

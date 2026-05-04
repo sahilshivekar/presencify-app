@@ -35,12 +35,13 @@ class SearchTimetableViewModel(
         },
         onRequest = { page ->
             val state = stateFlow.value
-            val academicYears = state.selectedAcademicYearOfSemester?.split("-")?.map { it.trim().toInt() }
+            val startYear = state.academicStartYear.toIntOrNull()
+            val endYear = state.academicEndYear.toIntOrNull()
 
             timetableRepository.getTimetables(
                 semesterNumber = state.selectedSemesters.firstOrNull(),
-                academicStartYearOfSemester = academicYears?.getOrNull(0),
-                academicEndYearOfSemester = academicYears?.getOrNull(1),
+                academicStartYearOfSemester = startYear,
+                academicEndYearOfSemester = endYear,
                 page = page,
                 limit = 20
             )
@@ -181,8 +182,12 @@ class SearchTimetableViewModel(
                 updateState { it.copy(selectedSemesters = newSemesters.toPersistentList()) }
             }
 
-            is SearchTimetableAction.SelectAcademicYearOfSemester -> {
-                updateState { it.copy(selectedAcademicYearOfSemester = action.year) }
+            is SearchTimetableAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+            }
+
+            is SearchTimetableAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
             }
 
             SearchTimetableAction.ResetFilters -> {
@@ -190,7 +195,8 @@ class SearchTimetableViewModel(
                     it.copy(
                         selectedBranches = persistentListOf(),
                         selectedSemesters = persistentListOf(),
-                        selectedAcademicYearOfSemester = null
+                        academicStartYear = "",
+                        academicEndYear = ""
                     )
                 }
             }

@@ -1,25 +1,20 @@
 package edu.watumull.presencify.feature.attendance.navigation
 
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.toRoute
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.attendance.add_student_biometrics.AddStudentBiometricsRoot
 import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsRoot
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardRoot
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsRoot
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceRoot
+import edu.watumull.presencify.feature.attendance.defaulters.DefaultersRoot
+import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
+import edu.watumull.presencify.feature.attendance.group_photo_scan.GroupPhotoScanRoot
 import edu.watumull.presencify.feature.attendance.mark_attendance.MarkAttendanceRoot
+import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
+import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceRoot
 import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsRoot
-import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
-import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
-import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
-import edu.watumull.presencify.feature.attendance.group_photo_scan.GroupPhotoScanRoot
-import edu.watumull.presencify.feature.attendance.defaulters.DefaultersRoot
-import kotlinx.coroutines.flow.firstOrNull
 
 fun NavGraphBuilder.attendanceDashboard(
     onNavigateBack: () -> Unit,

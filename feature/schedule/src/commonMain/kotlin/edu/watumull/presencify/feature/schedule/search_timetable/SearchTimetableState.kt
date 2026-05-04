@@ -5,7 +5,6 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.schedule.Timetable
 import edu.watumull.presencify.core.presentation.UiText
-import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -34,8 +33,8 @@ data class SearchTimetableState(
     val selectedSemesters: PersistentList<SemesterNumber> = persistentListOf(),
 
     // Filter Options - Academic Year of Semester
-    val academicYearOfSemesterOptions: ImmutableList<String> = generateAcademicYears(),
-    val selectedAcademicYearOfSemester: String? = null,
+    val academicStartYear: String = "",
+    val academicEndYear: String = "",
 
     // Pagination
     val currentPage: Int = 1,
@@ -76,11 +75,3 @@ enum class DialogIntention {
     GENERIC,
 }
 
-private fun generateAcademicYears(): ImmutableList<String> {
-    val currentYear = DateTimeUtils.getCurrentDate().year
-    return (0..9).map { offset ->
-        val startYear = currentYear - offset - 1
-        val endYear = currentYear - offset
-        "$startYear - $endYear"
-    }.toImmutableList()
-}

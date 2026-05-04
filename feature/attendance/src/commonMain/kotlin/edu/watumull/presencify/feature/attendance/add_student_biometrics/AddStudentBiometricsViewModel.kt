@@ -7,15 +7,13 @@ import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
-import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 
 class AddStudentBiometricsViewModel(
     private val studentRepository: StudentRepository,

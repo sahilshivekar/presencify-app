@@ -15,7 +15,8 @@ sealed interface SearchDivisionAction {
 
     // Filters
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber?) : SearchDivisionAction
-    data class SelectAcademicYear(val year: String?) : SearchDivisionAction
+    data class UpdateAcademicStartYear(val year: String) : SearchDivisionAction
+    data class UpdateAcademicEndYear(val year: String) : SearchDivisionAction
     data class SelectBranch(val branch: Branch?) : SearchDivisionAction
 
     data object ResetFilters : SearchDivisionAction

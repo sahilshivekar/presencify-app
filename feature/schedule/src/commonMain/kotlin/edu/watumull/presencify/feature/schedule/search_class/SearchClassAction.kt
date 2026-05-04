@@ -20,7 +20,8 @@ sealed interface SearchClassAction {
     // Filters - Branch, Semester, Academic Year
     data class ToggleBranch(val branch: Branch) : SearchClassAction
     data class ToggleSemester(val semester: SemesterNumber) : SearchClassAction
-    data class SelectAcademicYearOfSemester(val year: String?) : SearchClassAction
+    data class UpdateAcademicStartYear(val year: String) : SearchClassAction
+    data class UpdateAcademicEndYear(val year: String) : SearchClassAction
 
     // Filters - Division and Batch (dependent on above filters)
     data class SelectDivision(val division: Division?) : SearchClassAction

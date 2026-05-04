@@ -9,7 +9,6 @@ import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Division
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.presentation.UiText
-import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -42,8 +41,8 @@ data class SearchAttendanceState(
     val selectedSemesters: PersistentList<SemesterNumber> = persistentListOf(),
 
     // Filter Options - Academic Year of Semester
-    val academicYearOfSemesterOptions: ImmutableList<String> = generateAcademicYears(),
-    val selectedAcademicYearOfSemester: String? = null,
+    val academicStartYear: String = "",
+    val academicEndYear: String = "",
 
 
     // Filter Options - Division
@@ -95,13 +94,3 @@ data class SearchAttendanceState(
     }
 }
 
-private fun generateAcademicYears(): ImmutableList<String> {
-    val currentDate = DateTimeUtils.getCurrentDate()
-    val currentYear = currentDate.year
-    val startYear = 2020
-    val endYear = currentYear + 5
-
-    return (startYear until endYear).map { year ->
-        "$year-${year + 1}"
-    }.toImmutableList()
-}

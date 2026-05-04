@@ -9,10 +9,7 @@ import android.graphics.Color
 import android.util.Log
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.FloatBuffer
-import java.nio.LongBuffer
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 actual typealias PlatformImage = Bitmap
 

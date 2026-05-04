@@ -33,14 +33,15 @@ class SearchDivisionViewModel(
             },
             onRequest = { page ->
                 val state = stateFlow.value
-                val academicYears = state.selectedAcademicYear?.split("-")?.map { it.trim().toInt() }
+                val startYear = state.academicStartYear.toIntOrNull()
+                val endYear = state.academicEndYear.toIntOrNull()
 
                 divisionRepository.getDivisions(
                     searchQuery = state.searchQuery.ifBlank { null },
                     semesterNumber = state.selectedSemesterNumber,
                     branchId = state.selectedBranch?.id,
-                    academicStartYear = academicYears?.getOrNull(0),
-                    academicEndYear = academicYears?.getOrNull(1),
+                    academicStartYear = startYear,
+                    academicEndYear = endYear,
                     page = page,
                     limit = 20
                 )
@@ -165,8 +166,12 @@ class SearchDivisionViewModel(
                 updateState { it.copy(selectedSemesterNumber = action.semesterNumber) }
             }
 
-            is SearchDivisionAction.SelectAcademicYear -> {
-                updateState { it.copy(selectedAcademicYear = action.year) }
+            is SearchDivisionAction.UpdateAcademicStartYear -> {
+                updateState { it.copy(academicStartYear = action.year) }
+            }
+
+            is SearchDivisionAction.UpdateAcademicEndYear -> {
+                updateState { it.copy(academicEndYear = action.year) }
             }
 
             is SearchDivisionAction.SelectBranch -> {
@@ -177,7 +182,8 @@ class SearchDivisionViewModel(
                 updateState {
                     it.copy(
                         selectedSemesterNumber = null,
-                        selectedAcademicYear = null,
+                        academicStartYear = "",
+                        academicEndYear = "",
                         selectedBranch = null
                     )
                 }

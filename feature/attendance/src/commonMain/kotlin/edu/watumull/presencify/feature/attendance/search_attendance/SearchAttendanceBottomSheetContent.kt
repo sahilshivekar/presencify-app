@@ -13,15 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.presentation.utils.toReadableString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -133,24 +127,21 @@ fun SearchAttendanceBottomSheetContent(
             // Academic Year of Semester Filter
             FilterSection(title = "Academic Year of Semester") {
                 Row(
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    state.academicYearOfSemesterOptions.forEach { year ->
-                        FilterChip(
-                            selected = state.selectedAcademicYearOfSemester == year,
-                            onClick = {
-                                val newYear = if (state.selectedAcademicYearOfSemester == year) null else year
-                                onAction(SearchAttendanceAction.SelectAcademicYearOfSemester(newYear))
-                            },
-                            label = { Text(year) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        )
-                    }
+                    PresencifyTextField(
+                        value = state.academicStartYear,
+                        onValueChange = { onAction(SearchAttendanceAction.UpdateAcademicStartYear(it)) },
+                        label = "Start Year *",
+                        modifier = Modifier.weight(1f)
+                    )
+                    PresencifyTextField(
+                        value = state.academicEndYear,
+                        onValueChange = { onAction(SearchAttendanceAction.UpdateAcademicEndYear(it)) },
+                        label = "End Year *",
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
 
@@ -224,7 +215,7 @@ fun SearchAttendanceBottomSheetContent(
                 title = "Course",
                 isLoading = state.areCoursesLoading,
                 emptyMessage = when {
-                    state.selectedSemesters.isEmpty() || state.selectedAcademicYearOfSemester == null ->
+                    state.selectedSemesters.isEmpty() || state.academicStartYear.isEmpty() || state.academicEndYear.isEmpty() ->
                         "Select semester and academic year to load courses"
                     state.courseOptions.isEmpty() ->
                         "No courses found for selected semester"

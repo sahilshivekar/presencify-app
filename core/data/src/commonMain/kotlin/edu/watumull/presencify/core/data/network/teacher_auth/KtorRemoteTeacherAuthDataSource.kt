@@ -12,8 +12,6 @@ import edu.watumull.presencify.core.data.network.teacher_auth.ApiEndpoints.VERIF
 import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
-import edu.watumull.presencify.core.domain.model.auth.LoginTeacher
-import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
