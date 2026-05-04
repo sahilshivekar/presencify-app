@@ -16,6 +16,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
@@ -47,8 +49,6 @@ fun CreateAttendanceScreen(
     state: CreateAttendanceState,
     onAction: (CreateAttendanceAction) -> Unit
 ) {
-    var showDatePicker by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
 
     PresencifyScaffold(
         backPress = { onAction(CreateAttendanceAction.BackButtonClick) },
@@ -116,7 +116,7 @@ fun CreateAttendanceScreen(
                             DateSelectionSection(
                                 selectedDate = state.selectedDate,
                                 dateError = state.dateError,
-                                onDateClick = { showDatePicker = true }
+                                onAction = onAction
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
@@ -129,23 +129,6 @@ fun CreateAttendanceScreen(
                         }
                     }
                 }
-            }
-        }
-
-        // Date Picker Dialog
-        if (showDatePicker) {
-            DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
-                onConfirm = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val epochDays = millis / (24 * 60 * 60 * 1000)
-                        val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                        onAction(CreateAttendanceAction.UpdateDate(selectedDate))
-                    }
-                    showDatePicker = false
-                }
-            ) {
-                DatePicker(state = datePickerState)
             }
         }
 
@@ -217,7 +200,7 @@ private fun ClassDetailsSection(
 private fun DateSelectionSection(
     selectedDate: LocalDate?,
     dateError: String?,
-    onDateClick: () -> Unit
+    onAction: (CreateAttendanceAction) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -228,48 +211,16 @@ private fun DateSelectionSection(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        PresencifyTextField(
-            value = selectedDate?.toReadableString() ?: "",
-            onValueChange = { },
+        PresencifyDatePickerTextField(
+            value = selectedDate,
+            onValueChange = {
+                onAction(CreateAttendanceAction.UpdateDate(it))
+            },
             label = "Date *",
-            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
             supportingText = dateError,
             isError = dateError != null,
-            leadingIcon = {
-                IconButton(onClick = { onDateClick() }) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarToday,
-                        contentDescription = "Select Date"
-                    )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
         )
     }
 }
 
-@Composable
-private fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            content()
-        }
-    )
-}

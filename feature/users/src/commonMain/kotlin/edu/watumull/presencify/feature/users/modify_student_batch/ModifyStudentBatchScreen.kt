@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
@@ -89,14 +90,6 @@ fun ModifyStudentBatchScreen(
             onDismiss = {
                 onAction(ModifyStudentBatchAction.DismissDialog)
             }
-        )
-    }
-
-    // Date Picker Dialog
-    if (state.isDatePickerVisible) {
-        DatePickerDialog(
-            state = state,
-            onAction = onAction
         )
     }
 }
@@ -264,25 +257,15 @@ private fun ModifyStudentBatchScreenContent(
                         fontWeight = FontWeight.SemiBold
                     )
 
-                    PresencifyTextField(
-                        value = state.newBatchStartDate?.toReadableString() ?: "",
-                        onValueChange = {},
+                    PresencifyDatePickerTextField(
+                        value = state.newBatchStartDate,
+                        onValueChange = {
+                            onAction(ModifyStudentBatchAction.UpdateNewBatchStartDate(it))
+                        },
                         label = "Select Start Date",
+                        modifier = Modifier.fillMaxWidth(),
                         supportingText = state.newBatchStartDateError,
                         isError = state.newBatchStartDateError != null,
-                        readOnly = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onAction(ModifyStudentBatchAction.ChangeDatePickerVisibility(true)) },
-                        trailingIcon = {
-                            IconButton(onClick = { onAction(ModifyStudentBatchAction.ChangeDatePickerVisibility(true)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.DateRange,
-                                    contentDescription = "Select Date",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
                     )
                 }
 
@@ -296,47 +279,5 @@ private fun ModifyStudentBatchScreenContent(
                 )
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePickerDialog(
-    state: ModifyStudentBatchState,
-    onAction: (ModifyStudentBatchAction) -> Unit
-) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.newBatchStartDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-
-    val confirmEnabled = remember {
-        derivedStateOf { datePickerState.selectedDateMillis != null }
-    }
-
-    DatePickerDialog(
-        onDismissRequest = { onAction(ModifyStudentBatchAction.ChangeDatePickerVisibility(false)) },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val epochDays = millis / (24 * 60 * 60 * 1000)
-                        val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                        onAction(ModifyStudentBatchAction.UpdateNewBatchStartDate(selectedDate))
-                    }
-                },
-                enabled = confirmEnabled.value
-            ) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onAction(ModifyStudentBatchAction.ChangeDatePickerVisibility(false)) }
-            ) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
     }
 }

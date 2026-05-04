@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
@@ -48,6 +49,7 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.utils.toReadableString
+import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionAction
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -127,14 +129,6 @@ fun AddEditStudentScreen(
             }
         )
     }
-
-    // Date Picker Dialog
-    if (state.isDatePickerVisible) {
-        DatePickerDialog(
-            state = state,
-            onAction = onAction
-        )
-    }
 }
 
 @Composable
@@ -204,26 +198,16 @@ private fun PersonalDetailsStep(
 
         Spacer(Modifier.height(16.dp))
 
-        PresencifyTextField(
-            value = state.dob?.toReadableString() ?: "",
-            onValueChange = {},
+        PresencifyDatePickerTextField(
+            value = state.dob,
+            onValueChange = {
+                onAction(AddEditStudentAction.UpdateDob(it))
+            },
             label = "Date of Birth",
+            modifier = Modifier.fillMaxWidth(),
             supportingText = state.dobError,
             isError = state.dobError != null,
             enabled = !state.isLoading && !state.isSubmitting,
-            readOnly = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onAction(AddEditStudentAction.ChangeDatePickerVisibility(true)) },
-            trailingIcon = {
-                IconButton(onClick = { onAction(AddEditStudentAction.ChangeDatePickerVisibility(true)) }) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "Select Date",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
         )
     }
 }
@@ -407,47 +391,3 @@ private fun FormNavigationButtons(
         )
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePickerDialog(
-    state: AddEditStudentState,
-    onAction: (AddEditStudentAction) -> Unit
-) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.dob?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-
-    val confirmEnabled = remember {
-        derivedStateOf { datePickerState.selectedDateMillis != null }
-    }
-
-    DatePickerDialog(
-        onDismissRequest = { onAction(AddEditStudentAction.ChangeDatePickerVisibility(false)) },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val epochDays = millis / (24 * 60 * 60 * 1000)
-                        val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                        onAction(AddEditStudentAction.UpdateDob(selectedDate))
-                    }
-                },
-                enabled = confirmEnabled.value
-            ) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onAction(AddEditStudentAction.ChangeDatePickerVisibility(false)) }
-            ) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}
-
-

@@ -11,8 +11,8 @@ sealed interface AddEditSemesterAction {
     data class UpdateSemesterNumber(val semesterNumber: SemesterNumber) : AddEditSemesterAction
     data class UpdateAcademicStartYear(val year: String) : AddEditSemesterAction
     data class UpdateAcademicEndYear(val year: String) : AddEditSemesterAction
-    data class UpdateStartDate(val date: LocalDate) : AddEditSemesterAction
-    data class UpdateEndDate(val date: LocalDate) : AddEditSemesterAction
+    data class UpdateStartDate(val date: LocalDate?) : AddEditSemesterAction
+    data class UpdateEndDate(val date: LocalDate?) : AddEditSemesterAction
     data class UpdateSelectedBranch(val branchId: String) : AddEditSemesterAction
     data class UpdateSelectedScheme(val schemeId: String) : AddEditSemesterAction
 

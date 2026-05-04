@@ -59,6 +59,7 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyNoResult
 import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
+import edu.watumull.presencify.core.design.systems.components.PresencifyTimePickerTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
@@ -67,6 +68,7 @@ import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.RoomListItem
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.utils.toReadableString
+import edu.watumull.presencify.feature.schedule.add_edit_class.AddEditClassAction
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
@@ -266,10 +268,6 @@ private fun SearchRoomBottomSheetContent(
     onAction: (SearchRoomAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val startTimePickerState = rememberTimePickerState()
-    val endTimePickerState = rememberTimePickerState()
-    var showStartTimePicker by remember { mutableStateOf(false) }
-    var showEndTimePicker by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -432,62 +430,21 @@ private fun SearchRoomBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Start Time Picker
-                PresencifyTextField(
-                    value = state.freeBetweenStartTime?.toReadableString() ?: "",
-                    onValueChange = { },
+                PresencifyTimePickerTextField(
+                    value = state.freeBetweenStartTime,
+                    onValueChange = { onAction(SearchRoomAction.UpdateBusyStartTime(it)) },
                     label = "Start Time",
-                    readOnly = true,
+                    modifier = Modifier.weight(1f),
                     supportingText = state.busyStartTimeError,
                     isError = state.busyStartTimeError != null,
-                    leadingIcon = {
-                        IconButton(onClick = { showStartTimePicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.AccessTime,
-                                contentDescription = "Select start time"
-                            )
-                        }
-                    },
-                    trailingIcon = if (state.freeBetweenStartTime != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchRoomAction.UpdateBusyStartTime(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear start time"
-                                )
-                            }
-                        }
-                    } else null,
-                    modifier = Modifier.weight(1f)
                 )
-
-                // End Time Picker
-                PresencifyTextField(
-                    value = state.freeBetweenEndTime?.toReadableString() ?: "",
-                    onValueChange = { },
+                PresencifyTimePickerTextField(
+                    value = state.freeBetweenEndTime,
+                    onValueChange = { onAction(SearchRoomAction.UpdateBusyEndTime(it)) },
                     label = "End Time",
-                    readOnly = true,
+                    modifier = Modifier.weight(1f),
                     supportingText = state.busyEndTimeError,
                     isError = state.busyEndTimeError != null,
-                    leadingIcon = {
-                        IconButton(onClick = { showEndTimePicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.AccessTime,
-                                contentDescription = "Select end time"
-                            )
-                        }
-                    },
-                    trailingIcon = if (state.freeBetweenEndTime != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchRoomAction.UpdateBusyEndTime(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear end time"
-                                )
-                            }
-                        }
-                    } else null,
-                    modifier = Modifier.weight(1f)
                 )
             }
             // Day of Week Filter
@@ -552,60 +509,5 @@ private fun SearchRoomBottomSheetContent(
         }
     }
 
-    // Start Time Picker Dialog
-    if (showStartTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showStartTimePicker = false },
-            onConfirm = {
-                val time = LocalTime(startTimePickerState.hour, startTimePickerState.minute)
-                onAction(SearchRoomAction.UpdateBusyStartTime(time))
-                showStartTimePicker = false
-            }
-        ) {
-            TimePicker(state = startTimePickerState)
-        }
-    }
 
-    // End Time Picker Dialog
-    if (showEndTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showEndTimePicker = false },
-            onConfirm = {
-                val time = LocalTime(endTimePickerState.hour, endTimePickerState.minute)
-                onAction(SearchRoomAction.UpdateBusyEndTime(time))
-                showEndTimePicker = false
-            }
-        ) {
-            TimePicker(state = endTimePickerState)
-        }
-    }
-}
-
-@Composable
-private fun TimePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                content()
-            }
-        }
-    )
 }

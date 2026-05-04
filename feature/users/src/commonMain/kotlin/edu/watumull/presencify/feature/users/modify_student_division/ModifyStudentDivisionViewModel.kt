@@ -286,16 +286,11 @@ class ModifyStudentDivisionViewModel(
                 updateState { it.copy(isDivisionDropdownOpen = action.isOpen) }
             }
 
-            is ModifyStudentDivisionAction.ChangeDatePickerVisibility -> {
-                updateState { it.copy(isDatePickerVisible = action.isVisible) }
-            }
-
             is ModifyStudentDivisionAction.UpdateNewDivisionStartDate -> {
                 updateState {
                     it.copy(
                         newDivisionStartDate = action.date,
                         newDivisionStartDateError = null,
-                        isDatePickerVisible = false
                     )
                 }
             }

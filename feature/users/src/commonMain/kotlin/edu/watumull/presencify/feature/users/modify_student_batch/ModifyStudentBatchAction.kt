@@ -25,7 +25,7 @@ sealed interface ModifyStudentBatchAction {
 
     // Date picker actions
     data class ChangeDatePickerVisibility(val isVisible: Boolean) : ModifyStudentBatchAction
-    data class UpdateNewBatchStartDate(val date: LocalDate) : ModifyStudentBatchAction
+    data class UpdateNewBatchStartDate(val date: LocalDate?) : ModifyStudentBatchAction
 
     data object NavigateToSearchStudentClick : ModifyStudentBatchAction
 }

@@ -38,12 +38,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
+import edu.watumull.presencify.core.design.systems.components.PresencifyTimePickerTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.DayOfWeek
+import edu.watumull.presencify.core.domain.model.academics.Batch
+import edu.watumull.presencify.core.domain.model.academics.Course
+import edu.watumull.presencify.core.domain.model.schedule.Room
+import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
@@ -55,28 +63,6 @@ fun AddEditClassScreen(
     state: AddEditClassState,
     onAction: (AddEditClassAction) -> Unit,
 ) {
-    // Time Pickers
-    var showStartTimePicker by remember { mutableStateOf(false) }
-    var showEndTimePicker by remember { mutableStateOf(false) }
-    val startTimePickerState = rememberTimePickerState(
-        initialHour = state.startTime?.hour ?: 9,
-        initialMinute = state.startTime?.minute ?: 0
-    )
-    val endTimePickerState = rememberTimePickerState(
-        initialHour = state.endTime?.hour ?: 10,
-        initialMinute = state.endTime?.minute ?: 0
-    )
-
-    // Date Pickers
-    var showActiveFromPicker by remember { mutableStateOf(false) }
-    var showActiveTillPicker by remember { mutableStateOf(false) }
-    val activeFromDatePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.activeFrom?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-    val activeTillDatePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.activeTill?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-
     PresencifyScaffold(
         backPress = { onAction(AddEditClassAction.BackButtonClick) },
         topBarTitle = if (state.isEditMode) "Edit Class" else "Add Class",
@@ -107,35 +93,47 @@ fun AddEditClassScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Course Dropdown
-                        PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.model.academics.Course>(
+                        PresencifyDropDownMenuBox<Course>(
                             value = state.selectedCourse?.name ?: "",
                             options = state.availableCourses,
                             onSelectItem = { onAction(AddEditClassAction.UpdateCourse(it?.id)) },
                             label = "Course *",
                             itemToString = { it.name },
                             expanded = state.isCourseDropdownOpen,
-                            onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeCourseDropDownVisibility(it)) },
+                            onDropDownVisibilityChanged = {
+                                onAction(
+                                    AddEditClassAction.ChangeCourseDropDownVisibility(
+                                        it
+                                    )
+                                )
+                            },
                             supportingText = state.selectedCourseError,
                             enabled = !state.isSubmitting && !state.isEditMode,
                             modifier = Modifier.fillMaxWidth()
                         )
 
                         // Teacher Dropdown
-                        PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.model.teacher.Teacher>(
+                        PresencifyDropDownMenuBox<Teacher>(
                             value = state.selectedTeacher?.let { "${it.firstName} ${it.lastName}" } ?: "",
                             options = state.availableTeachers,
                             onSelectItem = { onAction(AddEditClassAction.UpdateTeacher(it?.id)) },
                             label = "Teacher *",
                             itemToString = { "${it.firstName} ${it.lastName}" },
                             expanded = state.isTeacherDropdownOpen,
-                            onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeTeacherDropDownVisibility(it)) },
+                            onDropDownVisibilityChanged = {
+                                onAction(
+                                    AddEditClassAction.ChangeTeacherDropDownVisibility(
+                                        it
+                                    )
+                                )
+                            },
                             supportingText = state.selectedTeacherError,
                             enabled = !state.isSubmitting && !state.isEditMode,
                             modifier = Modifier.fillMaxWidth()
                         )
 
                         // Room Dropdown
-                        PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.model.schedule.Room>(
+                        PresencifyDropDownMenuBox<Room>(
                             value = state.selectedRoom?.roomNumber ?: "",
                             options = state.availableRooms,
                             onSelectItem = { onAction(AddEditClassAction.UpdateRoom(it.id)) },
@@ -149,44 +147,63 @@ fun AddEditClassScreen(
                         )
 
                         // Class Type Dropdown
-                        PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.enums.ClassType>(
+                        PresencifyDropDownMenuBox<ClassType>(
                             value = state.classType?.value ?: "",
                             options = state.classTypeOptions,
                             onSelectItem = { onAction(AddEditClassAction.UpdateClassType(it)) },
                             label = "Class Type *",
                             itemToString = { it.value },
                             expanded = state.isClassTypeDropdownOpen,
-                            onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeClassTypeDropDownVisibility(it)) },
+                            onDropDownVisibilityChanged = {
+                                onAction(
+                                    AddEditClassAction.ChangeClassTypeDropDownVisibility(
+                                        it
+                                    )
+                                )
+                            },
                             supportingText = state.classTypeError,
                             enabled = !state.isSubmitting && !state.isEditMode,
                             modifier = Modifier.fillMaxWidth()
                         )
 
                         // Batch Dropdown (Only for Practical or Tutorial)
-                        if (state.classType == edu.watumull.presencify.core.domain.enums.ClassType.PRACTICAL ||
-                            state.classType == edu.watumull.presencify.core.domain.enums.ClassType.TUTORIAL) {
-                            PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.model.academics.Batch>(
+                        if (state.classType == ClassType.PRACTICAL ||
+                            state.classType == ClassType.TUTORIAL
+                        ) {
+                            PresencifyDropDownMenuBox<Batch>(
                                 value = state.selectedBatch?.batchCode ?: "",
                                 options = state.availableBatches,
                                 onSelectItem = { onAction(AddEditClassAction.UpdateBatch(it?.id)) },
                                 label = "Batch (Optional)",
                                 itemToString = { it.batchCode },
                                 expanded = state.isBatchDropdownOpen,
-                                onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeBatchDropDownVisibility(it)) },
+                                onDropDownVisibilityChanged = {
+                                    onAction(
+                                        AddEditClassAction.ChangeBatchDropDownVisibility(
+                                            it
+                                        )
+                                    )
+                                },
                                 enabled = !state.isSubmitting && !state.isEditMode,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
 
                         // Day of Week Dropdown
-                        PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.enums.DayOfWeek>(
+                        PresencifyDropDownMenuBox<DayOfWeek>(
                             value = state.dayOfWeek?.value ?: "",
                             options = state.dayOfWeekOptions,
                             onSelectItem = { onAction(AddEditClassAction.UpdateDayOfWeek(it)) },
                             label = "Day of Week *",
                             itemToString = { it.value },
                             expanded = state.isDayOfWeekDropdownOpen,
-                            onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeDayOfWeekDropDownVisibility(it)) },
+                            onDropDownVisibilityChanged = {
+                                onAction(
+                                    AddEditClassAction.ChangeDayOfWeekDropDownVisibility(
+                                        it
+                                    )
+                                )
+                            },
                             supportingText = state.dayOfWeekError,
                             enabled = !state.isSubmitting && !state.isEditMode,
                             modifier = Modifier.fillMaxWidth()
@@ -204,65 +221,24 @@ fun AddEditClassScreen(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                // Start Time Picker
-                                PresencifyTextField(
-                                    value = state.startTime?.toReadableString() ?: "",
-                                    onValueChange = { },
+                                PresencifyTimePickerTextField(
+                                    value = state.startTime,
+                                    onValueChange = { onAction(AddEditClassAction.UpdateStartTime(it)) },
                                     label = "Start Time *",
-                                    readOnly = true,
+                                    modifier = Modifier.weight(1f),
                                     supportingText = state.startTimeError,
                                     isError = state.startTimeError != null,
-                                    leadingIcon = {
-                                        IconButton(onClick = { showStartTimePicker = true }) {
-                                            Icon(
-                                                imageVector = Icons.Default.AccessTime,
-                                                contentDescription = "Select start time"
-                                            )
-                                        }
-                                    },
-                                    trailingIcon = if (state.startTime != null) {
-                                        {
-                                            IconButton(onClick = { onAction(AddEditClassAction.UpdateStartTime(null)) }) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Clear,
-                                                    contentDescription = "Clear start time"
-                                                )
-                                            }
-                                        }
-                                    } else null,
-                                    modifier = Modifier.weight(1f)
                                 )
-
-                                // End Time Picker
-                                PresencifyTextField(
-                                    value = state.endTime?.toReadableString() ?: "",
-                                    onValueChange = { },
+                                PresencifyTimePickerTextField(
+                                    value = state.endTime,
+                                    onValueChange = { onAction(AddEditClassAction.UpdateEndTime(it)) },
                                     label = "End Time *",
-                                    readOnly = true,
+                                    modifier = Modifier.weight(1f),
                                     supportingText = state.endTimeError,
                                     isError = state.endTimeError != null,
-                                    leadingIcon = {
-                                        IconButton(onClick = { showEndTimePicker = true }) {
-                                            Icon(
-                                                imageVector = Icons.Default.AccessTime,
-                                                contentDescription = "Select end time"
-                                            )
-                                        }
-                                    },
-                                trailingIcon = if (state.endTime != null) {
-                                    {
-                                        IconButton(onClick = { onAction(AddEditClassAction.UpdateEndTime(null)) }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Clear,
-                                                contentDescription = "Clear end time"
-                                            )
-                                        }
-                                    }
-                                } else null,
-                                modifier = Modifier.weight(1f)
-                            )
+                                )
+                            }
                         }
-                        } // End of time range if block
 
                         // Active Date Range (always visible, editable in both add and edit mode)
                         Text(
@@ -275,62 +251,25 @@ fun AddEditClassScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            // Active From Date Picker
-                            PresencifyTextField(
-                                value = state.activeFrom?.toReadableString() ?: "",
-                                onValueChange = { },
+                            PresencifyDatePickerTextField(
+                                value = state.activeFrom,
+                                onValueChange = {
+                                    onAction(AddEditClassAction.UpdateActiveFrom(it))
+                                },
                                 label = "Active From *",
-                                readOnly = true,
+                                modifier = Modifier.weight(1f),
                                 supportingText = state.activeFromError,
                                 isError = state.activeFromError != null,
-                                leadingIcon = {
-                                    IconButton(onClick = { showActiveFromPicker = true }) {
-                                        Icon(
-                                            imageVector = Icons.Default.DateRange,
-                                            contentDescription = "Select active from date"
-                                        )
-                                    }
-                                },
-                                trailingIcon = if (state.activeFrom != null) {
-                                    {
-                                        IconButton(onClick = { onAction(AddEditClassAction.UpdateActiveFrom(null)) }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Clear,
-                                                contentDescription = "Clear active from date"
-                                            )
-                                        }
-                                    }
-                                } else null,
-                                modifier = Modifier.weight(1f)
                             )
-
-                            // Active Till Date Picker
-                            PresencifyTextField(
-                                value = state.activeTill?.toReadableString() ?: "",
-                                onValueChange = { },
+                            PresencifyDatePickerTextField(
+                                value = state.activeTill,
+                                onValueChange = {
+                                    onAction(AddEditClassAction.UpdateActiveTill(it))
+                                },
                                 label = "Active Till *",
-                                readOnly = true,
+                                modifier = Modifier.weight(1f),
                                 supportingText = state.activeTillError,
                                 isError = state.activeTillError != null,
-                                leadingIcon = {
-                                    IconButton(onClick = { showActiveTillPicker = true }) {
-                                        Icon(
-                                            imageVector = Icons.Default.DateRange,
-                                            contentDescription = "Select active till date"
-                                        )
-                                    }
-                                },
-                                trailingIcon = if (state.activeTill != null) {
-                                    {
-                                        IconButton(onClick = { onAction(AddEditClassAction.UpdateActiveTill(null)) }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Clear,
-                                                contentDescription = "Clear active till date"
-                                            )
-                                        }
-                                    }
-                                } else null,
-                                modifier = Modifier.weight(1f)
                             )
                         }
 
@@ -376,66 +315,6 @@ fun AddEditClassScreen(
         }
     }
 
-    // Time Pickers Dialogs
-    if (showStartTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showStartTimePicker = false },
-            onConfirm = {
-                val time = LocalTime(startTimePickerState.hour, startTimePickerState.minute)
-                onAction(AddEditClassAction.UpdateStartTime(time))
-                showStartTimePicker = false
-            }
-        ) {
-            TimePicker(state = startTimePickerState)
-        }
-    }
-
-    if (showEndTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showEndTimePicker = false },
-            onConfirm = {
-                val time = LocalTime(endTimePickerState.hour, endTimePickerState.minute)
-                onAction(AddEditClassAction.UpdateEndTime(time))
-                showEndTimePicker = false
-            }
-        ) {
-            TimePicker(state = endTimePickerState)
-        }
-    }
-
-    // Date Pickers Dialogs
-    if (showActiveFromPicker) {
-        DatePickerDialog(
-            onDismissRequest = { showActiveFromPicker = false },
-            onConfirm = {
-                activeFromDatePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(AddEditClassAction.UpdateActiveFrom(selectedDate))
-                }
-                showActiveFromPicker = false
-            }
-        ) {
-            DatePicker(state = activeFromDatePickerState)
-        }
-    }
-
-    if (showActiveTillPicker) {
-        DatePickerDialog(
-            onDismissRequest = { showActiveTillPicker = false },
-            onConfirm = {
-                activeTillDatePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(AddEditClassAction.UpdateActiveTill(selectedDate))
-                }
-                showActiveTillPicker = false
-            }
-        ) {
-            DatePicker(state = activeTillDatePickerState)
-        }
-    }
-
     // Dialog
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
@@ -451,57 +330,4 @@ fun AddEditClassScreen(
             onDismiss = { onAction(AddEditClassAction.DismissDialog) }
         )
     }
-}
-
-@Composable
-private fun TimePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                content()
-            }
-        }
-    )
-}
-
-@Composable
-private fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            content()
-        }
-    )
 }

@@ -10,7 +10,7 @@ sealed interface AddEditStudentAction {
     data class UpdateMiddleName(val middleName: String) : AddEditStudentAction
     data class UpdateLastName(val lastName: String) : AddEditStudentAction
     data class UpdateGender(val gender: edu.watumull.presencify.core.domain.enums.Gender) : AddEditStudentAction
-    data class UpdateDob(val dob: kotlinx.datetime.LocalDate) : AddEditStudentAction
+    data class UpdateDob(val dob: kotlinx.datetime.LocalDate?) : AddEditStudentAction
     data class ChangeGenderDropDownVisibility(val isVisible: Boolean) : AddEditStudentAction
     data class ChangeDatePickerVisibility(val isVisible: Boolean) : AddEditStudentAction
 

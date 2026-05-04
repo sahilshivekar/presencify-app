@@ -1,6 +1,8 @@
 package edu.watumull.presencify.core.domain.enums
 
 import edu.watumull.presencify.core.domain.DisplayLabelProvider
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -10,6 +12,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable(with = SemesterNumberSerializer::class)
 enum class SemesterNumber(val value: Int) : DisplayLabelProvider {
@@ -42,10 +46,11 @@ enum class SemesterNumber(val value: Int) : DisplayLabelProvider {
          * - Jan-June: Even semesters (2,4,6,8) are active
          * - July-Dec: Odd semesters (1,3,5,7) are active
          */
+        @OptIn(ExperimentalTime::class)
         fun isEvenSemesterPeriod(): Boolean {
-            val now = kotlinx.datetime.Clock.System.now()
-                .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
-            return now.monthNumber in 1..6
+            val now = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+            return now.month.number in 1..6
         }
 
         /**
@@ -61,10 +66,11 @@ enum class SemesterNumber(val value: Int) : DisplayLabelProvider {
          * - Jan-June: Academic year started previous year (e.g., 2025-2026)
          * - July-Dec: Academic year starts this year (e.g., 2026-2027)
          */
+        @OptIn(ExperimentalTime::class)
         fun getCurrentAcademicStartYear(): Int {
-            val now = kotlinx.datetime.Clock.System.now()
-                .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
-            val currentMonth = now.monthNumber
+            val now = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+            val currentMonth = now.month.number
             val currentYear = now.year
 
             // Jan-June: Even semesters (2,4,6,8) are active, academic year started previous year
@@ -78,10 +84,11 @@ enum class SemesterNumber(val value: Int) : DisplayLabelProvider {
          * - Jan-June: Academic year ends this year (e.g., 2025-2026)
          * - July-Dec: Academic year ends next year (e.g., 2026-2027)
          */
+        @OptIn(ExperimentalTime::class)
         fun getCurrentAcademicEndYear(): Int {
-            val now = kotlinx.datetime.Clock.System.now()
-                .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
-            val currentMonth = now.monthNumber
+            val now = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+            val currentMonth = now.month.number
             val currentYear = now.year
 
             // Jan-June: Even semesters (2,4,6,8) are active, academic year ends this year

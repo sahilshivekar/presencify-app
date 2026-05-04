@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 
@@ -39,7 +40,6 @@ import edu.watumull.presencify.core.presentation.utils.toReadableString
 fun SearchAttendanceBottomSheetContent(
     state: SearchAttendanceState,
     onAction: (SearchAttendanceAction) -> Unit,
-    onDateClick: () -> Unit,
     onDismiss: () -> Unit = {},
 ) {
     Column(
@@ -75,30 +75,13 @@ fun SearchAttendanceBottomSheetContent(
         ) {
             // Date Filter
             FilterSection(title = "Date") {
-                PresencifyTextField(
-                    value = state.selectedDate?.toReadableString() ?: "",
-                    onValueChange = { },
-                    label = "Select Date",
-                    readOnly = true,
-                    leadingIcon = {
-                        IconButton(onClick = onDateClick) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select date"
-                            )
-                        }
+                PresencifyDatePickerTextField(
+                    value = state.selectedDate,
+                    onValueChange = {
+                        onAction(SearchAttendanceAction.SelectDate(it))
                     },
-                    trailingIcon = if (state.selectedDate != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchAttendanceAction.SelectDate(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear date"
-                                )
-                            }
-                        }
-                    } else null,
-                    modifier = Modifier.fillMaxWidth()
+                    label = "Select Date",
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 

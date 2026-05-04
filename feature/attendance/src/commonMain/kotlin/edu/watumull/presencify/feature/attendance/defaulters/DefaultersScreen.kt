@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.DatePickerDialog
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
@@ -39,6 +40,7 @@ import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.design.systems.components.DonutGraph
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.presentation.components.StudentListItem
@@ -52,12 +54,6 @@ fun DefaultersScreen(
     onAction: (DefaultersAction) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
-    val startDatePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.startDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-    val endDatePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.endDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
 
     PresencifyScaffold(
         topBarTitle = "Defaulters List",
@@ -180,67 +176,6 @@ fun DefaultersScreen(
             onDismiss = { onAction(DefaultersAction.DismissDialog) }
         )
     }
-
-    if (state.showStartDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { onAction(DefaultersAction.ChangeStartDatePickerVisibility(false)) },
-            onConfirm = {
-                startDatePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(DefaultersAction.SelectStartDate(selectedDate))
-                }
-                onAction(DefaultersAction.ChangeStartDatePickerVisibility(false))
-            }
-        ) {
-            DatePicker(state = startDatePickerState)
-        }
-    }
-
-    if (state.showEndDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { onAction(DefaultersAction.ChangeEndDatePickerVisibility(false)) },
-            onConfirm = {
-                endDatePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(DefaultersAction.SelectEndDate(selectedDate))
-                }
-                onAction(DefaultersAction.ChangeEndDatePickerVisibility(false))
-            }
-        ) {
-            DatePicker(state = endDatePickerState)
-        }
-    }
-}
-
-@Composable
-private fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                content()
-            }
-        }
-    )
 }
 
 @Composable
@@ -326,56 +261,24 @@ private fun FilterSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            PresencifyTextField(
-                value = state.startDate?.toReadableString() ?: "",
-                onValueChange = { },
-                label = "Start Date",
-                readOnly = true,
-                leadingIcon = {
-                    IconButton(onClick = { onAction(DefaultersAction.ChangeStartDatePickerVisibility(true)) }) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Select start date"
-                        )
-                    }
+
+            PresencifyDatePickerTextField(
+                value = state.startDate,
+                onValueChange = {
+                    onAction(DefaultersAction.SelectStartDate(it))
                 },
-                trailingIcon = if (state.startDate != null) {
-                    {
-                        IconButton(onClick = { onAction(DefaultersAction.SelectStartDate(null)) }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear start date"
-                            )
-                        }
-                    }
-                } else null,
+                label = "Start Date",
                 modifier = Modifier.weight(1f),
                 enabled = !state.isLoadingStudents
             )
 
-            PresencifyTextField(
-                value = state.endDate?.toReadableString() ?: "",
-                onValueChange = { },
-                label = "End Date",
-                readOnly = true,
-                leadingIcon = {
-                    IconButton(onClick = { onAction(DefaultersAction.ChangeEndDatePickerVisibility(true)) }) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Select end date"
-                        )
-                    }
+
+            PresencifyDatePickerTextField(
+                value = state.endDate,
+                onValueChange = {
+                    onAction(DefaultersAction.SelectEndDate(it))
                 },
-                trailingIcon = if (state.endDate != null) {
-                    {
-                        IconButton(onClick = { onAction(DefaultersAction.SelectEndDate(null)) }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear end date"
-                            )
-                        }
-                    }
-                } else null,
+                label = "End Date",
                 modifier = Modifier.weight(1f),
                 enabled = !state.isLoadingStudents
             )

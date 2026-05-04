@@ -37,7 +37,6 @@ data class ModifyStudentDivisionState(
 
     // New Division Start Date
     val newDivisionStartDate: LocalDate? = null,
-    val isDatePickerVisible: Boolean = false,
 
     // Validation
     val branchError: String? = null,

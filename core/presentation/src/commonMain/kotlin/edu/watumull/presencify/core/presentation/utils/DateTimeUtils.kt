@@ -116,7 +116,7 @@ fun LocalTime.toReadableString(): String {
 // day/month/year
 fun LocalDate.toReadableString(): String {
     return this.format(LocalDate.Format {
-        dayOfMonth(Padding.ZERO)
+        day(padding = Padding.ZERO)
         char('/')
         monthNumber(Padding.ZERO)
         char('/')
@@ -129,10 +129,9 @@ fun String.toLocalDate(): LocalDate? {
     return try {
         val parts = this.split("/")
         if (parts.size == 3) {
-            LocalDate(
-                year = parts[2].toInt(),
-                monthNumber = parts[1].toInt(),
-                dayOfMonth = parts[0].toInt()
+            LocalDate(year = parts[2].toInt(),
+                month = parts[1].toInt(),
+                day = parts[0].toInt()
             )
         } else {
             null

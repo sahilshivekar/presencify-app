@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
@@ -89,14 +90,6 @@ fun ModifyStudentDivisionScreen(
             onDismiss = {
                 onAction(ModifyStudentDivisionAction.DismissDialog)
             }
-        )
-    }
-
-    // Date Picker Dialog
-    if (state.isDatePickerVisible) {
-        DatePickerDialog(
-            state = state,
-            onAction = onAction
         )
     }
 }
@@ -264,25 +257,15 @@ private fun ModifyStudentDivisionScreenContent(
                         fontWeight = FontWeight.SemiBold
                     )
 
-                    PresencifyTextField(
-                        value = state.newDivisionStartDate?.toReadableString() ?: "",
-                        onValueChange = {},
-                        label = "Select Start Date",
+                    PresencifyDatePickerTextField(
+                        value = state.newDivisionStartDate,
+                        onValueChange = {
+                            onAction(ModifyStudentDivisionAction.UpdateNewDivisionStartDate(it))
+                        },
+                        label = "Active From",
+                        modifier = Modifier.fillMaxWidth(),
                         supportingText = state.newDivisionStartDateError,
                         isError = state.newDivisionStartDateError != null,
-                        readOnly = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onAction(ModifyStudentDivisionAction.ChangeDatePickerVisibility(true)) },
-                        trailingIcon = {
-                            IconButton(onClick = { onAction(ModifyStudentDivisionAction.ChangeDatePickerVisibility(true)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.DateRange,
-                                    contentDescription = "Select Date",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
                     )
                 }
 
@@ -299,44 +282,3 @@ private fun ModifyStudentDivisionScreenContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePickerDialog(
-    state: ModifyStudentDivisionState,
-    onAction: (ModifyStudentDivisionAction) -> Unit
-) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.newDivisionStartDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-
-    val confirmEnabled = remember {
-        derivedStateOf { datePickerState.selectedDateMillis != null }
-    }
-
-    DatePickerDialog(
-        onDismissRequest = { onAction(ModifyStudentDivisionAction.ChangeDatePickerVisibility(false)) },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val epochDays = millis / (24 * 60 * 60 * 1000)
-                        val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                        onAction(ModifyStudentDivisionAction.UpdateNewDivisionStartDate(selectedDate))
-                    }
-                },
-                enabled = confirmEnabled.value
-            ) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onAction(ModifyStudentDivisionAction.ChangeDatePickerVisibility(false)) }
-            ) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}

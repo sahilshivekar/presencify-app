@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
 import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
@@ -116,52 +117,31 @@ fun AddEditSemesterScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Start Date Picker
-                PresencifyTextField(
-                    value = state.startDate?.toReadableString() ?: "",
-                    onValueChange = {},
+                PresencifyDatePickerTextField(
+                    value = state.startDate,
+                    onValueChange = {
+                        onAction(AddEditSemesterAction.UpdateStartDate(it))
+                    },
                     label = "Start Date *",
+                    modifier = Modifier.fillMaxWidth(),
                     supportingText = state.startDateError,
-                    isError = state.startDateError != null,
                     enabled = !state.isLoading && !state.isSubmitting,
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onAction(AddEditSemesterAction.ChangeStartDatePickerVisibility(true)) },
-                    trailingIcon = {
-                        IconButton(onClick = { onAction(AddEditSemesterAction.ChangeStartDatePickerVisibility(true)) }) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select Start Date",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
+                    isError = state.startDateError != null,
                 )
+
 
                 Spacer(Modifier.height(16.dp))
 
-                // End Date Picker
-                PresencifyTextField(
-                    value = state.endDate?.toReadableString() ?: "",
-                    onValueChange = {},
+                PresencifyDatePickerTextField(
+                    value = state.endDate,
+                    onValueChange = {
+                        onAction(AddEditSemesterAction.UpdateEndDate(it))
+                    },
                     label = "End Date *",
+                    modifier = Modifier.fillMaxWidth(),
                     supportingText = state.endDateError,
-                    isError = state.endDateError != null,
                     enabled = !state.isLoading && !state.isSubmitting,
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onAction(AddEditSemesterAction.ChangeEndDatePickerVisibility(true)) },
-                    trailingIcon = {
-                        IconButton(onClick = { onAction(AddEditSemesterAction.ChangeEndDatePickerVisibility(true)) }) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select End Date",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
+                    isError = state.endDateError != null,
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -257,23 +237,6 @@ fun AddEditSemesterScreen(
         }
     }
 
-    // Date Picker Dialogs
-    if (state.isStartDatePickerVisible) {
-        DatePickerDialog(
-            selectedDate = state.startDate,
-            onDateSelected = { onAction(AddEditSemesterAction.UpdateStartDate(it)) },
-            onDismiss = { onAction(AddEditSemesterAction.ChangeStartDatePickerVisibility(false)) }
-        )
-    }
-
-    if (state.isEndDatePickerVisible) {
-        DatePickerDialog(
-            selectedDate = state.endDate,
-            onDateSelected = { onAction(AddEditSemesterAction.UpdateEndDate(it)) },
-            onDismiss = { onAction(AddEditSemesterAction.ChangeEndDatePickerVisibility(false)) }
-        )
-    }
-
     // Alert Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
@@ -291,47 +254,3 @@ fun AddEditSemesterScreen(
         )
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePickerDialog(
-    selectedDate: LocalDate?,
-    onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate?.toEpochDays()?.let { it * 24 * 60 * 60 * 1000L }
-    )
-
-    val confirmEnabled = remember {
-        derivedStateOf { datePickerState.selectedDateMillis != null }
-    }
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val epochDays = millis / (24 * 60 * 60 * 1000)
-                        val selectedDateNew = LocalDate.fromEpochDays(epochDays.toInt())
-                        onDateSelected(selectedDateNew)
-                    }
-                },
-                enabled = confirmEnabled.value
-            ) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}
-

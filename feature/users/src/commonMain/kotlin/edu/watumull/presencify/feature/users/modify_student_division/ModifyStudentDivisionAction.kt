@@ -23,9 +23,7 @@ sealed interface ModifyStudentDivisionAction {
     data class SelectDivision(val division: Division?) : ModifyStudentDivisionAction
     data class ChangeDivisionDropDownVisibility(val isOpen: Boolean) : ModifyStudentDivisionAction
 
-    // Date picker actions
-    data class ChangeDatePickerVisibility(val isVisible: Boolean) : ModifyStudentDivisionAction
-    data class UpdateNewDivisionStartDate(val date: LocalDate) : ModifyStudentDivisionAction
+    data class UpdateNewDivisionStartDate(val date: LocalDate?) : ModifyStudentDivisionAction
 
     data object NavigateToSearchStudentClick : ModifyStudentDivisionAction
 }

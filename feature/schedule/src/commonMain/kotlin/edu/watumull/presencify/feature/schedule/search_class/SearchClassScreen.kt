@@ -62,11 +62,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
 import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
 import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
 import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
+import edu.watumull.presencify.core.design.systems.components.PresencifyTimePickerTextField
 import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
@@ -285,14 +287,6 @@ private fun SearchClassBottomSheetContent(
     onAction: (SearchClassAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val startTimePickerState = rememberTimePickerState()
-    val endTimePickerState = rememberTimePickerState()
-    val activeFromDatePickerState = rememberDatePickerState()
-    val activeTillDatePickerState = rememberDatePickerState()
-    var showStartTimePicker by remember { mutableStateOf(false) }
-    var showEndTimePicker by remember { mutableStateOf(false) }
-    var showActiveFromPicker by remember { mutableStateOf(false) }
-    var showActiveTillPicker by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -525,61 +519,25 @@ private fun SearchClassBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Start Time Picker
-                PresencifyTextField(
-                    value = state.startTime?.toReadableString() ?: "",
-                    onValueChange = { },
+                PresencifyTimePickerTextField(
+                    value = state.startTime,
+                    onValueChange = {
+                        onAction(SearchClassAction.UpdateStartTime(it))
+                    },
                     label = "Start Time",
-                    readOnly = true,
                     supportingText = state.startTimeError,
                     isError = state.startTimeError != null,
-                    leadingIcon = {
-                        IconButton(onClick = { showStartTimePicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.AccessTime,
-                                contentDescription = "Select start time"
-                            )
-                        }
-                    },
-                    trailingIcon = if (state.startTime != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchClassAction.UpdateStartTime(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear start time"
-                                )
-                            }
-                        }
-                    } else null,
                     modifier = Modifier.weight(1f)
                 )
 
-                // End Time Picker
-                PresencifyTextField(
-                    value = state.endTime?.toReadableString() ?: "",
-                    onValueChange = { },
+                PresencifyTimePickerTextField(
+                    value = state.endTime,
+                    onValueChange = {
+                        onAction(SearchClassAction.UpdateEndTime(it))
+                    },
                     label = "End Time",
-                    readOnly = true,
                     supportingText = state.endTimeError,
                     isError = state.endTimeError != null,
-                    leadingIcon = {
-                        IconButton(onClick = { showEndTimePicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.AccessTime,
-                                contentDescription = "Select end time"
-                            )
-                        }
-                    },
-                    trailingIcon = if (state.endTime != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchClassAction.UpdateEndTime(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear end time"
-                                )
-                            }
-                        }
-                    } else null,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -598,62 +556,25 @@ private fun SearchClassBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Active From Date Picker
-                PresencifyTextField(
-                    value = state.activeFrom?.toReadableString() ?: "",
-                    onValueChange = { },
+                PresencifyDatePickerTextField(
+                    value = state.activeFrom,
+                    onValueChange = {
+                        onAction(SearchClassAction.UpdateActiveFrom(it))
+                    },
                     label = "Active From",
-                    readOnly = true,
+                    modifier = Modifier.weight(1f),
                     supportingText = state.activeFromError,
                     isError = state.activeFromError != null,
-                    leadingIcon = {
-                        IconButton(onClick = { showActiveFromPicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select active from date"
-                            )
-                        }
-                    },
-                    trailingIcon = if (state.activeFrom != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchClassAction.UpdateActiveFrom(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear active from date"
-                                )
-                            }
-                        }
-                    } else null,
-                    modifier = Modifier.weight(1f)
                 )
-
-                // Active Till Date Picker
-                PresencifyTextField(
-                    value = state.activeTill?.toReadableString() ?: "",
-                    onValueChange = { },
+                PresencifyDatePickerTextField(
+                    value = state.activeTill,
+                    onValueChange = {
+                        onAction(SearchClassAction.UpdateActiveTill(it))
+                    },
                     label = "Active Till",
-                    readOnly = true,
+                    modifier = Modifier.weight(1f),
                     supportingText = state.activeTillError,
                     isError = state.activeTillError != null,
-                    leadingIcon = {
-                        IconButton(onClick = { showActiveTillPicker = true }) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select active till date"
-                            )
-                        }
-                    },
-                    trailingIcon = if (state.activeTill != null) {
-                        {
-                            IconButton(onClick = { onAction(SearchClassAction.UpdateActiveTill(null)) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear active till date"
-                                )
-                            }
-                        }
-                    } else null,
-                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -731,120 +652,8 @@ private fun SearchClassBottomSheetContent(
             )
         }
     }
-
-    // Time Pickers
-    if (showStartTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showStartTimePicker = false },
-            onConfirm = {
-                val time = LocalTime(startTimePickerState.hour, startTimePickerState.minute)
-                onAction(SearchClassAction.UpdateStartTime(time))
-                showStartTimePicker = false
-            }
-        ) {
-            TimePicker(state = startTimePickerState)
-        }
-    }
-
-    if (showEndTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showEndTimePicker = false },
-            onConfirm = {
-                val time = LocalTime(endTimePickerState.hour, endTimePickerState.minute)
-                onAction(SearchClassAction.UpdateEndTime(time))
-                showEndTimePicker = false
-            }
-        ) {
-            TimePicker(state = endTimePickerState)
-        }
-    }
-
-    // Date Pickers
-    if (showActiveFromPicker) {
-        DatePickerDialog(
-            onDismissRequest = { showActiveFromPicker = false },
-            onConfirm = {
-                activeFromDatePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(SearchClassAction.UpdateActiveFrom(selectedDate))
-                }
-                showActiveFromPicker = false
-            }
-        ) {
-            DatePicker(state = activeFromDatePickerState)
-        }
-    }
-
-    if (showActiveTillPicker) {
-        DatePickerDialog(
-            onDismissRequest = { showActiveTillPicker = false },
-            onConfirm = {
-                activeTillDatePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(SearchClassAction.UpdateActiveTill(selectedDate))
-                }
-                showActiveTillPicker = false
-            }
-        ) {
-            DatePicker(state = activeTillDatePickerState)
-        }
-    }
 }
 
-@Composable
-private fun TimePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                content()
-            }
-        }
-    )
-}
-
-@Composable
-private fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            content()
-        }
-    )
-}
 
 @Composable
 private fun FilterSection(

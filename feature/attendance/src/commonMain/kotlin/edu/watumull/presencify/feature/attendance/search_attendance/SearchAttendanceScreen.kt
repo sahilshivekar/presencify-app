@@ -69,8 +69,6 @@ fun SearchAttendanceScreen(
     )
 
     val scope = rememberCoroutineScope()
-    var showDatePicker by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
 
     PresencifyBottomSheetScaffold(
         backPress = { onAction(SearchAttendanceAction.BackButtonClick) },
@@ -80,7 +78,6 @@ fun SearchAttendanceScreen(
             SearchAttendanceBottomSheetContent(
                 state = state,
                 onAction = onAction,
-                onDateClick = { showDatePicker = true },
                 onDismiss = {
                     scope.launch { scaffoldState.bottomSheetState.hide() }
                 },
@@ -106,23 +103,6 @@ fun SearchAttendanceScreen(
                     modifier = Modifier.padding(paddingValues)
                 )
             }
-        }
-    }
-
-    // Date Picker Dialog
-    if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            onConfirm = {
-                datePickerState.selectedDateMillis?.let { millis ->
-                    val epochDays = millis / (24 * 60 * 60 * 1000)
-                    val selectedDate = LocalDate.fromEpochDays(epochDays.toInt())
-                    onAction(SearchAttendanceAction.SelectDate(selectedDate))
-                }
-                showDatePicker = false
-            }
-        ) {
-            DatePicker(state = datePickerState)
         }
     }
 
@@ -285,28 +265,4 @@ private fun SearchAttendanceScreenContent(
             }
         }
     }
-}
-
-@Composable
-private fun DatePickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        text = {
-            content()
-        }
-    )
 }
