@@ -14,6 +14,7 @@ import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsCourseCode
 import edu.watumull.presencify.core.presentation.validation.validateAsCourseName
+import edu.watumull.presencify.core.presentation.validation.validateAsUUID
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
@@ -130,11 +131,12 @@ class AddEditCourseViewModel(
         val nameValidation = state.name.validateAsCourseName()
         val nameError = if (nameValidation.successful) null else nameValidation.errorMessage
 
-        val schemeValidation = if (state.selectedSchemeId.isNotBlank()) null else "Scheme is required"
+        val schemeValidation = state.selectedSchemeId.validateAsUUID()
+        val schemeError = if (schemeValidation.successful) null else schemeValidation.errorMessage
 
-        updateState { it.copy(codeError = codeError, nameError = nameError, schemeError = schemeValidation) }
+        updateState { it.copy(codeError = codeError, nameError = nameError, schemeError = schemeError) }
 
-        return codeError == null && nameError == null && schemeValidation == null
+        return codeError == null && nameError == null && schemeError == null
     }
 
     private suspend fun submitForm() {

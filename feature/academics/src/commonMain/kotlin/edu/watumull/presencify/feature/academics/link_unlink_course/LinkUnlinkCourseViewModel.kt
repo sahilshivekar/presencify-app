@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.validateAsBranch
+import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
@@ -49,26 +51,17 @@ class LinkUnlinkCourseViewModel(
     }
 
     private fun validateForm(): Boolean {
-        val branch = state.selectedBranch
-        val semesterNumber = state.selectedSemesterNumber
+        val branchValidation = state.selectedBranch.validateAsBranch()
+        val semesterValidation = state.selectedSemesterNumber.validateAsSemesterNumber()
 
-        var hasError = false
-
-        if (branch == null) {
-            updateState { it.copy(branchError = "Please select a branch") }
-            hasError = true
-        } else {
-            updateState { it.copy(branchError = null) }
+        updateState {
+            it.copy(
+                branchError = branchValidation.errorMessage,
+                semesterError = semesterValidation.errorMessage
+            )
         }
 
-        if (semesterNumber == null) {
-            updateState { it.copy(semesterError = "Please select a semester") }
-            hasError = true
-        } else {
-            updateState { it.copy(semesterError = null) }
-        }
-
-        return !hasError
+        return branchValidation.successful && semesterValidation.successful
     }
 
     override fun handleAction(action: LinkUnlinkCourseAction) {

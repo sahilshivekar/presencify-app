@@ -1,6 +1,8 @@
 package edu.watumull.presencify.core.presentation.validation
 
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 fun SemesterNumber?.validateAsSemesterNumber(): ValidationResult {
     if (this == null) {
@@ -114,16 +116,18 @@ fun String.validateAsVerificationCode(): ValidationResult {
     return ValidationResult(successful = true)
 }
 
+@OptIn(ExperimentalUuidApi::class)
 fun String?.validateAsUUID(): ValidationResult {
     if (this.isNullOrBlank()) {
-        return ValidationResult(successful = false, errorMessage = "UUID cannot be empty")
+        return ValidationResult(false, "UUID cannot be empty")
     }
 
-    val uuidRegex = Regex("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
-    val regexMatch = ValidationRule.RegexMatch(uuidRegex, "This field must be a valid UUID").validate(this)
-    if (!regexMatch.successful) return regexMatch
-
-    return ValidationResult(successful = true)
+    return try {
+        Uuid.parse(this)
+        ValidationResult(true)
+    } catch (e: Exception) {
+        ValidationResult(false, "Invalid UUID format")
+    }
 }
 
 fun String?.validateAsAcademicStartYear(endYear: String?): ValidationResult {

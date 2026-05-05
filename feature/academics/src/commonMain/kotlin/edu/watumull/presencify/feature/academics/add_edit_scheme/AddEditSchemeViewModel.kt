@@ -13,6 +13,7 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsSchemeName
+import edu.watumull.presencify.core.presentation.validation.validateAsUUID
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
@@ -124,11 +125,12 @@ class AddEditSchemeViewModel(
         val nameValidation = state.name.validateAsSchemeName()
         val nameError = if (nameValidation.successful) null else nameValidation.errorMessage
 
-        val uniValidation = if (state.selectedUniversityId.isNotBlank()) null else "University is required"
+        val universityValidation = state.selectedUniversityId.validateAsUUID()
+        val universityError = if (universityValidation.successful) null else universityValidation.errorMessage
 
-        updateState { it.copy(nameError = nameError, universityError = uniValidation) }
+        updateState { it.copy(nameError = nameError, universityError = universityError) }
 
-        return nameError == null && uniValidation == null
+        return nameError == null && universityError == null
     }
 
     private suspend fun submitForm() {

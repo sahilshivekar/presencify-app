@@ -13,6 +13,11 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
+import edu.watumull.presencify.core.presentation.validation.validateAsDivisionCode
+import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
+import edu.watumull.presencify.core.presentation.validation.validateAsUUID
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
@@ -197,44 +202,29 @@ class AddEditDivisionViewModel(
     }
 
     private fun validateSemesterInputs(): Boolean {
-        var isValid = true
+        val semesterValidation = state.semesterNumber.validateAsSemesterNumber()
+        val startYearValidation = state.academicStartYear.validateAsAcademicStartYear(endYear = state.academicEndYear)
+        val endYearValidation = state.academicEndYear.validateAsAcademicEndYear(startYear = state.academicStartYear)
 
-        val semesterNumberError = if (state.semesterNumber == null) "Semester number is required" else null
-        if (semesterNumberError != null) isValid = false
-
-        val startYearError = if (state.academicStartYear.isNotBlank()) {
-            val year = state.academicStartYear.toIntOrNull()
-            if (year == null || year < 1900 || year > 2100) "Invalid start year" else null
-        } else {
-            "Academic start year is required"
-        }
-        if (startYearError != null) isValid = false
-
-        val endYearError = if (state.academicEndYear.isNotBlank()) {
-            val year = state.academicEndYear.toIntOrNull()
-            if (year == null || year < 1900 || year > 2100) "Invalid end year" else null
-        } else {
-            "Academic end year is required"
-        }
-        if (endYearError != null) isValid = false
-
-        val branchError = if (state.selectedBranchId.isBlank()) "Branch is required" else null
-        if (branchError != null) isValid = false
+        val branchValidation = state.selectedBranchId.validateAsUUID()
 
         updateState {
             it.copy(
-                semesterNumberError = semesterNumberError,
-                academicStartYearError = startYearError,
-                academicEndYearError = endYearError,
-                branchError = branchError
+                semesterNumberError = semesterValidation.errorMessage,
+                academicStartYearError = startYearValidation.errorMessage,
+                academicEndYearError = endYearValidation.errorMessage,
+                branchError = branchValidation.errorMessage
             )
         }
 
-        return isValid
+        return semesterValidation.successful &&
+                startYearValidation.successful &&
+                endYearValidation.successful &&
+                branchValidation.successful
     }
 
     private fun validateDivisionCode(): Boolean {
-        val codeError = if (state.divisionCode.isNotBlank()) null else "Division code is required"
+        val codeError = state.divisionCode.validateAsDivisionCode().errorMessage
         updateState { it.copy(divisionCodeError = codeError) }
         return codeError == null
     }

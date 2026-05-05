@@ -11,6 +11,8 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.validateAsUniversityAbbreviation
+import edu.watumull.presencify.core.presentation.validation.validateAsUniversityName
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
@@ -97,30 +99,17 @@ class AddEditUniversityViewModel(
     }
 
     private fun validateForm(): Boolean {
-        var isValid = true
-
-        val nameError = if (state.name.isBlank()) {
-            "University name is required"
-        } else {
-            null
-        }
-        if (nameError != null) isValid = false
-
-        val abbreviationError = if (state.abbreviation.isBlank()) {
-            "Abbreviation is required"
-        } else {
-            null
-        }
-        if (abbreviationError != null) isValid = false
+        val nameValidation = state.name.validateAsUniversityName()
+        val abbreviationValidation = state.abbreviation.validateAsUniversityAbbreviation()
 
         updateState {
             it.copy(
-                nameError = nameError,
-                abbreviationError = abbreviationError
+                nameError = nameValidation.errorMessage,
+                abbreviationError = abbreviationValidation.errorMessage
             )
         }
 
-        return isValid
+        return nameValidation.successful && abbreviationValidation.successful
     }
 
     private suspend fun submitForm() {

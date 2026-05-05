@@ -14,6 +14,12 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.ValidationResult
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
+import edu.watumull.presencify.core.presentation.validation.validateAsBatchCode
+import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
+import edu.watumull.presencify.core.presentation.validation.validateAsUUID
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
@@ -153,17 +159,67 @@ class AddEditBatchViewModel(
         when (action) {
             is AddEditBatchAction.BackButtonClick -> handleBackNavigation()
             is AddEditBatchAction.DismissDialog -> updateState { it.copy(dialogState = null) }
-            is AddEditBatchAction.UpdateSemesterNumber -> updateState { it.copy(semesterNumber = action.semesterNumber, semesterNumberError = null, isSemesterNumberDropdownOpen = false) }
-            is AddEditBatchAction.UpdateAcademicStartYear -> updateState { it.copy(academicStartYear = action.year, academicStartYearError = null) }
-            is AddEditBatchAction.UpdateAcademicEndYear -> updateState { it.copy(academicEndYear = action.year, academicEndYearError = null) }
-            is AddEditBatchAction.UpdateSelectedBranch -> updateState { it.copy(selectedBranchId = action.branchId, branchError = null, isBranchDropdownOpen = false) }
-            is AddEditBatchAction.UpdateSelectedDivision -> updateState { it.copy(selectedDivisionId = action.divisionId, divisionError = null, isDivisionDropdownOpen = false, showBatchInput = true) }
-            is AddEditBatchAction.UpdateBatchCode -> updateState { it.copy(batchCode = action.code, batchCodeError = null) }
-            is AddEditBatchAction.ChangeSemesterNumberDropDownVisibility -> updateState { it.copy(isSemesterNumberDropdownOpen = action.isVisible) }
+            is AddEditBatchAction.UpdateSemesterNumber -> updateState {
+                it.copy(
+                    semesterNumber = action.semesterNumber,
+                    semesterNumberError = null,
+                    isSemesterNumberDropdownOpen = false
+                )
+            }
+
+            is AddEditBatchAction.UpdateAcademicStartYear -> updateState {
+                it.copy(
+                    academicStartYear = action.year,
+                    academicStartYearError = null
+                )
+            }
+
+            is AddEditBatchAction.UpdateAcademicEndYear -> updateState {
+                it.copy(
+                    academicEndYear = action.year,
+                    academicEndYearError = null
+                )
+            }
+
+            is AddEditBatchAction.UpdateSelectedBranch -> updateState {
+                it.copy(
+                    selectedBranchId = action.branchId,
+                    branchError = null,
+                    isBranchDropdownOpen = false
+                )
+            }
+
+            is AddEditBatchAction.UpdateSelectedDivision -> updateState {
+                it.copy(
+                    selectedDivisionId = action.divisionId,
+                    divisionError = null,
+                    isDivisionDropdownOpen = false,
+                    showBatchInput = true
+                )
+            }
+
+            is AddEditBatchAction.UpdateBatchCode -> updateState {
+                it.copy(
+                    batchCode = action.code,
+                    batchCodeError = null
+                )
+            }
+
+            is AddEditBatchAction.ChangeSemesterNumberDropDownVisibility -> updateState {
+                it.copy(
+                    isSemesterNumberDropdownOpen = action.isVisible
+                )
+            }
+
             is AddEditBatchAction.ChangeBranchDropDownVisibility -> updateState { it.copy(isBranchDropdownOpen = action.isVisible) }
             is AddEditBatchAction.ChangeDivisionDropDownVisibility -> updateState { it.copy(isDivisionDropdownOpen = action.isVisible) }
-            is AddEditBatchAction.FindDivisionsClick -> { viewModelScope.launch { findDivisions() } }
-            is AddEditBatchAction.SubmitClick -> { viewModelScope.launch { submitForm() } }
+            is AddEditBatchAction.FindDivisionsClick -> {
+                viewModelScope.launch { findDivisions() }
+            }
+
+            is AddEditBatchAction.SubmitClick -> {
+                viewModelScope.launch { submitForm() }
+            }
         }
     }
 
@@ -213,7 +269,14 @@ class AddEditBatchViewModel(
                 val divisions = result.divisions
                 if (divisions.isNotEmpty()) {
                     // Use the first matching division as default
-                    updateState { it.copy(isLoading = false, foundDivisions = divisions, showDivisionInput = true, divisionError = null) }
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            foundDivisions = divisions,
+                            showDivisionInput = true,
+                            divisionError = null
+                        )
+                    }
                 } else {
                     updateState {
                         it.copy(
@@ -244,54 +307,44 @@ class AddEditBatchViewModel(
     }
 
     private fun validateSemesterInputs(): Boolean {
-        var isValid = true
+        val semesterValidation = state.semesterNumber.validateAsSemesterNumber()
+        val startYearValidation = state.academicStartYear.validateAsAcademicStartYear(endYear = state.academicEndYear)
+        val endYearValidation = state.academicEndYear.validateAsAcademicEndYear(startYear = state.academicStartYear)
 
-        val semesterNumberError = if (state.semesterNumber == null) "Semester number is required" else null
-        if (semesterNumberError != null) isValid = false
-
-        val startYearError = if (state.academicStartYear.isNotBlank()) {
-            val year = state.academicStartYear.toIntOrNull()
-            if (year == null || year < 1900 || year > 2100) "Invalid start year" else null
-        } else {
-            "Academic start year is required"
-        }
-        if (startYearError != null) isValid = false
-
-        val endYearError = if (state.academicEndYear.isNotBlank()) {
-            val year = state.academicEndYear.toIntOrNull()
-            if (year == null || year < 1900 || year > 2100) "Invalid end year" else null
-        } else {
-            "Academic end year is required"
-        }
-        if (endYearError != null) isValid = false
-
-        val branchError = if (state.selectedBranchId.isBlank()) "Branch is required" else null
-        if (branchError != null) isValid = false
+        val branchValidation = state.selectedBranchId.validateAsUUID()
 
         updateState {
             it.copy(
-                semesterNumberError = semesterNumberError,
-                academicStartYearError = startYearError,
-                academicEndYearError = endYearError,
-                branchError = branchError
+                semesterNumberError = semesterValidation.errorMessage,
+                academicStartYearError = startYearValidation.errorMessage,
+                academicEndYearError = endYearValidation.errorMessage,
+                branchError = branchValidation.errorMessage
             )
         }
 
-        return isValid
+        return semesterValidation.successful &&
+                startYearValidation.successful &&
+                endYearValidation.successful &&
+                branchValidation.successful
     }
 
     private fun validateDivisionAndBatchCode(): Boolean {
-        var isValid = true
+        val divisionValidation = if (state.isEditMode) {
+            ValidationResult(successful = true)
+        } else {
+            state.selectedDivisionId.validateAsUUID()
+        }
 
-        // In edit mode, we don't need to validate division since it's already set
-        val divisionError = if (!state.isEditMode && state.selectedDivisionId.isBlank()) "Division is required" else null
-        if (divisionError != null) isValid = false
+        val batchCodeValidation = state.batchCode.validateAsBatchCode()
 
-        val batchCodeError = if (state.batchCode.isNotBlank()) null else "Batch code is required"
-        if (batchCodeError != null) isValid = false
+        updateState {
+            it.copy(
+                divisionError = divisionValidation.errorMessage,
+                batchCodeError = batchCodeValidation.errorMessage
+            )
+        }
 
-        updateState { it.copy(divisionError = divisionError, batchCodeError = batchCodeError) }
-        return isValid
+        return divisionValidation.successful && batchCodeValidation.successful
     }
 
     private suspend fun submitForm() {

@@ -17,6 +17,12 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
+import edu.watumull.presencify.core.presentation.validation.validateAsEndDate
+import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
+import edu.watumull.presencify.core.presentation.validation.validateAsStartDate
+import edu.watumull.presencify.core.presentation.validation.validateAsUUID
 import kotlinx.coroutines.launch
 
 class AddEditSemesterViewModel(
@@ -326,52 +332,35 @@ class AddEditSemesterViewModel(
     }
 
     private fun validateForm(): Boolean {
-        var isValid = true
+        val semesterValidation = state.semesterNumber.validateAsSemesterNumber()
+        val startYearValidation = state.academicStartYear.validateAsAcademicStartYear(endYear = state.academicEndYear)
+        val endYearValidation = state.academicEndYear.validateAsAcademicEndYear(startYear = state.academicStartYear)
 
-        val semesterNumberError = if (state.semesterNumber == null) "Semester number is required" else null
-        if (semesterNumberError != null) isValid = false
+        val startDateValidation = state.startDate.validateAsStartDate(endDate = state.endDate)
+        val endDateValidation = state.endDate.validateAsEndDate(startDate = state.startDate)
 
-        val startYearError = if (state.academicStartYear.isNotBlank()) {
-            val year = state.academicStartYear.toIntOrNull()
-            if (year == null || year < 1900 || year > 2100) "Invalid start year" else null
-        } else {
-            "Academic start year is required"
-        }
-        if (startYearError != null) isValid = false
-
-        val endYearError = if (state.academicEndYear.isNotBlank()) {
-            val year = state.academicEndYear.toIntOrNull()
-            if (year == null || year < 1900 || year > 2100) "Invalid end year" else null
-        } else {
-            "Academic end year is required"
-        }
-        if (endYearError != null) isValid = false
-
-        val startDateError = if (state.startDate == null) "Start date is required" else null
-        if (startDateError != null) isValid = false
-
-        val endDateError = if (state.endDate == null) "End date is required" else null
-        if (endDateError != null) isValid = false
-
-        val branchError = if (state.selectedBranchId.isBlank()) "Branch is required" else null
-        if (branchError != null) isValid = false
-
-        val schemeError = if (state.selectedSchemeId.isBlank()) "Scheme is required" else null
-        if (schemeError != null) isValid = false
+        val branchValidation = state.selectedBranchId.validateAsUUID()
+        val schemeValidation = state.selectedSchemeId.validateAsUUID()
 
         updateState {
             it.copy(
-                semesterNumberError = semesterNumberError,
-                academicStartYearError = startYearError,
-                academicEndYearError = endYearError,
-                startDateError = startDateError,
-                endDateError = endDateError,
-                branchError = branchError,
-                schemeError = schemeError
+                semesterNumberError = semesterValidation.errorMessage,
+                academicStartYearError = startYearValidation.errorMessage,
+                academicEndYearError = endYearValidation.errorMessage,
+                startDateError = startDateValidation.errorMessage,
+                endDateError = endDateValidation.errorMessage,
+                branchError = branchValidation.errorMessage,
+                schemeError = schemeValidation.errorMessage
             )
         }
 
-        return isValid
+        return semesterValidation.successful &&
+            startYearValidation.successful &&
+            endYearValidation.successful &&
+            startDateValidation.successful &&
+            endDateValidation.successful &&
+            branchValidation.successful &&
+            schemeValidation.successful
     }
 
     private suspend fun submitForm() {
@@ -436,4 +425,3 @@ class AddEditSemesterViewModel(
             }
     }
 }
-
