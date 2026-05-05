@@ -16,6 +16,9 @@ import edu.watumull.presencify.core.presentation.validation.validateAsFirstName
 import edu.watumull.presencify.core.presentation.validation.validateAsLastName
 import edu.watumull.presencify.core.presentation.validation.validateAsMiddleName
 import edu.watumull.presencify.core.presentation.validation.validateAsPhoneNumber
+import edu.watumull.presencify.core.presentation.validation.validateAsGender
+import edu.watumull.presencify.core.presentation.validation.validateAsTeacherRole
+import edu.watumull.presencify.core.presentation.validation.validateAsHighestQualification
 import edu.watumull.presencify.feature.users.navigation.UsersRoutes
 import kotlinx.coroutines.launch
 
@@ -179,12 +182,20 @@ class AddEditTeacherViewModel(
         val firstNameValidation = state.firstName.validateAsFirstName()
         val firstNameError = if (firstNameValidation.successful) null else firstNameValidation.errorMessage
 
+        val middleNameValidation = state.middleName.validateAsMiddleName()
+        val middleNameError = if (middleNameValidation.successful) null else middleNameValidation.errorMessage
+
         val lastNameValidation = state.lastName.validateAsLastName()
         val lastNameError = if (lastNameValidation.successful) null else lastNameValidation.errorMessage
 
-        val genderError = if (state.gender == null) "Gender is required" else null
+        val genderValidation = state.gender.validateAsGender()
+        val genderError = if (genderValidation.successful) null else genderValidation.errorMessage
 
-        val roleError = if (state.role == null) "Role is required" else null
+        val highestQualificationValidation = state.highestQualification.validateAsHighestQualification()
+        val highestQualificationError = if (highestQualificationValidation.successful) null else highestQualificationValidation.errorMessage
+
+        val roleValidation = state.role.validateAsTeacherRole()
+        val roleError = if (roleValidation.successful) null else roleValidation.errorMessage
 
         val emailValidation = state.email.validateAsEmail()
         val emailError = if (emailValidation.successful) null else emailValidation.errorMessage
@@ -195,16 +206,24 @@ class AddEditTeacherViewModel(
         updateState {
             it.copy(
                 firstNameError = firstNameError,
+                middleNameError = middleNameError,
                 lastNameError = lastNameError,
                 genderError = genderError,
+                highestQualificationError = highestQualificationError,
                 roleError = roleError,
                 emailError = emailError,
                 phoneNumberError = phoneNumberError
             )
         }
 
-        return firstNameError == null && lastNameError == null && genderError == null &&
-                roleError == null && emailError == null && phoneNumberError == null
+        return firstNameError == null &&
+            middleNameError == null &&
+            lastNameError == null &&
+            genderError == null &&
+            highestQualificationError == null &&
+            roleError == null &&
+            emailError == null &&
+            phoneNumberError == null
     }
 
     private suspend fun submitForm() {
@@ -246,12 +265,12 @@ class AddEditTeacherViewModel(
 
     private suspend fun addTeacher() = teacherRepository.addTeacher(
         firstName = state.firstName,
-        middleName = state.middleName.ifBlank { null },
+        middleName = state.middleName.takeIf { it.isNotBlank() },
         lastName = state.lastName,
         email = state.email,
         phoneNumber = state.phoneNumber,
         gender = state.gender!!,
-        highestQualification = state.highestQualification.ifBlank { null },
+        highestQualification = state.highestQualification.takeIf { it.isNotBlank() },
         role = state.role!!,
         isActive = true,
         teacherImage = state.teacherImageBytes
@@ -260,13 +279,12 @@ class AddEditTeacherViewModel(
     private suspend fun updateTeacher() = teacherRepository.updateTeacherDetails(
         id = state.teacherId!!,
         firstName = state.firstName,
-        middleName = state.middleName.ifBlank { null },
+        middleName = state.middleName.takeIf { it.isNotBlank() },
         lastName = state.lastName,
         email = state.email,
         role = state.role,
         gender = state.gender,
-        highestQualification = state.highestQualification.ifBlank { null },
+        highestQualification = state.highestQualification.takeIf { it.isNotBlank() },
         phoneNumber = state.phoneNumber,
     )
 }
-

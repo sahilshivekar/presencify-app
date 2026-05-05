@@ -117,7 +117,6 @@ class UpdateUserPasswordViewModel(
             val result = when (userRole) {
                 UserRole.STUDENT -> studentAuthRepository.updatePassword(password, confirmPassword)
                 UserRole.TEACHER -> teacherAuthRepository.updatePassword(password, confirmPassword)
-                null -> null
                 else -> null
             }
 

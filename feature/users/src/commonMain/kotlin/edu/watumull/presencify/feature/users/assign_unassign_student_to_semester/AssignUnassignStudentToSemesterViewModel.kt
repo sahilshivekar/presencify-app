@@ -9,6 +9,10 @@ import edu.watumull.presencify.core.domain.repository.academics.SemesterReposito
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
+import edu.watumull.presencify.core.presentation.validation.validateAsBranch
+import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
@@ -52,42 +56,24 @@ class AssignUnassignStudentToSemesterViewModel(
     }
 
     private fun validateForm(): Boolean {
-        val branch = state.selectedBranch
-        val semesterNumber = state.selectedSemesterNumber
-        val startYear = state.startYear
-        val endYear = state.endYear
+        val branchValidation = state.selectedBranch.validateAsBranch()
+        val semesterValidation = state.selectedSemesterNumber.validateAsSemesterNumber()
+        val startYearValidation = state.startYear.validateAsAcademicStartYear(endYear = state.endYear)
+        val endYearValidation = state.endYear.validateAsAcademicEndYear(startYear = state.startYear)
 
-        var hasError = false
-
-        if (branch == null) {
-            updateState { it.copy(branchError = "Please select a branch") }
-            hasError = true
-        } else {
-            updateState { it.copy(branchError = null) }
+        updateState {
+            it.copy(
+                branchError = branchValidation.errorMessage,
+                semesterNumberError = semesterValidation.errorMessage,
+                startYearError = startYearValidation.errorMessage,
+                endYearError = endYearValidation.errorMessage
+            )
         }
 
-        if (semesterNumber == null) {
-            updateState { it.copy(semesterNumberError = "Please select a semester number") }
-            hasError = true
-        } else {
-            updateState { it.copy(semesterNumberError = null) }
-        }
-
-        if (startYear.isBlank()) {
-            updateState { it.copy(startYearError = "Please enter a start year") }
-            hasError = true
-        } else {
-            updateState { it.copy(startYearError = null) }
-        }
-
-        if (endYear.isBlank()) {
-            updateState { it.copy(endYearError = "Please enter an end year") }
-            hasError = true
-        } else {
-            updateState { it.copy(endYearError = null) }
-        }
-
-        return !hasError
+        return branchValidation.successful &&
+            semesterValidation.successful &&
+            startYearValidation.successful &&
+            endYearValidation.successful
     }
 
     private fun findSemesterAndNavigate() {

@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
 import kotlinx.coroutines.launch
 
 class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDropoutState, MarkUnmarkStudentAsDropoutEvent, MarkUnmarkStudentAsDropoutAction>(
@@ -16,19 +18,21 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
             }
 
             is MarkUnmarkStudentAsDropoutAction.UpdateStartYear -> {
+                val startYearValidation = action.year.validateAsAcademicStartYear(endYear = state.endYear)
                 updateState {
                     it.copy(
                         startYear = action.year,
-                        startYearError = validateYear(action.year, "Start Year")
+                        startYearError = startYearValidation.errorMessage
                     )
                 }
             }
 
             is MarkUnmarkStudentAsDropoutAction.UpdateEndYear -> {
+                val endYearValidation = action.year.validateAsAcademicEndYear(startYear = state.startYear)
                 updateState {
                     it.copy(
                         endYear = action.year,
-                        endYearError = validateYear(action.year, "End Year")
+                        endYearError = endYearValidation.errorMessage
                     )
                 }
             }
@@ -45,51 +49,43 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
         }
     }
 
-    private fun validateYear(year: String, fieldName: String): String? {
-        return when {
-            year.isBlank() -> "$fieldName is required"
-            year.toIntOrNull() == null -> "$fieldName must be a valid number"
-            year.length != 4 -> "$fieldName must be 4 digits"
-            year.toInt() < 2000 || year.toInt() > 2100 -> "$fieldName must be between 2000 and 2100"
-            else -> null
-        }
-    }
-
     private fun validateAndNavigate() {
-        val state = stateFlow.value
+        val current = stateFlow.value
 
-        // Validate both years
-        val startYearError = validateYear(state.startYear, "Start Year")
-        val endYearError = validateYear(state.endYear, "End Year")
+        val startYearValidation = current.startYear.validateAsAcademicStartYear(endYear = current.endYear)
+        val endYearValidation = current.endYear.validateAsAcademicEndYear(startYear = current.startYear)
 
-        // Check if end year is exactly start year + 1
-        val yearRelationError = if (startYearError == null && endYearError == null) {
-            val startYearInt = state.startYear.toInt()
-            val endYearInt = state.endYear.toInt()
+        val yearRelationError = if (startYearValidation.successful && endYearValidation.successful) {
+            val startYearInt = current.startYear.toIntOrNull()
+            val endYearInt = current.endYear.toIntOrNull()
 
             when {
+                startYearInt == null || endYearInt == null -> null // already covered by validators
                 endYearInt != startYearInt + 1 -> "End year must be exactly one year after start year"
                 else -> null
             }
-        } else null
+        } else {
+            null
+        }
 
-        // Update errors
         updateState {
             it.copy(
-                startYearError = startYearError,
-                endYearError = yearRelationError ?: endYearError
+                startYearError = startYearValidation.errorMessage,
+                endYearError = yearRelationError ?: endYearValidation.errorMessage
             )
         }
 
-        // If there are any errors, show dialog
-        if (startYearError != null || endYearError != null || yearRelationError != null) {
+        if (!startYearValidation.successful || !endYearValidation.successful || yearRelationError != null) {
             updateState {
                 it.copy(
                     dialogState = MarkUnmarkStudentAsDropoutState.DialogState(
                         dialogType = DialogType.ERROR,
                         title = "Validation Error",
                         message = UiText.DynamicString(
-                            startYearError ?: endYearError ?: yearRelationError ?: "Please fix the errors"
+                            startYearValidation.errorMessage
+                                ?: endYearValidation.errorMessage
+                                ?: yearRelationError
+                                ?: "Please fix the errors"
                         ),
                         dialogIntention = DialogIntention.GENERIC
                     )
@@ -98,11 +94,10 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
             return
         }
 
-        // All validation passed, navigate
         sendEvent(
             MarkUnmarkStudentAsDropoutEvent.NavigateToSearchStudent(
-                dropoutAcademicStartYear = state.startYear.toInt(),
-                dropoutAcademicEndYear = state.endYear.toInt()
+                dropoutAcademicStartYear = current.startYear.toInt(),
+                dropoutAcademicEndYear = current.endYear.toInt()
             )
         )
     }

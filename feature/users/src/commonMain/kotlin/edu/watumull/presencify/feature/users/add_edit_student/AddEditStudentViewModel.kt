@@ -13,13 +13,18 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.ValidationResult
+import edu.watumull.presencify.core.presentation.validation.validateAsAdmissionType
+import edu.watumull.presencify.core.presentation.validation.validateAsAdmissionYear
 import edu.watumull.presencify.core.presentation.validation.validateAsDob
 import edu.watumull.presencify.core.presentation.validation.validateAsEmail
 import edu.watumull.presencify.core.presentation.validation.validateAsFirstName
+import edu.watumull.presencify.core.presentation.validation.validateAsGender
 import edu.watumull.presencify.core.presentation.validation.validateAsLastName
 import edu.watumull.presencify.core.presentation.validation.validateAsMiddleName
 import edu.watumull.presencify.core.presentation.validation.validateAsPhoneNumber
 import edu.watumull.presencify.core.presentation.validation.validateAsPrn
+import edu.watumull.presencify.core.presentation.validation.validateAsUUID
 import edu.watumull.presencify.feature.users.navigation.UsersRoutes
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -321,20 +326,25 @@ class AddEditStudentViewModel(
         val firstNameValidation = state.firstName.validateAsFirstName()
         val firstNameError = if (firstNameValidation.successful) null else firstNameValidation.errorMessage
 
+        val middleNameValidation = state.middleName.validateAsMiddleName()
+        val middleNameError = if (middleNameValidation.successful) null else middleNameValidation.errorMessage
+
         val lastNameValidation = state.lastName.validateAsLastName()
         val lastNameError = if (lastNameValidation.successful) null else lastNameValidation.errorMessage
 
-        val genderError = if (state.gender == null) "Gender is required" else null
+        val genderValidation = state.gender.validateAsGender()
+        val genderError = if (genderValidation.successful) null else genderValidation.errorMessage
 
         updateState {
             it.copy(
                 firstNameError = firstNameError,
+                middleNameError = middleNameError,
                 lastNameError = lastNameError,
                 genderError = genderError
             )
         }
 
-        return firstNameError == null && lastNameError == null && genderError == null
+        return firstNameError == null && middleNameError == null && lastNameError == null && genderError == null
     }
 
     private fun validateContactDetails(): Boolean {
@@ -344,8 +354,8 @@ class AddEditStudentViewModel(
         val phoneValidation = state.phoneNumber.validateAsPhoneNumber()
         val phoneNumberError = if (phoneValidation.successful) null else phoneValidation.errorMessage
 
-        val parentEmailValidation = if (state.parentEmail.isNotBlank()) state.parentEmail.validateAsEmail() else null
-        val parentEmailError = if (parentEmailValidation == null || parentEmailValidation.successful) null else parentEmailValidation.errorMessage
+        val parentEmailValidation = if (state.parentEmail.isNotBlank()) state.parentEmail.validateAsEmail() else ValidationResult(true)
+        val parentEmailError = parentEmailValidation.errorMessage
 
         updateState {
             it.copy(
@@ -360,31 +370,26 @@ class AddEditStudentViewModel(
 
     private fun validateAcademicDetails(): Boolean {
         val prnValidation = state.prn.validateAsPrn()
-        val prnError = if (prnValidation.successful) null else prnValidation.errorMessage
-
-        val admissionYearInt = state.admissionYear.toIntOrNull()
-        val admissionYearError = when {
-            state.admissionYear.isBlank() -> "Admission year is required"
-            admissionYearInt == null -> "Invalid admission year"
-            state.admissionYear.length != 4 -> "Admission year must be 4 digits"
-            else -> null
-        }
-        val admissionTypeError = if (state.admissionType == null) "Admission type is required" else null
-        val branchError = if (state.selectedBranchId.isBlank()) "Branch is required" else null
-        val schemeError = if (state.selectedSchemeId.isBlank()) "Scheme is required" else null
+        val admissionYearValidation = state.admissionYear.validateAsAdmissionYear()
+        val admissionTypeValidation = state.admissionType.validateAsAdmissionType()
+        val branchValidation = state.selectedBranchId.validateAsUUID()
+        val schemeValidation = state.selectedSchemeId.validateAsUUID()
 
         updateState {
             it.copy(
-                prnError = prnError,
-                admissionYearError = admissionYearError,
-                admissionTypeError = admissionTypeError,
-                branchError = branchError,
-                schemeError = schemeError
+                prnError = prnValidation.errorMessage,
+                admissionYearError = admissionYearValidation.errorMessage,
+                admissionTypeError = admissionTypeValidation.errorMessage,
+                branchError = branchValidation.errorMessage,
+                schemeError = schemeValidation.errorMessage
             )
         }
 
-        return prnError == null && admissionYearError == null && admissionTypeError == null &&
-                branchError == null && schemeError == null
+        return prnValidation.successful &&
+            admissionYearValidation.successful &&
+            admissionTypeValidation.successful &&
+            branchValidation.successful &&
+            schemeValidation.successful
     }
 
     private suspend fun submitForm() {
