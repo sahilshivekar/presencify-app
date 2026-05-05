@@ -11,6 +11,8 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
+import edu.watumull.presencify.core.presentation.validation.validateAsEmail
+import edu.watumull.presencify.core.presentation.validation.validateAsVerificationCode
 import edu.watumull.presencify.feature.admin.auth.navigation.AdminAuthRoutes
 import kotlinx.coroutines.launch
 
@@ -53,20 +55,20 @@ class AdminVerifyCodeViewModel(
         val email = currentState.email.trim()
         val code = currentState.code.trim()
 
-        // Reset errors
+        val codeValidation = code.validateAsVerificationCode()
+        val emailValidation = email.validateAsEmail()
+
+        // Set errors (login screen style: validate on submit)
         updateState {
-            it.copy(codeError = null)
+            it.copy(
+                codeError = codeValidation.errorMessage
+            )
         }
 
-        // Validation
-        if (code.isBlank()) {
-            updateState {
-                it.copy(codeError = "Code can't be blank")
-            }
-            return
-        }
+        if (!codeValidation.successful) return
 
-        if (email.isBlank()) {
+        // Email is a route param; still validate to avoid weird states
+        if (!emailValidation.successful) {
             viewModelScope.launch {
                 SnackbarController.sendEvent(SnackbarEvent("Technical error occurred, please restart the app"))
             }
