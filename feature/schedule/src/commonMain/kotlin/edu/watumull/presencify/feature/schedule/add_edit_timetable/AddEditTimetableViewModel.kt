@@ -14,7 +14,8 @@ import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.ValidationResult
-import edu.watumull.presencify.core.presentation.validation.ValidationRule
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
+import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
 import edu.watumull.presencify.core.presentation.validation.validateAsBranch
 import edu.watumull.presencify.core.presentation.validation.validateAsDivision
 import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
@@ -131,12 +132,8 @@ class AddEditTimetableViewModel(
         // Validate using validation functions
         val branchValidation = branch.validateAsBranch()
         val semesterValidation = semesterNumber.validateAsSemesterNumber()
-
-        // Validate start year
-        val startYearValidation = validateYear(startYear, "start year")
-
-        // Validate end year
-        val endYearValidation = validateYear(endYear, "end year")
+        val startYearValidation = startYear.validateAsAcademicStartYear(endYear = endYear)
+        val endYearValidation = endYear.validateAsAcademicEndYear(startYear = startYear)
 
         updateState {
             it.copy(
@@ -151,22 +148,6 @@ class AddEditTimetableViewModel(
                 semesterValidation.successful &&
                 startYearValidation.successful &&
                 endYearValidation.successful
-    }
-
-    private fun validateYear(yearString: String, fieldName: String): ValidationResult {
-        val required = ValidationRule.Required("Please enter a $fieldName").validate(yearString)
-        if (!required.successful) return required
-
-        val year = yearString.toIntOrNull()
-        if (year == null) {
-            return ValidationResult(successful = false, errorMessage = "Please enter a valid year")
-        }
-
-        if (year < 1900 || year > 2100) {
-            return ValidationResult(successful = false, errorMessage = "Year must be between 1900 and 2100")
-        }
-
-        return ValidationResult(successful = true)
     }
 
     private fun findDivisionsAndBatches() {
@@ -331,7 +312,7 @@ class AddEditTimetableViewModel(
             }
 
             result
-                .onSuccess { timetable ->
+                .onSuccess { _ ->
                     updateState {
                         it.copy(
                             isSaving = false,

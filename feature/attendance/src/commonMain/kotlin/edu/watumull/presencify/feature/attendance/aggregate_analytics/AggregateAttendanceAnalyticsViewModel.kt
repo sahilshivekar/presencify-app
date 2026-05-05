@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.AttendanceRecord
@@ -37,9 +38,8 @@ class AggregateAttendanceAnalyticsViewModel(
             loadBranches()
         }
 
-        // Pre-populate from route params if available (override defaults if provided)
         routeParams.semesterNumber?.let { semNum ->
-            edu.watumull.presencify.core.domain.enums.SemesterNumber.fromValue(semNum)?.let { sn ->
+            SemesterNumber.fromValue(semNum)?.let { sn ->
                 updateState { it.copy(selectedSemesterNumber = sn) }
             }
         }
@@ -93,7 +93,7 @@ class AggregateAttendanceAnalyticsViewModel(
     }
 
     private suspend fun resolveSemesterAndLoadData(
-        semesterNumber: edu.watumull.presencify.core.domain.enums.SemesterNumber,
+        semesterNumber: SemesterNumber,
         academicStartYear: Int,
         academicEndYear: Int,
         branchId: String,

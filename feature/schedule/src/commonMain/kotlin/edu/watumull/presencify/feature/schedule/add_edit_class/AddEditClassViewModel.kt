@@ -20,6 +20,7 @@ import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsClassActiveFrom
 import edu.watumull.presencify.core.presentation.validation.validateAsClassActiveTill
+import edu.watumull.presencify.core.presentation.validation.validateAsClassType
 import edu.watumull.presencify.core.presentation.validation.validateAsCourse
 import edu.watumull.presencify.core.presentation.validation.validateAsDayOfWeek
 import edu.watumull.presencify.core.presentation.validation.validateAsEndTime
@@ -300,32 +301,19 @@ class AddEditClassViewModel(
         val dayOfWeekValidation = state.dayOfWeek.validateAsDayOfWeek()
         val activeFromValidation = state.activeFrom.validateAsClassActiveFrom(state.activeTill)
         val activeTillValidation = state.activeTill.validateAsClassActiveTill(state.activeFrom)
-
-        // Validate class type (required field)
-        val classTypeError = if (state.classType == null) "Class type is required" else null
-
-        // Validate start time and end time
-        val startTimeError = if (state.startTime == null) {
-            "Start time is required"
-        } else {
-            state.startTime.validateAsStartTime(state.endTime).errorMessage
-        }
-
-        val endTimeError = if (state.endTime == null) {
-            "End time is required"
-        } else {
-            state.endTime.validateAsEndTime(state.startTime).errorMessage
-        }
+        val classTypeValidation = state.classType.validateAsClassType()
+        val startTimeValidation = state.startTime.validateAsStartTime(state.endTime)
+        val endTimeValidation = state.endTime.validateAsEndTime(state.startTime)
 
         updateState {
             it.copy(
                 selectedCourseError = courseValidation.errorMessage,
                 selectedTeacherError = teacherValidation.errorMessage,
                 selectedRoomError = roomValidation.errorMessage,
-                classTypeError = classTypeError,
+                classTypeError = classTypeValidation.errorMessage,
                 dayOfWeekError = dayOfWeekValidation.errorMessage,
-                startTimeError = startTimeError,
-                endTimeError = endTimeError,
+                startTimeError = startTimeValidation.errorMessage,
+                endTimeError = endTimeValidation.errorMessage,
                 activeFromError = activeFromValidation.errorMessage,
                 activeTillError = activeTillValidation.errorMessage
             )
@@ -337,19 +325,19 @@ class AddEditClassViewModel(
                 !dayOfWeekValidation.successful ||
                 !activeFromValidation.successful ||
                 !activeTillValidation.successful ||
-                classTypeError != null ||
-                startTimeError != null ||
-                endTimeError != null
+                !classTypeValidation.successful ||
+                !startTimeValidation.successful ||
+                !endTimeValidation.successful
 
         if (hasError) {
             val errorMessage = listOfNotNull(
                 courseValidation.errorMessage,
                 teacherValidation.errorMessage,
                 roomValidation.errorMessage,
-                classTypeError,
+                classTypeValidation.errorMessage,
                 dayOfWeekValidation.errorMessage,
-                startTimeError,
-                endTimeError,
+                startTimeValidation.errorMessage,
+                endTimeValidation.errorMessage,
                 activeFromValidation.errorMessage,
                 activeTillValidation.errorMessage
             ).firstOrNull() ?: "Please fix the errors"
