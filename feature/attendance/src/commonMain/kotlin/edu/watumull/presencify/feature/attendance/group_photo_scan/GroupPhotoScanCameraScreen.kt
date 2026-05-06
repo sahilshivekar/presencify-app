@@ -8,9 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
 @Composable
 fun GroupPhotoScanCameraScreen(
@@ -40,7 +40,7 @@ fun GroupPhotoScanCameraScreen(
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 16.dp),
+                    .padding(top = DesignToken.spacing.lg),
             )
         }
     }

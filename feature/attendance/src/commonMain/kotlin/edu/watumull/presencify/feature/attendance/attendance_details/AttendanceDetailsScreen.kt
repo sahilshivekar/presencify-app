@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -30,10 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
@@ -86,7 +86,7 @@ fun AttendanceDetailsScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                         ) {
                             Text(
                                 text = state.viewState.message.asString(),
@@ -130,20 +130,20 @@ fun AttendanceDetailsScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 16.dp)
+                                        .padding(horizontal = DesignToken.spacing.lg)
                                 ) {
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
                                     state.classSession?.let { classSession ->
                                         ClassDetailsSection(classSession = classSession, date = state.attendance?.date!!)
                                     }
 
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
                                     // Action Buttons (between class details and stats)
                                     ActionButtonsSection(onAction = onAction)
 
-                                    Spacer(modifier = Modifier.height(24.dp))
+                                    Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
                                     // Stats Cards Section
                                     AttendanceStatsSection(
@@ -152,7 +152,7 @@ fun AttendanceDetailsScreen(
                                         absentStudents = state.absentStudents
                                     )
 
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                                 }
                             }
 
@@ -161,7 +161,7 @@ fun AttendanceDetailsScreen(
                                 SecondaryScrollableTabRow(
                                     selectedTabIndex = allTabs.indexOf(state.selectedTab),
                                     divider = {},
-                                    edgePadding = 16.dp,
+                                    edgePadding = DesignToken.spacing.lg,
                                     modifier = Modifier.background(MaterialTheme.colorScheme.background)
                                 ) {
                                     allTabs.forEach { tab ->
@@ -190,7 +190,7 @@ fun AttendanceDetailsScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(200.dp)
-                                            .padding(16.dp),
+                                            .padding(DesignToken.spacing.lg),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -212,9 +212,9 @@ fun AttendanceDetailsScreen(
                                     if (student != null) {
                                         Column {
                                             if (filteredStudents.first() == attendanceStudent) {
-                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
                                             }
-                                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                            Box(modifier = Modifier.padding(horizontal = DesignToken.spacing.lg)) {
                                                 StudentListItem(
                                                     studentName = "${student.firstName} ${student.lastName}",
                                                     prn = student.prn,
@@ -222,7 +222,7 @@ fun AttendanceDetailsScreen(
                                                     onClick = null
                                                 )
                                             }
-                                            Spacer(modifier = Modifier.height(12.dp))
+                                            Spacer(modifier = Modifier.height(DesignToken.spacing.md))
                                         }
                                     }
                                 }
@@ -230,7 +230,7 @@ fun AttendanceDetailsScreen(
 
                             // Bottom padding
                             item {
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                             }
                         }
                     }
@@ -258,7 +258,7 @@ private fun ClassDetailsSection(
     date: LocalDate,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
     ) {
         Text(
             text = date.toReadableString(),
@@ -313,7 +313,7 @@ private fun AttendanceStatsSection(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
         // Total Students Card
         AttendanceStatCard(
@@ -350,9 +350,9 @@ private fun AttendanceStatCard(
         modifier = modifier
             .background(
                 color = color.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.medium
             )
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -363,7 +363,7 @@ private fun AttendanceStatCard(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,

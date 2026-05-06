@@ -96,7 +96,7 @@ kotlin {
                 implementation(libs.kotlinx.collections.immutable)
 
                 implementation(project(":core:domain"))
-                implementation(project(":core:design-systems"))
+                implementation(project(":core:designsystem"))
 
             }
             dependencies {

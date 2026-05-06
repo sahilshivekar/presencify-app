@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.academics.search_branch
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.presentation.UiText
 import kotlinx.collections.immutable.PersistentList

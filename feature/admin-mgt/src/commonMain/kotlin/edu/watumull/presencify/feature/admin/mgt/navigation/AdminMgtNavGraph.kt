@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.admin.mgt.navigation
 
 import androidx.navigation.NavGraphBuilder
-import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.admin.mgt.add_admin.AddAdminRoot
 import edu.watumull.presencify.feature.admin.mgt.admin_details.AdminDetailsRoot
 import edu.watumull.presencify.feature.admin.mgt.update_password.UpdatePasswordRoot

@@ -35,16 +35,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.baseline_account_circle_24
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyCard
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.baseline_account_circle_24
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyCard
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
@@ -116,28 +117,28 @@ private fun TeacherDetailsScreenContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TeacherImageContainer(state = state, onAction = onAction)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
         TeacherDetailsContainer(state = state)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
 
         Column(
             modifier = Modifier
-                .padding(top = 16.dp)
+                .padding(top = DesignToken.spacing.lg)
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = DesignToken.spacing.lg),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (LocalUserRole.current == UserRole.ADMIN) {
@@ -154,8 +155,8 @@ private fun TeacherDetailsScreenContent(
                         if (state.isRemovingTeacher) {
                             CircularProgressIndicator(
                                 color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp,
+                                modifier = Modifier.size(DesignToken.components.progressMd),
+                                strokeWidth = DesignToken.strokes.md,
                             )
                         } else {
                             Text(
@@ -169,7 +170,7 @@ private fun TeacherDetailsScreenContent(
                     LocalUserRole.current == UserRole.TEACHER &&
                     state.teacherId == LocalUserId.current
                 ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                         PresencifyTextButton(
                             onClick = { onAction(TeacherDetailsAction.ClickUpdatePassword) },
                             enabled = !state.isLoggingOut
@@ -223,7 +224,7 @@ private fun TeacherImageContainer(
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                     .wrapContentHeight()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = DesignToken.spacing.lg)
                     .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -234,18 +235,18 @@ private fun TeacherImageContainer(
                     error = painterResource(Res.drawable.baseline_account_circle_24),
                     contentDescription = "Teacher Image",
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(200.dp)
+                        .padding(DesignToken.spacing.lg)
+                        .size(DesignToken.avatars.xxl)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp),
+                        .padding(horizontal = DesignToken.spacing.lg)
+                        .padding(bottom = DesignToken.spacing.lg),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     PresencifyTextButton(
@@ -266,8 +267,8 @@ private fun TeacherImageContainer(
                             if (state.isRemovingImage) {
                                 CircularProgressIndicator(
                                     color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(20.dp),
-                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(DesignToken.components.progressMd),
+                                    strokeWidth = DesignToken.strokes.md,
                                 )
                             } else {
                                 Text(text = "Remove Image", color = MaterialTheme.colorScheme.error)
@@ -309,7 +310,7 @@ private fun TeacherImageContainer(
             model = state.teacher?.teacherImageUrl,
             contentDescription = null,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(DesignToken.spacing.sm)
                 .size(120.dp)
                 .clip(CircleShape),
             contentScale = ContentScale.Crop,
@@ -344,7 +345,7 @@ private fun TeacherDetailsContainer(state: TeacherDetailsState) {
         modifier = Modifier
             .wrapContentHeight()
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(top = 16.dp),
+            .padding(top = DesignToken.spacing.lg),
     ) {
         DetailRow(
             label = "Full Name",
@@ -395,8 +396,8 @@ private fun DetailRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = if (isLast) 16.dp else 0.dp),
+            .padding(horizontal = DesignToken.spacing.lg)
+            .padding(top = DesignToken.spacing.lg, bottom = if (isLast) DesignToken.spacing.lg else DesignToken.spacing.none),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

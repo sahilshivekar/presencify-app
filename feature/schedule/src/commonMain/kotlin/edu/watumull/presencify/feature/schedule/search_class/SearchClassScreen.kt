@@ -43,17 +43,17 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyTimePickerTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyBottomSheetScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.utils.toReadableString
@@ -162,7 +162,7 @@ private fun SearchClassScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -181,7 +181,7 @@ private fun SearchClassScreenContent(
                 onSearchClick = { onAction(SearchClassAction.Search) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             Box(
                 modifier = Modifier
@@ -192,7 +192,7 @@ private fun SearchClassScreenContent(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                 ) {
                     items(
                         items = state.classes,
@@ -274,9 +274,9 @@ private fun SearchClassBottomSheetContent(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(24.dp)
+            .padding(DesignToken.spacing.xl)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
     ) {
         // Header with Reset
         Row(
@@ -300,7 +300,7 @@ private fun SearchClassBottomSheetContent(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.sm))
 
         // Branch Filter
         FilterSection(
@@ -309,7 +309,7 @@ private fun SearchClassBottomSheetContent(
         ) {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.branchOptions.forEach { branch ->
                     FilterChip(
@@ -329,7 +329,7 @@ private fun SearchClassBottomSheetContent(
         FilterSection(title = "Semester") {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.semesterOptions.forEach { semester ->
                     FilterChip(
@@ -349,7 +349,7 @@ private fun SearchClassBottomSheetContent(
         FilterSection(title = "Academic Year of Semester") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 PresencifyTextField(
                     value = state.academicStartYear,
@@ -383,7 +383,7 @@ private fun SearchClassBottomSheetContent(
         ) {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.divisionOptions.forEach { division ->
                     FilterChip(
@@ -419,7 +419,7 @@ private fun SearchClassBottomSheetContent(
         ) {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.batchOptions.forEach { batch ->
                     FilterChip(
@@ -439,7 +439,7 @@ private fun SearchClassBottomSheetContent(
         }
 
         // Class Type Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Class Type",
                 style = MaterialTheme.typography.titleMedium,
@@ -449,8 +449,8 @@ private fun SearchClassBottomSheetContent(
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.classTypeOptions.forEach { classType ->
                     FilterChip(
@@ -467,7 +467,7 @@ private fun SearchClassBottomSheetContent(
         }
 
         // Extra Class Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -489,7 +489,7 @@ private fun SearchClassBottomSheetContent(
         }
 
         // Time Range Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Time Range",
                 style = MaterialTheme.typography.titleMedium,
@@ -498,7 +498,7 @@ private fun SearchClassBottomSheetContent(
             )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 PresencifyTimePickerTextField(
@@ -526,7 +526,7 @@ private fun SearchClassBottomSheetContent(
         }
 
         // Date Range Filter (Active From/Till)
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Active Date Range",
                 style = MaterialTheme.typography.titleMedium,
@@ -535,7 +535,7 @@ private fun SearchClassBottomSheetContent(
             )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 PresencifyDatePickerTextField(
@@ -569,8 +569,8 @@ private fun SearchClassBottomSheetContent(
         ) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.availableRooms.forEach { room ->
                     FilterChip(
@@ -594,8 +594,8 @@ private fun SearchClassBottomSheetContent(
         ) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.availableTeachers.forEach { teacher ->
                     FilterChip(
@@ -613,7 +613,7 @@ private fun SearchClassBottomSheetContent(
 
         // Action Buttons
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
             modifier = Modifier.fillMaxWidth()
         ) {
             PresencifyTextButton(
@@ -644,7 +644,7 @@ private fun FilterSection(
     emptyMessage: String? = null,
     content: @Composable () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
@@ -655,11 +655,11 @@ private fun FilterSection(
         when {
             isLoading -> {
                 CircularProgressIndicator(
-                    strokeWidth = 2.dp,
+                    strokeWidth = DesignToken.strokes.md,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .size(20.dp)
-                        .padding(top = 4.dp)
+                        .size(DesignToken.components.progressMd)
+                        .padding(top = DesignToken.spacing.xs)
                 )
             }
             emptyMessage != null -> {

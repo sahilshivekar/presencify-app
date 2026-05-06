@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.schedule.search_class
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch

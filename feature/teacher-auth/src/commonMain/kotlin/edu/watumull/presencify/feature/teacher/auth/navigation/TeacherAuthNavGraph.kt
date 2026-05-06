@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.teacher.auth.navigation
 
 import androidx.navigation.NavGraphBuilder
-import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.teacher.auth.forgot_password.TeacherForgotPasswordRoot
 import edu.watumull.presencify.feature.teacher.auth.login.TeacherLoginRoot
 import edu.watumull.presencify.feature.teacher.auth.verify_code.TeacherVerifyCodeRoot

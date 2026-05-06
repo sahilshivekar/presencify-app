@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.users.add_edit_student
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.model.academics.Branch

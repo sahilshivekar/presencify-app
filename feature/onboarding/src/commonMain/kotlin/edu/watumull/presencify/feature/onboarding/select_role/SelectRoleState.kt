@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.onboarding.select_role
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 
 data class SelectRoleState(
     val viewState: ViewState = ViewState.Loading,

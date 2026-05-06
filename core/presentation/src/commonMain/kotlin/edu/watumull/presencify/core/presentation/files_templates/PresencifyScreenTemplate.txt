@@ -57,10 +57,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.ExperimentalMaterial3Api
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
@@ -127,7 +127,7 @@ private fun ${NAME}ScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -186,7 +186,7 @@ class ${NAME}ViewModel :
 
 #if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "") package ${PACKAGE_NAME} #end
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
 
 data class ${NAME}State(

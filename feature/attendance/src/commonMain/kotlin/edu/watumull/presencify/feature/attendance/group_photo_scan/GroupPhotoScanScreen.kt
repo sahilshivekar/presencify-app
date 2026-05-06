@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Close
@@ -33,10 +32,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.isDesktopPlatform
 import edu.watumull.presencify.core.presentation.utils.ImagePicker
@@ -64,12 +64,12 @@ fun GroupPhotoScanScreen(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                     .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                    .padding(DesignToken.spacing.lg),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 ) {
                     PresencifyActionBar(
                         text = "Upload from device",
@@ -111,8 +111,8 @@ fun GroupPhotoScanScreen(
                 } else {
                     LazyVerticalGrid(
                         columns = GridCells.Adaptive(minSize = 100.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth(),
@@ -121,7 +121,7 @@ fun GroupPhotoScanScreen(
                             Box(
                                 modifier = Modifier
                                     .size(100.dp)
-                                    .clip(RoundedCornerShape(8.dp))
+                                    .clip(MaterialTheme.shapes.small)
                                     .background(MaterialTheme.colorScheme.surfaceVariant),
                             ) {
                                 AsyncImage(
@@ -135,16 +135,15 @@ fun GroupPhotoScanScreen(
                                     onClick = { onAction(GroupPhotoScanAction.RemoveImage(index)) },
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
-                                        .size(24.dp)
+                                        .size(DesignToken.icons.md)
                                         .background(
                                             MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-                                            RoundedCornerShape(bottomStart = 8.dp),
                                         ),
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove",
-                                        modifier = Modifier.size(16.dp),
+                                        modifier = Modifier.size(DesignToken.spacing.lg),
                                     )
                                 }
                             }
@@ -152,7 +151,7 @@ fun GroupPhotoScanScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),

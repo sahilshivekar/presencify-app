@@ -15,12 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -46,7 +46,7 @@ fun AddEditDivisionScreen(
             Column(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!state.isEditMode) {
@@ -57,7 +57,7 @@ fun AddEditDivisionScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = DesignToken.spacing.lg)
                     )
 
                     // Semester Number Dropdown
@@ -74,7 +74,7 @@ fun AddEditDivisionScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.lg))
 
                     // Academic Start Year
                     PresencifyTextField(
@@ -87,7 +87,7 @@ fun AddEditDivisionScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.lg))
 
                     // Academic End Year
                     PresencifyTextField(
@@ -100,7 +100,7 @@ fun AddEditDivisionScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.lg))
 
                     // Branch Dropdown
                     PresencifyDropDownMenuBox<Branch>(
@@ -116,7 +116,7 @@ fun AddEditDivisionScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xl))
 
                     // Find Semester Button
                     PresencifyButton(
@@ -129,7 +129,7 @@ fun AddEditDivisionScreen(
                 }
 
                 if (state.showDivisionInput && state.foundSemester != null) {
-                    Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xxl))
 
                     if (!state.isEditMode) {
                         Text(
@@ -138,7 +138,7 @@ fun AddEditDivisionScreen(
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 8.dp)
+                                .padding(bottom = DesignToken.spacing.sm)
                         )
                     }
 
@@ -148,7 +148,7 @@ fun AddEditDivisionScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = DesignToken.spacing.lg)
                     )
 
                     PresencifyTextField(
@@ -161,7 +161,7 @@ fun AddEditDivisionScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xl))
 
                     PresencifyButton(
                         onClick = { onAction(AddEditDivisionAction.SubmitClick) },

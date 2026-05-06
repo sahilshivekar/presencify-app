@@ -19,13 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.apartment_24
-import edu.watumull.presencify.core.design.systems.clock_icon
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
-import edu.watumull.presencify.core.design.systems.round_menu_book_24
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.apartment_24
+import edu.watumull.presencify.core.designsystem.clock_icon
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.round_menu_book_24
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -42,12 +42,12 @@ fun ScheduleDashboardScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column(
                     modifier = Modifier.widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                 ) {
                     // Section: Rooms and Classes
                     DashboardSection(title = "Rooms and Classes") {
@@ -82,7 +82,7 @@ private fun DashboardSection(
     title: String,
     content: @Composable () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
@@ -97,7 +97,7 @@ private fun DashboardSection(
 private fun DashboardRow(content: @Composable RowScope.() -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
         content = content
     )
 }
@@ -122,7 +122,7 @@ private fun RowScope.DashboardItem(
                 painter = painterResource(icon),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(DesignToken.icons.md)
             )
         },
         trailingContent = {

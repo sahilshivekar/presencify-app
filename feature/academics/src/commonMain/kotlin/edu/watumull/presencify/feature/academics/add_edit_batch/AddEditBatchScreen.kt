@@ -15,12 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
@@ -47,7 +47,7 @@ fun AddEditBatchScreen(
             Column(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!state.isEditMode) {
@@ -58,7 +58,7 @@ fun AddEditBatchScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = DesignToken.spacing.lg)
                     )
 
                     // Semester Number Dropdown
@@ -75,7 +75,7 @@ fun AddEditBatchScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.lg))
 
                     // Academic Start Year
                     PresencifyTextField(
@@ -88,7 +88,7 @@ fun AddEditBatchScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.lg))
 
                     // Academic End Year
                     PresencifyTextField(
@@ -101,7 +101,7 @@ fun AddEditBatchScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.lg))
 
                     // Branch Dropdown
                     PresencifyDropDownMenuBox<Branch>(
@@ -117,7 +117,7 @@ fun AddEditBatchScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xl))
 
                     // Find Divisions Button
                     PresencifyButton(
@@ -131,7 +131,7 @@ fun AddEditBatchScreen(
 
                 // Step 2: Division Selection (shown after divisions found)
                 if (!state.isEditMode && state.showDivisionInput && state.foundDivisions.isNotEmpty()) {
-                    Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xxl))
 
                     Text(
                         text = "Step 2: Select Division",
@@ -139,7 +139,7 @@ fun AddEditBatchScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = DesignToken.spacing.lg)
                     )
 
                     PresencifyDropDownMenuBox<Division>(
@@ -158,7 +158,7 @@ fun AddEditBatchScreen(
 
                 // Step 3: Batch Code (shown after division is selected)
                 if (state.showBatchInput) {
-                    Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xxl))
 
                     if (!state.isEditMode) {
                         Text(
@@ -167,7 +167,7 @@ fun AddEditBatchScreen(
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 8.dp)
+                                .padding(bottom = DesignToken.spacing.sm)
                         )
                     }
 
@@ -180,7 +180,7 @@ fun AddEditBatchScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
+                                    .padding(bottom = DesignToken.spacing.lg)
                             )
                         }
                     }
@@ -195,7 +195,7 @@ fun AddEditBatchScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xl))
 
                     PresencifyButton(
                         onClick = { onAction(AddEditBatchAction.SubmitClick) },

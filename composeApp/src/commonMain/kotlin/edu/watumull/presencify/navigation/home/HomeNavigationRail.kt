@@ -21,9 +21,9 @@ import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
@@ -43,7 +43,7 @@ fun HomeNavigationRail(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         contentColor = MaterialTheme.colorScheme.onSurface
     ) {
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         val attendanceTabRoute: NavRoute = if (LocalUserRole.current == UserRole.STUDENT) {
             AttendanceRoutes.StudentAttendanceAnalytics()
@@ -104,7 +104,7 @@ fun HomeNavigationRail(
                     Icon(
                         imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
                         contentDescription = item.label,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(DesignToken.icons.md)
                     )
                 },
                 label = {
@@ -121,7 +121,7 @@ fun HomeNavigationRail(
                     unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = DesignToken.spacing.xs)
             )
         }
     }

@@ -26,9 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
-import edu.watumull.presencify.core.design.systems.theme.PresencifyTheme
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
+import edu.watumull.presencify.core.designsystem.theme.PresencifyTheme
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.global_snackbar.ObserveAsEvents
@@ -77,7 +78,7 @@ fun App() {
                     snackbarHost = {
                         SnackbarHost(
                             hostState = snackbarHostState,
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(DesignToken.spacing.lg),
                         )
                     },
                     contentWindowInsets = WindowInsets(0.dp)
@@ -102,9 +103,9 @@ fun SplashScreen() {
         Image(
             painter = painterResource(Res.drawable.presencify_logo_circle_svg),
             contentDescription = null,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(DesignToken.images.sm)
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
         Text(
             text = "Presencify",
             style = MaterialTheme.typography.headlineSmall,

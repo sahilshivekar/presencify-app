@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -23,13 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
@@ -62,7 +61,7 @@ fun DynamicQRScreen(
             is DynamicQRState.ViewState.Error -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                 ) {
                     Text(
                         text = state.viewState.message.asString(),
@@ -87,7 +86,7 @@ fun DynamicQRScreen(
                     Column(
                         modifier = Modifier
                             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                            .padding(16.dp),
+                            .padding(DesignToken.spacing.lg),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         state.attendance?.let { attendance ->
@@ -114,7 +113,7 @@ fun DynamicQRScreen(
                         } else {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                             ) {
                                 PresencifyOutlinedButton(
                                     onClick = { onAction(DynamicQRAction.ShowQRClick) },
@@ -134,9 +133,9 @@ fun DynamicQRScreen(
                         if (!state.isStopped && state.qrCodeContent.isNotEmpty()) {
                             Box(
                                 modifier = Modifier
-                                    .padding(vertical = 16.dp)
-                                    .background(Color.White, RoundedCornerShape(20.dp))
-                                    .padding(16.dp), // Extra quiet zone for better aesthetics
+                                    .padding(vertical = DesignToken.spacing.lg)
+                                    .background(Color.White, MaterialTheme.shapes.extraLarge)
+                                    .padding(DesignToken.spacing.lg), // Extra quiet zone for better aesthetics
                                 contentAlignment = Alignment.Center
                             ) {
                                 val painter = rememberQrCodePainter(state.qrCodeContent) {
@@ -178,8 +177,8 @@ private fun ClassDetailsSection(
     date: LocalDate,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(bottom = 16.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+        modifier = Modifier.padding(bottom = DesignToken.spacing.lg)
     ) {
         Text(
             text = date.toReadableString(),

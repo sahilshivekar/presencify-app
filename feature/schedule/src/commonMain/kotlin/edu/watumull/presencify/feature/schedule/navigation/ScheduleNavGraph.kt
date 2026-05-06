@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.schedule.navigation
 
 import androidx.navigation.NavGraphBuilder
-import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.schedule.add_edit_class.AddEditClassRoot
 import edu.watumull.presencify.feature.schedule.add_edit_room.AddEditRoomRoot
 import edu.watumull.presencify.feature.schedule.add_edit_timetable.AddEditTimetableRoot

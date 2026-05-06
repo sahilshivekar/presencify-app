@@ -20,11 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +69,7 @@ private fun TeacherVerifyCodeScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(16.dp)
+            .padding(DesignToken.spacing.lg)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -87,7 +87,7 @@ private fun TeacherVerifyCodeScreenContent(
                 ),
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.xxl))
 
             // Verification Code TextField
             PresencifyTextField(

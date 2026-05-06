@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.academics.batch_details
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.presentation.UiText
 

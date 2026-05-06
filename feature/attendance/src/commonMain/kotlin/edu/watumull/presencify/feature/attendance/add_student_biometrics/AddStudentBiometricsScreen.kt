@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -32,9 +31,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.utils.ImagePicker
 import kotlinx.coroutines.launch
@@ -60,14 +60,14 @@ fun AddStudentBiometricsScreen(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Add up to 10 face images for the student. Ensure the face is clearly visible in different angles/lighting if possible.",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = DesignToken.spacing.lg)
                 )
 
                 PresencifyButton(
@@ -83,11 +83,11 @@ fun AddStudentBiometricsScreen(
                     enabled = !state.isLoading && state.images.size < 10,
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
                     Text("Add Images")
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
                 Text(
                     text = "Selected Images: ${state.images.size} / 10",
@@ -95,19 +95,19 @@ fun AddStudentBiometricsScreen(
                     modifier = Modifier.align(Alignment.Start)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 100.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                     modifier = Modifier.weight(1f).fillMaxWidth()
                 ) {
                     itemsIndexed(state.images) { index, imageBytes ->
                         Box(
                             modifier = Modifier
                                 .size(100.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(MaterialTheme.shapes.small)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             AsyncImage(
@@ -121,23 +121,22 @@ fun AddStudentBiometricsScreen(
                                 onClick = { onAction(AddStudentBiometricsAction.RemoveImage(index)) },
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
-                                    .size(24.dp)
+                                    .size(DesignToken.icons.md)
                                     .background(
                                         MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-                                        RoundedCornerShape(bottomStart = 8.dp)
                                     )
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Remove",
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(DesignToken.spacing.lg)
                                 )
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
                 PresencifyButton(
                     modifier = Modifier.fillMaxWidth(),

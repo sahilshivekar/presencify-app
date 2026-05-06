@@ -20,15 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTimePickerTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.academics.Batch
@@ -69,8 +69,8 @@ fun AddEditClassScreen(
                             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                            .padding(DesignToken.spacing.lg),
+                        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                     ) {
                         // Course Dropdown
                         PresencifyDropDownMenuBox<Course>(
@@ -198,7 +198,7 @@ fun AddEditClassScreen(
                             )
 
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 PresencifyTimePickerTextField(
@@ -228,7 +228,7 @@ fun AddEditClassScreen(
                         )
 
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             PresencifyDatePickerTextField(
@@ -279,7 +279,7 @@ fun AddEditClassScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
                         // Submit Button
                         PresencifyButton(

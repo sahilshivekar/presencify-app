@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.HorizontalDivider
@@ -27,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.core.presentation.utils.toLocalDate
 
@@ -108,11 +107,11 @@ fun ClassListItem(
                     Icon(
                         imageVector = Icons.Default.Schedule,
                         contentDescription = "Time",
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(DesignToken.spacing.lg),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(DesignToken.spacing.xs))
 
                     // Time: "10:00 AM - 11:00 AM"
                     Text(
@@ -130,26 +129,26 @@ fun ClassListItem(
                         )
                     }
                     if (roomNumber != null && dayOfWeek == null) {
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
                         Text(
                             text = roomNumber,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal = DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
                 }
                 if (classType != null || roomNumber != null || isExtraClass) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                 }
 
                 // Tags row: Class Type, Room Number, Extra Class (at end)
                 FlowRow(
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.xs)
                 ) {
                     // Class Type tag
                     classType?.let {
@@ -158,9 +157,9 @@ fun ClassListItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(MaterialTheme.colorScheme.secondaryContainer)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal =DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
 
@@ -171,9 +170,9 @@ fun ClassListItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal =DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
 
@@ -184,20 +183,20 @@ fun ClassListItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(Color.Red)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal =DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
                 }
 
                 if (semesterText != null && divisionOrBatchText != null && branchAbbreviation != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                 }
                 // Semester, Division/Batch, Academic Year, Branch in one row with tags
                 FlowRow(
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.xs)
                 ) {
                     // Semester tag
                     semesterText?.let { text ->
@@ -206,9 +205,9 @@ fun ClassListItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(MaterialTheme.colorScheme.tertiaryContainer)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal =DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
 
@@ -219,9 +218,9 @@ fun ClassListItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(MaterialTheme.colorScheme.primaryContainer)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal =DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
 
@@ -232,16 +231,16 @@ fun ClassListItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.extraSmall)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal =DesignToken.spacing.sm, vertical = DesignToken.spacing.xs)
                         )
                     }
                 }
 
 
                 if (activeFrom != null && activeTill != null) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -253,7 +252,7 @@ fun ClassListItem(
                                 modifier = Modifier
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                                    .padding(horizontal = DesignToken.spacing.xs, vertical = DesignToken.spacing.xs)
                             )
                         } else {
                             // Active as normal text (no tag)
@@ -264,7 +263,7 @@ fun ClassListItem(
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
 
                         // Dates text
                         Text(
@@ -287,9 +286,9 @@ fun ClassListItem(
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
                         Column {
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                             HorizontalDivider()
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
                             Text(
                                 text = message.asString(),
                                 style = MaterialTheme.typography.bodySmall,

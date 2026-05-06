@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -30,9 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
@@ -82,7 +81,7 @@ fun MarkAttendanceScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                         ) {
                             Text(
                                 text = state.viewState.message.asString(),
@@ -100,7 +99,7 @@ fun MarkAttendanceScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = DesignToken.spacing.lg),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         item {
@@ -108,8 +107,8 @@ fun MarkAttendanceScreen(
                                 modifier = Modifier
                                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                                     .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(24.dp)
+                                    .padding(vertical = DesignToken.spacing.lg),
+                                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                             ) {
                                 // Class Details Section
                                 state.classSession?.let { classSession ->
@@ -125,7 +124,7 @@ fun MarkAttendanceScreen(
                                         onClick = { onAction(MarkAttendanceAction.DynamicQRClick) },
                                         modifier = Modifier.fillMaxWidth()
                                     )
-//                                    Spacer(modifier = Modifier.height(12.dp))
+//                                    Spacer(modifier = Modifier.height(DesignToken.spacing.md))
 //                                    PresencifyActionBar(
 //                                        text = "Group photo scan",
 //                                        onClick = { onAction(MarkAttendanceAction.GroupPhotoScanClick) },
@@ -155,7 +154,7 @@ fun MarkAttendanceScreen(
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.SemiBold
                                 )
-                                Spacer(modifier = Modifier.height(12.dp))
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.md))
                             }
                         }
 
@@ -208,7 +207,7 @@ fun MarkAttendanceScreen(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null
@@ -217,7 +216,7 @@ fun MarkAttendanceScreen(
                                         },
                                         onClick = null
                                     )
-                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Spacer(modifier = Modifier.height(DesignToken.spacing.md))
                                 }
                             }
                         }
@@ -234,7 +233,7 @@ private fun ClassDetailsSection(
     date: LocalDate,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
     ) {
         Text(
             text = date.toReadableString(),
@@ -288,7 +287,7 @@ private fun AttendanceStatsSection(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
 
         // Total Students Card
@@ -326,9 +325,9 @@ private fun AttendanceStatCard(
         modifier = modifier
             .background(
                 color = color.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.medium
             )
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -339,7 +338,7 @@ private fun AttendanceStatCard(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,

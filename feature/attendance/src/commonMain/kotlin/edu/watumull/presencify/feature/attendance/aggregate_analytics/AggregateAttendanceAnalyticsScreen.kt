@@ -43,11 +43,12 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
-import edu.watumull.presencify.core.design.systems.components.DonutGraph
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.DonutGraph
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
@@ -78,8 +79,8 @@ fun AggregateAttendanceAnalyticsScreen(
                 Column(
                     modifier = Modifier
                         .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(DesignToken.spacing.lg),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                 ) {
                     // Filter Section
                     FilterSection(state = state, onAction = onAction)
@@ -89,7 +90,7 @@ fun AggregateAttendanceAnalyticsScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 32.dp),
+                                .padding(vertical = DesignToken.spacing.xxl),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator()
@@ -112,7 +113,7 @@ fun AggregateAttendanceAnalyticsScreen(
                             text = "No attendance data available for the selected filters.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 32.dp)
+                            modifier = Modifier.padding(vertical = DesignToken.spacing.xxl)
                         )
                     }
                 }
@@ -142,7 +143,7 @@ private fun FilterSection(
     onAction: (AggregateAttendanceAnalyticsAction) -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
         Text(
             text = "Select Semester",
@@ -173,7 +174,7 @@ private fun FilterSection(
         // Academic Year Fields
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
         ) {
             PresencifyTextField(
                 value = state.academicStartYear,
@@ -217,7 +218,7 @@ private fun FilterSection(
             exit = shrinkVertically()
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
             ) {
                 Text(
                     text = "Optional Filters",
@@ -284,12 +285,12 @@ private fun AttendanceChartsSection(
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
             // Section 1: Weekly Attendance with Course Filter Chips
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
             ) {
                 Text(
                     text = "Weekly Attendance",
@@ -301,8 +302,8 @@ private fun AttendanceChartsSection(
                 // Course filter chips (Overall first, then individual courses)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     // Overall chip
                     val isOverallSelected = selectedCourseIds.value.contains(OVERALL_CHIP_ID)
@@ -325,7 +326,7 @@ private fun AttendanceChartsSection(
                         leadingIcon = {
                             Box(
                                 modifier = Modifier
-                                    .size(12.dp)
+                                    .size(DesignToken.icons.xs)
                                     .background(
                                         color = overallColor,
                                         shape = androidx.compose.foundation.shape.CircleShape
@@ -356,7 +357,7 @@ private fun AttendanceChartsSection(
                             leadingIcon = {
                                 Box(
                                     modifier = Modifier
-                                        .size(12.dp)
+                                        .size(DesignToken.icons.xs)
                                         .background(
                                             color = courseColor,
                                             shape = androidx.compose.foundation.shape.CircleShape
@@ -388,7 +389,7 @@ private fun AttendanceChartsSection(
                         text = "Select at least one course to view attendance graph",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)
+                        modifier = Modifier.padding(vertical = DesignToken.spacing.xxl, horizontal = DesignToken.spacing.lg)
                     )
                 }
             }
@@ -396,7 +397,7 @@ private fun AttendanceChartsSection(
             // Section 2: Average Attendance per Course (Donut Graphs)
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
             ) {
                 Text(
                     text = "Average Attendance per Course",
@@ -410,7 +411,7 @@ private fun AttendanceChartsSection(
                 rows.forEach { rowItems ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
                         verticalAlignment = Alignment.Top
                     ) {
                         rowItems.forEach { attendance ->
@@ -422,8 +423,7 @@ private fun AttendanceChartsSection(
                                 modifier = Modifier.weight(1f),
                                 percentage = percentage,
                                 label = attendance.courseName,
-                                size = 100.dp,
-                                strokeWidth = 8.dp,
+                                strokeWidth = DesignToken.strokes.extraThick,
                                 animate = true,
                                 onClick = {
                                     onAction(
@@ -444,7 +444,7 @@ private fun AttendanceChartsSection(
                     }
 
                     if (rowItems != rows.last()) {
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                     }
                 }
             }

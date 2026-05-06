@@ -20,9 +20,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,9 +40,9 @@ fun HomeTopBar(
                 Image(
                     painter = painterResource(Res.drawable.presencify_logo_circle_svg),
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(DesignToken.icons.lg)
                 )
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(DesignToken.spacing.sm))
                 Text("Presencify", style = MaterialTheme.typography.titleMedium)
             }
         },
@@ -57,7 +57,7 @@ fun HomeTopBar(
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
                     contentDescription = "Account Details",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(DesignToken.icons.md)
                 )
             }
         },

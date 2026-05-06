@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.RoomType
 
 /**
@@ -59,7 +59,7 @@ fun RoomListItem(
                 }
 
                 if (type != null) {
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
                     Badge(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -97,9 +97,9 @@ fun RoomListItem(
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
                         Column {    
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                             HorizontalDivider()
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
                             Text(
                                 text = message.asString(),
                                 style = MaterialTheme.typography.bodySmall,

@@ -23,14 +23,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -61,7 +61,7 @@ fun AddEditStudentScreen(
             Column(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AnimatedContent(
@@ -88,7 +88,7 @@ fun AddEditStudentScreen(
                     }
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 FormNavigationButtons(state, onAction)
             }
@@ -132,7 +132,7 @@ private fun PersonalDetailsStep(
             text = "Personal Details",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = DesignToken.spacing.xl)
         )
 
         PresencifyTextField(
@@ -145,7 +145,7 @@ private fun PersonalDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.middleName,
@@ -157,7 +157,7 @@ private fun PersonalDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.lastName,
@@ -169,7 +169,7 @@ private fun PersonalDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDropDownMenuBox<Gender>(
             value = state.gender?.toDisplayLabel() ?: "",
@@ -184,7 +184,7 @@ private fun PersonalDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDatePickerTextField(
             value = state.dob,
@@ -213,7 +213,7 @@ private fun ContactDetailsStep(
             text = "Contact Details",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = DesignToken.spacing.xl)
         )
 
         PresencifyTextField(
@@ -226,7 +226,7 @@ private fun ContactDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.phoneNumber,
@@ -238,7 +238,7 @@ private fun ContactDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.parentEmail,
@@ -265,7 +265,7 @@ private fun AcademicDetailsStep(
             text = "Academic Details",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = DesignToken.spacing.xl)
         )
 
         PresencifyTextField(
@@ -278,7 +278,7 @@ private fun AcademicDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.admissionYear,
@@ -293,7 +293,7 @@ private fun AcademicDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDropDownMenuBox<AdmissionType>(
             value = state.admissionType?.toDisplayLabel() ?: "",
@@ -308,7 +308,7 @@ private fun AcademicDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDropDownMenuBox<Branch>(
             value = state.branchOptions.find { it.id == state.selectedBranchId }?.abbreviation ?: "",
@@ -323,7 +323,7 @@ private fun AcademicDetailsStep(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDropDownMenuBox<Scheme>(
             value = state.schemeOptions.find { it.id == state.selectedSchemeId }?.name ?: "",
@@ -348,7 +348,7 @@ private fun FormNavigationButtons(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
+            .padding(bottom = DesignToken.spacing.lg),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -358,7 +358,7 @@ private fun FormNavigationButtons(
                 enabled = !state.isSubmitting,
                 modifier = Modifier
                     .weight(.5f)
-                    .padding(end = 4.dp),
+                    .padding(end = DesignToken.spacing.xs),
                 text = "Back"
             )
         }
@@ -375,7 +375,7 @@ private fun FormNavigationButtons(
             enabled = !state.isSubmitting,
             modifier = Modifier
                 .weight(.5f)
-                .padding(start = if (state.currentStep != StudentFormStep.PERSONAL_DETAILS) 4.dp else 0.dp)
+                .padding(start = if (state.currentStep != StudentFormStep.PERSONAL_DETAILS) DesignToken.spacing.xs else DesignToken.spacing.none)
         )
     }
 }

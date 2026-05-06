@@ -50,12 +50,13 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
-import edu.watumull.presencify.core.design.systems.components.DonutGraph
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.DonutGraph
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
@@ -128,7 +129,7 @@ private fun StudentAttendanceAnalyticsScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -148,14 +149,14 @@ private fun StudentAttendanceAnalyticsScreenContent(
             )
 
             if (LocalUserRole.current == UserRole.STUDENT && !isDesktopPlatform()) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                 PresencifyActionBar(
                     text = "Scan QR for attendance",
                     onClick = { onAction(StudentAttendanceAnalyticsAction.ScanQrClick) }
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
             // Semesters List
             if (student.studentSemesters.isNullOrEmpty()) {
@@ -164,7 +165,7 @@ private fun StudentAttendanceAnalyticsScreenContent(
                 )
             } else {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     items(
@@ -211,7 +212,7 @@ private fun StudentInfoHeader(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = MaterialTheme.shapes.medium
             )
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
@@ -220,7 +221,7 @@ private fun StudentInfoHeader(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
         Text(
             text = "PRN: $prn",
             style = MaterialTheme.typography.bodyMedium,
@@ -257,7 +258,7 @@ private fun SemesterAttendanceItem(
     // Get batches from StudentBatch
     val studentBatches = student.studentBatches
 
-    edu.watumull.presencify.core.design.systems.components.PresencifyCard(
+    edu.watumull.presencify.core.designsystem.components.PresencifyCard(
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -267,7 +268,7 @@ private fun SemesterAttendanceItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = DesignToken.spacing.lg, vertical = DesignToken.spacing.md),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -315,18 +316,18 @@ private fun SemesterAttendanceItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-                        .padding(16.dp)
+                        .padding(DesignToken.spacing.lg)
                 ) {
                     when {
                         isLoading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(24.dp),
+                                    .padding(DesignToken.spacing.xl),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier.size(40.dp),
+                                    modifier = Modifier.size(DesignToken.components.progressMd),
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -337,7 +338,7 @@ private fun SemesterAttendanceItem(
                                 text = "No attendance data available for this semester",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier.padding(DesignToken.spacing.lg)
                             )
                         }
 
@@ -367,15 +368,15 @@ private fun SemesterDetailsSection(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .padding(start = 16.dp)
+            .padding(start = DesignToken.spacing.lg)
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
     ) {
         // Semester line
         Box(
             modifier = Modifier
-                .width(5.dp)
+                .width(DesignToken.strokes.thick)
                 .fillMaxHeight()
-                .padding(top = 4.dp, bottom = 20.dp)
+                .padding(top = DesignToken.spacing.xs, bottom = DesignToken.spacing.lg)
                 .background(
                     color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium
@@ -391,7 +392,7 @@ private fun SemesterDetailsSection(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
             ) {
                 Text(
                     text = "Start Date",
@@ -400,7 +401,7 @@ private fun SemesterDetailsSection(
                 )
                 Text(
                     text = ":",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -424,8 +425,8 @@ private fun SemesterDetailsSection(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .padding(top = 4.dp, bottom = 16.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
+                    .padding(top = DesignToken.spacing.xs, bottom = DesignToken.spacing.lg)
             ) {
                 Text(
                     text = "End Date",
@@ -434,7 +435,7 @@ private fun SemesterDetailsSection(
                 )
                 Text(
                     text = ":",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -456,7 +457,7 @@ private fun DivisionDetailsItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp, start = 32.dp, end = 16.dp),
+            .padding(top = DesignToken.spacing.xs, start = DesignToken.spacing.xxl, end = DesignToken.spacing.lg),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -471,15 +472,15 @@ private fun DivisionDetailsItem(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 32.dp)
+            .padding(start = DesignToken.spacing.xxl)
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
     ) {
         // Division line
         Box(
             modifier = Modifier
-                .width(5.dp)
+                .width(DesignToken.strokes.thick)
                 .fillMaxHeight()
-                .padding(vertical = 4.dp)
+                .padding(vertical = DesignToken.spacing.xs)
                 .background(
                     color = MaterialTheme.colorScheme.secondary,
                     shape = MaterialTheme.shapes.medium
@@ -495,7 +496,7 @@ private fun DivisionDetailsItem(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
             ) {
                 Text(
                     text = "From",
@@ -504,7 +505,7 @@ private fun DivisionDetailsItem(
                 )
                 Text(
                     text = ":",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -540,8 +541,8 @@ private fun DivisionDetailsItem(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 4.dp)
+                        .padding(horizontal = DesignToken.spacing.sm)
+                        .padding(top = DesignToken.spacing.xs)
                 ) {
                     Text(
                         text = "Till",
@@ -550,7 +551,7 @@ private fun DivisionDetailsItem(
                     )
                     Text(
                         text = ":",
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -570,7 +571,7 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp, start = 32.dp, end = 16.dp),
+            .padding(top = DesignToken.spacing.xs, start = DesignToken.spacing.xxl, end = DesignToken.spacing.lg),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -585,15 +586,15 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 32.dp)
+            .padding(start = DesignToken.spacing.xxl)
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
     ) {
         // Batch line
         Box(
             modifier = Modifier
-                .width(5.dp)
+                .width(DesignToken.strokes.thick)
                 .fillMaxHeight()
-                .padding(vertical = 4.dp)
+                .padding(vertical = DesignToken.spacing.xs)
                 .background(
                     color = MaterialTheme.colorScheme.tertiary,
                     shape = MaterialTheme.shapes.medium
@@ -609,7 +610,7 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
             ) {
                 Text(
                     text = "From",
@@ -618,7 +619,7 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
                 )
                 Text(
                     text = ":",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -633,8 +634,8 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 4.dp)
+                        .padding(horizontal = DesignToken.spacing.sm)
+                        .padding(top = DesignToken.spacing.xs)
                 ) {
                     Text(
                         text = "Till",
@@ -643,7 +644,7 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
                     )
                     Text(
                         text = ":",
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -680,12 +681,12 @@ private fun AttendanceCoursesGrid(
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
             // Section 1: Weekly Attendance with Course Filter Chips
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
             ) {
                 Text(
                     text = "Weekly Attendance",
@@ -697,8 +698,8 @@ private fun AttendanceCoursesGrid(
                 // Course filter chips (Overall first, then individual courses)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     // Overall chip
                     val isOverallSelected = selectedCourseIds.value.contains(OVERALL_CHIP_ID)
@@ -721,7 +722,7 @@ private fun AttendanceCoursesGrid(
                         leadingIcon = {
                             Box(
                                 modifier = Modifier
-                                    .size(12.dp)
+                                    .size(DesignToken.icons.xs)
                                     .background(
                                         color = overallColor,
                                         shape = androidx.compose.foundation.shape.CircleShape
@@ -752,7 +753,7 @@ private fun AttendanceCoursesGrid(
                             leadingIcon = {
                                 Box(
                                     modifier = Modifier
-                                        .size(12.dp)
+                                        .size(DesignToken.icons.xs)
                                         .background(
                                             color = courseColor,
                                             shape = androidx.compose.foundation.shape.CircleShape
@@ -784,7 +785,7 @@ private fun AttendanceCoursesGrid(
                         text = "Select at least one course to view attendance graph",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)
+                        modifier = Modifier.padding(vertical = DesignToken.spacing.xxl, horizontal = DesignToken.spacing.lg)
                     )
                 }
             }
@@ -792,7 +793,7 @@ private fun AttendanceCoursesGrid(
             // Section 2: Average Attendance per Course
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
             ) {
                 Text(
                     text = "Average Attendance per Course",
@@ -807,7 +808,7 @@ private fun AttendanceCoursesGrid(
                 rows.forEach { rowItems ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
                         verticalAlignment = Alignment.Top
                     ) {
                         rowItems.forEach { attendance ->
@@ -816,8 +817,7 @@ private fun AttendanceCoursesGrid(
                                 value = attendance.attendedLectures,
                                 total = attendance.totalLectures,
                                 label = attendance.courseName,
-                                size = 100.dp,
-                                strokeWidth = 8.dp,
+                                strokeWidth = DesignToken.strokes.extraThick,
                                 animate = true,
                                 onClick = {
                                     onAction(
@@ -839,7 +839,7 @@ private fun AttendanceCoursesGrid(
 
                     // Add spacing between rows except after the last row
                     if (rowItems != rows.last()) {
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                     }
                 }
             }

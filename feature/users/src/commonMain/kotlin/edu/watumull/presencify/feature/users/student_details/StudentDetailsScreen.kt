@@ -42,15 +42,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.baseline_account_circle_24
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyCard
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.baseline_account_circle_24
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyCard
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.academics.Semester
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.student.StudentBatch
@@ -143,7 +144,7 @@ private fun StudentDetailsScreenContent(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -159,13 +160,13 @@ private fun StudentDetailsScreenContent(
 
                 Column(
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(top = DesignToken.spacing.lg)
                         .widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp),
+                            .padding(bottom = DesignToken.spacing.lg),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         if (LocalUserRole.current == UserRole.ADMIN) {
@@ -183,8 +184,8 @@ private fun StudentDetailsScreenContent(
                                 if (state.isRemovingStudent) {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.dp,
+                                        modifier = Modifier.size(DesignToken.components.progressMd),
+                                        strokeWidth = DesignToken.strokes.md,
                                     )
                                 } else {
                                     Text(
@@ -198,7 +199,7 @@ private fun StudentDetailsScreenContent(
                             LocalUserRole.current == UserRole.STUDENT &&
                             state.studentId == LocalUserId.current
                         ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                                 PresencifyTextButton(
                                     onClick = { onAction(StudentDetailsAction.ClickUpdatePassword) },
                                     enabled = !state.isLoggingOut
@@ -226,7 +227,7 @@ private fun StudentDetailsScreenContent(
 
                 SemesterDetailsContainer(state = state)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
             }
         }
     }
@@ -250,7 +251,7 @@ private fun StudentImageContainer(
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                     .wrapContentHeight()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = DesignToken.spacing.lg)
                     .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -261,18 +262,18 @@ private fun StudentImageContainer(
                     error = painterResource(Res.drawable.baseline_account_circle_24),
                     contentDescription = "Student Image",
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(DesignToken.spacing.lg)
                         .size(200.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp),
+                        .padding(horizontal = DesignToken.spacing.lg)
+                        .padding(bottom = DesignToken.spacing.lg),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     PresencifyTextButton(
@@ -293,8 +294,8 @@ private fun StudentImageContainer(
                             if (state.isRemovingImage) {
                                 CircularProgressIndicator(
                                     color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(20.dp),
-                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(DesignToken.components.progressMd),
+                                    strokeWidth = DesignToken.strokes.md,
                                 )
                             } else {
                                 Text(text = "Remove Image", color = MaterialTheme.colorScheme.error)
@@ -336,8 +337,8 @@ private fun StudentImageContainer(
             model = state.student?.studentImageUrl,
             contentDescription = null,
             modifier = Modifier
-                .padding(10.dp)
-                .size(120.dp)
+                .padding(DesignToken.spacing.sm)
+                .size(DesignToken.avatars.xxl)
                 .clip(CircleShape),
             contentScale = ContentScale.Crop,
             colorFilter = if (state.student?.studentImageUrl != null) null else ColorFilter.tint(
@@ -371,12 +372,12 @@ private fun PersonalDetailsContainer(state: StudentDetailsState) {
         modifier = Modifier
             .wrapContentHeight()
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(top = 16.dp),
+            .padding(top = DesignToken.spacing.lg),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
+                .padding(start = DesignToken.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -384,7 +385,7 @@ private fun PersonalDetailsContainer(state: StudentDetailsState) {
                 text = "Personal Details",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = DesignToken.spacing.lg)
             )
         }
 
@@ -428,12 +429,12 @@ private fun ContactDetailsContainer(state: StudentDetailsState) {
         modifier = Modifier
             .wrapContentHeight()
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(top = 16.dp),
+            .padding(top = DesignToken.spacing.lg),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
+                .padding(start = DesignToken.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -441,7 +442,7 @@ private fun ContactDetailsContainer(state: StudentDetailsState) {
                 text = "Contact Details",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = DesignToken.spacing.lg)
             )
         }
 
@@ -469,12 +470,12 @@ private fun AcademicDetailsContainer(state: StudentDetailsState) {
         modifier = Modifier
             .wrapContentHeight()
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(top = 16.dp),
+            .padding(top = DesignToken.spacing.lg),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
+                .padding(start = DesignToken.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -482,7 +483,7 @@ private fun AcademicDetailsContainer(state: StudentDetailsState) {
                 text = "Educational Details",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = DesignToken.spacing.lg)
             )
         }
 
@@ -520,18 +521,18 @@ private fun DropoutDetailsContainer(state: StudentDetailsState) {
             modifier = Modifier
                 .wrapContentHeight()
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                .padding(top = 16.dp),
+                .padding(top = DesignToken.spacing.lg),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(DesignToken.spacing.lg)
             ) {
                 Text(
                     text = "Dropout Details",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = DesignToken.spacing.sm)
                 )
 
                 state.dropoutDetails.forEach { dropout ->
@@ -539,7 +540,7 @@ private fun DropoutDetailsContainer(state: StudentDetailsState) {
                         text = "Academic Year: ${dropout.academicStartYear} - ${dropout.academicEndYear}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = DesignToken.spacing.xs)
                     )
                 }
             }
@@ -557,13 +558,13 @@ private fun SemesterDetailsContainer(state: StudentDetailsState) {
         modifier = Modifier
             .wrapContentHeight()
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(vertical = 16.dp),
+            .padding(vertical = DesignToken.spacing.lg),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
+                .padding(horizontal = DesignToken.spacing.lg)
+                .padding(top = DesignToken.spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -581,7 +582,7 @@ private fun SemesterDetailsContainer(state: StudentDetailsState) {
                 text = "No semester details available",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(DesignToken.spacing.lg)
             )
         } else {
             semestersWithData.forEach { semester ->
@@ -604,8 +605,8 @@ private fun SemesterItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
+            .padding(horizontal = DesignToken.spacing.lg)
+            .padding(top = DesignToken.spacing.lg),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -625,15 +626,15 @@ private fun SemesterItem(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 16.dp)
+            .padding(start = DesignToken.spacing.lg)
             .height(IntrinsicSize.Min)
     ) {
         // Semester line
         Box(
             modifier = Modifier
-                .width(5.dp)
+                .width(DesignToken.strokes.thick)
                 .fillMaxHeight()
-                .padding(top = 4.dp, bottom = 20.dp)
+                .padding(top = DesignToken.spacing.xs, bottom = DesignToken.spacing.lg)
                 .background(
                     color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium
@@ -649,7 +650,7 @@ private fun SemesterItem(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
             ) {
                 Text(
                     text = "Start Date",
@@ -658,7 +659,7 @@ private fun SemesterItem(
                 )
                 Text(
                     text = ":",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -686,8 +687,8 @@ private fun SemesterItem(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .padding(top = 4.dp, bottom = 16.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
+                    .padding(top = DesignToken.spacing.xs, bottom = DesignToken.spacing.lg)
             ) {
                 Text(
                     text = "End Date",
@@ -696,7 +697,7 @@ private fun SemesterItem(
                 )
                 Text(
                     text = ":",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -718,7 +719,7 @@ private fun DivisionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp, start = 32.dp, end = 16.dp),
+            .padding(top = DesignToken.spacing.xs, start = DesignToken.spacing.xxl, end = DesignToken.spacing.lg),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -733,15 +734,15 @@ private fun DivisionItem(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 32.dp)
+            .padding(start = DesignToken.spacing.xxl)
             .height(IntrinsicSize.Min)
     ) {
         // Division line
         Box(
             modifier = Modifier
-                .width(5.dp)
+                .width(DesignToken.strokes.thick)
                 .fillMaxHeight()
-                .padding(vertical = 4.dp)
+                .padding(vertical = DesignToken.spacing.xs)
                 .background(
                     color = MaterialTheme.colorScheme.secondary,
                     shape = MaterialTheme.shapes.medium
@@ -757,7 +758,7 @@ private fun DivisionItem(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
             ) {
                 Text(
                     text = "From",
@@ -766,7 +767,7 @@ private fun DivisionItem(
                 )
                 Text(
                     text = "",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -801,8 +802,8 @@ private fun DivisionItem(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 4.dp)
+                        .padding(horizontal = DesignToken.spacing.sm)
+                        .padding(top = DesignToken.spacing.xs)
                 ) {
                     Text(
                         text = "till",
@@ -811,7 +812,7 @@ private fun DivisionItem(
                     )
                     Text(
                         text = "",
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -832,7 +833,7 @@ private fun BatchItem(studentBatch: StudentBatch) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp, start = 32.dp, end = 16.dp),
+            .padding(top = DesignToken.spacing.xs, start = DesignToken.spacing.xxl, end = DesignToken.spacing.lg),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -847,15 +848,15 @@ private fun BatchItem(studentBatch: StudentBatch) {
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 32.dp)
+            .padding(start = DesignToken.spacing.xxl)
             .height(IntrinsicSize.Min)
     ) {
         // Batch line
         Box(
             modifier = Modifier
-                .width(5.dp)
+                .width(DesignToken.strokes.thick)
                 .fillMaxHeight()
-                .padding(vertical = 4.dp)
+                .padding(vertical = DesignToken.spacing.xs)
                 .background(
                     color = MaterialTheme.colorScheme.tertiary,
                     shape = MaterialTheme.shapes.medium
@@ -871,7 +872,7 @@ private fun BatchItem(studentBatch: StudentBatch) {
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = DesignToken.spacing.sm)
             ) {
                 Text(
                     text = "From",
@@ -880,7 +881,7 @@ private fun BatchItem(studentBatch: StudentBatch) {
                 )
                 Text(
                     text = "",
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -895,8 +896,8 @@ private fun BatchItem(studentBatch: StudentBatch) {
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 4.dp)
+                        .padding(horizontal = DesignToken.spacing.sm)
+                        .padding(top = DesignToken.spacing.xs)
                 ) {
                     Text(
                         text = "till",
@@ -905,7 +906,7 @@ private fun BatchItem(studentBatch: StudentBatch) {
                     )
                     Text(
                         text = "",
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier.padding(horizontal = DesignToken.spacing.xs),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -929,8 +930,8 @@ private fun DetailRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = if (isLast) 16.dp else 0.dp),
+            .padding(horizontal = DesignToken.spacing.lg)
+            .padding(top = DesignToken.spacing.lg, bottom = if (isLast) DesignToken.spacing.lg else DesignToken.spacing.none),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

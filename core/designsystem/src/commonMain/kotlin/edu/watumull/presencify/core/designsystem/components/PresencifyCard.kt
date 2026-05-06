@@ -1,0 +1,40 @@
+package edu.watumull.presencify.core.designsystem.components
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
+
+@Composable
+fun PresencifyCard(
+    modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.extraSmall,
+    elevation: Dp = DesignToken.elevation.xs,
+    onClick: (() -> Unit)? = null,
+    colors: CardColors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+    ),
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Card(
+        shape = shape,
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .clip(MaterialTheme.shapes.medium),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = elevation,
+        ),
+        colors = colors,
+        content = content,
+    )
+}

@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.navigation
 
 import androidx.navigation.NavGraphBuilder
-import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.users.add_edit_student.AddEditStudentRoot
 import edu.watumull.presencify.feature.users.add_edit_teacher.AddEditTeacherRoot
 import edu.watumull.presencify.feature.users.assign_unassign_student_to_batch.AssignUnassignStudentToBatchRoot

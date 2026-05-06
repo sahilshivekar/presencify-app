@@ -68,7 +68,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":core:presentation"))
-                implementation(project(":core:design-systems"))
+                implementation(project(":core:designsystem"))
                 implementation(project(":core:domain"))
                 implementation(libs.kotlin.stdlib)
                 // Presentation/UI

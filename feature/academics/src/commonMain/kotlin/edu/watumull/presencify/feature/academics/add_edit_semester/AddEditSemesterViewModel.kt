@@ -3,7 +3,7 @@ package edu.watumull.presencify.feature.academics.add_edit_semester
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.onError
@@ -16,13 +16,13 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarControl
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
-import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
 import edu.watumull.presencify.core.presentation.validation.validateAsEndDate
 import edu.watumull.presencify.core.presentation.validation.validateAsSemesterNumber
 import edu.watumull.presencify.core.presentation.validation.validateAsStartDate
 import edu.watumull.presencify.core.presentation.validation.validateAsUUID
+import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
 class AddEditSemesterViewModel(

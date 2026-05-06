@@ -17,12 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.TeacherRole
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -48,7 +48,7 @@ fun AddEditTeacherScreen(
             Column(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AddEditTeacherScreenContent(
@@ -99,12 +99,12 @@ private fun AddEditTeacherScreenContent(
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = DesignToken.spacing.lg)
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
         ) {
             PresencifyTextField(
                 value = state.firstName,
@@ -127,7 +127,7 @@ private fun AddEditTeacherScreenContent(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.lastName,
@@ -139,7 +139,7 @@ private fun AddEditTeacherScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDropDownMenuBox<Gender>(
             value = state.gender?.toDisplayLabel() ?: "",
@@ -154,7 +154,7 @@ private fun AddEditTeacherScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.highestQualification,
@@ -166,7 +166,7 @@ private fun AddEditTeacherScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyDropDownMenuBox<TeacherRole>(
             value = state.role?.toDisplayLabel() ?: "",
@@ -181,7 +181,7 @@ private fun AddEditTeacherScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(DesignToken.spacing.xl))
 
         // Contact Details Section
         Text(
@@ -190,7 +190,7 @@ private fun AddEditTeacherScreenContent(
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = DesignToken.spacing.lg)
         )
 
         PresencifyTextField(
@@ -203,7 +203,7 @@ private fun AddEditTeacherScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         PresencifyTextField(
             value = state.phoneNumber,
@@ -215,7 +215,7 @@ private fun AddEditTeacherScreenContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(DesignToken.spacing.xl))
 
         // Submit Button
         PresencifyButton(

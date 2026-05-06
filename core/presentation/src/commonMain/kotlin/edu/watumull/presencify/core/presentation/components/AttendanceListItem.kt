@@ -24,8 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.DonutGraph
-import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.components.DonutGraph
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
 /**
  * List item component for displaying Attendance information.
@@ -67,7 +68,7 @@ fun AttendanceListItem(
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
                 }
                 Badge(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -105,13 +106,13 @@ fun AttendanceListItem(
 //                        style = MaterialTheme.typography.labelMedium, // Or bodyMedium? labelMedium is slightly smaller/bolder usually
 //                        color = MaterialTheme.colorScheme.onSurface
 //                    )
-//                    Spacer(modifier = Modifier.height(8.dp))
+//                    Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
                     val percentage = if (totalCount > 0) (presentCount.toFloat() / totalCount.toFloat()) * 100f else 0f
                     DonutGraph(
                         percentage = percentage,
                         size = 40.dp,
-                        strokeWidth = 4.dp,
+                        strokeWidth = DesignToken.strokes.thick,
                         total = totalCount,
                         value = presentCount,
                         animate = false // Disable animation for list items to improve performance
@@ -129,11 +130,11 @@ fun AttendanceListItem(
                     Icon(
                         imageVector = Icons.Default.Schedule,
                         contentDescription = "Time",
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(DesignToken.spacing.lg),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(DesignToken.spacing.xs))
 
                     // Time: "10:00 AM - 11:00 AM"
                     Text(
@@ -164,9 +165,9 @@ fun AttendanceListItem(
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
                         Column {
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                             HorizontalDivider()
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
                             Text(
                                 text = message.asString(),
                                 style = MaterialTheme.typography.bodySmall,

@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.student.auth.forgot_password
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
 
 data class StudentForgotPasswordState(

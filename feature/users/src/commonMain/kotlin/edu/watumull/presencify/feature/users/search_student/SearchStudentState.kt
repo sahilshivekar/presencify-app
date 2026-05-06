@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.search_student
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch

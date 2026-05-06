@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Description
@@ -27,10 +26,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.utils.CsvPicker
 import edu.watumull.presencify.core.presentation.utils.pickCsvFileWithResult
@@ -96,7 +96,7 @@ private fun ImportTeachersScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -105,7 +105,7 @@ private fun ImportTeachersScreenContent(
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
             Text(
                 text = "Upload a CSV file containing teacher details to bulk import teachers.",
@@ -118,21 +118,21 @@ private fun ImportTeachersScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(onClick = onPickFile)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                 ) {
                     if (state.selectedFile != null) {
                         Icon(
                             imageVector = Icons.Default.Description,
                             contentDescription = "Selected File",
-                            modifier = Modifier.size(48.dp),
+                            modifier = Modifier.size(DesignToken.icons.xl),
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
@@ -149,7 +149,7 @@ private fun ImportTeachersScreenContent(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add CSV",
-                            modifier = Modifier.size(48.dp),
+                            modifier = Modifier.size(DesignToken.icons.xl),
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(

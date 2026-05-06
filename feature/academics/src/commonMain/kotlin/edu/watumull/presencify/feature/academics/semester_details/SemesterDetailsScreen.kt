@@ -20,12 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.CourseListItem
@@ -57,7 +57,7 @@ fun SemesterDetailsScreen(
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .padding(paddingValues)
-                        .padding(16.dp),
+                        .padding(DesignToken.spacing.lg),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -65,13 +65,13 @@ fun SemesterDetailsScreen(
                     Column(
                         modifier = Modifier
                             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                            .padding(top = 8.dp)
+                            .padding(top = DesignToken.spacing.sm)
                     ) {
                         Text(
                             text = "Semester",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(bottom = 12.dp)
+                            modifier = Modifier.padding(bottom = DesignToken.spacing.md)
                         )
                         state.semester?.let { semester ->
                             val divisionCodes = semester.divisions?.map { it.divisionCode }?.toPersistentList()
@@ -94,7 +94,7 @@ fun SemesterDetailsScreen(
                         }
 
                         if (LocalUserRole.current == UserRole.ADMIN) {
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -113,8 +113,8 @@ fun SemesterDetailsScreen(
                                     if (state.isRemovingSemester) {
                                         CircularProgressIndicator(
                                             color = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(20.dp),
-                                            strokeWidth = 2.dp,
+                                            modifier = Modifier.size(DesignToken.components.progressMd),
+                                            strokeWidth = DesignToken.strokes.md,
                                         )
                                     } else {
                                         Text(text = "Remove semester", color = MaterialTheme.colorScheme.error)
@@ -123,21 +123,21 @@ fun SemesterDetailsScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
                         // Courses Section
                         Text(
                             text = "Courses of this semester",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(bottom = 12.dp)
+                            modifier = Modifier.padding(bottom = DesignToken.spacing.md)
                         )
 
                         if (state.isLoadingCourses) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 32.dp),
+                                    .padding(vertical = DesignToken.spacing.xxl),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(
@@ -151,7 +151,7 @@ fun SemesterDetailsScreen(
                         } else {
                             LazyColumn(
                                 modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                             ) {
                                 items(
                                     items = state.courses,

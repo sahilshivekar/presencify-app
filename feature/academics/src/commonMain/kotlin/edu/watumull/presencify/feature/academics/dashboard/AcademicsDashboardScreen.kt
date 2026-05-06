@@ -15,17 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.apartment_24
-import edu.watumull.presencify.core.design.systems.branch_24
-import edu.watumull.presencify.core.design.systems.clock_icon
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.group_batch
-import edu.watumull.presencify.core.design.systems.group_division
-import edu.watumull.presencify.core.design.systems.round_menu_book_24
-import edu.watumull.presencify.core.design.systems.scheme_24
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.apartment_24
+import edu.watumull.presencify.core.designsystem.branch_24
+import edu.watumull.presencify.core.designsystem.clock_icon
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.group_batch
+import edu.watumull.presencify.core.designsystem.group_division
+import edu.watumull.presencify.core.designsystem.round_menu_book_24
+import edu.watumull.presencify.core.designsystem.scheme_24
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
@@ -42,19 +42,19 @@ fun AcademicsDashboardScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column(
                     modifier = Modifier.widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                 ) {
                     // Section 1: Curriculum and Governance
                     DashboardSection(title = "Curriculum and Governance") {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                             ) {
                                 PresencifyActionBar(
                                     text = "Branch",
@@ -71,7 +71,7 @@ fun AcademicsDashboardScreen(
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                             ) {
                                 PresencifyActionBar(
                                     text = "Course",
@@ -99,7 +99,7 @@ fun AcademicsDashboardScreen(
 
                     // Section 2: Academic Time & Cohort
                     DashboardSection(title = "Academic Time & cohort") {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                             PresencifyActionBar(
                                 text = "Semesters",
                                 leadingIcon = Res.drawable.clock_icon,
@@ -108,7 +108,7 @@ fun AcademicsDashboardScreen(
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                             ) {
                                 PresencifyActionBar(
                                     text = "Division",
@@ -136,7 +136,7 @@ private fun DashboardSection(
     title: String,
     content: @Composable () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,

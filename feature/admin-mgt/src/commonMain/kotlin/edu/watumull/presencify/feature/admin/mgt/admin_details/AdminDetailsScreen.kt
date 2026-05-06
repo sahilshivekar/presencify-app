@@ -44,15 +44,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +116,7 @@ private fun AdminDetailsScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -129,10 +129,10 @@ private fun AdminDetailsScreenContent(
             verticalArrangement = Arrangement.Top
         ) {
             // Profile Icon
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
             Icon(
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(DesignToken.avatars.xxl)
                     .clip(CircleShape),
                 imageVector = Icons.Filled.AccountCircle,
                 contentDescription = null,
@@ -145,7 +145,7 @@ private fun AdminDetailsScreenContent(
                 onAction = onAction
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             // Password Container
             PasswordContainer(
@@ -153,7 +153,7 @@ private fun AdminDetailsScreenContent(
                 onAction = onAction
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             // Account Settings Container
             AccountSettingsContainer(
@@ -161,7 +161,7 @@ private fun AdminDetailsScreenContent(
                 onAction = onAction
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
         }
     }
 }
@@ -174,7 +174,7 @@ private fun AdminDetailsContainer(
 ) {
     val emailFocusRequester = remember { FocusRequester() }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
     Column(
         modifier = modifier
@@ -212,7 +212,7 @@ private fun AdminDetailsContainer(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
         PresencifyTextField(
             value = if (state.isEditingDetails) state.editableUsername else state.orgUsername,
@@ -229,7 +229,7 @@ private fun AdminDetailsContainer(
             keyboardActions = KeyboardActions(onNext = { emailFocusRequester.requestFocus() })
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
         PresencifyTextField(
             value = if (state.isEditingDetails) state.editableEmail else state.orgEmail,
@@ -255,7 +255,7 @@ private fun AdminDetailsContainer(
             exit = shrinkVertically() + fadeOut()
         ) {
             Column {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -265,7 +265,7 @@ private fun AdminDetailsContainer(
                         onClick = { onAction(AdminDetailsAction.ClickCancelEditingDetails) },
                         modifier = Modifier
                             .weight(1f)
-                            .padding(end = 8.dp),
+                            .padding(end = DesignToken.spacing.sm),
                         enabled = !state.isSendingVerificationCode &&
                                  !state.isLoggingOut &&
                                  !state.isRemovingAccount &&
@@ -276,7 +276,7 @@ private fun AdminDetailsContainer(
                         onClick = { onAction(AdminDetailsAction.ClickUpdateDetails) },
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start = 8.dp),
+                            .padding(start = DesignToken.spacing.sm),
                         text = "Update",
                         isLoading = state.isUpdatingDetails,
                         enabled = !state.isSendingVerificationCode &&
@@ -331,7 +331,7 @@ private fun PasswordContainer(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
         PresencifyTextField(
             value = "........",
@@ -373,7 +373,7 @@ private fun AccountSettingsContainer(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
         // Verify Email (only show if not verified)
         if (state.isVerified == false) {
@@ -387,8 +387,8 @@ private fun AccountSettingsContainer(
                 trailingContent = {
                     if (state.isSendingVerificationCode) {
                         CircularProgressIndicator(
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(24.dp),
+                            strokeWidth = DesignToken.strokes.md,
+                            modifier = Modifier.size(DesignToken.components.progressMd),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -435,8 +435,8 @@ private fun AccountSettingsContainer(
             trailingContent = {
                 if (state.isLoggingOut) {
                     CircularProgressIndicator(
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(24.dp),
+                        strokeWidth = DesignToken.strokes.md,
+                        modifier = Modifier.size(DesignToken.components.progressMd),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -463,8 +463,8 @@ private fun AccountSettingsContainer(
             trailingContent = {
                 if (state.isRemovingAccount) {
                     CircularProgressIndicator(
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(24.dp),
+                        strokeWidth = DesignToken.strokes.md,
+                        modifier = Modifier.size(DesignToken.components.progressMd),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -479,7 +479,7 @@ private fun AccountSettingsContainer(
             }
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
     }
 }
 

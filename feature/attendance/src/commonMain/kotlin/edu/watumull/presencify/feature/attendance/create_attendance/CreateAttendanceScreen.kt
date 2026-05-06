@@ -18,11 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
@@ -62,7 +62,7 @@ fun CreateAttendanceScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                         ) {
                             Text(
                                 text = state.viewState.message.asString(),
@@ -81,15 +81,15 @@ fun CreateAttendanceScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = DesignToken.spacing.lg),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Column(
                             modifier = Modifier
                                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                                 .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(24.dp)
+                                .padding(vertical = DesignToken.spacing.lg),
+                            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                         ) {
                             // Class Details Section
                             state.classSession?.let { classSession ->
@@ -136,7 +136,7 @@ private fun ClassDetailsSection(
     classSession: ClassSession
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
     ) {
         Text(
             text = "Class Details",
@@ -189,7 +189,7 @@ private fun DateSelectionSection(
     onAction: (CreateAttendanceAction) -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
     ) {
         Text(
             text = "Select Date",

@@ -24,12 +24,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.UniversityListItem
@@ -76,9 +76,9 @@ fun UniversityDetailsScreen(
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background)
                             .padding(paddingValues)
-                            .padding(horizontal = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(vertical = 16.dp),
+                            .padding(horizontal = DesignToken.spacing.lg),
+                        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
+                        contentPadding = PaddingValues(vertical = DesignToken.spacing.lg),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         items(
@@ -97,7 +97,7 @@ fun UniversityDetailsScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 )
 
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                                 if (LocalUserRole.current == UserRole.ADMIN) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -126,8 +126,8 @@ fun UniversityDetailsScreen(
                                             if (state.removingUniversityId == university.id) {
                                                 CircularProgressIndicator(
                                                     color = MaterialTheme.colorScheme.error,
-                                                    modifier = Modifier.size(20.dp),
-                                                    strokeWidth = 2.dp
+                                                    modifier = Modifier.size(DesignToken.components.progressMd),
+                                                    strokeWidth = DesignToken.strokes.md
                                                 )
                                             } else {
                                                 Text(

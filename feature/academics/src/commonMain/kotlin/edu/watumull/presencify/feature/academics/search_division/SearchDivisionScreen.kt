@@ -34,12 +34,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyBottomSheetScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.DivisionListItem
@@ -80,7 +80,7 @@ fun SearchDivisionScreen(
             if (LocalUserRole.current == UserRole.ADMIN) {
                 FloatingActionButton(
                     onClick = { onAction(SearchDivisionAction.ClickFloatingActionButton) },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(DesignToken.spacing.lg)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -162,7 +162,7 @@ private fun SearchDivisionScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -181,7 +181,7 @@ private fun SearchDivisionScreenContent(
                 onSearchClick = { onAction(SearchDivisionAction.Search) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             Box(
                 modifier = Modifier
@@ -192,7 +192,7 @@ private fun SearchDivisionScreenContent(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                 ) {
                     items(
                         items = state.divisions,
@@ -222,13 +222,13 @@ private fun SearchDivisionScreenContent(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(16.dp),
+                                        .padding(DesignToken.spacing.lg),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(32.dp),
-                                        strokeWidth = 2.dp
+                                        modifier = Modifier.size(DesignToken.components.progressMd),
+                                        strokeWidth = DesignToken.strokes.md
                                     )
                                 }
                             }

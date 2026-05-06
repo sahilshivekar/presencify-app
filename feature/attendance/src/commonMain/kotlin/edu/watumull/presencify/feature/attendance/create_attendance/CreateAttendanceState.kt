@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.attendance.create_attendance
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiText
 import kotlinx.datetime.LocalDate

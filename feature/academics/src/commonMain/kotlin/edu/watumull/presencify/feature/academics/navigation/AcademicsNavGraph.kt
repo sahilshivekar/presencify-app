@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.academics.navigation
 
 import androidx.navigation.NavGraphBuilder
-import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.academics.add_edit_batch.AddEditBatchRoot
 import edu.watumull.presencify.feature.academics.add_edit_branch.AddEditBranchRoot
 import edu.watumull.presencify.feature.academics.add_edit_course.AddEditCourseRoot

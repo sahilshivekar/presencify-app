@@ -43,7 +43,7 @@ Presencify/
 │   │       ├── global_snackbar/# Global feedback system (SnackbarController)
 │   │       └── utils/          # BaseViewModel, UiText, DateTimeUtils, MVI helpers
 │   │
-│   └── design-systems/         # Custom UI Kit (Theme & Pure UI Components)
+│   └── designsystem/         # Custom UI Kit (Theme & Pure UI Components)
 │       └── src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/
 │           ├── components/     # PresencifyScaffold, SearchBar, Buttons, Dialogs
 │           ├── theme/          # AppTheme, ColorPalette, Typography
@@ -80,10 +80,10 @@ Presencify/
 └── settings.gradle.kts         # Module inclusion script
 
 - **App Host:** [Presencify/composeApp/src/commonMain/kotlin/edu/watumull/presencify/App.kt](Presencify/composeApp/src/commonMain/kotlin/edu/watumull/presencify/App.kt) provides `LocalUserRole` and collects global snackbar.
-- **Design System:** [Presencify/core/design-systems/src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/components](Presencify/core/design-systems/src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/components) offers `PresencifyScaffold`, `PresencifyBottomSheetScaffold`, dialogs, `PresencifySearchBar`, buttons, text fields.
+- **Design System:** [Presencify/core/designsystem/src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/components](Presencify/core/designsystem/src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/components) offers `PresencifyScaffold`, `PresencifyBottomSheetScaffold`, dialogs, `PresencifySearchBar`, buttons, text fields.
 - **Presentation Utilities:** [Presencify/core/presentation/src/commonMain/kotlin/edu/watumull/presencify/core/presentation](Presencify/core/presentation/src/commonMain/kotlin/edu/watumull/presencify/core/presentation) contains MVI helpers, error-to-UI mapping, templates, and snackbar.
 - **Feature Modules:** Place screens under `Presencify/feature/<module>/src/commonMain/kotlin/edu/watumull/presencify/feature/<domain>/<screen>` (modules can host multiple screens, e.g., `feature/users` → `SearchStudent`, `AddEditStudent`, `SearchTeacher`).
- - **Shared Composables:** Put basic cross-feature components in design-systems. If a component depends on domain models or presentation utilities, place it under `core/presentation/components`. Implement a screen-specific shimmer for each screen rather than a global one.
+ - **Shared Composables:** Put basic cross-feature components in designsystem. If a component depends on domain models or presentation utilities, place it under `core/presentation/components`. Implement a screen-specific shimmer for each screen rather than a global one.
  - **Module Dependencies:** Feature modules must not depend on other feature modules. Composition wiring happens in `composeApp`.
  - **Koin Aggregation:** Each feature declares a top-level `val` Koin `Module` (e.g., `val usersModule = module { viewModel { ... } }`). In `composeApp`, aggregate feature modules via Koin’s `includes()`.
  - **Feature Boundaries:** Features contain presentation/UI only. DTOs and mappers live strictly in `:core:data` and `:core:domain` — no cross-feature data types.
@@ -113,6 +113,19 @@ Presencify/
  - **Search Flow:** For search-like flows, use `debounce(300ms)` and `collectLatest` to cancel in-flight work.
  - **Navigation Extensions:** Each feature defines its own `NavGraphBuilder` extension for routes and uses `composableWithSlideTransitions` for consistent enter/exit transitions.
 
+## Design Tokens & Sizing Rules
+- Never hardcode commonly reusable `Dp` values directly in Composables.
+- Always prefer using centralized design tokens from the designsystem module via `DesignToken`.
+
+### Available Design Tokens
+Use:
+- `DesignToken.spacing.*`
+- `DesignToken.elevation.*`
+- `DesignToken.icons.*`
+- `DesignToken.avatars.*`
+- `DesignToken.images.*`
+- `DesignToken.strokes.*`
+
 ## Role & Visibility
 - **CompositionLocal:** Access role via `LocalUserRole.current` from [App.kt](Presencify/composeApp/src/commonMain/kotlin/edu/watumull/presencify/App.kt).
 - **Roles:** `ADMIN`, `TEACHER`, `STUDENT` (see [UserRole.kt](Presencify/core/domain/src/commonMain/kotlin/edu/watumull/presencify/core/domain/model/auth/UserRole.kt)).
@@ -129,7 +142,7 @@ Presencify/
 - **Dialogs:** Use `PresencifyAlertDialog` for errors, info, and confirmations via `state.dialogState`.
   - Confirmations for risky operations (e.g., delete) must use `DialogType.CONFIRM_RISKY_ACTION`.
   - Server-sent business messages (`DataError.Remote.BusinessLogicError`) should show as `DialogType.ERROR` with the server-provided message.
-  - Dialog types are defined in [DialogType.kt](Presencify/core/design-systems/src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/components/dialog/DialogType.kt).
+  - Dialog types are defined in [DialogType.kt](Presencify/core/designsystem/src/commonMain/kotlin/edu/watumull/presencify/core/design/systems/components/dialog/DialogType.kt).
    - Dialog stacking: allow only one visible at a time; queue subsequent dialogs and show them after the current one is dismissed.
    - Delete confirmations: include the entity name when available ("Are you sure you want to delete <name>?"); if not available, use a generic message ("Are you sure you want to delete this?").
   - Rate Limiting: On `TooManyRequests`, show an INFO dialog. Do not auto-retry; user may retry later.
@@ -231,7 +244,7 @@ Presencify/
    - **Submit Validation:** On submit buttons, validate all required fields and only proceed if all errors are `null`
    - **Never Custom Validation:** Always use centralized validation extension functions - never implement validation logic in ViewModels (except for simple blank checks on login screens)
    - 
- - **Typography:** Use `MaterialTheme.typography` (from design-systems). Standardize: `titleLarge` for screen titles, `titleMedium` for section headers, and `bodyLarge/bodyMedium` for content text.
+ - **Typography:** Use `MaterialTheme.typography` (from designsystem). Standardize: `titleLarge` for screen titles, `titleMedium` for section headers, and `bodyLarge/bodyMedium` for content text.
   - Submit buttons remain enabled; on click, validate and return early while showing inline errors.
  - **Required Markers:** Indicate required fields with an asterisk by building annotated text and appending a red `*`.
  - **IME Actions:** Standardize IME actions per field (`Next`, `Done`, `Search`) for consistent form flows.
@@ -289,7 +302,7 @@ Presencify/
 ## Resources & Assets
 - **Strings:** For rapid development and English-only, avoid creating new string resources for general UI copy; prefer dynamic strings. Data error messages continue to use resources via `DataError.toUiText()`.
 - **Colors:** Do not define new palette entries or ad-hoc colors in features; use existing design-system colors only which will be easily accessible with `MaterialTheme.colorScheme.<color>`.
-- **Drawables & Resources:** Always use resources from the design-systems module for drawables and other assets. The design-systems module has a public Res class configured as follows:
+- **Drawables & Resources:** Always use resources from the designsystem module for drawables and other assets. The designsystem module has a public Res class configured as follows:
   ```kotlin
   compose.resources {
       // This makes the generated 'Res' class and all resource accessors
@@ -298,10 +311,10 @@ Presencify/
       
       // Optional: You can also customize the package name if you want it to be
       // consistent across the app
-      packageOfResClass = "edu.watumull.presencify.core.design.systems"
+      packageOfResClass = "edu.watumull.presencify.core.designsystem"
   }
   ```
-  Import and use resources like: `import edu.watumull.presencify.core.design.systems.Res` and access drawable resources via `Res.drawable.<resource_name>`.
+  Import and use resources like: `import edu.watumull.presencify.core.designsystem.Res` and access drawable resources via `Res.drawable.<resource_name>`.
 - **File Uploads (CSV):** Validate size and MIME type and show clear error messages.
 
 ## Data & Serialization

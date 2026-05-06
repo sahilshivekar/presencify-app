@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.schedule.add_edit_room
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.RoomType
 import edu.watumull.presencify.core.presentation.UiText
 import kotlinx.collections.immutable.ImmutableList

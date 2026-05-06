@@ -16,9 +16,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
 @Composable
 fun RecognizeStudentScreen(
@@ -71,7 +71,7 @@ fun RecognizeStudentScreen(
                 LivenessOverlay(
                     sequence = state.livenessSequence,
                     currentStep = state.currentStep,
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 32.dp)
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = DesignToken.spacing.xxl)
                 )
             }
 
@@ -85,7 +85,7 @@ fun RecognizeStudentScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                         Text(
                             text = if (state.isRecognizing) "Verifying Identity..." else "Loading...",
                             color = Color.White,
@@ -132,7 +132,7 @@ private fun LivenessOverlay(
     Box(
         modifier = modifier
             .background(Color.Black.copy(alpha = 0.6f), shape = MaterialTheme.shapes.medium)
-            .padding(16.dp)
+            .padding(DesignToken.spacing.lg)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -140,7 +140,7 @@ private fun LivenessOverlay(
                 color = Color.White,
                 style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
             Text(
                 text = instruction,
                 color = MaterialTheme.colorScheme.primary, // Or a visible color

@@ -19,15 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.add_to_semester
-import edu.watumull.presencify.core.design.systems.baseline_person_remove_24
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.edit_outlined
-import edu.watumull.presencify.core.design.systems.group_batch
-import edu.watumull.presencify.core.design.systems.group_division
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.add_to_semester
+import edu.watumull.presencify.core.designsystem.baseline_person_remove_24
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.edit_outlined
+import edu.watumull.presencify.core.designsystem.group_batch
+import edu.watumull.presencify.core.designsystem.group_division
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
@@ -44,18 +44,18 @@ fun UsersDashboardScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column(
                     modifier = Modifier.widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                 ) {
                     // Section 1: Users
                     DashboardSection(title = "Users") {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                         ) {
                             PresencifyActionBar(
                                 text = "Students",
@@ -74,7 +74,7 @@ fun UsersDashboardScreen(
                     if (LocalUserRole.current == UserRole.ADMIN) {
                         // Section 2: Assign Students
                         DashboardSection(title = "Assign students") {
-                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                                 PresencifyActionBar(
                                     text = "Assign/Unassign Student to Semester",
                                     leadingIcon = Res.drawable.add_to_semester,
@@ -120,7 +120,7 @@ fun UsersDashboardScreen(
 
                         // Section 4: Import
                         DashboardSection(title = "Import from CSV") {
-                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                                 PresencifyActionBar(
                                     text = "Import Students from CSV",
                                     leadingImageVector = Icons.Default.Description,
@@ -147,7 +147,7 @@ private fun DashboardSection(
     title: String,
     content: @Composable () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,

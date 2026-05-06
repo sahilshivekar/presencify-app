@@ -23,11 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -39,7 +39,7 @@ fun SearchAttendanceBottomSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(DesignToken.spacing.lg)
     ) {
         // Fixed Header
         Row(
@@ -58,14 +58,14 @@ fun SearchAttendanceBottomSheetContent(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
 
         // Scrollable Filter Options
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
         ) {
             // Date Filter
             FilterSection(title = "Date") {
@@ -87,7 +87,7 @@ fun SearchAttendanceBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.branchOptions.forEach { branch ->
                         FilterChip(
@@ -108,7 +108,7 @@ fun SearchAttendanceBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.semesterOptions.forEach { semester ->
                         FilterChip(
@@ -128,7 +128,7 @@ fun SearchAttendanceBottomSheetContent(
             FilterSection(title = "Academic Year of Semester") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     PresencifyTextField(
                         value = state.academicStartYear,
@@ -159,7 +159,7 @@ fun SearchAttendanceBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.divisionOptions.forEach { division ->
                         FilterChip(
@@ -191,7 +191,7 @@ fun SearchAttendanceBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.batchOptions.forEach { batch ->
                         FilterChip(
@@ -225,7 +225,7 @@ fun SearchAttendanceBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.courseOptions.forEach { course ->
                         FilterChip(
@@ -247,7 +247,7 @@ fun SearchAttendanceBottomSheetContent(
 
         // Fixed Footer with Apply Button
         Column {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
             PresencifyButton(
                 text = "Apply",
                 onClick = {
@@ -274,7 +274,7 @@ private fun FilterSection(
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(DesignToken.spacing.md))
 
         when {
             isLoading -> {
@@ -282,7 +282,7 @@ private fun FilterSection(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(DesignToken.components.progressMd))
                 }
             }
             emptyMessage != null -> {

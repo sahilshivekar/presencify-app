@@ -3,7 +3,7 @@ package edu.watumull.presencify.feature.users.search_teacher
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText

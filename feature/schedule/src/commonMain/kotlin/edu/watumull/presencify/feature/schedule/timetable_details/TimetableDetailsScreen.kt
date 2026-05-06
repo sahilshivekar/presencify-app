@@ -26,13 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyActionBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -77,7 +77,7 @@ fun TimetableDetailsScreen(
                     ) {
                         // Timetable Info Card
                         Column(
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(DesignToken.spacing.lg)
                         ) {
                             state.timetable?.let { timetable ->
                                 val division = timetable.division
@@ -107,7 +107,7 @@ fun TimetableDetailsScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                             
                             if (LocalUserRole.current == UserRole.ADMIN) {
                                 Row(
@@ -141,8 +141,8 @@ fun TimetableDetailsScreen(
                                         if (state.isRemovingTimetable) {
                                             CircularProgressIndicator(
                                                 color = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.size(20.dp),
-                                                strokeWidth = 2.dp,
+                                                modifier = Modifier.size(DesignToken.components.progressMd),
+                                                strokeWidth = DesignToken.strokes.md,
                                             )
                                         } else {
                                             Text(
@@ -170,7 +170,7 @@ fun TimetableDetailsScreen(
                         SecondaryScrollableTabRow(
                             selectedTabIndex = allDays.indexOf(state.selectedDay),
                             divider = {},
-                            edgePadding = 16.dp
+                            edgePadding = DesignToken.spacing.lg
                         ) {
                             allDays.forEach { day ->
                                 Tab(
@@ -193,7 +193,7 @@ fun TimetableDetailsScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp),
+                                    .padding(DesignToken.spacing.lg),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator()
@@ -214,7 +214,7 @@ fun TimetableDetailsScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(16.dp),
+                                        .padding(DesignToken.spacing.lg),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     PresencifyNoResultsIndicator(
@@ -225,8 +225,8 @@ fun TimetableDetailsScreen(
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                        .padding(DesignToken.spacing.lg),
+                                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                                 ) {
                                     // Active Classes
                                     if (activeClasses.isNotEmpty()) {
@@ -328,7 +328,7 @@ fun TimetableDetailsScreen(
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .padding(vertical = 32.dp),
+                                                    .padding(vertical = DesignToken.spacing.xxl),
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 PresencifyNoResultsIndicator(

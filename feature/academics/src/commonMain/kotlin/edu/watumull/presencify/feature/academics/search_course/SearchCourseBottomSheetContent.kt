@@ -22,9 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -36,7 +36,7 @@ fun SearchCourseBottomSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(DesignToken.spacing.lg)
     ) {
         // Fixed Header
         Row(
@@ -55,21 +55,21 @@ fun SearchCourseBottomSheetContent(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
 
         // Scrollable Filter Options
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
         ) {
             // Semester Number Filter
             FilterSection(title = "Semester") {
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.semesterNumberOptions.forEach { semesterNumber ->
                         FilterChip(
@@ -96,7 +96,7 @@ fun SearchCourseBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.branchOptions.forEach { branch ->
                         FilterChip(
@@ -123,7 +123,7 @@ fun SearchCourseBottomSheetContent(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.schemeOptions.forEach { scheme ->
                         FilterChip(
@@ -149,8 +149,8 @@ fun SearchCourseBottomSheetContent(
             ) {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.teacherOptions.forEach { teacher ->
                         val teacherName = buildString {
@@ -185,7 +185,7 @@ fun SearchCourseBottomSheetContent(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(vertical = DesignToken.spacing.lg),
             text = "Apply Filters"
         )
     }
@@ -199,7 +199,7 @@ private fun FilterSection(
     content: @Composable () -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
     ) {
         Text(
             text = title,
@@ -211,11 +211,11 @@ private fun FilterSection(
         when {
             isLoading -> {
                 CircularProgressIndicator(
-                    strokeWidth = 2.dp,
+                    strokeWidth = DesignToken.strokes.md,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .size(20.dp)
-                        .padding(top = 4.dp)
+                        .size(DesignToken.components.progressSm)
+                        .padding(top = DesignToken.spacing.xs)
                 )
             }
             emptyMessage != null -> {

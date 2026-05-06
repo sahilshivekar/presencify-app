@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.attendance.navigation
 
 import androidx.navigation.NavGraphBuilder
-import edu.watumull.presencify.core.design.systems.components.composableWithSlideTransitions
+import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
 import edu.watumull.presencify.feature.attendance.add_student_biometrics.AddStudentBiometricsRoot
 import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsRoot
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardRoot

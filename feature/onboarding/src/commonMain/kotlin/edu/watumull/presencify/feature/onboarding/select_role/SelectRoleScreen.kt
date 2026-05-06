@@ -25,14 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.baseline_admin_panel_settings_24
-import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyLoadingDialog
-import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.baseline_admin_panel_settings_24
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyLoadingDialog
+import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import org.jetbrains.compose.resources.painterResource
 
@@ -103,7 +104,7 @@ private fun SelectRoleScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -112,13 +113,13 @@ private fun SelectRoleScreenContent(
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
             // 1. Logo
             Image(
                 painter = painterResource(Res.drawable.presencify_logo_circle_svg),
                 contentDescription = "App Logo",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(DesignToken.images.sm)
             )
 
             // 2. Welcome Text
@@ -129,7 +130,7 @@ private fun SelectRoleScreenContent(
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                 Text(
                     text = "Select a role to continue",
                     style = MaterialTheme.typography.bodyLarge,
@@ -140,7 +141,7 @@ private fun SelectRoleScreenContent(
 
             // 3. Role List Items
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 modifier = Modifier.widthIn(max = 400.dp)
             ) {
                 RoleSelectionItem(
@@ -193,7 +194,7 @@ private fun RoleSelectionItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = "Select",
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(DesignToken.spacing.lg),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },

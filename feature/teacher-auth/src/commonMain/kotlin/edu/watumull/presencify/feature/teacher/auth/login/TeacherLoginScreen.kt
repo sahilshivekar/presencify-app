@@ -35,13 +35,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.Res
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
-import edu.watumull.presencify.core.design.systems.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.Res
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import org.jetbrains.compose.resources.painterResource
 
@@ -85,7 +86,7 @@ private fun TeacherLoginScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-            .padding(16.dp)
+            .padding(DesignToken.spacing.lg)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -95,8 +96,8 @@ private fun TeacherLoginScreenContent(
         // Logo
         Image(
             modifier = Modifier
-                .padding(top = 36.dp)
-                .size(80.dp),
+                .padding(top = DesignToken.spacing.xxl)
+                .size(DesignToken.images.sm),
             painter = painterResource(Res.drawable.presencify_logo_circle_svg),
             contentDescription = "Presencify Logo",
         )
@@ -107,7 +108,7 @@ private fun TeacherLoginScreenContent(
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        Spacer(Modifier.height(60.dp))
+        Spacer(Modifier.height(DesignToken.spacing.huge))
 
         Column(
             horizontalAlignment = Alignment.Start,
@@ -131,7 +132,7 @@ private fun TeacherLoginScreenContent(
             )
         }
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(DesignToken.spacing.sm))
 
         // Email Field
         PresencifyTextField(
@@ -198,7 +199,7 @@ private fun TeacherLoginScreenContent(
             text = "Log in"
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(DesignToken.spacing.lg))
 
         // Forgot Password Button
         PresencifyTextButton(

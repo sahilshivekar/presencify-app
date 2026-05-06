@@ -40,16 +40,16 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
-import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyTimePickerTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyBottomSheetScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
+import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.model.auth.UserRole
@@ -92,7 +92,7 @@ fun SearchRoomScreen(
 
                 FloatingActionButton(
                     onClick = { onAction(SearchRoomAction.ClickFloatingActionButton) },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(DesignToken.spacing.lg)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -174,7 +174,7 @@ private fun SearchRoomScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -193,7 +193,7 @@ private fun SearchRoomScreenContent(
                 onSearchClick = { onAction(SearchRoomAction.Search) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             Box(
                 modifier = Modifier
@@ -204,7 +204,7 @@ private fun SearchRoomScreenContent(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                 ) {
                     items(
                         items = state.rooms,
@@ -259,9 +259,9 @@ private fun SearchRoomBottomSheetContent(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(24.dp)
+            .padding(DesignToken.spacing.xl)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
     ) {
         // Header
         Text(
@@ -272,7 +272,7 @@ private fun SearchRoomBottomSheetContent(
         )
 
         // Sort By Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Sort By",
                 style = MaterialTheme.typography.titleMedium,
@@ -282,8 +282,8 @@ private fun SearchRoomBottomSheetContent(
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.sortByOptions.forEach { sortBy ->
                     FilterChip(
@@ -307,7 +307,7 @@ private fun SearchRoomBottomSheetContent(
         }
 
         // Sort Order Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Sort Order",
                 style = MaterialTheme.typography.titleMedium,
@@ -317,8 +317,8 @@ private fun SearchRoomBottomSheetContent(
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.sortOrderOptions.forEach { sortOrder ->
                     FilterChip(
@@ -342,7 +342,7 @@ private fun SearchRoomBottomSheetContent(
         }
 
         // Room Type Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Room Type",
                 style = MaterialTheme.typography.titleMedium,
@@ -352,8 +352,8 @@ private fun SearchRoomBottomSheetContent(
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.roomTypeOptions.forEach { roomType ->
                     FilterChip(
@@ -371,7 +371,7 @@ private fun SearchRoomBottomSheetContent(
 
 
         // Capacity Range Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Capacity Range",
                 style = MaterialTheme.typography.titleMedium,
@@ -380,7 +380,7 @@ private fun SearchRoomBottomSheetContent(
             )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 PresencifyTextField(
@@ -404,7 +404,7 @@ private fun SearchRoomBottomSheetContent(
         }
 
         // Busy Time Range Filter
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Show rooms available on",
                 style = MaterialTheme.typography.titleMedium,
@@ -413,7 +413,7 @@ private fun SearchRoomBottomSheetContent(
             )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 PresencifyTimePickerTextField(
@@ -434,11 +434,11 @@ private fun SearchRoomBottomSheetContent(
                 )
             }
             // Day of Week Filter
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     state.dayOfWeekOptions.forEach { day ->
                         FilterChip(
@@ -473,7 +473,7 @@ private fun SearchRoomBottomSheetContent(
 
         // Action Buttons
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
             modifier = Modifier.fillMaxWidth()
         ) {
             PresencifyOutlinedButton(

@@ -43,15 +43,15 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton
-import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyBottomSheetScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
+import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.TimetableListItem
@@ -92,7 +92,7 @@ fun SearchTimetableScreen(
 
                 FloatingActionButton(
                     onClick = { onAction(SearchTimetableAction.ClickFloatingActionButton) },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(DesignToken.spacing.lg)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -176,7 +176,7 @@ private fun SearchTimetableScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -195,7 +195,7 @@ private fun SearchTimetableScreenContent(
                 onSearchClick = { onAction(SearchTimetableAction.Search) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             Box(
                 modifier = Modifier
@@ -206,7 +206,7 @@ private fun SearchTimetableScreenContent(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                 ) {
                     items(
                         items = state.filteredTimetables,
@@ -277,9 +277,9 @@ private fun SearchTimetableBottomSheetContent(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(24.dp)
+            .padding(DesignToken.spacing.xl)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
     ) {
         // Header with Reset
         Row(
@@ -303,7 +303,7 @@ private fun SearchTimetableBottomSheetContent(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.sm))
 
         // Branch Filter
         FilterSection(
@@ -312,7 +312,7 @@ private fun SearchTimetableBottomSheetContent(
         ) {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.branchOptions.forEach { branch ->
                     FilterChip(
@@ -332,7 +332,7 @@ private fun SearchTimetableBottomSheetContent(
         FilterSection(title = "Semester") {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 state.semesterOptions.forEach { semester ->
                     FilterChip(
@@ -352,7 +352,7 @@ private fun SearchTimetableBottomSheetContent(
         FilterSection(title = "Academic Year of Semester") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
                 PresencifyTextField(
                     value = state.academicStartYear,
@@ -369,12 +369,12 @@ private fun SearchTimetableBottomSheetContent(
             }
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.sm))
 
         // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
         ) {
             PresencifyOutlinedButton(
                 text = "Cancel",
@@ -400,7 +400,7 @@ private fun FilterSection(
     emptyMessage: String? = null,
     content: @Composable () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,

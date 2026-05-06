@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import co.touchlab.kermit.Logger
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import qrscanner.CameraLens
 import qrscanner.QrScanner
 

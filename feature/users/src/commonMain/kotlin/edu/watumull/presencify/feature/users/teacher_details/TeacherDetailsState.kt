@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.users.teacher_details
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiText
 

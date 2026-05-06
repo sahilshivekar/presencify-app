@@ -23,10 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
@@ -109,8 +109,8 @@ fun HomeBottomNavigationBar(
                         imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
                         contentDescription = item.label,
                         modifier = Modifier
-                            .height(24.dp)
-                            .width(24.dp)
+                            .height(DesignToken.icons.md)
+                            .width(DesignToken.icons.md)
                     )
                 },
                 label = {
@@ -130,7 +130,7 @@ fun HomeBottomNavigationBar(
                     disabledIconColor = MaterialTheme.colorScheme.onSurface,
                     disabledTextColor = MaterialTheme.colorScheme.onSurface
                 ),
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal =DesignToken.spacing.sm)
             )
         }
     }

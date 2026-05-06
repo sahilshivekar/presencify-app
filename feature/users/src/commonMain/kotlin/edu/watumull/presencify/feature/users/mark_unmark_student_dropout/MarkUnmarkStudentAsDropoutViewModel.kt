@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.mark_unmark_student_dropout
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear

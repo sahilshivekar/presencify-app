@@ -40,13 +40,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyBottomSheetScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifySearchBar
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyBottomSheetScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.StudentListItem
@@ -98,7 +98,7 @@ fun SearchStudentScreen(
             if (LocalUserRole.current == UserRole.ADMIN) {
                 FloatingActionButton(
                     onClick = { onAction(SearchStudentAction.ClickFloatingActionButton) },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(DesignToken.spacing.lg)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -180,7 +180,7 @@ private fun SearchStudentScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(DesignToken.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -199,7 +199,7 @@ private fun SearchStudentScreenContent(
                 onSearchClick = { onAction(SearchStudentAction.Search) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
             Box(
                 modifier = Modifier
@@ -210,7 +210,7 @@ private fun SearchStudentScreenContent(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
                     items(
                         items = state.students,
@@ -257,7 +257,7 @@ private fun SearchStudentScreenContent(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null
@@ -292,7 +292,7 @@ private fun SearchStudentScreenContent(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null
@@ -303,7 +303,7 @@ private fun SearchStudentScreenContent(
 
                                     SearchStudentIntention.ADD_STUDENT_BIOMETRIC -> {
                                         {
-                                            edu.watumull.presencify.core.design.systems.components.PresencifyOutlinedButton(
+                                            edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton(
                                                 text = "Select",
                                                 onClick = {
                                                     onAction(SearchStudentAction.StudentActionButtonClick(student.id))
@@ -340,7 +340,7 @@ private fun SearchStudentScreenContent(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null
@@ -375,7 +375,7 @@ private fun SearchStudentScreenContent(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null
@@ -412,7 +412,7 @@ private fun SearchStudentScreenContent(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null
@@ -451,7 +451,7 @@ private fun SearchStudentScreenContent(
                                                         {
                                                             CircularProgressIndicator(
                                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = 2.dp
+                                                                strokeWidth = DesignToken.strokes.md
                                                             )
                                                         }
                                                     } else null

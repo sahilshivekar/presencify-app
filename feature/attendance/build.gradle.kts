@@ -71,7 +71,7 @@ kotlin {
                 implementation(libs.qrose)
                 implementation(project(":core:presentation"))
 
-                implementation(project(":core:design-systems"))
+                implementation(project(":core:designsystem"))
                 implementation(project(":core:domain"))
                 // Presentation/UI
                 implementation("org.jetbrains.compose.runtime:runtime:1.10.0")

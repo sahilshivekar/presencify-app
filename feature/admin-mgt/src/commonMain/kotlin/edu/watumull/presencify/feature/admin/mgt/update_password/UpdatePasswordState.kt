@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.admin.mgt.update_password
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
 
 data class UpdatePasswordState(

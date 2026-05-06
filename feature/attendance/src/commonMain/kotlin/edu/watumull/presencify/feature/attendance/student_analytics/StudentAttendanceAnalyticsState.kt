@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.attendance.student_analytics
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord
 import edu.watumull.presencify.core.domain.model.student.Student

@@ -23,9 +23,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import edu.watumull.presencify.core.design.systems.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.TeacherRole
 
 /**
@@ -55,14 +55,14 @@ fun TeacherListItem(
                     model = teacherImageUrl,
                     contentDescription = "Teacher profile image",
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(DesignToken.avatars.md)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
             } else {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(DesignToken.avatars.md)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
@@ -70,7 +70,7 @@ fun TeacherListItem(
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Default profile",
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(DesignToken.avatars.md),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -103,9 +103,9 @@ fun TeacherListItem(
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
                         Column {    
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                             HorizontalDivider()
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
                             Text(
                                 text = message.asString(),
                                 style = MaterialTheme.typography.bodySmall,

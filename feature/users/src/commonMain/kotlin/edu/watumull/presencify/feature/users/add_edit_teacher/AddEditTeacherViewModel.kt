@@ -3,7 +3,7 @@ package edu.watumull.presencify.feature.users.add_edit_teacher
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
@@ -13,12 +13,12 @@ import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsEmail
 import edu.watumull.presencify.core.presentation.validation.validateAsFirstName
+import edu.watumull.presencify.core.presentation.validation.validateAsGender
+import edu.watumull.presencify.core.presentation.validation.validateAsHighestQualification
 import edu.watumull.presencify.core.presentation.validation.validateAsLastName
 import edu.watumull.presencify.core.presentation.validation.validateAsMiddleName
 import edu.watumull.presencify.core.presentation.validation.validateAsPhoneNumber
-import edu.watumull.presencify.core.presentation.validation.validateAsGender
 import edu.watumull.presencify.core.presentation.validation.validateAsTeacherRole
-import edu.watumull.presencify.core.presentation.validation.validateAsHighestQualification
 import edu.watumull.presencify.feature.users.navigation.UsersRoutes
 import kotlinx.coroutines.launch
 

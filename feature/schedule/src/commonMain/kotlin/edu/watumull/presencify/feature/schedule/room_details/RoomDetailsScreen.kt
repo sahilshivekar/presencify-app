@@ -17,12 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyDefaultLoadingScreen
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextButton
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.RoomListItem
@@ -52,7 +52,7 @@ fun RoomDetailsScreen(
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .padding(paddingValues)
-                        .padding(16.dp),
+                        .padding(DesignToken.spacing.lg),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Column(
@@ -72,7 +72,7 @@ fun RoomDetailsScreen(
                         }
                         if (LocalUserRole.current == UserRole.ADMIN) {
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -95,8 +95,8 @@ fun RoomDetailsScreen(
                                     if (state.isRemovingRoom) {
                                         CircularProgressIndicator(
                                             color = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(20.dp),
-                                            strokeWidth = 2.dp,
+                                            modifier = Modifier.size(DesignToken.components.progressMd),
+                                            strokeWidth = DesignToken.strokes.md,
                                         )
                                     } else {
                                         Text(

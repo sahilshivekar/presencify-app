@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.attendance.defaulters
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository

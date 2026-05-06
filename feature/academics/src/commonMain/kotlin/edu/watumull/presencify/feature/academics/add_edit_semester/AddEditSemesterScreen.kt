@@ -16,13 +16,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Scheme
@@ -49,7 +49,7 @@ fun AddEditSemesterScreen(
             Column(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
-                    .padding(16.dp),
+                    .padding(DesignToken.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -58,7 +58,7 @@ fun AddEditSemesterScreen(
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = DesignToken.spacing.lg)
                 )
 
                 // Semester Number Dropdown
@@ -75,7 +75,7 @@ fun AddEditSemesterScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 // Academic Start Year
                 PresencifyTextField(
@@ -88,7 +88,7 @@ fun AddEditSemesterScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 // Academic End Year
                 PresencifyTextField(
@@ -101,7 +101,7 @@ fun AddEditSemesterScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 PresencifyDatePickerTextField(
                     value = state.startDate,
@@ -116,7 +116,7 @@ fun AddEditSemesterScreen(
                 )
 
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 PresencifyDatePickerTextField(
                     value = state.endDate,
@@ -130,7 +130,7 @@ fun AddEditSemesterScreen(
                     isError = state.endDateError != null,
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 // Branch Dropdown
                 PresencifyDropDownMenuBox<Branch>(
@@ -146,7 +146,7 @@ fun AddEditSemesterScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(DesignToken.spacing.lg))
 
                 // Scheme Dropdown
                 PresencifyDropDownMenuBox<Scheme>(
@@ -164,7 +164,7 @@ fun AddEditSemesterScreen(
 
                 // Optional Courses Section
                 if (state.optionalCourseGroups.isNotEmpty()) {
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(DesignToken.spacing.xl))
 
                     Text(
                         text = "Optional Courses",
@@ -172,7 +172,7 @@ fun AddEditSemesterScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 12.dp)
+                            .padding(bottom = DesignToken.spacing.md)
                     )
 
                     // Dynamically create a dropdown for each optional course group
@@ -198,19 +198,19 @@ fun AddEditSemesterScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(DesignToken.spacing.lg))
                     }
                 }
 
                 // Show loading indicator when fetching optional courses
                 if (state.isFetchingOptionalCourses) {
                     CircularProgressIndicator(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(DesignToken.spacing.lg),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(DesignToken.spacing.xl))
 
                 PresencifyButton(
                     onClick = { onAction(AddEditSemesterAction.SubmitClick) },

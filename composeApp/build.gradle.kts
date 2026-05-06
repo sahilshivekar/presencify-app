@@ -58,7 +58,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:data"))
             implementation(project(":core:domain"))
-            implementation(project(":core:design-systems"))
+            implementation(project(":core:designsystem"))
             implementation(project(":core:presentation"))
             implementation(project(":feature:admin-auth"))
             implementation(project(":feature:student-auth"))

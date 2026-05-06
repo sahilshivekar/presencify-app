@@ -24,14 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import edu.watumull.presencify.core.design.systems.components.DonutGraph
-import edu.watumull.presencify.core.design.systems.components.PresencifyButton
-import edu.watumull.presencify.core.design.systems.components.PresencifyDatePickerTextField
-import edu.watumull.presencify.core.design.systems.components.PresencifyDropDownMenuBox
-import edu.watumull.presencify.core.design.systems.components.PresencifyNoResultsIndicator
-import edu.watumull.presencify.core.design.systems.components.PresencifyScaffold
-import edu.watumull.presencify.core.design.systems.components.PresencifyTextField
-import edu.watumull.presencify.core.design.systems.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.DonutGraph
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyDatePickerTextField
+import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMenuBox
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.StudentListItem
@@ -68,14 +69,14 @@ fun DefaultersScreen(
                 modifier = Modifier
                     .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
             ) {
                 item {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                            .padding(DesignToken.spacing.lg),
+                        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                     ) {
                         FilterSection(state = state, onAction = onAction)
 
@@ -93,7 +94,7 @@ fun DefaultersScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 32.dp),
+                                .padding(vertical = DesignToken.spacing.xxl),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator()
@@ -103,7 +104,7 @@ fun DefaultersScreen(
                     item {
                         PresencifyNoResultsIndicator(
                             text = "No students found.",
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(DesignToken.spacing.lg)
                         )
                     }
                 } else {
@@ -114,7 +115,7 @@ fun DefaultersScreen(
                             studentImageUrl = student.studentImageUrl,
                             studentBranch = student.branch?.abbreviation,
                             onClick = { /* Do nothing */ },
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            modifier = Modifier.padding(horizontal = DesignToken.spacing.lg),
                             trailingContent = {
                                 val isLoading = state.isAttendanceLoadingMap[student.id] == true
                                 val attendancePercentage = if (state.selectedCourse != null) {
@@ -125,8 +126,8 @@ fun DefaultersScreen(
 
                                 if (isLoading) {
                                     CircularProgressIndicator(
-                                        modifier = Modifier.size(36.dp),
-                                        strokeWidth = 3.dp
+                                        modifier = Modifier.size(DesignToken.components.progressMd),
+                                        strokeWidth = DesignToken.strokes.md
                                     )
                                 } else if (attendancePercentage != null) {
                                     val (present, total) = if (state.selectedCourse != null) {
@@ -140,7 +141,7 @@ fun DefaultersScreen(
                                         DonutGraph(
                                             percentage = attendancePercentage,
                                             size = 40.dp,
-                                            strokeWidth = 4.dp,
+                                            strokeWidth = DesignToken.strokes.thick,
                                             animate = true,
                                             centerText = "${attendancePercentage.toInt()}%",
                                             centerSubtext = "$present / $total"
@@ -173,7 +174,7 @@ private fun FilterSection(
     onAction: (DefaultersAction) -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
         Text(
             text = "Select Semester",
@@ -198,7 +199,7 @@ private fun FilterSection(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
         ) {
             PresencifyTextField(
                 value = state.academicStartYear,
@@ -248,7 +249,7 @@ private fun FilterSection(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
         ) {
 
             PresencifyDatePickerTextField(

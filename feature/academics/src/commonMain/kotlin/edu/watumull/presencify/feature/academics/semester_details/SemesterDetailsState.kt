@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.academics.semester_details
 
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
 import edu.watumull.presencify.core.presentation.UiText

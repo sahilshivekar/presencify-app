@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.import_students
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.design.systems.components.dialog.DialogType
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
