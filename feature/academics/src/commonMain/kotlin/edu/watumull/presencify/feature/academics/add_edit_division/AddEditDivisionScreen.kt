@@ -29,10 +29,9 @@ import edu.watumull.presencify.core.presentation.UiConstants
 fun AddEditDivisionScreen(
     state: AddEditDivisionState,
     onAction: (AddEditDivisionAction) -> Unit,
-    onConfirmNavigateBack: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditDivisionAction.BackButtonClick) },
+        backPress = { onAction(AddEditDivisionAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Division" else "Add Division",
     ) { paddingValues ->
         Column(
@@ -178,16 +177,10 @@ fun AddEditDivisionScreen(
     // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES -> onConfirmNavigateBack()
-                    DialogIntention.GENERIC -> onAction(AddEditDivisionAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(AddEditDivisionAction.ConfirmNavigateBack) },
             onDismiss = { onAction(AddEditDivisionAction.DismissDialog) }
         )
     }

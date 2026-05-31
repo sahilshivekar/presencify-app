@@ -5,7 +5,7 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
 
 sealed interface AssignUnassignStudentToDivisionAction {
-    data object BackButtonClick : AssignUnassignStudentToDivisionAction
+    data object NavigateBack : AssignUnassignStudentToDivisionAction
     data object DismissDialog : AssignUnassignStudentToDivisionAction
 
     data class SelectBranch(val branch: Branch?) : AssignUnassignStudentToDivisionAction

@@ -46,7 +46,7 @@ fun AddAdminScreen(
     onAction: (AddAdminAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddAdminAction.ClickBackButton) },
+        backPress = { onAction(AddAdminAction.NavigateBack) },
         topBarTitle = "Add Admin",
     ) { paddingValues ->
         AddAdminScreenContent(
@@ -58,15 +58,13 @@ fun AddAdminScreen(
 
     // Dialog handling
     state.dialogState?.let { dialogState ->
-        if (dialogState.message != null) {
-            PresencifyAlertDialog(
-                isVisible = dialogState.isVisible,
-                dialogType = dialogState.dialogType,
-                title = dialogState.title,
-                message = dialogState.message.asString(),
-                onDismiss = { onAction(AddAdminAction.DismissDialog) }
-            )
-        }
+        PresencifyAlertDialog(
+            dialogType = dialogState.dialogType,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(AddAdminAction.ConfirmNavigateBack) },
+            onDismiss = { onAction(AddAdminAction.DismissDialog) }
+        )
     }
 }
 

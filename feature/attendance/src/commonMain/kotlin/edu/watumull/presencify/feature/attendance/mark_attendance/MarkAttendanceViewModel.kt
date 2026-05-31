@@ -28,7 +28,7 @@ class MarkAttendanceViewModel(
 
     override fun handleAction(action: MarkAttendanceAction) {
         when (action) {
-            MarkAttendanceAction.BackButtonClick -> sendEvent(MarkAttendanceEvent.NavigateBack)
+            MarkAttendanceAction.NavigateBack -> sendEvent(MarkAttendanceEvent.NavigateBack)
             MarkAttendanceAction.DynamicQRClick -> sendEvent(MarkAttendanceEvent.NavigateToDynamicQR(attendanceId))
             MarkAttendanceAction.GroupPhotoScanClick -> sendEvent(MarkAttendanceEvent.NavigateToGroupPhotoScan(attendanceId))
             MarkAttendanceAction.ShareAttendanceSummary -> shareAttendanceSummary()

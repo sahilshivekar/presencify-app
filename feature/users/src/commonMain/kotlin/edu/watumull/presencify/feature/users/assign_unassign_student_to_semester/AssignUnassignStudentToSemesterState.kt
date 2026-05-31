@@ -1,10 +1,10 @@
 package edu.watumull.presencify.feature.users.assign_unassign_student_to_semester
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -46,16 +46,4 @@ data class AssignUnassignStudentToSemesterState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText = UiText.DynamicString(""),
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
 }

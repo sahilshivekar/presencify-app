@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.repository.academics.SemesterReposito
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.utils.CsvUtils
@@ -379,11 +380,10 @@ class DefaultersViewModel(
     private fun showError(message: UiText) {
         updateState {
             it.copy(
-                dialogState = DefaultersState.DialogState(
-                    isVisible = true,
-                    dialogType = DialogType.ERROR,
-                    title = "Error",
-                    message = message
+                dialogState = DialogState(
+                    title = UiText.DynamicString("Error"),
+                    message = message,
+                    dialogType = DialogType.ERROR
                 )
             )
         }

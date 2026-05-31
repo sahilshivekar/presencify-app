@@ -5,8 +5,7 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
 
 sealed interface SearchBatchAction {
-    data object BackButtonClick : SearchBatchAction
-    data object DismissDialog : SearchBatchAction
+    data object NavigateBack : SearchBatchAction
 
 
     // Search & Refresh

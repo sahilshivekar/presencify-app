@@ -32,7 +32,7 @@ fun LinkUnlinkCourseScreen(
     onAction: (LinkUnlinkCourseAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(LinkUnlinkCourseAction.BackButtonClick) },
+        backPress = { onAction(LinkUnlinkCourseAction.NavigateBack) },
         topBarTitle = "Link/Unlink Courses",
     ) { paddingValues ->
         when (state.viewState) {
@@ -58,17 +58,9 @@ fun LinkUnlinkCourseScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(LinkUnlinkCourseAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(LinkUnlinkCourseAction.DismissDialog)
             }

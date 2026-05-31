@@ -1,11 +1,10 @@
 package edu.watumull.presencify.feature.academics.add_edit_semester
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Scheme
-import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.datetime.LocalDate
 
 data class AddEditSemesterState(
@@ -48,18 +47,4 @@ data class AddEditSemesterState(
     val isEndDatePickerVisible: Boolean = false,
 
     val dialogState: DialogState? = null,
-) {
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
-    CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-}
-
+)

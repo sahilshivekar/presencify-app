@@ -3,7 +3,6 @@ package edu.watumull.presencify.feature.users.search_teacher
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
@@ -51,12 +50,9 @@ class SearchTeacherViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchTeacherState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchTeacherState.ViewState.Error(error.toUiText()),
+                    isRefreshing = false,
+                    isLoadingTeachers = false
                 )
             }
         },
@@ -138,13 +134,10 @@ class SearchTeacherViewModel(
     override fun handleAction(action: SearchTeacherAction) {
         when (action) {
 
-            is SearchTeacherAction.BackButtonClick -> {
+            is SearchTeacherAction.NavigateBack -> {
                 sendEvent(SearchTeacherEvent.NavigateBack)
             }
 
-            is SearchTeacherAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchTeacherAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

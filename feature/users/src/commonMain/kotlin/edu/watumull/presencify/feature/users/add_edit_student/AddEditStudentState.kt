@@ -1,11 +1,10 @@
 package edu.watumull.presencify.feature.users.add_edit_student
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.AdmissionType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Scheme
-import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.datetime.LocalDate
 
 data class AddEditStudentState(
@@ -61,20 +60,7 @@ data class AddEditStudentState(
     val studentImageBytes: ByteArray? = null,
     val studentImageUrl: String? = null,
     val isImageDialogVisible: Boolean = false,
-) {
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
-    CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-}
+)
 
 enum class StudentFormStep {
     PERSONAL_DETAILS,

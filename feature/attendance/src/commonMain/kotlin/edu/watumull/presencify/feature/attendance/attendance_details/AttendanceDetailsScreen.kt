@@ -47,7 +47,7 @@ fun AttendanceDetailsScreen(
     onAction: (AttendanceDetailsAction) -> Unit
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AttendanceDetailsAction.BackButtonClick) },
+        backPress = { onAction(AttendanceDetailsAction.NavigateBack) },
         topBarTitle = "Attendance Details",
         actions = {
             if (state.viewState == AttendanceDetailsState.ViewState.Content && state.attendance != null) {
@@ -93,7 +93,7 @@ fun AttendanceDetailsScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.error
                             )
-                            Button(onClick = { onAction(AttendanceDetailsAction.BackButtonClick) }) {
+                            Button(onClick = { onAction(AttendanceDetailsAction.NavigateBack) }) {
                                 Text("Go Back")
                             }
                         }
@@ -239,15 +239,14 @@ fun AttendanceDetailsScreen(
         }
     }
 
-    // Confirmation Dialog
+    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = DialogType.CONFIRM_RISKY_ACTION,
-            title = "Remove Attendance",
+            dialogType = dialogState.dialogType,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = dialogState.onConfirm,
-            onDismiss = dialogState.onDismiss
+            onConfirm = { onAction(AttendanceDetailsAction.ConfirmRemoveAttendance) },
+            onDismiss = { onAction(AttendanceDetailsAction.DismissDialog) }
         )
     }
 }

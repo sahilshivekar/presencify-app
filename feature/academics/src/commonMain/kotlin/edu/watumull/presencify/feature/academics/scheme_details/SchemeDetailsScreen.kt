@@ -32,7 +32,7 @@ fun SchemeDetailsScreen(
     onAction: (SchemeDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(SchemeDetailsAction.BackButtonClick) },
+        backPress = { onAction(SchemeDetailsAction.NavigateBack) },
         topBarTitle = "Scheme Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -112,16 +112,10 @@ fun SchemeDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_SCHEME -> onAction(SchemeDetailsAction.ConfirmRemoveScheme)
-                    DialogIntention.GENERIC -> onAction(SchemeDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(SchemeDetailsAction.ConfirmRemoveScheme) },
             onDismiss = { onAction(SchemeDetailsAction.DismissDialog) }
         )
     }

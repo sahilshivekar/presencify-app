@@ -32,7 +32,7 @@ fun AttendanceDashboardScreen(
     onAction: (AttendanceDashboardAction) -> Unit
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AttendanceDashboardAction.BackButtonClick) },
+        backPress = { onAction(AttendanceDashboardAction.NavigateBack) },
 //        topBarTitle = "Attendance",
         floatingActionButton = {
             FloatingActionButton(

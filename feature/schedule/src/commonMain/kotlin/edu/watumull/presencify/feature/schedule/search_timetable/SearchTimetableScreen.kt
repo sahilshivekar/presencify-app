@@ -50,7 +50,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsI
 import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -75,7 +74,7 @@ fun SearchTimetableScreen(
     val scope = rememberCoroutineScope()
 
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchTimetableAction.BackButtonClick) },
+        backPress = { onAction(SearchTimetableAction.NavigateBack) },
         topBarTitle = "Search Timetables",
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -124,25 +123,6 @@ fun SearchTimetableScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchTimetableAction.DismissDialog)
-            }
-        )
     }
 }
 

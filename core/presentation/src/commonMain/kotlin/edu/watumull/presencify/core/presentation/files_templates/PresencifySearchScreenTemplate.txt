@@ -21,14 +21,14 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ${NAME}Root(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     val viewModel: ${NAME}ViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is ${NAME}Event.NavigateBack -> onBackButtonClick()
+            is ${NAME}Event.NavigateBack -> onNavigateBack()
             is ${NAME}Event.NavigateToAddEdit -> {
                 
             }
@@ -82,7 +82,7 @@ fun ${NAME}Screen(
     onAction: (${NAME}Action) -> Unit,
 ) {
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(${NAME}Action.BackButtonClick) },
+        backPress = { onAction(${NAME}Action.NavigateBack) },
         topBarTitle = "${NAME}",
         sheetContent = { ${NAME}BottomSheetContent(state = state, onAction = onAction) },
         floatingActionButton = {
@@ -114,20 +114,10 @@ fun ${NAME}Screen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(${NAME}Action.DismissDialog)
-            }
+            dialogType = dialogState.dialogType,
+            onDismiss = { onAction(${NAME}Action.DismissDialog) }
         )
     }
 
@@ -235,7 +225,7 @@ class ${NAME}ViewModel :
 
     override fun handleAction(action: ${NAME}Action) {
         when (action) {
-            is ${NAME}Action.BackButtonClick -> {
+            is ${NAME}Action.NavigateBack -> {
                 sendEvent(${NAME}Event.NavigateBack)
             }
             is ${NAME}Action.DismissDialog -> {
@@ -311,6 +301,7 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class ${NAME}State(
     val viewState: ViewState = ViewState.Loading,
@@ -327,14 +318,6 @@ data class ${NAME}State(
         data class Error(val message: UiText) : ViewState
         data object Content: ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText = "",
-    )
 
     data class BottomSheetState(
         val isVisible: Boolean = false,
@@ -361,7 +344,7 @@ sealed interface ${NAME}Event {
 #if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "") package ${PACKAGE_NAME} #end
 
 sealed interface ${NAME}Action {
-    data object BackButtonClick : ${NAME}Action
+    data object NavigateBack : ${NAME}Action
     data object DismissDialog : ${NAME}Action
     data object ShowBottomSheet : ${NAME}Action
     data object DismissBottomSheet : ${NAME}Action
@@ -373,11 +356,6 @@ sealed interface ${NAME}Action {
     data object ApplyFilters : ${NAME}Action
     data object Refresh : ${NAME}Action
     data object FloatingActionButtonClick : ${NAME}Action
-}
-
-// required if there are multiple different confirmation operations need to be done on screen
-enum class DialogIntention {
-    GENERIC,
 }
 
 # =============================================================================

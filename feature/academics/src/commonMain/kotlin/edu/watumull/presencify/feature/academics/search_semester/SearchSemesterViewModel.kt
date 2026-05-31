@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.academics.search_semester
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
@@ -55,12 +54,8 @@ class SearchSemesterViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchSemesterState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchSemesterState.ViewState.Error(error.toUiText()),
+                    isLoadingSemesters = false
                 )
             }
         },
@@ -132,12 +127,7 @@ class SearchSemesterViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchSemesterState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchSemesterState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -158,12 +148,7 @@ class SearchSemesterViewModel(
                 updateState {
                     it.copy(
                         areSchemesLoading = false,
-                        dialogState = SearchSemesterState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchSemesterState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -172,13 +157,10 @@ class SearchSemesterViewModel(
     override fun handleAction(action: SearchSemesterAction) {
         when (action) {
 
-            is SearchSemesterAction.BackButtonClick -> {
+            is SearchSemesterAction.NavigateBack -> {
                 sendEvent(SearchSemesterEvent.NavigateBack)
             }
 
-            is SearchSemesterAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchSemesterAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

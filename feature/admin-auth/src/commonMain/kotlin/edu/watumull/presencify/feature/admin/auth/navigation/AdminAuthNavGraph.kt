@@ -14,7 +14,7 @@ fun NavGraphBuilder.adminAuthNavGraph(
 ) {
     composableWithSlideTransitions<AdminAuthRoutes.AdminLogin> {
         AdminLoginRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToHome = onNavigateToHome,
             onNavigateToForgotPassword = onNavigateToForgotPassword
         )
@@ -22,14 +22,14 @@ fun NavGraphBuilder.adminAuthNavGraph(
 
     composableWithSlideTransitions<AdminAuthRoutes.AdminForgotPassword> {
         AdminForgotPasswordRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToVerifyCode = { email -> onNavigateToVerifyCode(email) }
         )
     }
 
     composableWithSlideTransitions<AdminAuthRoutes.AdminVerifyCode> { backStackEntry ->
         AdminVerifyCodeRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onCodeVerified = onNavigateToHome
         )
     }

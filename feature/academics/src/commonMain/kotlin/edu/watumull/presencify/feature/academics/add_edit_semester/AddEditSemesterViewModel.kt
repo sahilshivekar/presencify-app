@@ -12,6 +12,8 @@ import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -54,10 +56,9 @@ class AddEditSemesterViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditSemesterState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Branches",
+                            title = UiText.DynamicString("Error Loading Branches"),
                             message = error.toUiText()
                         )
                     )
@@ -73,10 +74,9 @@ class AddEditSemesterViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditSemesterState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Schemes",
+                            title = UiText.DynamicString("Error Loading Schemes"),
                             message = error.toUiText()
                         )
                     )
@@ -109,10 +109,9 @@ class AddEditSemesterViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditSemesterState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Semester",
+                            title = UiText.DynamicString("Error Loading Semester"),
                             message = error.toUiText()
                         )
                     )
@@ -122,7 +121,8 @@ class AddEditSemesterViewModel(
 
     override fun handleAction(action: AddEditSemesterAction) {
         when (action) {
-            is AddEditSemesterAction.BackButtonClick -> handleBackNavigation()
+            is AddEditSemesterAction.NavigateBack -> handleBackNavigation()
+            is AddEditSemesterAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditSemesterAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AddEditSemesterAction.UpdateSemesterNumber -> {
                 updateState {
@@ -227,11 +227,10 @@ class AddEditSemesterViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditSemesterState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
                     )
                 )
             }
@@ -311,10 +310,9 @@ class AddEditSemesterViewModel(
                 updateState {
                     it.copy(
                         isFetchingOptionalCourses = false,
-                        dialogState = AddEditSemesterState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Optional Courses",
+                            title = UiText.DynamicString("Error Loading Optional Courses"),
                             message = error.toUiText()
                         )
                     )
@@ -322,7 +320,7 @@ class AddEditSemesterViewModel(
             }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditSemesterEvent.NavigateBack)
     }
@@ -414,10 +412,9 @@ class AddEditSemesterViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditSemesterState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Semester" else "Error Adding Semester",
+                            title = UiText.DynamicString(if (state.isEditMode) "Error Updating Semester" else "Error Adding Semester"),
                             message = error.toUiText()
                         )
                     )

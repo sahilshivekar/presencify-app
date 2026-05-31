@@ -1,6 +1,5 @@
 package edu.watumull.presencify.feature.schedule.search_class
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
@@ -20,7 +19,6 @@ import kotlinx.datetime.LocalTime
 
 data class SearchClassState(
     val viewState: ViewState = ViewState.Content,
-    val dialogState: DialogState? = null,
 
     // Intention
     val intention: SearchClassIntention = SearchClassIntention.DEFAULT,
@@ -94,18 +92,6 @@ data class SearchClassState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText = UiText.DynamicString(""),
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
 }
 
 

@@ -12,6 +12,6 @@ sealed interface AdminDetailsAction {
     data object ConfirmRemoveAccount : AdminDetailsAction
     data object ClickUpdatePassword : AdminDetailsAction
     data object ClickAddAdmin : AdminDetailsAction
-    data object ClickBackButton : AdminDetailsAction
+    data object NavigateBack : AdminDetailsAction
     data object DismissDialog : AdminDetailsAction
 }

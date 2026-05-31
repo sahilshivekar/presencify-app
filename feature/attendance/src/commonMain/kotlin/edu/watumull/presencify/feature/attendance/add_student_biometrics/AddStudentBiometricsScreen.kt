@@ -151,15 +151,9 @@ fun AddStudentBiometricsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> onAction(AddStudentBiometricsAction.DismissDialog)
-                }
-            },
             onDismiss = { onAction(AddStudentBiometricsAction.DismissDialog) }
         )
     }

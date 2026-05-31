@@ -33,7 +33,7 @@ fun DivisionDetailsScreen(
     onAction: (DivisionDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(DivisionDetailsAction.BackButtonClick) },
+        backPress = { onAction(DivisionDetailsAction.NavigateBack) },
         topBarTitle = "Division Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -121,16 +121,10 @@ fun DivisionDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_DIVISION -> onAction(DivisionDetailsAction.ConfirmRemoveDivision)
-                    DialogIntention.GENERIC -> onAction(DivisionDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(DivisionDetailsAction.ConfirmRemoveDivision) },
             onDismiss = { onAction(DivisionDetailsAction.DismissDialog) }
         )
     }

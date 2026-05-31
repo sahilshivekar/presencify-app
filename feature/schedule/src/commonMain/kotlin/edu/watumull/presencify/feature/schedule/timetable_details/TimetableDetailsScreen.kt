@@ -50,7 +50,7 @@ fun TimetableDetailsScreen(
     onAction: (TimetableDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(TimetableDetailsAction.BackButtonClick) },
+        backPress = { onAction(TimetableDetailsAction.NavigateBack) },
         topBarTitle = "Timetable Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -348,16 +348,10 @@ fun TimetableDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_TIMETABLE -> onAction(TimetableDetailsAction.ConfirmRemoveTimetable)
-                    DialogIntention.GENERIC -> onAction(TimetableDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(TimetableDetailsAction.ConfirmRemoveTimetable) },
             onDismiss = { onAction(TimetableDetailsAction.DismissDialog) }
         )
     }

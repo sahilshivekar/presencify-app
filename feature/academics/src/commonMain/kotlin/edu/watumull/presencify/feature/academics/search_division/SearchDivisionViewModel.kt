@@ -52,12 +52,8 @@ class SearchDivisionViewModel(
             onError = { error ->
                 updateState {
                     it.copy(
-                        dialogState = SearchDivisionState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchDivisionState.ViewState.Error(error.toUiText()),
+                        isLoadingDivisions = false
                     )
                 }
             },
@@ -127,12 +123,7 @@ class SearchDivisionViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchDivisionState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchDivisionState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -141,13 +132,10 @@ class SearchDivisionViewModel(
     override fun handleAction(action: SearchDivisionAction) {
         when (action) {
 
-            is SearchDivisionAction.BackButtonClick -> {
+            is SearchDivisionAction.NavigateBack -> {
                 sendEvent(SearchDivisionEvent.NavigateBack)
             }
 
-            is SearchDivisionAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchDivisionAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

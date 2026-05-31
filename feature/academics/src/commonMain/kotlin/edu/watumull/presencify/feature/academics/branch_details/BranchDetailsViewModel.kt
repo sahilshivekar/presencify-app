@@ -7,7 +7,10 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController.sendEvent
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
@@ -43,27 +46,25 @@ class BranchDetailsViewModel(
 
     override fun handleAction(action: BranchDetailsAction) {
         when (action) {
-            is BranchDetailsAction.BackButtonClick -> sendEvent(BranchDetailsEvent.NavigateBack)
+            is BranchDetailsAction.NavigateBack -> sendEvent(BranchDetailsEvent.NavigateBack)
             is BranchDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is BranchDetailsAction.RemoveBranchClick -> updateState {
                 it.copy(
-                    dialogState = BranchDetailsState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_BRANCH,
-                        title = "Remove Branch",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
-                            "Are you sure you want to remove ${state.branch?.name ?: "this branch"}?"
+                        title = UiText.DynamicString("Remove Branch"),
+                        message = UiText.DynamicString(
+                            "Are you sure you want to remove this branch? This action cannot be undone and all associated semesters, divisions, batches and attendance records will also be removed."
                         )
                     )
                 )
             }
+            is BranchDetailsAction.ConfirmRemoveBranch -> {
+                viewModelScope.launch {
+                    removeBranch()
+                }
+            }
             is BranchDetailsAction.EditBranchClick -> sendEvent(BranchDetailsEvent.NavigateToEditBranch(state.branchId))
-        }
-    }
-
-    fun confirmRemoveBranch() {
-        viewModelScope.launch {
-            removeBranch()
         }
     }
 
@@ -86,10 +87,9 @@ class BranchDetailsViewModel(
                 updateState {
                     it.copy(
                         isRemovingBranch = false,
-                        dialogState = BranchDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Branch",
+                            title = UiText.DynamicString("Error Removing Branch"),
                             message = error.toUiText()
                         )
                     )

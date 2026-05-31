@@ -58,7 +58,7 @@ fun TeacherDetailsScreen(
     onAction: (TeacherDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(TeacherDetailsAction.BackButtonClick) },
+        backPress = { onAction(TeacherDetailsAction.NavigateBack) },
         topBarTitle = "Teacher Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -84,24 +84,11 @@ fun TeacherDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_TEACHER -> {
-                        onAction(TeacherDetailsAction.ConfirmRemoveTeacher)
-                    }
-
-                    DialogIntention.GENERIC -> {
-                        onAction(TeacherDetailsAction.DismissDialog)
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(TeacherDetailsAction.DismissDialog)
-            }
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(TeacherDetailsAction.ConfirmRemoveTeacher) },
+            onDismiss = { onAction(TeacherDetailsAction.DismissDialog) }
         )
     }
 }

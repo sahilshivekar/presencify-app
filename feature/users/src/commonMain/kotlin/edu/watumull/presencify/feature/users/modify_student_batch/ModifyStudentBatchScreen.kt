@@ -36,7 +36,7 @@ fun ModifyStudentBatchScreen(
     onAction: (ModifyStudentBatchAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(ModifyStudentBatchAction.BackButtonClick) },
+        backPress = { onAction(ModifyStudentBatchAction.NavigateBack) },
         topBarTitle = "Modify Student Batch",
     ) { paddingValues ->
         when (state.viewState) {
@@ -62,17 +62,9 @@ fun ModifyStudentBatchScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(ModifyStudentBatchAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(ModifyStudentBatchAction.DismissDialog)
             }

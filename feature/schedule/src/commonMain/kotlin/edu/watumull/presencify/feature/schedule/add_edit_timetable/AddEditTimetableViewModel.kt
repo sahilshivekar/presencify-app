@@ -11,6 +11,9 @@ import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.schedule.TimetableRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.ValidationResult
@@ -61,11 +64,10 @@ class AddEditTimetableViewModel(
                     updateState {
                         it.copy(
                             areBranchesLoading = false,
-                            dialogState = AddEditTimetableState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                title = UiText.DynamicString("Error"),
+                                message = error.toUiText()
                             )
                         )
                     }
@@ -177,13 +179,12 @@ class AddEditTimetableViewModel(
                         updateState {
                             it.copy(
                                 isLookingBatches = false,
-                                dialogState = AddEditTimetableState.DialogState(
+                                dialogState = DialogState(
                                     dialogType = DialogType.ERROR,
-                                    title = "Divisions Not Found",
+                                    title = UiText.DynamicString("Divisions Not Found"),
                                     message = UiText.DynamicString(
                                         "No divisions found for the selected branch, semester number, and academic year. Please check your selection."
-                                    ),
-                                    dialogIntention = DialogIntention.GENERIC
+                                    )
                                 )
                             )
                         }
@@ -207,11 +208,10 @@ class AddEditTimetableViewModel(
                         it.copy(
                             isLookingDivisions = false,
                             isLookingBatches = false,
-                            dialogState = AddEditTimetableState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                title = UiText.DynamicString("Error"),
+                                message = error.toUiText()
                             )
                         )
                     }
@@ -245,11 +245,10 @@ class AddEditTimetableViewModel(
                 updateState {
                     it.copy(
                         isLookingBatches = false,
-                        dialogState = AddEditTimetableState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            title = "Error Loading Batches",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
+                            title = UiText.DynamicString("Error Loading Batches"),
+                            message = error.toUiText()
                         )
                     )
                 }
@@ -295,11 +294,10 @@ class AddEditTimetableViewModel(
                     updateState {
                         it.copy(
                             isSaving = false,
-                            dialogState = AddEditTimetableState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = UiText.DynamicString("Invalid version number"),
-                                dialogIntention = DialogIntention.GENERIC
+                                title = UiText.DynamicString("Error"),
+                                message = UiText.DynamicString("Invalid version number")
                             )
                         )
                     }
@@ -313,30 +311,24 @@ class AddEditTimetableViewModel(
 
             result
                 .onSuccess { _ ->
-                    updateState {
-                        it.copy(
-                            isSaving = false,
-                            dialogState = AddEditTimetableState.DialogState(
-                                dialogType = DialogType.SUCCESS,
-                                title = "Success",
-                                message = UiText.DynamicString(
-                                    if (state.isEditMode) "Timetable updated successfully"
-                                    else "Timetable created successfully"
-                                ),
-                                dialogIntention = DialogIntention.SUCCESS
+                    updateState { it.copy(isSaving = false) }
+                    viewModelScope.launch {
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = if (state.isEditMode) "Timetable updated successfully" else "Timetable created successfully"
                             )
                         )
                     }
+                    sendEvent(AddEditTimetableEvent.NavigateBack)
                 }
                 .onError { error ->
                     updateState {
                         it.copy(
                             isSaving = false,
-                            dialogState = AddEditTimetableState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                title = UiText.DynamicString("Error"),
+                                message = error.toUiText()
                             )
                         )
                     }
@@ -346,17 +338,10 @@ class AddEditTimetableViewModel(
 
     override fun handleAction(action: AddEditTimetableAction) {
         when (action) {
-            is AddEditTimetableAction.BackButtonClick -> {
-                sendEvent(AddEditTimetableEvent.NavigateBack)
-            }
-
+            is AddEditTimetableAction.NavigateBack -> handleBackNavigation()
+            is AddEditTimetableAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditTimetableAction.DismissDialog -> {
-                val currentDialogIntention = state.dialogState?.dialogIntention
                 updateState { it.copy(dialogState = null) }
-                if (currentDialogIntention == DialogIntention.SUCCESS) {
-                    // Navigate back after successful save
-                    sendEvent(AddEditTimetableEvent.NavigateBack)
-                }
             }
 
             is AddEditTimetableAction.SelectBranch -> {
@@ -471,5 +456,36 @@ class AddEditTimetableViewModel(
                 saveTimetable()
             }
         }
+    }
+
+    private fun handleBackNavigation() {
+        if (hasUnsavedChanges()) {
+            updateState {
+                it.copy(
+                    dialogState = DialogState(
+                        dialogType = DialogType.CONFIRM_NORMAL_ACTION,
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                    )
+                )
+            }
+        } else {
+            sendEvent(AddEditTimetableEvent.NavigateBack)
+        }
+    }
+
+    private fun confirmNavigateBack() {
+        updateState { it.copy(dialogState = null) }
+        sendEvent(AddEditTimetableEvent.NavigateBack)
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        return state.selectedBranch != null ||
+               state.selectedSemesterNumber != null ||
+               state.startYear.isNotBlank() ||
+               state.endYear.isNotBlank() ||
+               state.selectedDivision != null ||
+               state.timetableVersion.isNotBlank() ||
+               state.selectedBatches.isNotEmpty()
     }
 }

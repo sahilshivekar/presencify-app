@@ -5,8 +5,7 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 
 sealed interface SearchCourseAction {
-    data object BackButtonClick : SearchCourseAction
-    data object DismissDialog : SearchCourseAction
+    data object NavigateBack : SearchCourseAction
 
 
     // Search & Refresh

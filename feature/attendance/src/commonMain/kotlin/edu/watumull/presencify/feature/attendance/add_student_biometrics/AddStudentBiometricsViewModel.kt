@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -38,10 +39,10 @@ class AddStudentBiometricsViewModel(
         if (currentImages.size + newImages.size > 10) {
             updateState {
                 it.copy(
-                    dialogState = AddStudentBiometricsState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Limit Reached",
-                        message = UiText.DynamicString("You can select a maximum of 10 images.")
+                    dialogState = DialogState(
+                        title = UiText.DynamicString("Limit Reached"),
+                        message = UiText.DynamicString("You can select a maximum of 10 images."),
+                        dialogType = DialogType.ERROR
                     )
                 )
             }
@@ -76,10 +77,10 @@ class AddStudentBiometricsViewModel(
             }.onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddStudentBiometricsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText()
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error"),
+                            message = error.toUiText(),
+                            dialogType = DialogType.ERROR
                         )
                     )
                 }

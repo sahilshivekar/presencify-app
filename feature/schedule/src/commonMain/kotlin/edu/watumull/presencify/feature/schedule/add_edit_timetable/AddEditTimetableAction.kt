@@ -6,7 +6,8 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
 
 sealed interface AddEditTimetableAction {
-    data object BackButtonClick : AddEditTimetableAction
+    data object NavigateBack : AddEditTimetableAction
+    data object ConfirmNavigateBack : AddEditTimetableAction
     data object DismissDialog : AddEditTimetableAction
 
     data class SelectBranch(val branch: Branch?) : AddEditTimetableAction

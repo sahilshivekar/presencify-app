@@ -3,7 +3,6 @@ package edu.watumull.presencify.feature.academics.search_course
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
@@ -93,12 +92,8 @@ class SearchCourseViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchCourseState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchCourseState.ViewState.Error(error.toUiText()),
+                    isLoadingCourses = false
                 )
             }
         },
@@ -174,12 +169,7 @@ class SearchCourseViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchCourseState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchCourseState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -200,12 +190,7 @@ class SearchCourseViewModel(
                 updateState {
                     it.copy(
                         areSchemesLoading = false,
-                        dialogState = SearchCourseState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchCourseState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -226,12 +211,7 @@ class SearchCourseViewModel(
                 updateState {
                     it.copy(
                         areTeachersLoading = false,
-                        dialogState = SearchCourseState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchCourseState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -349,12 +329,7 @@ class SearchCourseViewModel(
                                 updateState {
                                     it.copy(
                                         loadingCourseIds = it.loadingCourseIds - courseId,
-                                        dialogState = SearchCourseState.DialogState(
-                                            dialogType = DialogType.ERROR,
-                                            title = "Error Fetching Updated Course",
-                                            message = error.toUiText(),
-                                            dialogIntention = DialogIntention.GENERIC
-                                        )
+                                        courseFeedback = it.courseFeedback + (courseId to ListItemFeedback.Error(error.toUiText()))
                                     )
                                 }
                             }
@@ -462,13 +437,10 @@ class SearchCourseViewModel(
     override fun handleAction(action: SearchCourseAction) {
         when (action) {
 
-            is SearchCourseAction.BackButtonClick -> {
+            is SearchCourseAction.NavigateBack -> {
                 sendEvent(SearchCourseEvent.NavigateBack)
             }
 
-            is SearchCourseAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchCourseAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

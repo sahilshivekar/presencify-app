@@ -5,6 +5,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -110,12 +112,10 @@ class StudentLoginViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            dialogState = StudentLoginState.DialogState(
-                                isVisible = true,
-                                title = "Login Failed",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Login Failed"),
                                 message = error.toUiText(),
-                                dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.LOGIN_ERROR
+                                dialogType = DialogType.ERROR
                             )
                         )
                     }

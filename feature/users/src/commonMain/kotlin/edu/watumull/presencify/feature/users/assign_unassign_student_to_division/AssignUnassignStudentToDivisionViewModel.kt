@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
@@ -45,11 +46,10 @@ class AssignUnassignStudentToDivisionViewModel(
                     updateState {
                         it.copy(
                             areBranchesLoading = false,
-                            dialogState = AssignUnassignStudentToDivisionState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -103,13 +103,12 @@ class AssignUnassignStudentToDivisionViewModel(
                         // No divisions found
                         updateState {
                             it.copy(
-                                dialogState = AssignUnassignStudentToDivisionState.DialogState(
-                                    dialogType = DialogType.ERROR,
-                                    title = "Divisions Not Found",
+                                dialogState = DialogState(
+                                    title = UiText.DynamicString("Divisions Not Found"),
                                     message = UiText.DynamicString(
                                         "No divisions found for the selected branch, semester number, and academic year. Please check your selection."
                                     ),
-                                    dialogIntention = DialogIntention.GENERIC
+                                    dialogType = DialogType.ERROR,
                                 )
                             )
                         }
@@ -129,11 +128,10 @@ class AssignUnassignStudentToDivisionViewModel(
                     updateState {
                         it.copy(
                             isLookingDivisions = false,
-                            dialogState = AssignUnassignStudentToDivisionState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -171,7 +169,7 @@ class AssignUnassignStudentToDivisionViewModel(
 
     override fun handleAction(action: AssignUnassignStudentToDivisionAction) {
         when (action) {
-            is AssignUnassignStudentToDivisionAction.BackButtonClick -> {
+            is AssignUnassignStudentToDivisionAction.NavigateBack -> {
                 sendEvent(AssignUnassignStudentToDivisionEvent.NavigateBack)
             }
 

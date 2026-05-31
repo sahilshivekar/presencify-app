@@ -8,6 +8,8 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.domain.repository.academics.UniversityRepository
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -43,10 +45,9 @@ class AddEditSchemeViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditSchemeState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Universities",
+                            title = UiText.DynamicString("Error Loading Universities"),
                             message = error.toUiText()
                         )
                     )
@@ -71,10 +72,9 @@ class AddEditSchemeViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditSchemeState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Scheme",
+                            title = UiText.DynamicString("Error Loading Scheme"),
                             message = error.toUiText()
                         )
                     )
@@ -84,7 +84,8 @@ class AddEditSchemeViewModel(
 
     override fun handleAction(action: AddEditSchemeAction) {
         when (action) {
-            is AddEditSchemeAction.BackButtonClick -> handleBackNavigation()
+            is AddEditSchemeAction.NavigateBack -> handleBackNavigation()
+            is AddEditSchemeAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditSchemeAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AddEditSchemeAction.UpdateName -> updateState { it.copy(name = action.name, nameError = null) }
             is AddEditSchemeAction.UpdateSelectedUniversity -> updateState { it.copy(selectedUniversityId = action.universityId, universityError = null, isUniversityDropdownOpen = false) }
@@ -99,11 +100,10 @@ class AddEditSchemeViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditSchemeState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
                     )
                 )
             }
@@ -112,7 +112,7 @@ class AddEditSchemeViewModel(
         }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditSchemeEvent.NavigateBack)
     }
@@ -159,10 +159,9 @@ class AddEditSchemeViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditSchemeState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Scheme" else "Error Adding Scheme",
+                            title = UiText.DynamicString(if (state.isEditMode) "Error Updating Scheme" else "Error Adding Scheme"),
                             message = error.toUiText()
                         )
                     )

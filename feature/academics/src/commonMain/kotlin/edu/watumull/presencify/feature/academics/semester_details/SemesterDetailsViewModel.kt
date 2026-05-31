@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -59,15 +61,14 @@ class SemesterDetailsViewModel(
 
     override fun handleAction(action: SemesterDetailsAction) {
         when (action) {
-            is SemesterDetailsAction.BackButtonClick -> sendEvent(SemesterDetailsEvent.NavigateBack)
+            is SemesterDetailsAction.NavigateBack -> sendEvent(SemesterDetailsEvent.NavigateBack)
             is SemesterDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is SemesterDetailsAction.RemoveSemesterClick -> updateState {
                 it.copy(
-                    dialogState = SemesterDetailsState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_SEMESTER,
-                        title = "Remove Semester",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
+                        title = UiText.DynamicString("Remove Semester"),
+                        message = UiText.DynamicString(
                             "Are you sure you want to remove this semester?, This will also remove all associated divisions and batches"
                         )
                     )
@@ -101,10 +102,9 @@ class SemesterDetailsViewModel(
                 updateState {
                     it.copy(
                         isRemovingSemester = false,
-                        dialogState = SemesterDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Semester",
+                            title = UiText.DynamicString("Error Removing Semester"),
                             message = error.toUiText()
                         )
                     )

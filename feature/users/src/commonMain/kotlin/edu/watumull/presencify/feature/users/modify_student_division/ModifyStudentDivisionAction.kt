@@ -6,7 +6,7 @@ import edu.watumull.presencify.core.domain.model.academics.Division
 import kotlinx.datetime.LocalDate
 
 sealed interface ModifyStudentDivisionAction {
-    data object BackButtonClick : ModifyStudentDivisionAction
+    data object NavigateBack : ModifyStudentDivisionAction
     data object DismissDialog : ModifyStudentDivisionAction
 
     data class SelectBranch(val branch: Branch?) : ModifyStudentDivisionAction

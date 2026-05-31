@@ -6,7 +6,7 @@ import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
 
 sealed interface AggregateAttendanceAnalyticsAction {
-    data object BackButtonClick : AggregateAttendanceAnalyticsAction
+    data object NavigateBack : AggregateAttendanceAnalyticsAction
     data object DismissDialog : AggregateAttendanceAnalyticsAction
 
     data class DonutCourseClick(val courseId: String) : AggregateAttendanceAnalyticsAction

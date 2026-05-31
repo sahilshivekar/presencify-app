@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
@@ -43,11 +44,10 @@ class AssignUnassignStudentToSemesterViewModel(
                     updateState {
                         it.copy(
                             areBranchesLoading = false,
-                            dialogState = AssignUnassignStudentToSemesterState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -102,13 +102,12 @@ class AssignUnassignStudentToSemesterViewModel(
                         // Semester not found
                         updateState {
                             it.copy(
-                                dialogState = AssignUnassignStudentToSemesterState.DialogState(
-                                    dialogType = DialogType.ERROR,
-                                    title = "Semester Not Found",
+                                dialogState = DialogState(
+                                    title = UiText.DynamicString("Semester Not Found"),
                                     message = UiText.DynamicString(
                                         "No semester found for the selected branch, semester number, and academic year. Please check your selection."
                                     ),
-                                    dialogIntention = DialogIntention.GENERIC
+                                    dialogType = DialogType.ERROR,
                                 )
                             )
                         }
@@ -123,11 +122,10 @@ class AssignUnassignStudentToSemesterViewModel(
                     updateState {
                         it.copy(
                             isLookingSemester = false,
-                            dialogState = AssignUnassignStudentToSemesterState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -137,7 +135,7 @@ class AssignUnassignStudentToSemesterViewModel(
 
     override fun handleAction(action: AssignUnassignStudentToSemesterAction) {
         when (action) {
-            is AssignUnassignStudentToSemesterAction.BackButtonClick -> {
+            is AssignUnassignStudentToSemesterAction.NavigateBack -> {
                 sendEvent(AssignUnassignStudentToSemesterEvent.NavigateBack)
             }
 

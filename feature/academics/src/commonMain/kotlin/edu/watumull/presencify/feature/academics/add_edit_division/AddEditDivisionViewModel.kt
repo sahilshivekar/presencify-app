@@ -9,6 +9,8 @@ import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -65,10 +67,9 @@ class AddEditDivisionViewModel(
                         updateState {
                             it.copy(
                                 isLoadingDivision = false,
-                                dialogState = AddEditDivisionState.DialogState(
+                                dialogState = DialogState(
                                     dialogType = DialogType.ERROR,
-                                    dialogIntention = DialogIntention.GENERIC,
-                                    title = "Error Loading Semester",
+                                    title = UiText.DynamicString("Error Loading Semester"),
                                     message = error.toUiText()
                                 )
                             )
@@ -79,10 +80,9 @@ class AddEditDivisionViewModel(
                 updateState {
                     it.copy(
                         isLoadingDivision = false,
-                        dialogState = AddEditDivisionState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Division",
+                            title = UiText.DynamicString("Error Loading Division"),
                             message = error.toUiText()
                         )
                     )
@@ -98,10 +98,9 @@ class AddEditDivisionViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditDivisionState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Branches",
+                            title = UiText.DynamicString("Error Loading Branches"),
                             message = error.toUiText()
                         )
                     )
@@ -111,7 +110,8 @@ class AddEditDivisionViewModel(
 
     override fun handleAction(action: AddEditDivisionAction) {
         when (action) {
-            is AddEditDivisionAction.BackButtonClick -> handleBackNavigation()
+            is AddEditDivisionAction.NavigateBack -> handleBackNavigation()
+            is AddEditDivisionAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditDivisionAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AddEditDivisionAction.UpdateSemesterNumber -> updateState { it.copy(semesterNumber = action.semesterNumber, semesterNumberError = null, isSemesterNumberDropdownOpen = false) }
             is AddEditDivisionAction.UpdateAcademicStartYear -> updateState { it.copy(academicStartYear = action.year, academicStartYearError = null) }
@@ -129,11 +129,10 @@ class AddEditDivisionViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditDivisionState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
                     )
                 )
             }
@@ -142,7 +141,7 @@ class AddEditDivisionViewModel(
         }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditDivisionEvent.NavigateBack)
     }
@@ -176,11 +175,10 @@ class AddEditDivisionViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            dialogState = AddEditDivisionState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.INFO,
-                                dialogIntention = DialogIntention.GENERIC,
-                                title = "No Semester Found",
-                                message = edu.watumull.presencify.core.presentation.UiText.DynamicString("No semester found with the selected criteria. Please check your inputs.")
+                                title = UiText.DynamicString("No Semester Found"),
+                                message = UiText.DynamicString("No semester found with the selected criteria. Please check your inputs.")
                             )
                         )
                     }
@@ -190,10 +188,9 @@ class AddEditDivisionViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditDivisionState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Finding Semester",
+                            title = UiText.DynamicString("Error Finding Semester"),
                             message = error.toUiText()
                         )
                     )
@@ -263,10 +260,9 @@ class AddEditDivisionViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditDivisionState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Division" else "Error Adding Division",
+                            title = UiText.DynamicString(if (state.isEditMode) "Error Updating Division" else "Error Adding Division"),
                             message = error.toUiText()
                         )
                     )
@@ -274,4 +270,3 @@ class AddEditDivisionViewModel(
             }
     }
 }
-

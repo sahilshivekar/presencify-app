@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AdminLoginRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
 ) {
@@ -17,7 +17,7 @@ fun AdminLoginRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is AdminLoginEvent.NavigateBack -> onBackButtonClick()
+            is AdminLoginEvent.NavigateBack -> onNavigateBack()
             is AdminLoginEvent.NavigateToHome -> onNavigateToHome()
             is AdminLoginEvent.NavigateToForgotPassword -> onNavigateToForgotPassword()
         }

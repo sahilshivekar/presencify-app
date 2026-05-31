@@ -7,8 +7,7 @@ import edu.watumull.presencify.core.domain.enums.RoomType
 import kotlinx.datetime.LocalTime
 
 sealed interface SearchRoomAction {
-    data object BackButtonClick : SearchRoomAction
-    data object DismissDialog : SearchRoomAction
+    data object NavigateBack : SearchRoomAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchRoomAction

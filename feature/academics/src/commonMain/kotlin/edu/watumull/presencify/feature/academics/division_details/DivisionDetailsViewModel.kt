@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -43,15 +45,14 @@ class DivisionDetailsViewModel(
 
     override fun handleAction(action: DivisionDetailsAction) {
         when (action) {
-            is DivisionDetailsAction.BackButtonClick -> sendEvent(DivisionDetailsEvent.NavigateBack)
+            is DivisionDetailsAction.NavigateBack -> sendEvent(DivisionDetailsEvent.NavigateBack)
             is DivisionDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is DivisionDetailsAction.RemoveDivisionClick -> updateState {
                 it.copy(
-                    dialogState = DivisionDetailsState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_DIVISION,
-                        title = "Remove Division",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
+                        title = UiText.DynamicString("Remove Division"),
+                        message = UiText.DynamicString(
                             "Are you sure you want to remove this semester? This will also remove all associated batches"
                         )
                     )
@@ -85,10 +86,9 @@ class DivisionDetailsViewModel(
                 updateState {
                     it.copy(
                         isRemovingDivision = false,
-                        dialogState = DivisionDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Division",
+                            title = UiText.DynamicString("Error Removing Division"),
                             message = error.toUiText()
                         )
                     )

@@ -30,10 +30,9 @@ import edu.watumull.presencify.core.presentation.UiConstants
 fun AddEditBatchScreen(
     state: AddEditBatchState,
     onAction: (AddEditBatchAction) -> Unit,
-    onConfirmNavigateBack: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditBatchAction.BackButtonClick) },
+        backPress = { onAction(AddEditBatchAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Batch" else "Add Batch",
     ) { paddingValues ->
         Column(
@@ -212,16 +211,10 @@ fun AddEditBatchScreen(
     // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES -> onConfirmNavigateBack()
-                    DialogIntention.GENERIC -> onAction(AddEditBatchAction.DismissDialog)
-                }
-            },
+            onConfirm = { onAction(AddEditBatchAction.ConfirmNavigateBack) },
             onDismiss = { onAction(AddEditBatchAction.DismissDialog) }
         )
     }

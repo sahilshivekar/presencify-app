@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
@@ -79,10 +80,10 @@ class GroupPhotoScanViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            dialogState = GroupPhotoScanState.DialogState(
-                                dialogType = DialogType.SUCCESS, // 🔥 always show dialog
-                                title = "Scan Result",
-                                message = UiText.DynamicString(message)
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Scan Result"),
+                                message = UiText.DynamicString(message),
+                                dialogType = DialogType.SUCCESS
                             )
                         )
                     }
@@ -91,10 +92,10 @@ class GroupPhotoScanViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            dialogState = GroupPhotoScanState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Unable to submit",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Unable to submit"),
                                 message = error.toUiText(),
+                                dialogType = DialogType.ERROR
                             )
                         )
                     }

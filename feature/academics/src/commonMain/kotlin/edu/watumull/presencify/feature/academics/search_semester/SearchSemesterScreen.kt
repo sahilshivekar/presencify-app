@@ -62,7 +62,7 @@ fun SearchSemesterScreen(
     val scope = rememberCoroutineScope()
 
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchSemesterAction.BackButtonClick) },
+        backPress = { onAction(SearchSemesterAction.NavigateBack) },
         topBarTitle = "Search Semesters",
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -108,25 +108,6 @@ fun SearchSemesterScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchSemesterAction.DismissDialog)
-            }
-        )
     }
 }
 

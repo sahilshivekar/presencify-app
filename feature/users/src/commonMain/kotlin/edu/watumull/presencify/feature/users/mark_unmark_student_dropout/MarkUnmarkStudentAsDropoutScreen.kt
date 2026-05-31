@@ -31,7 +31,7 @@ fun MarkUnmarkStudentAsDropoutScreen(
     onAction: (MarkUnmarkStudentAsDropoutAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(MarkUnmarkStudentAsDropoutAction.BackButtonClick) },
+        backPress = { onAction(MarkUnmarkStudentAsDropoutAction.NavigateBack) },
         topBarTitle = "Mark/Unmark Student as Dropout",
     ) { paddingValues ->
         when (state.viewState) {
@@ -57,17 +57,9 @@ fun MarkUnmarkStudentAsDropoutScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(MarkUnmarkStudentAsDropoutAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(MarkUnmarkStudentAsDropoutAction.DismissDialog)
             }

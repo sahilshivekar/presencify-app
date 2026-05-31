@@ -3,8 +3,9 @@ package edu.watumull.presencify.feature.academics.add_edit_batch
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 
 sealed interface AddEditBatchAction {
-    data object BackButtonClick : AddEditBatchAction
+    data object NavigateBack : AddEditBatchAction
     data object DismissDialog : AddEditBatchAction
+    data object ConfirmNavigateBack : AddEditBatchAction
     data object FindDivisionsClick : AddEditBatchAction
     data object SubmitClick : AddEditBatchAction
 

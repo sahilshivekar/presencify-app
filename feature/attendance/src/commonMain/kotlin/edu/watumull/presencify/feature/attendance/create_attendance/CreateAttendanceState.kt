@@ -1,8 +1,8 @@
 package edu.watumull.presencify.feature.attendance.create_attendance
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.datetime.LocalDate
 
 data class CreateAttendanceState(
@@ -24,11 +24,4 @@ data class CreateAttendanceState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val title: String = "",
-        val message: UiText = UiText.DynamicString("")
-    )
 }

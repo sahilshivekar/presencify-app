@@ -45,7 +45,7 @@ fun MarkAttendanceScreen(
     onAction: (MarkAttendanceAction) -> Unit
 ) {
     PresencifyScaffold(
-        backPress = { onAction(MarkAttendanceAction.BackButtonClick) },
+        backPress = { onAction(MarkAttendanceAction.NavigateBack) },
         topBarTitle = "Mark Attendance",
         actions = {
             if (state.viewState == MarkAttendanceState.ViewState.Content && state.attendance != null) {
@@ -88,7 +88,7 @@ fun MarkAttendanceScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.error
                             )
-                            Button(onClick = { onAction(MarkAttendanceAction.BackButtonClick) }) {
+                            Button(onClick = { onAction(MarkAttendanceAction.NavigateBack) }) {
                                 Text("Go Back")
                             }
                         }

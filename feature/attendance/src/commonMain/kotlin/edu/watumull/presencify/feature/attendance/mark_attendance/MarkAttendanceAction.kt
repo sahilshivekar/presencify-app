@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.attendance.mark_attendance
 
 sealed interface MarkAttendanceAction {
-    data object BackButtonClick : MarkAttendanceAction
+    data object NavigateBack : MarkAttendanceAction
     data object DynamicQRClick : MarkAttendanceAction
     data object GroupPhotoScanClick : MarkAttendanceAction
     data object ShareAttendanceSummary : MarkAttendanceAction

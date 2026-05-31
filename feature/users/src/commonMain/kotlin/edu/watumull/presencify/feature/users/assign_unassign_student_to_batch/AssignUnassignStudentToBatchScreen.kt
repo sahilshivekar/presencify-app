@@ -35,7 +35,7 @@ fun AssignUnassignStudentToBatchScreen(
     onAction: (AssignUnassignStudentToBatchAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AssignUnassignStudentToBatchAction.BackButtonClick) },
+        backPress = { onAction(AssignUnassignStudentToBatchAction.NavigateBack) },
         topBarTitle = "Assign/Unassign Student to Batch",
     ) { paddingValues ->
         when (state.viewState) {
@@ -61,17 +61,9 @@ fun AssignUnassignStudentToBatchScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(AssignUnassignStudentToBatchAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(AssignUnassignStudentToBatchAction.DismissDialog)
             }

@@ -5,6 +5,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsBranch
@@ -38,11 +40,10 @@ class LinkUnlinkCourseViewModel(
                     updateState {
                         it.copy(
                             areBranchesLoading = false,
-                            dialogState = LinkUnlinkCourseState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -66,7 +67,7 @@ class LinkUnlinkCourseViewModel(
 
     override fun handleAction(action: LinkUnlinkCourseAction) {
         when (action) {
-            is LinkUnlinkCourseAction.BackButtonClick -> {
+            is LinkUnlinkCourseAction.NavigateBack -> {
                 sendEvent(LinkUnlinkCourseEvent.NavigateBack)
             }
 

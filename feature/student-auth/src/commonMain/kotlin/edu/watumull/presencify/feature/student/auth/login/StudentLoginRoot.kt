@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun StudentLoginRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
 ) {
@@ -17,7 +17,7 @@ fun StudentLoginRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is StudentLoginEvent.NavigateBack -> onBackButtonClick()
+            is StudentLoginEvent.NavigateBack -> onNavigateBack()
             is StudentLoginEvent.NavigateToHome -> onNavigateToHome()
             is StudentLoginEvent.NavigateToForgotPassword -> onNavigateToForgotPassword()
         }

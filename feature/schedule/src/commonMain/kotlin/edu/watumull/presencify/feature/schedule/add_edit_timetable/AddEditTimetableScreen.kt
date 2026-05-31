@@ -25,6 +25,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMe
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
@@ -38,7 +39,7 @@ fun AddEditTimetableScreen(
     onAction: (AddEditTimetableAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditTimetableAction.BackButtonClick) },
+        backPress = { onAction(AddEditTimetableAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Timetable" else "Add Timetable",
     ) { paddingValues ->
         when (state.viewState) {
@@ -64,12 +65,11 @@ fun AddEditTimetableScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
+            dialogType = dialogState.dialogType,
             onConfirm = {
-                onAction(AddEditTimetableAction.DismissDialog)
+                onAction(AddEditTimetableAction.ConfirmNavigateBack)
             },
             onDismiss = {
                 onAction(AddEditTimetableAction.DismissDialog)

@@ -24,7 +24,6 @@ fun BranchDetailsRoot(
     BranchDetailsScreen(
         state = state,
         onAction = viewModel::trySendAction,
-        onConfirmRemove = viewModel::confirmRemoveBranch
     )
 }
 

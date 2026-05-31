@@ -35,7 +35,7 @@ fun AssignUnassignStudentToDivisionScreen(
     onAction: (AssignUnassignStudentToDivisionAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AssignUnassignStudentToDivisionAction.BackButtonClick) },
+        backPress = { onAction(AssignUnassignStudentToDivisionAction.NavigateBack) },
         topBarTitle = "Assign/Unassign Student to Division",
     ) { paddingValues ->
         when (state.viewState) {
@@ -61,17 +61,9 @@ fun AssignUnassignStudentToDivisionScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(AssignUnassignStudentToDivisionAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(AssignUnassignStudentToDivisionAction.DismissDialog)
             }

@@ -30,10 +30,9 @@ import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRol
 fun BranchDetailsScreen(
     state: BranchDetailsState,
     onAction: (BranchDetailsAction) -> Unit,
-    onConfirmRemove: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(BranchDetailsAction.BackButtonClick) },
+        backPress = { onAction(BranchDetailsAction.NavigateBack) },
         topBarTitle = "Branch Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -110,16 +109,10 @@ fun BranchDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_BRANCH -> onConfirmRemove()
-                    DialogIntention.GENERIC -> onAction(BranchDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(BranchDetailsAction.ConfirmRemoveBranch) },
             onDismiss = { onAction(BranchDetailsAction.DismissDialog) }
         )
     }

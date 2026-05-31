@@ -1,9 +1,9 @@
 package edu.watumull.presencify.feature.users.add_edit_teacher
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.TeacherRole
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class AddEditTeacherState(
     val viewState: ViewState = ViewState.Content,
@@ -45,18 +45,5 @@ data class AddEditTeacherState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
-    CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
 }
 

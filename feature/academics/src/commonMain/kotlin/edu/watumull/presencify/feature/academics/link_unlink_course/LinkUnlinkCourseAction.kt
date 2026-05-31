@@ -4,7 +4,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 
 sealed interface LinkUnlinkCourseAction {
-    data object BackButtonClick : LinkUnlinkCourseAction
+    data object NavigateBack : LinkUnlinkCourseAction
     data object DismissDialog : LinkUnlinkCourseAction
 
     data class SelectBranch(val branch: Branch?) : LinkUnlinkCourseAction

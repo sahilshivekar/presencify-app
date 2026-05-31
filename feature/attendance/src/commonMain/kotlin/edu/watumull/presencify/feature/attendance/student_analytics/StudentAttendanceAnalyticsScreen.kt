@@ -73,7 +73,7 @@ fun StudentAttendanceAnalyticsScreen(
 ) {
     val userRole = LocalUserRole.current
     PresencifyScaffold(
-        backPress = { onAction(StudentAttendanceAnalyticsAction.BackButtonClick) },
+        backPress = { onAction(StudentAttendanceAnalyticsAction.NavigateBack) },
         topBarTitle = if (userRole == UserRole.STUDENT) null else "Student Attendance Analytics",
     ) { paddingValues ->
         when (state.viewState) {
@@ -99,17 +99,9 @@ fun StudentAttendanceAnalyticsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic confirmation
-                    }
-                }
-            },
             onDismiss = {
                 onAction(StudentAttendanceAnalyticsAction.DismissDialog)
             }

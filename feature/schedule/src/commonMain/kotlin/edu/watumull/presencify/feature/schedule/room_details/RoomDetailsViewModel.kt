@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.schedule.room_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
@@ -44,56 +45,55 @@ class RoomDetailsViewModel(
 
     override fun handleAction(action: RoomDetailsAction) {
         when (action) {
-            is RoomDetailsAction.BackButtonClick -> sendEvent(RoomDetailsEvent.NavigateBack)
+            is RoomDetailsAction.NavigateBack -> sendEvent(RoomDetailsEvent.NavigateBack)
             is RoomDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
-            is RoomDetailsAction.RemoveRoomClick -> updateState {
-                it.copy(
-                    dialogState = RoomDetailsState.DialogState(
-                        dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_ROOM,
-                        title = "Remove Room",
-                        message = UiText.DynamicString(
-                            "Are you sure you want to remove ${state.room?.roomNumber ?: "this room"}?"
-                        )
-                    )
-                )
-            }
-            is RoomDetailsAction.ConfirmRemoveRoom -> {
-                viewModelScope.launch {
-                    removeRoom()
-                }
-            }
+            is RoomDetailsAction.RemoveRoomClick -> handleRemoveRoom()
+            is RoomDetailsAction.ConfirmRemoveRoom -> confirmRemoveRoom()
             is RoomDetailsAction.EditRoomClick -> sendEvent(RoomDetailsEvent.NavigateToEditRoom(state.roomId))
         }
     }
 
-    private suspend fun removeRoom() {
-        val roomId = state.room?.id ?: return
+    private fun handleRemoveRoom() {
+        updateState { it.copy(
+            dialogState = DialogState(
+                dialogType = DialogType.CONFIRM_RISKY_ACTION,
+                title = UiText.DynamicString("Remove Room"),
+                message = UiText.DynamicString("Are you sure you want to remove ${state.room?.roomNumber ?: "this room"}?")
+            )
+        ) }
+    }
 
-        updateState { it.copy(isRemovingRoom = true, dialogState = null) }
+    private fun confirmRemoveRoom() {
+        updateState { it.copy(dialogState = null) }
+        removeRoom()
+    }
 
-        roomRepository.removeRoom(roomId)
-            .onSuccess {
-                updateState { it.copy(isRemovingRoom = false) }
-                viewModelScope.launch {
+    private fun removeRoom() {
+        viewModelScope.launch {
+            val roomId = state.room?.id ?: return@launch
+
+            updateState { it.copy(isRemovingRoom = true) }
+
+            roomRepository.removeRoom(roomId)
+                .onSuccess {
+                    updateState { it.copy(isRemovingRoom = false) }
                     SnackbarController.sendEvent(
                         SnackbarEvent(message = "Room removed successfully")
                     )
+                    sendEvent(RoomDetailsEvent.NavigateBack)
                 }
-                sendEvent(RoomDetailsEvent.NavigateBack)
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        isRemovingRoom = false,
-                        dialogState = RoomDetailsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Room",
-                            message = error.toUiText()
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isRemovingRoom = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = UiText.DynamicString("Error Removing Room"),
+                                message = error.toUiText()
+                            )
                         )
-                    )
+                    }
                 }
-            }
+        }
     }
 }

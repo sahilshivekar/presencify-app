@@ -54,12 +54,8 @@ class SearchBatchViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchBatchState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchBatchState.ViewState.Error(error.toUiText()),
+                    isLoadingBatches = false
                 )
             }
         },
@@ -129,12 +125,7 @@ class SearchBatchViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchBatchState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchBatchState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -172,12 +163,7 @@ class SearchBatchViewModel(
                     updateState {
                         it.copy(
                             areDivisionsLoading = false,
-                            dialogState = SearchBatchState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchBatchState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -195,13 +181,10 @@ class SearchBatchViewModel(
     override fun handleAction(action: SearchBatchAction) {
         when (action) {
 
-            is SearchBatchAction.BackButtonClick -> {
+            is SearchBatchAction.NavigateBack -> {
                 sendEvent(SearchBatchEvent.NavigateBack)
             }
 
-            is SearchBatchAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchBatchAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

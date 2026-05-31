@@ -3,11 +3,13 @@ package edu.watumull.presencify.feature.users.teacher_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
 import edu.watumull.presencify.core.domain.repository.teacher_auth.TeacherAuthRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -59,7 +61,7 @@ class TeacherDetailsViewModel(
 
     override fun handleAction(action: TeacherDetailsAction) {
         when (action) {
-            is TeacherDetailsAction.BackButtonClick -> {
+            is TeacherDetailsAction.NavigateBack -> {
                 sendEvent(TeacherDetailsEvent.NavigateBack)
             }
 
@@ -96,24 +98,11 @@ class TeacherDetailsViewModel(
             }
 
             is TeacherDetailsAction.RemoveTeacherClick -> {
-                updateState {
-                    it.copy(
-                        dialogState = TeacherDetailsState.DialogState(
-                            dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                            dialogIntention = DialogIntention.CONFIRM_REMOVE_TEACHER,
-                            title = "Remove Teacher",
-                            message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
-                                "Are you sure you want to remove ${state.teacher?.firstName} ${state.teacher?.lastName}?"
-                            )
-                        )
-                    )
-                }
+                handleRemoveTeacher()
             }
 
             is TeacherDetailsAction.ConfirmRemoveTeacher -> {
-                viewModelScope.launch {
-                    removeTeacher()
-                }
+                confirmRemoveTeacher()
             }
 
             is TeacherDetailsAction.EditTeacherDetailsClick -> {
@@ -173,10 +162,9 @@ class TeacherDetailsViewModel(
                         isUpdatingImage = false,
                         isImageDialogVisible = false,
                         newUploadedImageBytes = null,
-                        dialogState = TeacherDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Updating Image",
+                            title = UiText.DynamicString("Error Updating Image"),
                             message = error.toUiText()
                         )
                     )
@@ -211,10 +199,9 @@ class TeacherDetailsViewModel(
                         isRemovingImage = false,
                         isImageDialogVisible = false,
                         newUploadedImageBytes = null,
-                        dialogState = TeacherDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Image",
+                            title = UiText.DynamicString("Error Removing Image"),
                             message = error.toUiText()
                         )
                     )
@@ -223,37 +210,51 @@ class TeacherDetailsViewModel(
     }
 
 
-    private suspend fun removeTeacher() {
-        val teacherId = state.teacher?.id ?: return
-
+    private fun handleRemoveTeacher() {
         updateState {
             it.copy(
-                isRemovingTeacher = true,
-                dialogState = null
+                dialogState = DialogState(
+                    dialogType = DialogType.CONFIRM_RISKY_ACTION,
+                    title = UiText.DynamicString("Remove Teacher"),
+                    message = UiText.DynamicString("Are you sure you want to remove ${state.teacher?.firstName} ${state.teacher?.lastName}?")
+                )
             )
         }
-        teacherRepository.removeTeacher(teacherId)
-            .onSuccess {
-                updateState { it.copy(isRemovingTeacher = false) }
-                viewModelScope.launch {
+    }
+
+    private fun confirmRemoveTeacher() {
+        updateState { it.copy(dialogState = null) }
+        removeTeacher()
+    }
+
+    // ...existing code...
+
+    private fun removeTeacher() {
+        viewModelScope.launch {
+            val teacherId = state.teacher?.id ?: return@launch
+
+            updateState { it.copy(isRemovingTeacher = true) }
+
+            teacherRepository.removeTeacher(teacherId)
+                .onSuccess {
+                    updateState { it.copy(isRemovingTeacher = false) }
                     SnackbarController.sendEvent(
                         SnackbarEvent(message = "Teacher removed successfully")
                     )
+                    sendEvent(TeacherDetailsEvent.NavigateBack)
                 }
-                sendEvent(TeacherDetailsEvent.NavigateBack)
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        isRemovingTeacher = false,
-                        dialogState = TeacherDetailsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Teacher",
-                            message = error.toUiText()
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isRemovingTeacher = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = UiText.DynamicString("Error Removing Teacher"),
+                                message = error.toUiText()
+                            )
                         )
-                    )
+                    }
                 }
-            }
+        }
     }
 }

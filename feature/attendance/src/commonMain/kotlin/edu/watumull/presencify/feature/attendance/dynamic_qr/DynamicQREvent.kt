@@ -10,5 +10,5 @@ sealed interface DynamicQRAction {
     data object StopButtonClick : DynamicQRAction
     data object ShowQRClick : DynamicQRAction
     data object NavigateToDetails : DynamicQRAction
-    data object BackButtonClick : DynamicQRAction
+    data object NavigateBack : DynamicQRAction
 }

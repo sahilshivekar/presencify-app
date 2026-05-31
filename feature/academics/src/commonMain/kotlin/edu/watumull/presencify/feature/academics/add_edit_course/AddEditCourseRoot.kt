@@ -21,7 +21,6 @@ fun AddEditCourseRoot(
 
     AddEditCourseScreen(
         state = state,
-        onAction = viewModel::trySendAction,
-        onConfirmNavigateBack = viewModel::confirmNavigateBack
+        onAction = viewModel::trySendAction
     )
 }

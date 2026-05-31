@@ -44,10 +44,9 @@ import edu.watumull.presencify.feature.users.add_edit_student.StudentFormStep.PE
 fun AddEditStudentScreen(
     state: AddEditStudentState,
     onAction: (AddEditStudentAction) -> Unit,
-    onConfirmNavigateBack: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditStudentAction.BackButtonClick) },
+        backPress = { onAction(AddEditStudentAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Student" else "Add Student",
     ) { paddingValues ->
         Column(
@@ -98,19 +97,11 @@ fun AddEditStudentScreen(
     // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
             onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES -> {
-                        onConfirmNavigateBack()
-                    }
-                    DialogIntention.GENERIC -> {
-                        onAction(AddEditStudentAction.DismissDialog)
-                    }
-                }
+                onAction(AddEditStudentAction.ConfirmNavigateBack)
             },
             onDismiss = {
                 onAction(AddEditStudentAction.DismissDialog)

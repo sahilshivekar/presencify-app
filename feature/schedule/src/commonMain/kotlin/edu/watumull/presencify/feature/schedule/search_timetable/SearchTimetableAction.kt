@@ -4,8 +4,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 
 sealed interface SearchTimetableAction {
-    data object BackButtonClick : SearchTimetableAction
-    data object DismissDialog : SearchTimetableAction
+    data object NavigateBack : SearchTimetableAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchTimetableAction

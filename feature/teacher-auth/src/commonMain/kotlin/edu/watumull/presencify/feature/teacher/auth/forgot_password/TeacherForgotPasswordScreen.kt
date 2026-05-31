@@ -47,10 +47,9 @@ fun TeacherForgotPasswordScreen(
     // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message!!.asString(),
             onDismiss = { onAction(TeacherForgotPasswordAction.DismissDialog) }
         )
     }

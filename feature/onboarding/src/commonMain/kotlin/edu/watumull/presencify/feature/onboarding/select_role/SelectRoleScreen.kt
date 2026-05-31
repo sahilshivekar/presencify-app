@@ -30,7 +30,6 @@ import edu.watumull.presencify.core.designsystem.baseline_admin_panel_settings_2
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyLoadingDialog
 import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
@@ -65,23 +64,6 @@ fun SelectRoleScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message,
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {}
-                }
-            },
-            onDismiss = {
-                onAction(SelectRoleAction.DismissDialog)
-            }
-        )
     }
 }
 

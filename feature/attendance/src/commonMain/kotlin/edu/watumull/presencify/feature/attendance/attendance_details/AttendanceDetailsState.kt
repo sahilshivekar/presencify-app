@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.attendance.attendance_details
 import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class AttendanceDetailsState(
     val viewState: ViewState = ViewState.Loading,
@@ -23,11 +24,4 @@ data class AttendanceDetailsState(
         data object Content : ViewState
         data class Error(val message: UiText) : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val message: UiText,
-        val onConfirm: () -> Unit = {},
-        val onDismiss: () -> Unit = {}
-    )
 }

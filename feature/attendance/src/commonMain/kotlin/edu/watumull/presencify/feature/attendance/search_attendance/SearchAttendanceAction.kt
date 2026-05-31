@@ -8,8 +8,7 @@ import edu.watumull.presencify.core.domain.model.academics.Division
 import kotlinx.datetime.LocalDate
 
 sealed interface SearchAttendanceAction {
-    data object BackButtonClick : SearchAttendanceAction
-    data object DismissDialog : SearchAttendanceAction
+    data object NavigateBack : SearchAttendanceAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchAttendanceAction

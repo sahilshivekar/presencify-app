@@ -34,7 +34,7 @@ fun AssignUnassignStudentToSemesterScreen(
     onAction: (AssignUnassignStudentToSemesterAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AssignUnassignStudentToSemesterAction.BackButtonClick) },
+        backPress = { onAction(AssignUnassignStudentToSemesterAction.NavigateBack) },
         topBarTitle = "Assign/Unassign Student to Semester",
     ) { paddingValues ->
         when (state.viewState) {
@@ -60,17 +60,9 @@ fun AssignUnassignStudentToSemesterScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(AssignUnassignStudentToSemesterAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(AssignUnassignStudentToSemesterAction.DismissDialog)
             }

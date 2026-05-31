@@ -16,21 +16,21 @@ fun NavGraphBuilder.adminMgtNavGraph(
 
     composableWithSlideTransitions<AdminMgtRoutes.AddAdmin> {
         AddAdminRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToAdminDetails = onNavigateToAdminDetails
         )
     }
 
     composableWithSlideTransitions<AdminMgtRoutes.UpdateAdminPassword> {
         UpdatePasswordRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToAdminDetails = onNavigateToAdminDetails
         )
     }
 
     composableWithSlideTransitions<AdminMgtRoutes.AdminDetails> {
         AdminDetailsRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToUpdatePassword = onNavigateToUpdatePassword,
             onNavigateToVerifyCode = onNavigateToVerifyCode,
             onNavigateToAddAdmin = onNavigateToAddAdmin,

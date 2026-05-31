@@ -1,24 +1,12 @@
 package edu.watumull.presencify.feature.attendance.add_student_biometrics
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class AddStudentBiometricsState(
     val studentId: String = "",
     val images: List<ByteArray> = emptyList(),
     val isLoading: Boolean = false,
     val dialogState: DialogState? = null
-) {
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
-}
+)
 

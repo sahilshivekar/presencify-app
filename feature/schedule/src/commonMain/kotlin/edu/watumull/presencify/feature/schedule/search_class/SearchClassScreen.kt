@@ -52,7 +52,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
 import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
@@ -77,7 +76,7 @@ fun SearchClassScreen(
     val scope = rememberCoroutineScope()
 
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchClassAction.BackButtonClick) },
+        backPress = { onAction(SearchClassAction.NavigateBack) },
         topBarTitle = if(state.intention == SearchClassIntention.CREATE_ATTENDANCE_SHEET) "Select Class" else "Search Classes",
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -110,25 +109,6 @@ fun SearchClassScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchClassAction.DismissDialog)
-            }
-        )
     }
 }
 

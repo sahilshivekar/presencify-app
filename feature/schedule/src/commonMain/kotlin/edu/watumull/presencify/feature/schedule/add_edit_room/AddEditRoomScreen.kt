@@ -34,7 +34,7 @@ fun AddEditRoomScreen(
     onAction: (AddEditRoomAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditRoomAction.BackButtonClick) },
+        backPress = { onAction(AddEditRoomAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Room" else "Add Room",
     ) { paddingValues ->
         when (state.viewState) {
@@ -60,16 +60,11 @@ fun AddEditRoomScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
+            dialogType = dialogState.dialogType,
             onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(AddEditRoomAction.DismissDialog)
-                    }
-                }
+                onAction(AddEditRoomAction.ConfirmNavigateBack)
             },
             onDismiss = {
                 onAction(AddEditRoomAction.DismissDialog)

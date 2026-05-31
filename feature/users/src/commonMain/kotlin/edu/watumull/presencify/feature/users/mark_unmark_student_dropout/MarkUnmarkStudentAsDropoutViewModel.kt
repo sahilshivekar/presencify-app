@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.users.mark_unmark_student_dropout
 import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicStartYear
@@ -13,7 +14,7 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
 ) {
     override fun handleAction(action: MarkUnmarkStudentAsDropoutAction) {
         when (action) {
-            MarkUnmarkStudentAsDropoutAction.BackButtonClick -> {
+            MarkUnmarkStudentAsDropoutAction.NavigateBack -> {
                 sendEvent(MarkUnmarkStudentAsDropoutEvent.NavigateBack)
             }
 
@@ -78,16 +79,15 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
         if (!startYearValidation.successful || !endYearValidation.successful || yearRelationError != null) {
             updateState {
                 it.copy(
-                    dialogState = MarkUnmarkStudentAsDropoutState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Validation Error",
+                    dialogState = DialogState(
+                        title = UiText.DynamicString("Validation Error"),
                         message = UiText.DynamicString(
                             startYearValidation.errorMessage
                                 ?: endYearValidation.errorMessage
                                 ?: yearRelationError
                                 ?: "Please fix the errors"
                         ),
-                        dialogIntention = DialogIntention.GENERIC
+                        dialogType = DialogType.ERROR,
                     )
                 )
             }

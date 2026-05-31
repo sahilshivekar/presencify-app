@@ -24,6 +24,5 @@ fun BatchDetailsRoot(
     BatchDetailsScreen(
         state = state,
         onAction = viewModel::trySendAction,
-        onConfirmRemove = viewModel::confirmRemoveBatch
     )
 }

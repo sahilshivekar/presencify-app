@@ -1,8 +1,7 @@
 package edu.watumull.presencify.feature.academics.search_scheme
 
 sealed interface SearchSchemeAction {
-    data object BackButtonClick : SearchSchemeAction
-    data object DismissDialog : SearchSchemeAction
+    data object NavigateBack : SearchSchemeAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchSchemeAction

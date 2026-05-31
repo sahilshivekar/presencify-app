@@ -3,16 +3,19 @@ package edu.watumull.presencify.feature.academics.add_edit_branch
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsBranchAbbreviation
 import edu.watumull.presencify.core.presentation.validation.validateAsBranchName
+import edu.watumull.presencify.feature.academics.add_edit_batch.AddEditBatchEvent
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 
@@ -49,10 +52,9 @@ class AddEditBranchViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditBranchState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Branch",
+                            title = UiText.DynamicString("Error Loading Branch"),
                             message = error.toUiText()
                         )
                     )
@@ -62,7 +64,8 @@ class AddEditBranchViewModel(
 
     override fun handleAction(action: AddEditBranchAction) {
         when (action) {
-            is AddEditBranchAction.BackButtonClick -> handleBackNavigation()
+            is AddEditBranchAction.NavigateBack -> handleBackNavigation()
+            is AddEditBranchAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditBranchAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AddEditBranchAction.UpdateName -> updateState { it.copy(name = action.name, nameError = null) }
             is AddEditBranchAction.UpdateAbbreviation -> updateState { it.copy(abbreviation = action.abbreviation, abbreviationError = null) }
@@ -78,11 +81,10 @@ class AddEditBranchViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditBranchState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
                     )
                 )
             }
@@ -91,7 +93,7 @@ class AddEditBranchViewModel(
         }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditBranchEvent.NavigateBack)
     }
@@ -143,10 +145,9 @@ class AddEditBranchViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditBranchState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Branch" else "Error Adding Branch",
+                            title = UiText.DynamicString(if (state.isEditMode) "Error Updating Branch" else "Error Adding Branch"),
                             message = error.toUiText()
                         )
                     )

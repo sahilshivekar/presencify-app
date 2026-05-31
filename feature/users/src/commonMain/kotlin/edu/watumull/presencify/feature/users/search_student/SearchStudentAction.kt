@@ -8,11 +8,9 @@ import edu.watumull.presencify.core.domain.model.academics.Division
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 
 sealed interface SearchStudentAction {
-    data object BackButtonClick : SearchStudentAction
-    data object DismissDialog : SearchStudentAction
+    data object NavigateBack : SearchStudentAction
 
-
-    // Search & Refresh
+    // ...existing code...
     data class UpdateSearchQuery(val query: String) : SearchStudentAction
     data object Search : SearchStudentAction
     data object Refresh : SearchStudentAction

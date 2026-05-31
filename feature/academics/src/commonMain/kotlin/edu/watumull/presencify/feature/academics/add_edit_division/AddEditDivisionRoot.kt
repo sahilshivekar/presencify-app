@@ -21,7 +21,6 @@ fun AddEditDivisionRoot(
 
     AddEditDivisionScreen(
         state = state,
-        onAction = viewModel::trySendAction,
-        onConfirmNavigateBack = viewModel::confirmNavigateBack
+        onAction = viewModel::trySendAction
     )
 }

@@ -158,11 +158,9 @@ fun DefaultersScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = { onAction(DefaultersAction.DismissDialog) },
             onDismiss = { onAction(DefaultersAction.DismissDialog) }
         )
     }

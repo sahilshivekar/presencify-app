@@ -3,12 +3,14 @@ package edu.watumull.presencify.feature.users.student_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student.StudentDropoutRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -80,10 +82,9 @@ class StudentDetailsViewModel(
                 updateState {
                     it.copy(
                         areDropoutDetailsLoading = false,
-                        dialogState = StudentDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Dropout Details",
+                            title = UiText.DynamicString("Error Loading Dropout Details"),
                             message = error.toUiText()
                         )
                     )
@@ -93,7 +94,7 @@ class StudentDetailsViewModel(
 
     override fun handleAction(action: StudentDetailsAction) {
         when (action) {
-            is StudentDetailsAction.BackButtonClick -> {
+            is StudentDetailsAction.NavigateBack -> {
                 sendEvent(StudentDetailsEvent.NavigateBack)
             }
 
@@ -130,24 +131,11 @@ class StudentDetailsViewModel(
             }
 
             is StudentDetailsAction.RemoveStudentClick -> {
-                updateState {
-                    it.copy(
-                        dialogState = StudentDetailsState.DialogState(
-                            dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                            dialogIntention = DialogIntention.CONFIRM_REMOVE_STUDENT,
-                            title = "Remove Student",
-                            message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
-                                "Are you sure you want to remove ${state.student?.firstName} ${state.student?.lastName}?"
-                            )
-                        )
-                    )
-                }
+                handleRemoveStudent()
             }
 
             is StudentDetailsAction.ConfirmRemoveStudent -> {
-                viewModelScope.launch {
-                    removeStudent()
-                }
+                confirmRemoveStudent()
             }
 
             is StudentDetailsAction.EditStudentDetailsClick -> {
@@ -204,10 +192,9 @@ class StudentDetailsViewModel(
                         isUpdatingImage = false,
                         isImageDialogVisible = false,
                         newUploadedImageBytes = null,
-                        dialogState = StudentDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Updating Image",
+                            title = UiText.DynamicString("Error Updating Image"),
                             message = error.toUiText()
                         )
                     )
@@ -242,10 +229,9 @@ class StudentDetailsViewModel(
                         isRemovingImage = false,
                         isImageDialogVisible = false,
                         newUploadedImageBytes = null,
-                        dialogState = StudentDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Image",
+                            title = UiText.DynamicString("Error Removing Image"),
                             message = error.toUiText()
                         )
                     )
@@ -254,38 +240,51 @@ class StudentDetailsViewModel(
     }
 
 
-    private suspend fun removeStudent() {
-        val studentId = state.student?.id ?: return
-
+    private fun handleRemoveStudent() {
         updateState {
             it.copy(
-                isRemovingStudent = true,
-                dialogState = null
+                dialogState = DialogState(
+                    dialogType = DialogType.CONFIRM_RISKY_ACTION,
+                    title = UiText.DynamicString("Remove Student"),
+                    message = UiText.DynamicString("Are you sure you want to remove ${state.student?.firstName} ${state.student?.lastName}?")
+                )
             )
         }
+    }
 
-        studentRepository.removeStudent(studentId)
-            .onSuccess {
-                updateState { it.copy(isRemovingStudent = false) }
-                viewModelScope.launch {
+    private fun confirmRemoveStudent() {
+        updateState { it.copy(dialogState = null) }
+        removeStudent()
+    }
+
+    // ...existing code...
+
+    private fun removeStudent() {
+        viewModelScope.launch {
+            val studentId = state.student?.id ?: return@launch
+
+            updateState { it.copy(isRemovingStudent = true) }
+
+            studentRepository.removeStudent(studentId)
+                .onSuccess {
+                    updateState { it.copy(isRemovingStudent = false) }
                     SnackbarController.sendEvent(
                         SnackbarEvent(message = "Student removed successfully")
                     )
+                    sendEvent(StudentDetailsEvent.NavigateBack)
                 }
-                sendEvent(StudentDetailsEvent.NavigateBack)
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        isRemovingStudent = false,
-                        dialogState = StudentDetailsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Student",
-                            message = error.toUiText()
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isRemovingStudent = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = UiText.DynamicString("Error Removing Student"),
+                                message = error.toUiText()
+                            )
                         )
-                    )
+                    }
                 }
-            }
+        }
     }
 }

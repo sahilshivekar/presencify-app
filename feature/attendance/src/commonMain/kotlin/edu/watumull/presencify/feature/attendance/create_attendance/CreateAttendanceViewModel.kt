@@ -8,6 +8,8 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
 import edu.watumull.presencify.core.domain.repository.schedule.ClassSessionRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceEvent.NavigateBack
@@ -46,10 +48,10 @@ class CreateAttendanceViewModel(
                     updateState {
                         it.copy(
                             viewState = CreateAttendanceState.ViewState.Error(error.toUiText()),
-                            dialogState = CreateAttendanceState.DialogState(
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
+                                message = error.toUiText(),
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText()
                             )
                         )
                     }
@@ -90,10 +92,10 @@ class CreateAttendanceViewModel(
                     updateState {
                         it.copy(
                             isCreatingAttendance = false,
-                            dialogState = CreateAttendanceState.DialogState(
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
+                                message = error.toUiText(),
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText()
                             )
                         )
                     }
@@ -103,7 +105,7 @@ class CreateAttendanceViewModel(
 
     override fun handleAction(action: CreateAttendanceAction) {
         when (action) {
-            CreateAttendanceAction.BackButtonClick -> {
+            CreateAttendanceAction.NavigateBack -> {
                 sendEvent(NavigateBack)
             }
 

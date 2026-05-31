@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -43,27 +45,25 @@ class BatchDetailsViewModel(
 
     override fun handleAction(action: BatchDetailsAction) {
         when (action) {
-            is BatchDetailsAction.BackButtonClick -> sendEvent(BatchDetailsEvent.NavigateBack)
+            is BatchDetailsAction.NavigateBack -> sendEvent(BatchDetailsEvent.NavigateBack)
             is BatchDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is BatchDetailsAction.RemoveBatchClick -> updateState {
                 it.copy(
-                    dialogState = BatchDetailsState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_BATCH,
-                        title = "Remove Batch",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
-                            "Are you sure you want to remove ${state.batch?.batchCode ?: "this batch"}?"
+                        title = UiText.DynamicString("Remove Batch"),
+                        message = UiText.DynamicString(
+                            "Are you sure you want to remove this batch? This action cannot be undone and all associated attendance records will also be removed."
                         )
                     )
                 )
             }
+            is BatchDetailsAction.ConfirmRemoveBatch -> {
+                viewModelScope.launch {
+                    removeBatch()
+                }
+            }
             is BatchDetailsAction.EditBatchClick -> sendEvent(BatchDetailsEvent.NavigateToEditBatch(state.batchId))
-        }
-    }
-
-    fun confirmRemoveBatch() {
-        viewModelScope.launch {
-            removeBatch()
         }
     }
 
@@ -86,10 +86,9 @@ class BatchDetailsViewModel(
                 updateState {
                     it.copy(
                         isRemovingBatch = false,
-                        dialogState = BatchDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Batch",
+                            title = UiText.DynamicString("Error Removing Batch"),
                             message = error.toUiText()
                         )
                     )

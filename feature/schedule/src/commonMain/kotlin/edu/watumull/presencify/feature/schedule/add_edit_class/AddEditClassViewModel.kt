@@ -14,6 +14,7 @@ import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import edu.watumull.presencify.core.domain.repository.schedule.TimetableRepository
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -103,11 +104,10 @@ class AddEditClassViewModel(
                     updateState {
                         it.copy(
                             isLoadingCourses = false,
-                            dialogState = AddEditClassState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
+                                title = UiText.DynamicString("Error"),
                                 message = UiText.DynamicString("Semester not found for this timetable"),
-                                dialogIntention = DialogIntention.GENERIC
                             )
                         )
                     }
@@ -117,11 +117,10 @@ class AddEditClassViewModel(
                 updateState {
                     it.copy(
                         isLoadingCourses = false,
-                        dialogState = AddEditClassState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            title = "Error",
+                            title = UiText.DynamicString("Error"),
                             message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
                         )
                     )
                 }
@@ -139,7 +138,8 @@ class AddEditClassViewModel(
                     )
                     // If in edit mode and a teacher is already selected, ensure we use the instance from availableTeachers
                     if (it.isEditMode && it.selectedTeacher != null) {
-                        val matchedTeacher = teachersWithCount.teachers.find { teacher -> teacher.id == it.selectedTeacher?.id }
+                        val matchedTeacher =
+                            teachersWithCount.teachers.find { teacher -> teacher.id == it.selectedTeacher?.id }
                         if (matchedTeacher != null) {
                             newState.copy(selectedTeacher = matchedTeacher)
                         } else {
@@ -199,7 +199,8 @@ class AddEditClassViewModel(
                                 )
                                 // If in edit mode and a batch is already selected, ensure we use the instance from availableBatches
                                 if (it.isEditMode && it.selectedBatch != null) {
-                                    val matchedBatch = batchesWithCount.batches.find { batch -> batch.id == it.selectedBatch?.id }
+                                    val matchedBatch =
+                                        batchesWithCount.batches.find { batch -> batch.id == it.selectedBatch?.id }
                                     if (matchedBatch != null) {
                                         newState.copy(selectedBatch = matchedBatch)
                                     } else {
@@ -280,11 +281,10 @@ class AddEditClassViewModel(
 
                 updateState {
                     it.copy(
-                        dialogState = AddEditClassState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            title = "Validation Error",
+                            title = UiText.DynamicString("Validation Error"),
                             message = UiText.DynamicString(errorMessage),
-                            dialogIntention = DialogIntention.GENERIC
                         )
                     )
                 }
@@ -344,11 +344,10 @@ class AddEditClassViewModel(
 
             updateState {
                 it.copy(
-                    dialogState = AddEditClassState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.ERROR,
-                        title = "Validation Error",
+                        title = UiText.DynamicString("Validation Error"),
                         message = UiText.DynamicString(errorMessage),
-                        dialogIntention = DialogIntention.GENERIC
                     )
                 )
             }
@@ -425,11 +424,10 @@ class AddEditClassViewModel(
                     updateState {
                         it.copy(
                             isSubmitting = false,
-                            dialogState = AddEditClassState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
                             )
                         )
                     }
@@ -439,13 +437,15 @@ class AddEditClassViewModel(
 
     override fun handleAction(action: AddEditClassAction) {
         when (action) {
-            is AddEditClassAction.BackButtonClick -> sendEvent(NavigateBack)
+            is AddEditClassAction.NavigateBack -> handleBackNavigation()
+            is AddEditClassAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditClassAction.DismissDialog -> updateState { it.copy(dialogState = null) }
 
             is AddEditClassAction.UpdateCourse -> {
                 val course = state.availableCourses.find { it.id == action.courseId }
                 updateState { it.copy(selectedCourse = course, selectedCourseError = null) }
             }
+
             is AddEditClassAction.ChangeCourseDropDownVisibility -> {
                 updateState { it.copy(isCourseDropdownOpen = action.isVisible) }
             }
@@ -454,6 +454,7 @@ class AddEditClassViewModel(
                 val teacher = state.availableTeachers.find { it.id == action.teacherId }
                 updateState { it.copy(selectedTeacher = teacher, selectedTeacherError = null) }
             }
+
             is AddEditClassAction.ChangeTeacherDropDownVisibility -> {
                 updateState { it.copy(isTeacherDropdownOpen = action.isVisible) }
             }
@@ -462,6 +463,7 @@ class AddEditClassViewModel(
                 val room = state.availableRooms.find { it.id == action.roomId }
                 updateState { it.copy(selectedRoom = room, selectedRoomError = null) }
             }
+
             is AddEditClassAction.ChangeRoomDropDownVisibility -> {
                 updateState { it.copy(isRoomDropdownOpen = action.isVisible) }
             }
@@ -470,6 +472,7 @@ class AddEditClassViewModel(
                 val batch = state.availableBatches.find { it.id == action.batchId }
                 updateState { it.copy(selectedBatch = batch) }
             }
+
             is AddEditClassAction.ChangeBatchDropDownVisibility -> {
                 updateState { it.copy(isBatchDropdownOpen = action.isVisible) }
             }
@@ -477,6 +480,7 @@ class AddEditClassViewModel(
             is AddEditClassAction.UpdateClassType -> {
                 updateState { it.copy(classType = action.classType, classTypeError = null) }
             }
+
             is AddEditClassAction.ChangeClassTypeDropDownVisibility -> {
                 updateState { it.copy(isClassTypeDropdownOpen = action.isVisible) }
             }
@@ -484,6 +488,7 @@ class AddEditClassViewModel(
             is AddEditClassAction.UpdateDayOfWeek -> {
                 updateState { it.copy(dayOfWeek = action.dayOfWeek, dayOfWeekError = null) }
             }
+
             is AddEditClassAction.ChangeDayOfWeekDropDownVisibility -> {
                 updateState { it.copy(isDayOfWeekDropdownOpen = action.isVisible) }
             }
@@ -510,5 +515,38 @@ class AddEditClassViewModel(
 
             is AddEditClassAction.SubmitClick -> submitClass()
         }
+    }
+
+    private fun handleBackNavigation() {
+        if (hasUnsavedChanges()) {
+            updateState {
+                it.copy(
+                    dialogState = DialogState(
+                        dialogType = DialogType.CONFIRM_NORMAL_ACTION,
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                    )
+                )
+            }
+        } else {
+            sendEvent(AddEditClassEvent.NavigateBack)
+        }
+    }
+
+    private fun confirmNavigateBack() {
+        updateState { it.copy(dialogState = null) }
+        sendEvent(AddEditClassEvent.NavigateBack)
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        return state.selectedCourse == null ||
+                state.selectedTeacher == null ||
+                state.selectedRoom == null ||
+                state.dayOfWeek == null ||
+                state.startTime == null ||
+                state.endTime == null ||
+                state.activeFrom == null ||
+                state.activeTill == null ||
+                state.classType == null
     }
 }

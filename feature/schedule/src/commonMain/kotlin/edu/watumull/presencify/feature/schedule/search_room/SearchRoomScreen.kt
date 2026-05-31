@@ -48,7 +48,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedBu
 import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
 import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
@@ -75,7 +74,7 @@ fun SearchRoomScreen(
     val scope = rememberCoroutineScope()
 
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchRoomAction.BackButtonClick) },
+        backPress = { onAction(SearchRoomAction.NavigateBack) },
         topBarTitle = "Search Rooms",
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -122,25 +121,6 @@ fun SearchRoomScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchRoomAction.DismissDialog)
-            }
-        )
     }
 }
 

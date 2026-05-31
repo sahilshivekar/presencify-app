@@ -62,7 +62,7 @@ fun SearchBatchScreen(
 
     val scope = rememberCoroutineScope()
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchBatchAction.BackButtonClick) },
+        backPress = { onAction(SearchBatchAction.NavigateBack) },
         topBarTitle = "Search Batches",
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -108,25 +108,6 @@ fun SearchBatchScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchBatchAction.DismissDialog)
-            }
-        )
     }
 }
 

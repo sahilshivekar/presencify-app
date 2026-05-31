@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -143,12 +144,10 @@ parentEmail: Optional string, must be a valid email format if provided.""".trimI
                         updateState {
                             it.copy(
                                 isSubmitting = false,
-                                dialogState = ImportStudentsState.DialogState(
-                                    isVisible = true,
+                                dialogState = DialogState(
                                     title = UiText.DynamicString("Import Failed"),
                                     message = error.toUiText(),
-                                    dialogType = DialogType.ERROR,
-                                    dialogIntention = ImportStudentsState.DialogIntention.GENERIC
+                                    dialogType = DialogType.ERROR
                                 )
                             )
                         }

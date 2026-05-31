@@ -22,7 +22,6 @@ fun AddEditTeacherRoot(
     AddEditTeacherScreen(
         state = state,
         onAction = viewModel::trySendAction,
-        onConfirmNavigateBack = viewModel::confirmNavigateBack
     )
 }
 

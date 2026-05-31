@@ -3,8 +3,9 @@ package edu.watumull.presencify.feature.academics.add_edit_division
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 
 sealed interface AddEditDivisionAction {
-    data object BackButtonClick : AddEditDivisionAction
+    data object NavigateBack : AddEditDivisionAction
     data object DismissDialog : AddEditDivisionAction
+    data object ConfirmNavigateBack : AddEditDivisionAction
     data object FindSemesterClick : AddEditDivisionAction
     data object SubmitClick : AddEditDivisionAction
 
@@ -17,4 +18,3 @@ sealed interface AddEditDivisionAction {
     data class ChangeSemesterNumberDropDownVisibility(val isVisible: Boolean) : AddEditDivisionAction
     data class ChangeBranchDropDownVisibility(val isVisible: Boolean) : AddEditDivisionAction
 }
-

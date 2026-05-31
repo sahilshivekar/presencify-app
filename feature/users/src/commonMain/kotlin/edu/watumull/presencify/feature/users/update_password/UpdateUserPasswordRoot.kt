@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun UpdateUserPasswordRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onNavigateToMyDetails: () -> Unit,
 ) {
     val viewModel: UpdateUserPasswordViewModel = koinViewModel()
@@ -16,7 +16,7 @@ fun UpdateUserPasswordRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is UpdateUserPasswordEvent.NavigateBack -> onBackButtonClick()
+            is UpdateUserPasswordEvent.NavigateBack -> onNavigateBack()
             is UpdateUserPasswordEvent.NavigateToMyDetails -> onNavigateToMyDetails()
         }
     }

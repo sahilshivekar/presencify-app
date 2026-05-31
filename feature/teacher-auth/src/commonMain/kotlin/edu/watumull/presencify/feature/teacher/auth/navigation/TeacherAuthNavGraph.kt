@@ -15,20 +15,20 @@ fun NavGraphBuilder.teacherAuthNavGraph(
 
     composableWithSlideTransitions<TeacherAuthRoutes.TeacherLogin> {
         TeacherLoginRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToHome = onNavigateToHome,
             onNavigateToForgotPassword = onNavigateToForgotPassword
         )
     }
     composableWithSlideTransitions<TeacherAuthRoutes.TeacherForgotPassword> {
         TeacherForgotPasswordRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToVerifyCode = { email -> onNavigateToVerifyCode(email) }
         )
     }
     composableWithSlideTransitions<TeacherAuthRoutes.TeacherVerifyCode> {
         TeacherVerifyCodeRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onCodeVerified = onNavigateToHome
         )
     }

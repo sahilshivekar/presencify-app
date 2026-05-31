@@ -5,7 +5,7 @@ import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
 
 sealed interface AssignUnassignStudentToBatchAction {
-    data object BackButtonClick : AssignUnassignStudentToBatchAction
+    data object NavigateBack : AssignUnassignStudentToBatchAction
     data object DismissDialog : AssignUnassignStudentToBatchAction
 
     data class SelectBranch(val branch: Branch?) : AssignUnassignStudentToBatchAction

@@ -36,7 +36,7 @@ fun ModifyStudentDivisionScreen(
     onAction: (ModifyStudentDivisionAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(ModifyStudentDivisionAction.BackButtonClick) },
+        backPress = { onAction(ModifyStudentDivisionAction.NavigateBack) },
         topBarTitle = "Modify Student Division",
     ) { paddingValues ->
         when (state.viewState) {
@@ -62,17 +62,9 @@ fun ModifyStudentDivisionScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        onAction(ModifyStudentDivisionAction.DismissDialog)
-                    }
-                }
-            },
+            dialogType = dialogState.dialogType,
             onDismiss = {
                 onAction(ModifyStudentDivisionAction.DismissDialog)
             }

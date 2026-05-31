@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.schedule.class_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
@@ -44,25 +45,10 @@ class ClassDetailsViewModel(
 
     override fun handleAction(action: ClassDetailsAction) {
         when (action) {
-            is ClassDetailsAction.BackButtonClick -> sendEvent(ClassDetailsEvent.NavigateBack)
+            is ClassDetailsAction.NavigateBack -> sendEvent(ClassDetailsEvent.NavigateBack)
             is ClassDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
-            is ClassDetailsAction.RemoveClassClick -> updateState {
-                it.copy(
-                    dialogState = ClassDetailsState.DialogState(
-                        dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_CLASS,
-                        title = "Remove Class",
-                        message = UiText.DynamicString(
-                            "Are you sure you want to remove this class?"
-                        )
-                    )
-                )
-            }
-            is ClassDetailsAction.ConfirmRemoveClass -> {
-                viewModelScope.launch {
-                    removeClass()
-                }
-            }
+            is ClassDetailsAction.RemoveClassClick -> handleRemoveClass()
+            is ClassDetailsAction.ConfirmRemoveClass -> confirmRemoveClass()
             is ClassDetailsAction.EditClassClick -> {
                 val timetableId = state.classSession?.timetableId
                 if (timetableId != null) {
@@ -72,33 +58,47 @@ class ClassDetailsViewModel(
         }
     }
 
-    private suspend fun removeClass() {
-        val classId = state.classSession?.id ?: return
+    private fun handleRemoveClass() {
+        updateState { it.copy(
+            dialogState = DialogState(
+                dialogType = DialogType.CONFIRM_RISKY_ACTION,
+                title = UiText.DynamicString("Remove Class"),
+                message = UiText.DynamicString("Are you sure you want to remove this class?")
+            )
+        ) }
+    }
 
-        updateState { it.copy(isRemovingClass = true, dialogState = null) }
+    private fun confirmRemoveClass() {
+        updateState { it.copy(dialogState = null) }
+        removeClass()
+    }
 
-        classSessionRepository.removeClass(classId)
-            .onSuccess {
-                updateState { it.copy(isRemovingClass = false) }
-                viewModelScope.launch {
+    private fun removeClass() {
+        viewModelScope.launch {
+            val classId = state.classSession?.id ?: return@launch
+
+            updateState { it.copy(isRemovingClass = true) }
+
+            classSessionRepository.removeClass(classId)
+                .onSuccess {
+                    updateState { it.copy(isRemovingClass = false) }
                     SnackbarController.sendEvent(
                         SnackbarEvent(message = "Class removed successfully")
                     )
+                    sendEvent(ClassDetailsEvent.NavigateBack)
                 }
-                sendEvent(ClassDetailsEvent.NavigateBack)
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        isRemovingClass = false,
-                        dialogState = ClassDetailsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Class",
-                            message = error.toUiText()
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isRemovingClass = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = UiText.DynamicString("Error Removing Class"),
+                                message = error.toUiText()
+                            )
                         )
-                    )
+                    }
                 }
-            }
+        }
     }
 }

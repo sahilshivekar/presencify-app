@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -65,10 +67,9 @@ class AddEditTeacherViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditTeacherState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Teacher",
+                            title = UiText.DynamicString("Error Loading Teacher"),
                             message = error.toUiText()
                         )
                     )
@@ -78,7 +79,8 @@ class AddEditTeacherViewModel(
 
     override fun handleAction(action: AddEditTeacherAction) {
         when (action) {
-            is AddEditTeacherAction.BackButtonClick -> handleBackNavigation()
+            is AddEditTeacherAction.NavigateBack -> handleBackNavigation()
+            is AddEditTeacherAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditTeacherAction.DismissDialog -> updateState { it.copy(dialogState = null) }
 
             // Personal Details
@@ -151,11 +153,10 @@ class AddEditTeacherViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditTeacherState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString(
                             "You have unsaved changes. Are you sure you want to leave?"
                         )
                     )
@@ -166,7 +167,7 @@ class AddEditTeacherViewModel(
         }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditTeacherEvent.NavigateBack)
     }
@@ -252,10 +253,9 @@ class AddEditTeacherViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditTeacherState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Teacher" else "Error Adding Teacher",
+                            title = UiText.DynamicString(if (state.isEditMode) "Error Updating Teacher" else "Error Adding Teacher"),
                             message = error.toUiText()
                         )
                     )

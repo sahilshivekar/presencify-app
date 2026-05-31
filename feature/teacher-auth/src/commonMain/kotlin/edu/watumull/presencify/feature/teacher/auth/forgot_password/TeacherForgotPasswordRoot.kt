@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun TeacherForgotPasswordRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onNavigateToVerifyCode: (String) -> Unit,
 ) {
     val viewModel: TeacherForgotPasswordViewModel = koinViewModel()
@@ -16,7 +16,7 @@ fun TeacherForgotPasswordRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is TeacherForgotPasswordEvent.NavigateBack -> onBackButtonClick()
+            is TeacherForgotPasswordEvent.NavigateBack -> onNavigateBack()
             is TeacherForgotPasswordEvent.NavigateToVerifyCode -> onNavigateToVerifyCode(event.email)
         }
     }

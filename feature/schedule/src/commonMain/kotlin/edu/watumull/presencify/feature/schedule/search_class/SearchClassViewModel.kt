@@ -3,7 +3,6 @@ package edu.watumull.presencify.feature.schedule.search_class
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
@@ -86,12 +85,9 @@ class SearchClassViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchClassState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchClassState.ViewState.Error(error.toUiText()),
+                    isRefreshing = false,
+                    isLoadingClasses = false
                 )
             }
         },
@@ -137,12 +133,7 @@ class SearchClassViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchClassState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchClassState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -180,12 +171,7 @@ class SearchClassViewModel(
                     updateState {
                         it.copy(
                             areDivisionsLoading = false,
-                            dialogState = SearchClassState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchClassState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -212,12 +198,7 @@ class SearchClassViewModel(
                     updateState {
                         it.copy(
                             areBatchesLoading = false,
-                            dialogState = SearchClassState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchClassState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -350,12 +331,7 @@ class SearchClassViewModel(
 
             updateState {
                 it.copy(
-                    dialogState = SearchClassState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Validation Error",
-                        message = UiText.DynamicString(errorMessage),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchClassState.ViewState.Error(UiText.DynamicString(errorMessage))
                 )
             }
         }
@@ -365,12 +341,8 @@ class SearchClassViewModel(
 
     override fun handleAction(action: SearchClassAction) {
         when (action) {
-            SearchClassAction.BackButtonClick -> {
+            SearchClassAction.NavigateBack -> {
                 sendEvent(NavigateBack)
-            }
-
-            SearchClassAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
             }
 
             is SearchClassAction.UpdateSearchQuery -> {

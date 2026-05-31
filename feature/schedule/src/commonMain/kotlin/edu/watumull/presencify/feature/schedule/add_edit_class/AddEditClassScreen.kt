@@ -44,7 +44,7 @@ fun AddEditClassScreen(
     onAction: (AddEditClassAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditClassAction.BackButtonClick) },
+        backPress = { onAction(AddEditClassAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Class" else "Add Class",
     ) { paddingValues ->
         when (state.viewState) {
@@ -298,15 +298,10 @@ fun AddEditClassScreen(
     // Dialog
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> onAction(AddEditClassAction.DismissDialog)
-                }
-            },
+            onConfirm = { onAction(AddEditClassAction.ConfirmNavigateBack) },
             onDismiss = { onAction(AddEditClassAction.DismissDialog) }
         )
     }

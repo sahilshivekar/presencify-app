@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.admin.mgt.update_password
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class UpdatePasswordState(
     val password: String = "",
@@ -18,17 +18,4 @@ data class UpdatePasswordState(
         data object Content : ViewState
         data class Error(val message: UiText) : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
-    ERROR
 }

@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.mark_unmark_student_dropout
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class MarkUnmarkStudentAsDropoutState(
     val viewState: ViewState = ViewState.Content,
@@ -19,16 +19,4 @@ data class MarkUnmarkStudentAsDropoutState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType,
-        val title: String,
-        val message: UiText,
-        val dialogIntention: DialogIntention
-    )
-}
-
-enum class DialogIntention {
-    GENERIC
 }

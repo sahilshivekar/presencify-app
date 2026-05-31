@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -84,11 +85,10 @@ class AddEditRoomViewModel(
 
             updateState {
                 it.copy(
-                    dialogState = AddEditRoomState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.ERROR,
-                        title = "Validation Error",
-                        message = UiText.DynamicString(errorMessage),
-                        dialogIntention = DialogIntention.GENERIC
+                        title = UiText.DynamicString("Validation Error"),
+                        message = UiText.DynamicString(errorMessage)
                     )
                 )
             }
@@ -139,11 +139,10 @@ class AddEditRoomViewModel(
                     updateState {
                         it.copy(
                             isSubmitting = false,
-                            dialogState = AddEditRoomState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                title = UiText.DynamicString("Error"),
+                                message = error.toUiText()
                             )
                         )
                     }
@@ -153,10 +152,8 @@ class AddEditRoomViewModel(
 
     override fun handleAction(action: AddEditRoomAction) {
         when (action) {
-            AddEditRoomAction.BackButtonClick -> {
-                sendEvent(NavigateBack)
-            }
-
+            AddEditRoomAction.NavigateBack -> handleBackNavigation()
+            AddEditRoomAction.ConfirmNavigateBack -> confirmNavigateBack()
             AddEditRoomAction.DismissDialog -> {
                 updateState { it.copy(dialogState = null) }
             }
@@ -205,5 +202,33 @@ class AddEditRoomViewModel(
                 submitRoom()
             }
         }
+    }
+
+    private fun handleBackNavigation() {
+        if (hasUnsavedChanges()) {
+            updateState {
+                it.copy(
+                    dialogState = DialogState(
+                        dialogType = DialogType.CONFIRM_NORMAL_ACTION,
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                    )
+                )
+            }
+        } else {
+            sendEvent(NavigateBack)
+        }
+    }
+
+    private fun confirmNavigateBack() {
+        updateState { it.copy(dialogState = null) }
+        sendEvent(NavigateBack)
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        return state.roomNumber.isNotBlank() ||
+               state.name.isNotBlank() ||
+               state.sittingCapacity.isNotBlank() ||
+               state.roomType != null
     }
 }

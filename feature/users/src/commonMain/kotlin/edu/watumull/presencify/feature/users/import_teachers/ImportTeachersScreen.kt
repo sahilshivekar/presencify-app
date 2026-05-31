@@ -71,13 +71,9 @@ fun ImportTeachersScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title.asString(),
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                onAction(ImportTeachersAction.DismissDialog)
-            },
             onDismiss = {
                 onAction(ImportTeachersAction.DismissDialog)
             }

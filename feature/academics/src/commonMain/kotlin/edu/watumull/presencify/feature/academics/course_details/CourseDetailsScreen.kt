@@ -32,7 +32,7 @@ fun CourseDetailsScreen(
     onAction: (CourseDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(CourseDetailsAction.BackButtonClick) },
+        backPress = { onAction(CourseDetailsAction.NavigateBack) },
         topBarTitle = "Course Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -114,16 +114,10 @@ fun CourseDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_COURSE -> onAction(CourseDetailsAction.ConfirmRemoveCourse)
-                    DialogIntention.GENERIC -> onAction(CourseDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(CourseDetailsAction.ConfirmRemoveCourse) },
             onDismiss = { onAction(CourseDetailsAction.DismissDialog) }
         )
     }

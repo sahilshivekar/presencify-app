@@ -47,11 +47,9 @@ fun GroupPhotoScanCameraScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = { onAction(GroupPhotoScanAction.DismissDialog) },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             onDismiss = { onAction(GroupPhotoScanAction.DismissDialog) },
         )
     }

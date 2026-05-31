@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.academics.search_scheme
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
@@ -63,12 +62,7 @@ class SearchSchemeViewModel(
                         it.copy(
                             isLoadingSchemes = false,
                             isRefreshing = false,
-                            dialogState = SearchSchemeState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchSchemeState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -78,13 +72,10 @@ class SearchSchemeViewModel(
     override fun handleAction(action: SearchSchemeAction) {
         when (action) {
 
-            is SearchSchemeAction.BackButtonClick -> {
+            is SearchSchemeAction.NavigateBack -> {
                 sendEvent(SearchSchemeEvent.NavigateBack)
             }
 
-            is SearchSchemeAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchSchemeAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

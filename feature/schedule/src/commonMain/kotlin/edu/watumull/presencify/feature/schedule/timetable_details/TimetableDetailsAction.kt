@@ -3,7 +3,7 @@ package edu.watumull.presencify.feature.schedule.timetable_details
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 
 sealed interface TimetableDetailsAction {
-    data object BackButtonClick : TimetableDetailsAction
+    data object NavigateBack : TimetableDetailsAction
     data object DismissDialog : TimetableDetailsAction
     data object RemoveTimetableClick : TimetableDetailsAction
     data object ConfirmRemoveTimetable : TimetableDetailsAction

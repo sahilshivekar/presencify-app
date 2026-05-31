@@ -22,6 +22,5 @@ fun AddEditBranchRoot(
     AddEditBranchScreen(
         state = state,
         onAction = viewModel::trySendAction,
-        onConfirmNavigateBack = viewModel::confirmNavigateBack
     )
 }

@@ -3,6 +3,8 @@ package edu.watumull.presencify.feature.attendance.attendance_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
@@ -29,16 +31,31 @@ class AttendanceDetailsViewModel(
 
     override fun handleAction(action: AttendanceDetailsAction) {
         when (action) {
-            AttendanceDetailsAction.BackButtonClick -> sendEvent(AttendanceDetailsEvent.NavigateBack)
+            AttendanceDetailsAction.NavigateBack -> sendEvent(AttendanceDetailsEvent.NavigateBack)
             AttendanceDetailsAction.EditAttendanceClick -> sendEvent(
                 AttendanceDetailsEvent.NavigateToEditAttendance(attendanceId)
             )
-            AttendanceDetailsAction.RemoveAttendanceClick -> showRemoveConfirmation()
-            AttendanceDetailsAction.ConfirmRemoveAttendance -> removeAttendance()
+            AttendanceDetailsAction.RemoveAttendanceClick -> handleRemoveAttendance()
+            AttendanceDetailsAction.ConfirmRemoveAttendance -> confirmRemoveAttendance()
             AttendanceDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AttendanceDetailsAction.TabClick -> updateState { it.copy(selectedTab = action.tab) }
             is AttendanceDetailsAction.ShareAttendance -> shareAttendanceDetails(action.text)
         }
+    }
+
+    private fun handleRemoveAttendance() {
+        updateState { it.copy(
+            dialogState = DialogState(
+                dialogType = DialogType.CONFIRM_RISKY_ACTION,
+                title = UiText.DynamicString("Remove Attendance"),
+                message = UiText.DynamicString("Are you sure you want to remove this attendance record? This action cannot be undone.")
+            )
+        ) }
+    }
+
+    private fun confirmRemoveAttendance() {
+        updateState { it.copy(dialogState = null) }
+        removeAttendance()
     }
 
     private fun loadAttendanceDetails() {
@@ -67,21 +84,6 @@ class AttendanceDetailsViewModel(
         }
     }
 
-    private fun showRemoveConfirmation() {
-        updateState { it.copy(
-            dialogState = AttendanceDetailsState.DialogState(
-                message = UiText.DynamicString("Are you sure you want to remove this attendance record? This action cannot be undone."),
-                onConfirm = {
-                    updateState { it.copy(dialogState = null) }
-                    trySendAction(AttendanceDetailsAction.ConfirmRemoveAttendance)
-                },
-                onDismiss = {
-                    updateState { it.copy(dialogState = null) }
-                }
-            )
-        ) }
-    }
-
     private fun removeAttendance() {
         viewModelScope.launch {
             attendanceRepository.removeAttendance(attendanceId)
@@ -93,14 +95,10 @@ class AttendanceDetailsViewModel(
                 }
                 .onError { error ->
                     updateState { it.copy(
-                        dialogState = AttendanceDetailsState.DialogState(
-                            message = error.toUiText(),
-                            onConfirm = {
-                                updateState { it.copy(dialogState = null) }
-                            },
-                            onDismiss = {
-                                updateState { it.copy(dialogState = null) }
-                            }
+                        dialogState = DialogState(
+                            dialogType = DialogType.ERROR,
+                            title = UiText.DynamicString("Error"),
+                            message = error.toUiText()
                         )
                     ) }
                 }

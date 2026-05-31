@@ -33,7 +33,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyBottomShee
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -60,7 +59,7 @@ fun SearchAttendanceScreen(
     val scope = rememberCoroutineScope()
 
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchAttendanceAction.BackButtonClick) },
+        backPress = { onAction(SearchAttendanceAction.NavigateBack) },
         topBarTitle = if (state.routeCourseId != null) "Course Attendance" else "Search Attendance",
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -93,25 +92,6 @@ fun SearchAttendanceScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    SearchAttendanceState.DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchAttendanceAction.DismissDialog)
-            }
-        )
     }
 }
 

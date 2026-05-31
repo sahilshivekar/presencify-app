@@ -4,8 +4,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 
 sealed interface SearchDivisionAction {
-    data object BackButtonClick : SearchDivisionAction
-    data object DismissDialog : SearchDivisionAction
+    data object NavigateBack : SearchDivisionAction
 
 
     // Search & Refresh

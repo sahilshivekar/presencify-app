@@ -1,7 +1,8 @@
 package edu.watumull.presencify.feature.users.add_edit_teacher
 
 sealed interface AddEditTeacherAction {
-    data object BackButtonClick : AddEditTeacherAction
+    data object NavigateBack : AddEditTeacherAction
+    data object ConfirmNavigateBack : AddEditTeacherAction
     data object DismissDialog : AddEditTeacherAction
 
     // Personal Details

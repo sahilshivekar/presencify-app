@@ -5,6 +5,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.admin.AdminRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -101,14 +103,42 @@ class AddAdminViewModel(
                 addAdmin()
             }
 
-            is AddAdminAction.ClickBackButton -> {
-                sendEvent(AddAdminEvent.NavigateBack)
-            }
+            is AddAdminAction.NavigateBack -> handleBackNavigation()
+
+            is AddAdminAction.ConfirmNavigateBack -> confirmNavigateBack()
 
             is AddAdminAction.DismissDialog -> {
                 updateState { it.copy(dialogState = null) }
             }
         }
+    }
+
+    private fun handleBackNavigation() {
+        if (hasUnsavedChanges()) {
+            updateState {
+                it.copy(
+                    dialogState = DialogState(
+                        dialogType = DialogType.CONFIRM_NORMAL_ACTION,
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                    )
+                )
+            }
+        } else {
+            sendEvent(AddAdminEvent.NavigateBack)
+        }
+    }
+
+    private fun confirmNavigateBack() {
+        updateState { it.copy(dialogState = null) }
+        sendEvent(AddAdminEvent.NavigateBack)
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        return state.email.isNotBlank() ||
+               state.username.isNotBlank() ||
+               state.password.isNotBlank() ||
+               state.confirmPassword.isNotBlank()
     }
 
     private fun validatePasswordMatch(password: String, confirmPassword: String) {
@@ -178,12 +208,10 @@ class AddAdminViewModel(
                         it.copy(
                             isAdding = false,
                             isPasswordVisible = true,
-                            dialogState = AddAdminState.DialogState(
-                                isVisible = true,
-                                title = "Failed to Add Admin",
-                                message = error.toUiText(),
+                            dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.ERROR
+                                title = UiText.DynamicString("Failed to Add Admin"),
+                                message = error.toUiText()
                             )
                         )
                     }

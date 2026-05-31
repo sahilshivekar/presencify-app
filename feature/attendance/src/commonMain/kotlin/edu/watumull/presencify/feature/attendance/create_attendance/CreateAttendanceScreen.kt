@@ -37,7 +37,7 @@ fun CreateAttendanceScreen(
 ) {
 
     PresencifyScaffold(
-        backPress = { onAction(CreateAttendanceAction.BackButtonClick) },
+        backPress = { onAction(CreateAttendanceAction.NavigateBack) },
         topBarTitle = "Create Attendance"
     ) { paddingValues ->
         Box(
@@ -69,7 +69,7 @@ fun CreateAttendanceScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.error
                             )
-                            Button(onClick = { onAction(CreateAttendanceAction.BackButtonClick) }) {
+                            Button(onClick = { onAction(CreateAttendanceAction.NavigateBack) }) {
                                 Text("Go Back")
                             }
                         }
@@ -121,11 +121,10 @@ fun CreateAttendanceScreen(
         // Dialog for errors/success
         state.dialogState?.let { dialogState ->
             PresencifyAlertDialog(
-                dialogType = dialogState.dialogType,
-                title = dialogState.title,
+                title = dialogState.title?.asString(),
                 message = dialogState.message.asString(),
-                onDismiss = { onAction(CreateAttendanceAction.DismissDialog) },
-                onConfirm = { onAction(CreateAttendanceAction.DismissDialog) }
+                dialogType = dialogState.dialogType,
+                onDismiss = { onAction(CreateAttendanceAction.DismissDialog) }
             )
         }
     }

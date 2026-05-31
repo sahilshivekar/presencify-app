@@ -11,6 +11,8 @@ import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsCourseCode
 import edu.watumull.presencify.core.presentation.validation.validateAsCourseName
@@ -44,10 +46,9 @@ class AddEditCourseViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditCourseState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Schemes",
+                            title = UiText.DynamicString("Error Loading Schemes"),
                             message = error.toUiText()
                         )
                     )
@@ -74,10 +75,9 @@ class AddEditCourseViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditCourseState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Course",
+                            title = UiText.DynamicString("Error Loading Course"),
                             message = error.toUiText()
                         )
                     )
@@ -87,7 +87,8 @@ class AddEditCourseViewModel(
 
     override fun handleAction(action: AddEditCourseAction) {
         when (action) {
-            is AddEditCourseAction.BackButtonClick -> handleBackNavigation()
+            is AddEditCourseAction.NavigateBack -> handleBackNavigation()
+            is AddEditCourseAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditCourseAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AddEditCourseAction.UpdateCode -> updateState { it.copy(code = action.code, codeError = null) }
             is AddEditCourseAction.UpdateName -> updateState { it.copy(name = action.name, nameError = null) }
@@ -102,11 +103,10 @@ class AddEditCourseViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditCourseState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
                     )
                 )
             }
@@ -115,7 +115,7 @@ class AddEditCourseViewModel(
         }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditCourseEvent.NavigateBack)
     }
@@ -163,10 +163,9 @@ class AddEditCourseViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditCourseState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Course" else "Error Adding Course",
+                            title = UiText.DynamicString(if (state.isEditMode) "Error Updating Course" else "Error Adding Course"),
                             message = error.toUiText()
                         )
                     )
@@ -174,4 +173,3 @@ class AddEditCourseViewModel(
             }
     }
 }
-

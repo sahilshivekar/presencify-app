@@ -4,7 +4,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 
 sealed interface AssignUnassignStudentToSemesterAction {
-    data object BackButtonClick : AssignUnassignStudentToSemesterAction
+    data object NavigateBack : AssignUnassignStudentToSemesterAction
     data object DismissDialog : AssignUnassignStudentToSemesterAction
 
     data class SelectBranch(val branch: Branch?) : AssignUnassignStudentToSemesterAction

@@ -49,7 +49,7 @@ fun DynamicQRScreen(
     onAction: (DynamicQRAction) -> Unit
 ) {
     PresencifyScaffold(
-        backPress = { onAction(DynamicQRAction.BackButtonClick) },
+        backPress = { onAction(DynamicQRAction.NavigateBack) },
         topBarTitle = "Dynamic QR Attendance"
     ) { paddingValues ->
 
@@ -68,7 +68,7 @@ fun DynamicQRScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error
                     )
-                    Button(onClick = { onAction(DynamicQRAction.BackButtonClick) }) {
+                    Button(onClick = { onAction(DynamicQRAction.NavigateBack) }) {
                         Text("Go Back")
                     }
                 }

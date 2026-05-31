@@ -28,10 +28,9 @@ import edu.watumull.presencify.core.presentation.UiConstants
 fun AddEditSchemeScreen(
     state: AddEditSchemeState,
     onAction: (AddEditSchemeAction) -> Unit,
-    onConfirmNavigateBack: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditSchemeAction.BackButtonClick) },
+        backPress = { onAction(AddEditSchemeAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Scheme" else "Add Scheme",
     ) { paddingValues ->
         Column(
@@ -98,16 +97,10 @@ fun AddEditSchemeScreen(
     // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES -> onConfirmNavigateBack()
-                    DialogIntention.GENERIC -> onAction(AddEditSchemeAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(AddEditSchemeAction.ConfirmNavigateBack) },
             onDismiss = { onAction(AddEditSchemeAction.DismissDialog) }
         )
     }

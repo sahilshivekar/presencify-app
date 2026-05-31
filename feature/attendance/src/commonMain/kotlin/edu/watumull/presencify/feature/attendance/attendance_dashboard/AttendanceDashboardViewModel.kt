@@ -7,7 +7,7 @@ class AttendanceDashboardViewModel : BaseViewModel<AttendanceDashboardState, Att
 ) {
     override fun handleAction(action: AttendanceDashboardAction) {
         when (action) {
-            AttendanceDashboardAction.BackButtonClick -> {
+            AttendanceDashboardAction.NavigateBack -> {
                 sendEvent(AttendanceDashboardEvent.NavigateBack)
             }
             AttendanceDashboardAction.NavigateToStudentAttendanceAnalytics -> {

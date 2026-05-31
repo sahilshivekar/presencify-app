@@ -3,7 +3,8 @@ package edu.watumull.presencify.feature.schedule.add_edit_room
 import edu.watumull.presencify.core.domain.enums.RoomType
 
 sealed interface AddEditRoomAction {
-    data object BackButtonClick : AddEditRoomAction
+    data object NavigateBack : AddEditRoomAction
+    data object ConfirmNavigateBack : AddEditRoomAction
     data object DismissDialog : AddEditRoomAction
 
     // Room Details

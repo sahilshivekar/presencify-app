@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -43,15 +45,14 @@ class SchemeDetailsViewModel(
 
     override fun handleAction(action: SchemeDetailsAction) {
         when (action) {
-            is SchemeDetailsAction.BackButtonClick -> sendEvent(SchemeDetailsEvent.NavigateBack)
+            is SchemeDetailsAction.NavigateBack -> sendEvent(SchemeDetailsEvent.NavigateBack)
             is SchemeDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is SchemeDetailsAction.RemoveSchemeClick -> updateState {
                 it.copy(
-                    dialogState = SchemeDetailsState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_SCHEME,
-                        title = "Remove Scheme",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
+                        title = UiText.DynamicString("Remove Scheme"),
+                        message = UiText.DynamicString(
                             "Are you sure you want to remove ${state.scheme?.name ?: "this scheme"}?"
                         )
                     )
@@ -85,10 +86,9 @@ class SchemeDetailsViewModel(
                 updateState {
                     it.copy(
                         isRemovingScheme = false,
-                        dialogState = SchemeDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Scheme",
+                            title = UiText.DynamicString("Error Removing Scheme"),
                             message = error.toUiText()
                         )
                     )

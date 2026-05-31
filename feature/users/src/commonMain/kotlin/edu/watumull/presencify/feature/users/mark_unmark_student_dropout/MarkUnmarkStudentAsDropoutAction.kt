@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.mark_unmark_student_dropout
 
 sealed interface MarkUnmarkStudentAsDropoutAction {
-    data object BackButtonClick : MarkUnmarkStudentAsDropoutAction
+    data object NavigateBack : MarkUnmarkStudentAsDropoutAction
 
     data class UpdateStartYear(val year: String) : MarkUnmarkStudentAsDropoutAction
     data class UpdateEndYear(val year: String) : MarkUnmarkStudentAsDropoutAction

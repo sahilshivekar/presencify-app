@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.attendance.search_attendance
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -18,7 +17,6 @@ import kotlinx.datetime.LocalDate
 @Stable
 data class SearchAttendanceState(
     val viewState: ViewState = ViewState.Content,
-    val dialogState: DialogState? = null,
 
     // Search & Filter
     val searchQuery: String = "",
@@ -79,18 +77,6 @@ data class SearchAttendanceState(
         data object Loading : ViewState
         data object Content : ViewState
         data class Error(val message: UiText) : ViewState
-    }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType,
-        val title: String,
-        val message: UiText,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC
-    )
-
-    enum class DialogIntention {
-        GENERIC
     }
 }
 

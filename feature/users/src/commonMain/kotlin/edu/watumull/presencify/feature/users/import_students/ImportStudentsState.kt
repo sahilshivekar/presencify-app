@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.import_students
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class ImportStudentsState(
     val viewState: ViewState = ViewState.Content,
@@ -15,17 +15,5 @@ data class ImportStudentsState(
     sealed interface ViewState {
         data object Loading : ViewState
         data object Content : ViewState
-    }
-
-    data class DialogState(
-        val isVisible: Boolean,
-        val title: UiText,
-        val message: UiText?,
-        val dialogType: DialogType,
-        val dialogIntention: DialogIntention
-    )
-
-    enum class DialogIntention {
-        GENERIC
     }
 }

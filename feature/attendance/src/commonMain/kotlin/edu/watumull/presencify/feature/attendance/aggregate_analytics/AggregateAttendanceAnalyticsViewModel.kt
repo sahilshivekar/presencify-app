@@ -15,6 +15,8 @@ import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
@@ -69,11 +71,10 @@ class AggregateAttendanceAnalyticsViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = AggregateAttendanceAnalyticsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error Loading Branches",
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error Loading Branches"),
                             message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
+                            dialogType = DialogType.ERROR
                         )
                     )
                 }
@@ -114,13 +115,10 @@ class AggregateAttendanceAnalyticsViewModel(
                     it.copy(
                         isLoadingAttendance = false,
                         semester = null,
-                        dialogState = AggregateAttendanceAnalyticsState.DialogState(
-                            dialogType = DialogType.INFO,
-                            title = "No Semester Found",
-                            message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
-                                "No semester found for the selected filters."
-                            ),
-                            dialogIntention = DialogIntention.GENERIC
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("No Semester Found"),
+                            message = UiText.DynamicString("No semester found for the selected filters."),
+                            dialogType = DialogType.INFO
                         )
                     )
                 }
@@ -139,11 +137,10 @@ class AggregateAttendanceAnalyticsViewModel(
             updateState {
                 it.copy(
                     isLoadingAttendance = false,
-                    dialogState = AggregateAttendanceAnalyticsState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error Finding Semester",
+                    dialogState = DialogState(
+                        title = UiText.DynamicString("Error Finding Semester"),
                         message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
+                        dialogType = DialogType.ERROR
                     )
                 )
             }
@@ -192,11 +189,10 @@ class AggregateAttendanceAnalyticsViewModel(
                 updateState {
                     it.copy(
                         isLoadingAttendance = false,
-                        dialogState = AggregateAttendanceAnalyticsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error Loading Courses",
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error Loading Courses"),
                             message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
+                            dialogType = DialogType.ERROR
                         )
                     )
                 }
@@ -259,7 +255,7 @@ class AggregateAttendanceAnalyticsViewModel(
 
     override fun handleAction(action: AggregateAttendanceAnalyticsAction) {
         when (action) {
-            is AggregateAttendanceAnalyticsAction.BackButtonClick -> {
+            is AggregateAttendanceAnalyticsAction.NavigateBack -> {
                 sendEvent(AggregateAttendanceAnalyticsEvent.NavigateBack)
             }
             is AggregateAttendanceAnalyticsAction.DismissDialog -> {

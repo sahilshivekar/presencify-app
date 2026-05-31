@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.update_password
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class UpdateUserPasswordState(
     val password: String = "",
@@ -11,11 +11,4 @@ data class UpdateUserPasswordState(
     val isPasswordVisible: Boolean = false,
     val isUpdating: Boolean = false,
     val dialogState: DialogState? = null,
-) {
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val title: String = "",
-        val message: UiText? = null,
-        val dialogType: DialogType = DialogType.INFO,
-    )
-}
+)

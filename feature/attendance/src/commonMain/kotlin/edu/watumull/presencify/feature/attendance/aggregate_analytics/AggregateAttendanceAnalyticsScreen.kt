@@ -66,7 +66,7 @@ fun AggregateAttendanceAnalyticsScreen(
     onAction: (AggregateAttendanceAnalyticsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AggregateAttendanceAnalyticsAction.BackButtonClick) },
+        backPress = { onAction(AggregateAttendanceAnalyticsAction.NavigateBack) },
         topBarTitle = "Aggregate Attendance Analytics",
     ) { paddingValues ->
         LazyColumn(
@@ -123,15 +123,9 @@ fun AggregateAttendanceAnalyticsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> onAction(AggregateAttendanceAnalyticsAction.DismissDialog)
-                }
-            },
             onDismiss = { onAction(AggregateAttendanceAnalyticsAction.DismissDialog) }
         )
     }

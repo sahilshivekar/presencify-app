@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -43,15 +45,14 @@ class CourseDetailsViewModel(
 
     override fun handleAction(action: CourseDetailsAction) {
         when (action) {
-            is CourseDetailsAction.BackButtonClick -> sendEvent(CourseDetailsEvent.NavigateBack)
+            is CourseDetailsAction.NavigateBack -> sendEvent(CourseDetailsEvent.NavigateBack)
             is CourseDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is CourseDetailsAction.RemoveCourseClick -> updateState {
                 it.copy(
-                    dialogState = CourseDetailsState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_COURSE,
-                        title = "Remove Course",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString(
+                        title = UiText.DynamicString("Remove Course"),
+                        message = UiText.DynamicString(
                             "Are you sure you want to remove ${state.course?.name ?: "this course"}?"
                         )
                     )
@@ -85,10 +86,9 @@ class CourseDetailsViewModel(
                 updateState {
                     it.copy(
                         isRemovingCourse = false,
-                        dialogState = CourseDetailsState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Course",
+                            title = UiText.DynamicString("Error Removing Course"),
                             message = error.toUiText()
                         )
                     )

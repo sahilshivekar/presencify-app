@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AddAdminRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onNavigateToAdminDetails: () -> Unit,
 ) {
     val viewModel: AddAdminViewModel = koinViewModel()
@@ -16,7 +16,7 @@ fun AddAdminRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is AddAdminEvent.NavigateBack -> onBackButtonClick()
+            is AddAdminEvent.NavigateBack -> onNavigateBack()
             is AddAdminEvent.NavigateToAdminDetails -> onNavigateToAdminDetails()
         }
     }

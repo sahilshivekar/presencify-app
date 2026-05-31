@@ -3,7 +3,6 @@ package edu.watumull.presencify.feature.users.search_student
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
@@ -167,12 +166,9 @@ class SearchStudentViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchStudentState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchStudentState.ViewState.Error(error.toUiText()),
+                    isRefreshing = false,
+                    isLoadingStudents = false
                 )
             }
         },
@@ -289,12 +285,7 @@ class SearchStudentViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchStudentState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchStudentState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -315,12 +306,7 @@ class SearchStudentViewModel(
                 updateState {
                     it.copy(
                         areSchemesLoading = false,
-                        dialogState = SearchStudentState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchStudentState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -358,12 +344,7 @@ class SearchStudentViewModel(
                     updateState {
                         it.copy(
                             areDivisionsLoading = false,
-                            dialogState = SearchStudentState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchStudentState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -390,12 +371,7 @@ class SearchStudentViewModel(
                     updateState {
                         it.copy(
                             areBatchesLoading = false,
-                            dialogState = SearchStudentState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchStudentState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -483,12 +459,7 @@ class SearchStudentViewModel(
                     updateState {
                         it.copy(
                             loadingStudentIds = it.loadingStudentIds - studentId,
-                            dialogState = SearchStudentState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            studentFeedback = it.studentFeedback + (studentId to ListItemFeedback.Error(error.toUiText()))
                         )
                     }
                 }
@@ -515,12 +486,7 @@ class SearchStudentViewModel(
                     updateState {
                         it.copy(
                             loadingStudentIds = it.loadingStudentIds - studentId,
-                            dialogState = SearchStudentState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            studentFeedback = it.studentFeedback + (studentId to ListItemFeedback.Error(error.toUiText()))
                         )
                     }
                 }
@@ -754,11 +720,8 @@ class SearchStudentViewModel(
         } catch (e: Exception) {
             updateState {
                 it.copy(
-                    dialogState = SearchStudentState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Invalid Date",
-                        message = UiText.DynamicString("Invalid start date format: ${e.message}"),
-                        dialogIntention = DialogIntention.GENERIC
+                    viewState = SearchStudentState.ViewState.Error(
+                        UiText.DynamicString("Invalid start date format: ${e.message}")
                     )
                 )
             }
@@ -776,11 +739,8 @@ class SearchStudentViewModel(
         if (semesterNumberEnum == null) {
             updateState {
                 it.copy(
-                    dialogState = SearchStudentState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Invalid Semester",
-                        message = UiText.DynamicString("Invalid semester number"),
-                        dialogIntention = DialogIntention.GENERIC
+                    viewState = SearchStudentState.ViewState.Error(
+                        UiText.DynamicString("Invalid semester number")
                     )
                 )
             }
@@ -1087,11 +1047,8 @@ class SearchStudentViewModel(
         } catch (e: Exception) {
             updateState {
                 it.copy(
-                    dialogState = SearchStudentState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Invalid Date",
-                        message = UiText.DynamicString("Invalid start date format: ${e.message}"),
-                        dialogIntention = DialogIntention.GENERIC
+                    viewState = SearchStudentState.ViewState.Error(
+                        UiText.DynamicString("Invalid start date format: ${e.message}")
                     )
                 )
             }
@@ -1109,11 +1066,8 @@ class SearchStudentViewModel(
         if (semesterNumberEnum == null) {
             updateState {
                 it.copy(
-                    dialogState = SearchStudentState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Invalid Semester",
-                        message = UiText.DynamicString("Invalid semester number"),
-                        dialogIntention = DialogIntention.GENERIC
+                    viewState = SearchStudentState.ViewState.Error(
+                        UiText.DynamicString("Invalid semester number")
                     )
                 )
             }
@@ -1323,13 +1277,10 @@ class SearchStudentViewModel(
     override fun handleAction(action: SearchStudentAction) {
         when (action) {
 
-            is SearchStudentAction.BackButtonClick -> {
+            is SearchStudentAction.NavigateBack -> {
                 sendEvent(NavigateBack)
             }
 
-            is SearchStudentAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchStudentAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

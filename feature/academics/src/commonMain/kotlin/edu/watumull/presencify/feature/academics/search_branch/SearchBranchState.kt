@@ -10,7 +10,6 @@ import kotlinx.collections.immutable.persistentListOf
 @Stable
 data class SearchBranchState(
     val viewState: ViewState = ViewState.Content,
-    val dialogState: DialogState? = null,
 
     // Search
     val searchQuery: String = "",
@@ -25,17 +24,5 @@ data class SearchBranchState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText = UiText.DynamicString(""),
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
 }
 

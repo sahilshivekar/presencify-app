@@ -6,7 +6,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 sealed interface AddEditClassAction {
-    data object BackButtonClick : AddEditClassAction
+    data object NavigateBack : AddEditClassAction
+    data object ConfirmNavigateBack : AddEditClassAction
     data object DismissDialog : AddEditClassAction
 
     // Class Details

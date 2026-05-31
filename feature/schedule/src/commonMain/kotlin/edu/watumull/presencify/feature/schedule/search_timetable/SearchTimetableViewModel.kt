@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.schedule.search_timetable
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
@@ -52,12 +51,9 @@ class SearchTimetableViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchTimetableState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchTimetableState.ViewState.Error(error.toUiText()),
+                    isRefreshing = false,
+                    isLoadingTimetables = false
                 )
             }
         },
@@ -101,12 +97,7 @@ class SearchTimetableViewModel(
                 updateState {
                     it.copy(
                         areBranchesLoading = false,
-                        dialogState = SearchTimetableState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error",
-                            message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
-                        )
+                        viewState = SearchTimetableState.ViewState.Error(error.toUiText())
                     )
                 }
             }
@@ -139,12 +130,8 @@ class SearchTimetableViewModel(
 
     override fun handleAction(action: SearchTimetableAction) {
         when (action) {
-            SearchTimetableAction.BackButtonClick -> {
+            SearchTimetableAction.NavigateBack -> {
                 sendEvent(NavigateBack)
-            }
-
-            SearchTimetableAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
             }
 
             is SearchTimetableAction.UpdateSearchQuery -> {

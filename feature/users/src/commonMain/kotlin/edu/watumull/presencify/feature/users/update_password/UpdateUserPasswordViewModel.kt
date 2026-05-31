@@ -9,6 +9,7 @@ import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
 import edu.watumull.presencify.core.domain.repository.teacher_auth.TeacherAuthRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -124,8 +125,8 @@ class UpdateUserPasswordViewModel(
                 updateState {
                     it.copy(
                         isUpdating = false,
-                        dialogState = UpdateUserPasswordState.DialogState(
-                            title = "Not Allowed",
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Not Allowed"),
                             message = UiText.DynamicString(
                                 "Unable to determine your account role. Please log in again and retry."
                             ),
@@ -147,8 +148,8 @@ class UpdateUserPasswordViewModel(
                         it.copy(
                             isUpdating = false,
                             isPasswordVisible = true,
-                            dialogState = UpdateUserPasswordState.DialogState(
-                                title = "Failed to Update Password",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Failed to Update Password"),
                                 message = error.toUiText(),
                                 dialogType = DialogType.ERROR
                             )

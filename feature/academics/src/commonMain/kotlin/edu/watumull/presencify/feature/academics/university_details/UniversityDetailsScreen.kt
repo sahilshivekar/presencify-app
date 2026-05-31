@@ -41,7 +41,7 @@ fun UniversityDetailsScreen(
     onAction: (UniversityDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(UniversityDetailsAction.BackButtonClick) },
+        backPress = { onAction(UniversityDetailsAction.NavigateBack) },
         topBarTitle = "Universities",
         floatingActionButton = {
             if (state.viewState is UniversityDetailsState.ViewState.Content) {
@@ -148,16 +148,10 @@ fun UniversityDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_UNIVERSITY -> onAction(UniversityDetailsAction.ConfirmRemoveUniversity)
-                    DialogIntention.GENERIC -> onAction(UniversityDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(UniversityDetailsAction.ConfirmRemoveUniversity) },
             onDismiss = { onAction(UniversityDetailsAction.DismissDialog) }
         )
     }

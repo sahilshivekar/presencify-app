@@ -7,6 +7,8 @@ import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.admin_auth.AdminAuthRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -93,12 +95,10 @@ class AdminVerifyCodeViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            dialogState = AdminVerifyCodeState.DialogState(
-                                isVisible = true,
-                                title = "Verification Failed",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Verification Failed"),
                                 message = error.toUiText(),
                                 dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.VERIFY_CODE_ERROR
                             )
                         )
                     }

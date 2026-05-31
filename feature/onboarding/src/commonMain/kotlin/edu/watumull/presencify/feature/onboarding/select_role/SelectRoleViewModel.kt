@@ -9,9 +9,6 @@ class SelectRoleViewModel :
 
     override fun handleAction(action: SelectRoleAction) {
         when (action) {
-            is SelectRoleAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
             SelectRoleAction.OnAdminSelected -> {
                 sendEvent(SelectRoleEvent.NavigateToAdminLogin)
             }

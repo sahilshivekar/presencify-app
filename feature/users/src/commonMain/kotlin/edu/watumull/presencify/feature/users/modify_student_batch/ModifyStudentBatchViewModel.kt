@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsAcademicEndYear
@@ -48,11 +49,10 @@ class ModifyStudentBatchViewModel(
                     updateState {
                         it.copy(
                             areBranchesLoading = false,
-                            dialogState = ModifyStudentBatchState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -105,13 +105,12 @@ class ModifyStudentBatchViewModel(
                         updateState {
                             it.copy(
                                 isLookingBatches = false,
-                                dialogState = ModifyStudentBatchState.DialogState(
-                                    dialogType = DialogType.ERROR,
-                                    title = "Divisions Not Found",
+                                dialogState = DialogState(
+                                    title = UiText.DynamicString("Divisions Not Found"),
                                     message = UiText.DynamicString(
                                         "No divisions found for the selected branch, semester number, and academic year. Please check your selection."
                                     ),
-                                    dialogIntention = DialogIntention.GENERIC
+                                    dialogType = DialogType.ERROR,
                                 )
                             )
                         }
@@ -130,11 +129,10 @@ class ModifyStudentBatchViewModel(
                     updateState {
                         it.copy(
                             isLookingBatches = false,
-                            dialogState = ModifyStudentBatchState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Error"),
                                 message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
+                                dialogType = DialogType.ERROR,
                             )
                         )
                     }
@@ -177,11 +175,10 @@ class ModifyStudentBatchViewModel(
         if (hasError) {
             updateState {
                 it.copy(
-                    dialogState = ModifyStudentBatchState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
+                    dialogState = DialogState(
+                        title = UiText.DynamicString("Error"),
                         message = errorMessage ?: UiText.DynamicString("Failed to fetch batches"),
-                        dialogIntention = DialogIntention.GENERIC
+                        dialogType = DialogType.ERROR,
                     )
                 )
             }
@@ -189,13 +186,12 @@ class ModifyStudentBatchViewModel(
             // No batches found
             updateState {
                 it.copy(
-                    dialogState = ModifyStudentBatchState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Batches Not Found",
+                    dialogState = DialogState(
+                        title = UiText.DynamicString("Batches Not Found"),
                         message = UiText.DynamicString(
                             "No batches found for the selected parameters. Please check your selection."
                         ),
-                        dialogIntention = DialogIntention.GENERIC
+                        dialogType = DialogType.ERROR,
                     )
                 )
             }
@@ -250,7 +246,7 @@ class ModifyStudentBatchViewModel(
 
     override fun handleAction(action: ModifyStudentBatchAction) {
         when (action) {
-            is ModifyStudentBatchAction.BackButtonClick -> {
+            is ModifyStudentBatchAction.NavigateBack -> {
                 sendEvent(ModifyStudentBatchEvent.NavigateBack)
             }
 

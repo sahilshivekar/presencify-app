@@ -26,10 +26,9 @@ import edu.watumull.presencify.core.presentation.UiConstants
 fun AddEditUniversityScreen(
     state: AddEditUniversityState,
     onAction: (AddEditUniversityAction) -> Unit,
-    onConfirmNavigateBack: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditUniversityAction.BackButtonClick) },
+        backPress = { onAction(AddEditUniversityAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit University" else "Add University",
     ) { paddingValues ->
         Column(
@@ -93,16 +92,10 @@ fun AddEditUniversityScreen(
     // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES -> onConfirmNavigateBack()
-                    DialogIntention.GENERIC -> onAction(AddEditUniversityAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(AddEditUniversityAction.ConfirmNavigateBack) },
             onDismiss = { onAction(AddEditUniversityAction.DismissDialog) }
         )
     }

@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AdminForgotPasswordRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onNavigateToVerifyCode: (String) -> Unit,
 ) {
     val viewModel: AdminForgotPasswordViewModel = koinViewModel()
@@ -16,7 +16,7 @@ fun AdminForgotPasswordRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is AdminForgotPasswordEvent.NavigateBack -> onBackButtonClick()
+            is AdminForgotPasswordEvent.NavigateBack -> onNavigateBack()
             is AdminForgotPasswordEvent.NavigateToVerifyCode -> onNavigateToVerifyCode(event.email)
         }
     }

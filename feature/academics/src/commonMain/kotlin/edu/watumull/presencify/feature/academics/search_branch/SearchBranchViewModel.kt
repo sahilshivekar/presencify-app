@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.academics.search_branch
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
@@ -63,12 +62,7 @@ class SearchBranchViewModel(
                         it.copy(
                             isLoadingBranches = false,
                             isRefreshing = false,
-                            dialogState = SearchBranchState.DialogState(
-                                dialogType = DialogType.ERROR,
-                                title = "Error",
-                                message = error.toUiText(),
-                                dialogIntention = DialogIntention.GENERIC
-                            )
+                            viewState = SearchBranchState.ViewState.Error(error.toUiText())
                         )
                     }
                 }
@@ -78,13 +72,10 @@ class SearchBranchViewModel(
     override fun handleAction(action: SearchBranchAction) {
         when (action) {
 
-            is SearchBranchAction.BackButtonClick -> {
+            is SearchBranchAction.NavigateBack -> {
                 sendEvent(SearchBranchEvent.NavigateBack)
             }
 
-            is SearchBranchAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchBranchAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

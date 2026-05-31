@@ -22,6 +22,5 @@ fun AddEditUniversityRoot(
     AddEditUniversityScreen(
         state = state,
         onAction = viewModel::trySendAction,
-        onConfirmNavigateBack = viewModel::confirmNavigateBack
     )
 }

@@ -6,6 +6,7 @@ import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -122,12 +123,10 @@ class ImportTeachersViewModel(
                 .onError { error ->
                     updateState { it.copy(
                         isSubmitting = false,
-                        dialogState = ImportTeachersState.DialogState(
-                            isVisible = true,
+                        dialogState = DialogState(
                             title = UiText.DynamicString("Import Failed"),
                             message = error.toUiText(),
-                            dialogType = DialogType.ERROR,
-                            dialogIntention = ImportTeachersState.DialogIntention.GENERIC
+                            dialogType = DialogType.ERROR
                         )
                     ) }
                 }

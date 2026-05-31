@@ -62,7 +62,7 @@ fun AdminDetailsScreen(
     onAction: (AdminDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AdminDetailsAction.ClickBackButton) },
+        backPress = { onAction(AdminDetailsAction.NavigateBack) },
         topBarTitle = "Admin Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -88,21 +88,13 @@ fun AdminDetailsScreen(
 
     // Dialog handling
     state.dialogState?.let { dialogState ->
-        if (dialogState.message != null) {
-            PresencifyAlertDialog(
-                isVisible = dialogState.isVisible,
-                dialogType = dialogState.dialogType,
-                title = dialogState.title,
-                message = dialogState.message.asString(),
-                onDismiss = { onAction(AdminDetailsAction.DismissDialog) },
-                onConfirm = when (dialogState.dialogIntention) {
-                    DialogIntention.REMOVE_ACCOUNT_CONFIRMATION -> {
-                        { onAction(AdminDetailsAction.ConfirmRemoveAccount) }
-                    }
-                    else -> null
-                }
-            )
-        }
+        PresencifyAlertDialog(
+            dialogType = dialogState.dialogType,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(AdminDetailsAction.ConfirmRemoveAccount) },
+            onDismiss = { onAction(AdminDetailsAction.DismissDialog) }
+        )
     }
 }
 
@@ -200,9 +192,9 @@ private fun AdminDetailsContainer(
             IconButton(
                 onClick = { onAction(AdminDetailsAction.ClickEditDetails) },
                 enabled = !state.isSendingVerificationCode &&
-                         !state.isLoggingOut &&
-                         !state.isRemovingAccount &&
-                         !state.isUpdatingDetails
+                        !state.isLoggingOut &&
+                        !state.isRemovingAccount &&
+                        !state.isUpdatingDetails
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -221,10 +213,10 @@ private fun AdminDetailsContainer(
             supportingText = state.usernameError,
             label = "Username",
             enabled = state.isEditingDetails &&
-                     !state.isSendingVerificationCode &&
-                     !state.isLoggingOut &&
-                     !state.isRemovingAccount &&
-                     !state.isUpdatingDetails,
+                    !state.isSendingVerificationCode &&
+                    !state.isLoggingOut &&
+                    !state.isRemovingAccount &&
+                    !state.isUpdatingDetails,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { emailFocusRequester.requestFocus() })
         )
@@ -238,10 +230,10 @@ private fun AdminDetailsContainer(
             supportingText = state.emailError,
             label = "Email",
             enabled = state.isEditingDetails &&
-                     !state.isSendingVerificationCode &&
-                     !state.isLoggingOut &&
-                     !state.isRemovingAccount &&
-                     !state.isUpdatingDetails,
+                    !state.isSendingVerificationCode &&
+                    !state.isLoggingOut &&
+                    !state.isRemovingAccount &&
+                    !state.isUpdatingDetails,
             modifier = Modifier
                 .focusRequester(emailFocusRequester)
                 .fillMaxWidth(),
@@ -267,9 +259,9 @@ private fun AdminDetailsContainer(
                             .weight(1f)
                             .padding(end = DesignToken.spacing.sm),
                         enabled = !state.isSendingVerificationCode &&
-                                 !state.isLoggingOut &&
-                                 !state.isRemovingAccount &&
-                                 !state.isUpdatingDetails,
+                                !state.isLoggingOut &&
+                                !state.isRemovingAccount &&
+                                !state.isUpdatingDetails,
                         text = "Cancel"
                     )
                     PresencifyButton(
@@ -280,8 +272,8 @@ private fun AdminDetailsContainer(
                         text = "Update",
                         isLoading = state.isUpdatingDetails,
                         enabled = !state.isSendingVerificationCode &&
-                                 !state.isLoggingOut &&
-                                 !state.isRemovingAccount
+                                !state.isLoggingOut &&
+                                !state.isRemovingAccount
                     )
                 }
             }
@@ -319,9 +311,9 @@ private fun PasswordContainer(
             IconButton(
                 onClick = { onAction(AdminDetailsAction.ClickUpdatePassword) },
                 enabled = !state.isSendingVerificationCode &&
-                         !state.isLoggingOut &&
-                         !state.isRemovingAccount &&
-                         !state.isUpdatingDetails
+                        !state.isLoggingOut &&
+                        !state.isRemovingAccount &&
+                        !state.isUpdatingDetails
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -395,9 +387,9 @@ private fun AccountSettingsContainer(
                 },
                 modifier = Modifier.clickable(
                     enabled = !state.isSendingVerificationCode &&
-                             !state.isLoggingOut &&
-                             !state.isRemovingAccount &&
-                             !state.isUpdatingDetails
+                            !state.isLoggingOut &&
+                            !state.isRemovingAccount &&
+                            !state.isUpdatingDetails
                 ) {
                     onAction(AdminDetailsAction.ClickVerifyEmail)
                 }
@@ -415,9 +407,9 @@ private fun AccountSettingsContainer(
             },
             modifier = Modifier.clickable(
                 enabled = !state.isSendingVerificationCode &&
-                         !state.isLoggingOut &&
-                         !state.isRemovingAccount &&
-                         !state.isUpdatingDetails
+                        !state.isLoggingOut &&
+                        !state.isRemovingAccount &&
+                        !state.isUpdatingDetails
             ) {
                 onAction(AdminDetailsAction.ClickAddAdmin)
             }
@@ -443,9 +435,9 @@ private fun AccountSettingsContainer(
             },
             modifier = Modifier.clickable(
                 enabled = !state.isSendingVerificationCode &&
-                         !state.isLoggingOut &&
-                         !state.isRemovingAccount &&
-                         !state.isUpdatingDetails
+                        !state.isLoggingOut &&
+                        !state.isRemovingAccount &&
+                        !state.isUpdatingDetails
             ) {
                 onAction(AdminDetailsAction.ClickLogout)
             }
@@ -471,9 +463,9 @@ private fun AccountSettingsContainer(
             },
             modifier = Modifier.clickable(
                 enabled = !state.isSendingVerificationCode &&
-                         !state.isLoggingOut &&
-                         !state.isRemovingAccount &&
-                         !state.isUpdatingDetails
+                        !state.isLoggingOut &&
+                        !state.isRemovingAccount &&
+                        !state.isUpdatingDetails
             ) {
                 onAction(AdminDetailsAction.ClickRemoveAccount)
             }

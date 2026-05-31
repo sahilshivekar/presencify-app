@@ -1,7 +1,7 @@
 package edu.watumull.presencify.feature.users.teacher_details
 
 sealed interface TeacherDetailsAction {
-    data object BackButtonClick : TeacherDetailsAction
+    data object NavigateBack : TeacherDetailsAction
     data object DismissDialog : TeacherDetailsAction
     data object ToggleImageDialog : TeacherDetailsAction
     data object RemoveImageClick : TeacherDetailsAction

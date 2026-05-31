@@ -100,7 +100,6 @@ fun RecognizeStudentScreen(
     // Dialog for face not recognized / cheating / generic errors
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
             title = dialogState.title,
             message = dialogState.message.asString(),

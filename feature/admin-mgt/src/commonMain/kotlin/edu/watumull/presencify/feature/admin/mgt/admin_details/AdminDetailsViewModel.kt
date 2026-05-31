@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.admin.AdminRepository
 import edu.watumull.presencify.core.domain.repository.admin_auth.AdminAuthRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -98,7 +99,7 @@ class AdminDetailsViewModel(
                 sendEvent(AdminDetailsEvent.NavigateToAddAdmin)
             }
 
-            is AdminDetailsAction.ClickBackButton -> {
+            is AdminDetailsAction.NavigateBack -> {
                 sendEvent(AdminDetailsEvent.NavigateBack)
             }
 
@@ -196,12 +197,10 @@ class AdminDetailsViewModel(
                             isUpdatingDetails = false,
                             isEditingDetails = true,
                             isUsernameEmailEnabled = true,
-                            dialogState = AdminDetailsState.DialogState(
-                                isVisible = true,
-                                title = "Update Failed",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Update Failed"),
                                 message = error.toUiText(),
-                                dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.ERROR
+                                dialogType = DialogType.ERROR
                             )
                         )
                     }
@@ -225,12 +224,10 @@ class AdminDetailsViewModel(
                     updateState {
                         it.copy(
                             isSendingVerificationCode = false,
-                            dialogState = AdminDetailsState.DialogState(
-                                isVisible = true,
-                                title = "Failed to Send Verification Code",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Failed to Send Verification Code"),
                                 message = error.toUiText(),
-                                dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.ERROR
+                                dialogType = DialogType.ERROR
                             )
                         )
                     }
@@ -252,12 +249,10 @@ class AdminDetailsViewModel(
                     updateState {
                         it.copy(
                             isLoggingOut = false,
-                            dialogState = AdminDetailsState.DialogState(
-                                isVisible = true,
-                                title = "Logout Failed",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Logout Failed"),
                                 message = error.toUiText(),
                                 dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.ERROR
                             )
                         )
                     }
@@ -268,11 +263,9 @@ class AdminDetailsViewModel(
     private fun showRemoveAccountDialog() {
         updateState {
             it.copy(
-                dialogState = AdminDetailsState.DialogState(
-                    isVisible = true,
+                dialogState = DialogState(
                     dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                    dialogIntention = DialogIntention.REMOVE_ACCOUNT_CONFIRMATION,
-                    title = "Remove Account",
+                    title = UiText.DynamicString("Remove Account"),
                     message = UiText.DynamicString("Are you sure you want to remove your account? This action cannot be undone.")
                 )
             )
@@ -298,12 +291,10 @@ class AdminDetailsViewModel(
                     updateState {
                         it.copy(
                             isRemovingAccount = false,
-                            dialogState = AdminDetailsState.DialogState(
-                                isVisible = true,
-                                title = "Failed to Remove Account",
+                            dialogState = DialogState(
+                                title = UiText.DynamicString("Failed to Remove Account"),
                                 message = error.toUiText(),
                                 dialogType = DialogType.ERROR,
-                                dialogIntention = DialogIntention.ERROR
                             )
                         )
                     }

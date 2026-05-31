@@ -21,14 +21,14 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ${NAME}Root(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     val viewModel: ${NAME}ViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is ${NAME}Event.NavigateBack -> onBackButtonClick()
+            is ${NAME}Event.NavigateBack -> onNavigateBack()
         }
     }
 
@@ -47,23 +47,24 @@ fun ${NAME}Root(
 
 #if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "") package ${PACKAGE_NAME} #end
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.ExperimentalMaterial3Api
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.presentation.UiConstants
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.MaterialTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +73,7 @@ fun ${NAME}Screen(
     onAction: (${NAME}Action) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(${NAME}Action.BackButtonClick) },
+        backPress = { onAction(${NAME}Action.NavigateBack) },
         topBarTitle = "${NAME}",
     ) { paddingValues ->
         when (state.viewState) {
@@ -98,20 +99,10 @@ fun ${NAME}Screen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message,
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(${NAME}Action.DismissDialog)
-            }
+            onDismiss = { onAction(${NAME}Action.DismissDialog) }
         )
     }
 
@@ -170,7 +161,7 @@ class ${NAME}ViewModel :
 
     override fun handleAction(action: ${NAME}Action) {
         when (action) {
-            is ${NAME}Action.BackButtonClick -> {
+            is ${NAME}Action.NavigateBack -> {
                 sendEvent(${NAME}Event.NavigateBack)
             }
             is ${NAME}Action.DismissDialog -> {
@@ -188,6 +179,7 @@ class ${NAME}ViewModel :
 
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class ${NAME}State(
     val viewState: ViewState = ViewState.Loading,
@@ -198,14 +190,6 @@ data class ${NAME}State(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: String = "",
-    )
 }
 
 # =============================================================================
@@ -225,11 +209,6 @@ sealed interface ${NAME}Event {
 #if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "") package ${PACKAGE_NAME} #end
 
 sealed interface ${NAME}Action {
-    data object BackButtonClick : ${NAME}Action
+    data object NavigateBack : ${NAME}Action
     data object DismissDialog : ${NAME}Action
-}
-
-// required if there are multiple different confirmation operations need to be done on screen
-enum class DialogIntention {
-    GENERIC,
 }

@@ -34,7 +34,7 @@ fun RoomDetailsScreen(
     onAction: (RoomDetailsAction) -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(RoomDetailsAction.BackButtonClick) },
+        backPress = { onAction(RoomDetailsAction.NavigateBack) },
         topBarTitle = "Room Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -115,16 +115,10 @@ fun RoomDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_ROOM -> onAction(RoomDetailsAction.ConfirmRemoveRoom)
-                    DialogIntention.GENERIC -> onAction(RoomDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(RoomDetailsAction.ConfirmRemoveRoom) },
             onDismiss = { onAction(RoomDetailsAction.DismissDialog) }
         )
     }

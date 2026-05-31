@@ -12,6 +12,8 @@ import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
 import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
@@ -110,11 +112,10 @@ class StudentAttendanceAnalyticsViewModel(
                 updateState {
                     it.copy(
                         loadingSemesterIds = it.loadingSemesterIds - semesterId,
-                        dialogState = StudentAttendanceAnalyticsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = "Error Loading Courses",
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error Loading Courses"),
                             message = error.toUiText(),
-                            dialogIntention = DialogIntention.GENERIC
+                            dialogType = DialogType.ERROR,
                         )
                     )
                 }
@@ -205,7 +206,7 @@ class StudentAttendanceAnalyticsViewModel(
 
     override fun handleAction(action: StudentAttendanceAnalyticsAction) {
         when (action) {
-            is StudentAttendanceAnalyticsAction.BackButtonClick -> {
+            is StudentAttendanceAnalyticsAction.NavigateBack -> {
                 sendEvent(StudentAttendanceAnalyticsEvent.NavigateBack)
             }
 

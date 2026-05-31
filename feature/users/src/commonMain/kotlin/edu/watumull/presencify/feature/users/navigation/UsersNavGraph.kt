@@ -210,7 +210,7 @@ fun NavGraphBuilder.usersNavGraph(
 
     composableWithSlideTransitions<UsersRoutes.UpdateUserPassword> {
         UpdateUserPasswordRoot(
-            onBackButtonClick = onNavigateBack,
+            onNavigateBack = onNavigateBack,
             onNavigateToMyDetails = onNavigateBack,
         )
     }

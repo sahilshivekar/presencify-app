@@ -10,6 +10,8 @@ import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
+import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -74,10 +76,9 @@ class AddEditBatchViewModel(
                             .onError { error ->
                                 updateState {
                                     it.copy(
-                                        dialogState = AddEditBatchState.DialogState(
+                                        dialogState = DialogState(
                                             dialogType = DialogType.ERROR,
-                                            dialogIntention = DialogIntention.GENERIC,
-                                            title = "Error Loading Semester",
+                                            title = UiText.DynamicString("Error Loading Semester"),
                                             message = error.toUiText()
                                         )
                                     )
@@ -87,10 +88,9 @@ class AddEditBatchViewModel(
                     .onError { error ->
                         updateState {
                             it.copy(
-                                dialogState = AddEditBatchState.DialogState(
+                                dialogState = DialogState(
                                     dialogType = DialogType.ERROR,
-                                    dialogIntention = DialogIntention.GENERIC,
-                                    title = "Error Loading Division",
+                                    title = UiText.DynamicString("Error Loading Division"),
                                     message = error.toUiText()
                                 )
                             )
@@ -100,10 +100,9 @@ class AddEditBatchViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditBatchState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Batch",
+                            title = UiText.DynamicString("Error Loading Batch"),
                             message = error.toUiText()
                         )
                     )
@@ -144,10 +143,9 @@ class AddEditBatchViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
-                        dialogState = AddEditBatchState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Loading Branches",
+                            title = UiText.DynamicString("Error Loading Branches"),
                             message = error.toUiText()
                         )
                     )
@@ -157,7 +155,8 @@ class AddEditBatchViewModel(
 
     override fun handleAction(action: AddEditBatchAction) {
         when (action) {
-            is AddEditBatchAction.BackButtonClick -> handleBackNavigation()
+            is AddEditBatchAction.NavigateBack -> handleBackNavigation()
+            is AddEditBatchAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditBatchAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is AddEditBatchAction.UpdateSemesterNumber -> updateState {
                 it.copy(
@@ -227,11 +226,10 @@ class AddEditBatchViewModel(
         if (hasUnsavedChanges()) {
             updateState {
                 it.copy(
-                    dialogState = AddEditBatchState.DialogState(
+                    dialogState = DialogState(
                         dialogType = DialogType.CONFIRM_NORMAL_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES,
-                        title = "Unsaved Changes",
-                        message = edu.watumull.presencify.core.presentation.UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
+                        title = UiText.DynamicString("Unsaved Changes"),
+                        message = UiText.DynamicString("You have unsaved changes. Are you sure you want to leave?")
                     )
                 )
             }
@@ -240,7 +238,7 @@ class AddEditBatchViewModel(
         }
     }
 
-    fun confirmNavigateBack() {
+    private fun confirmNavigateBack() {
         updateState { it.copy(dialogState = null) }
         sendEvent(AddEditBatchEvent.NavigateBack)
     }
@@ -281,11 +279,10 @@ class AddEditBatchViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            dialogState = AddEditBatchState.DialogState(
+                            dialogState = DialogState(
                                 dialogType = DialogType.INFO,
-                                dialogIntention = DialogIntention.GENERIC,
-                                title = "No Divisions Found",
-                                message = edu.watumull.presencify.core.presentation.UiText.DynamicString("No divisions found with the selected criteria. Please check your inputs.")
+                                title = UiText.DynamicString("No Divisions Found"),
+                                message = UiText.DynamicString("No divisions found with the selected criteria. Please check your inputs.")
                             )
                         )
                     }
@@ -295,10 +292,9 @@ class AddEditBatchViewModel(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        dialogState = AddEditBatchState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Finding Divisions",
+                            title = UiText.DynamicString("Error Finding Divisions"),
                             message = error.toUiText()
                         )
                     )
@@ -381,10 +377,11 @@ class AddEditBatchViewModel(
                 updateState {
                     it.copy(
                         isSubmitting = false,
-                        dialogState = AddEditBatchState.DialogState(
+                        dialogState = DialogState(
                             dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = if (state.isEditMode) "Error Updating Batch" else "Error Adding Batch",
+                            title = if (state.isEditMode) UiText.DynamicString("Error Updating Batch") else UiText.DynamicString(
+                                "Error Adding Batch"
+                            ),
                             message = error.toUiText()
                         )
                     )

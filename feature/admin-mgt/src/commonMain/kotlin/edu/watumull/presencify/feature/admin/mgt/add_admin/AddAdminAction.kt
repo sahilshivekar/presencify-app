@@ -7,6 +7,7 @@ sealed interface AddAdminAction {
     data class ChangeConfirmPassword(val confirmPassword: String) : AddAdminAction
     data object TogglePasswordVisibility : AddAdminAction
     data object ClickAddAdmin : AddAdminAction
-    data object ClickBackButton : AddAdminAction
+    data object NavigateBack : AddAdminAction
+    data object ConfirmNavigateBack : AddAdminAction
     data object DismissDialog : AddAdminAction
 }

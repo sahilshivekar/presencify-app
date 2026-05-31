@@ -30,10 +30,9 @@ import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRol
 fun BatchDetailsScreen(
     state: BatchDetailsState,
     onAction: (BatchDetailsAction) -> Unit,
-    onConfirmRemove: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(BatchDetailsAction.BackButtonClick) },
+        backPress = { onAction(BatchDetailsAction.NavigateBack) },
         topBarTitle = "Batch Details",
     ) { paddingValues ->
         when (state.viewState) {
@@ -121,16 +120,10 @@ fun BatchDetailsScreen(
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_REMOVE_BATCH -> onConfirmRemove()
-                    DialogIntention.GENERIC -> onAction(BatchDetailsAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(BatchDetailsAction.ConfirmRemoveBatch) },
             onDismiss = { onAction(BatchDetailsAction.DismissDialog) }
         )
     }

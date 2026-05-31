@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.academics.search_course
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Course
@@ -18,7 +17,6 @@ import kotlinx.collections.immutable.toImmutableList
 @Stable
 data class SearchCourseState(
     val viewState: ViewState = ViewState.Content,
-    val dialogState: DialogState? = null,
 
     // Search & Filter
     val searchQuery: String = "",
@@ -57,7 +55,6 @@ data class SearchCourseState(
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false,
 
-
     // Track individual course operations (assign/unassign)
     val loadingCourseIds: Set<String> = emptySet(),
 
@@ -69,16 +66,4 @@ data class SearchCourseState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText = UiText.DynamicString(""),
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
 }

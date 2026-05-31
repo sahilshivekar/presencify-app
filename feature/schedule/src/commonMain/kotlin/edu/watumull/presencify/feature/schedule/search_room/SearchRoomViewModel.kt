@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.schedule.search_room
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
@@ -59,12 +58,8 @@ class SearchRoomViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchRoomState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error",
-                        message = error.toUiText(),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchRoomState.ViewState.Error(error.toUiText()),
+                    isLoadingRooms = false
                 )
             }
         },
@@ -201,12 +196,7 @@ class SearchRoomViewModel(
 
             updateState {
                 it.copy(
-                    dialogState = SearchRoomState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Validation Error",
-                        message = UiText.DynamicString(errorMessage),
-                        dialogIntention = DialogIntention.GENERIC
-                    )
+                    viewState = SearchRoomState.ViewState.Error(UiText.DynamicString(errorMessage))
                 )
             }
         }
@@ -216,13 +206,10 @@ class SearchRoomViewModel(
 
     override fun handleAction(action: SearchRoomAction) {
         when (action) {
-            SearchRoomAction.BackButtonClick -> {
+            SearchRoomAction.NavigateBack -> {
                 sendEvent(NavigateBack)
             }
 
-            SearchRoomAction.DismissDialog -> {
-                updateState { it.copy(dialogState = null) }
-            }
 
             is SearchRoomAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

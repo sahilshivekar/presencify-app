@@ -8,7 +8,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AdminVerifyCodeRoot(
-    onBackButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     onCodeVerified: () -> Unit,
 ) {
     val viewModel: AdminVerifyCodeViewModel = koinViewModel()
@@ -16,7 +16,7 @@ fun AdminVerifyCodeRoot(
 
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
-            is AdminVerifyCodeEvent.NavigateBack -> onBackButtonClick()
+            is AdminVerifyCodeEvent.NavigateBack -> onNavigateBack()
             is AdminVerifyCodeEvent.NavigateToHome -> onCodeVerified()
         }
     }

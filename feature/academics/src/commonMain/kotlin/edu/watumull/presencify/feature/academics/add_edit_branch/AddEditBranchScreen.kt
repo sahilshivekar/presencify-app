@@ -26,10 +26,9 @@ import edu.watumull.presencify.core.presentation.UiConstants
 fun AddEditBranchScreen(
     state: AddEditBranchState,
     onAction: (AddEditBranchAction) -> Unit,
-    onConfirmNavigateBack: () -> Unit,
 ) {
     PresencifyScaffold(
-        backPress = { onAction(AddEditBranchAction.BackButtonClick) },
+        backPress = { onAction(AddEditBranchAction.NavigateBack) },
         topBarTitle = if (state.isEditMode) "Edit Branch" else "Add Branch",
     ) { paddingValues ->
         Column(
@@ -93,16 +92,10 @@ fun AddEditBranchScreen(
     // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message?.asString() ?: "",
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.CONFIRM_NAVIGATION_WITH_UNSAVED_CHANGES -> onConfirmNavigateBack()
-                    DialogIntention.GENERIC -> onAction(AddEditBranchAction.DismissDialog)
-                }
-            },
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onConfirm = { onAction(AddEditBranchAction.ConfirmNavigateBack) },
             onDismiss = { onAction(AddEditBranchAction.DismissDialog) }
         )
     }

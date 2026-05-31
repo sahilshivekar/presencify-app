@@ -35,7 +35,7 @@ class DynamicQRViewModel(
             DynamicQRAction.StopButtonClick -> stopQrGeneration()
             DynamicQRAction.ShowQRClick -> startQrGeneration()
             DynamicQRAction.NavigateToDetails -> sendEvent(DynamicQREvent.NavigateToDetails(attendanceId))
-            DynamicQRAction.BackButtonClick -> sendEvent(DynamicQREvent.NavigateBack)
+            DynamicQRAction.NavigateBack -> sendEvent(DynamicQREvent.NavigateBack)
         }
     }
 

@@ -1,7 +1,8 @@
 package edu.watumull.presencify.feature.users.add_edit_student
 
 sealed interface AddEditStudentAction {
-    data object BackButtonClick : AddEditStudentAction
+    data object NavigateBack : AddEditStudentAction
+    data object ConfirmNavigateBack : AddEditStudentAction
     data object DismissDialog : AddEditStudentAction
 
     // Personal Details

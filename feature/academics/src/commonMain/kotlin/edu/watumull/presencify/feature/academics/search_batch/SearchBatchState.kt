@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.academics.search_batch
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -15,7 +14,6 @@ import kotlinx.collections.immutable.toImmutableList
 @Stable
 data class SearchBatchState(
     val viewState: ViewState = ViewState.Content,
-    val dialogState: DialogState? = null,
 
     // Search & Filter
     val searchQuery: String = "",
@@ -52,18 +50,6 @@ data class SearchBatchState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText = UiText.DynamicString(""),
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
 }
 
 

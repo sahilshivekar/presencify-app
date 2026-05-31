@@ -1,8 +1,8 @@
 package edu.watumull.presencify.feature.academics.course_details
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class CourseDetailsState(
     val viewState: ViewState = ViewState.Loading,
@@ -16,18 +16,5 @@ data class CourseDetailsState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
-    CONFIRM_REMOVE_COURSE,
 }
 

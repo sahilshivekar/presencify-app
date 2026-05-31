@@ -9,8 +9,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 sealed interface SearchClassAction {
-    data object BackButtonClick : SearchClassAction
-    data object DismissDialog : SearchClassAction
+    data object NavigateBack : SearchClassAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchClassAction

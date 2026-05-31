@@ -3,7 +3,6 @@ package edu.watumull.presencify.feature.attendance.search_attendance
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
@@ -80,11 +79,8 @@ class SearchAttendanceViewModel(
         onError = { error ->
             updateState {
                 it.copy(
-                    dialogState = SearchAttendanceState.DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = "Error Loading Attendances",
-                        message = error.toUiText()
-                    )
+                    viewState = SearchAttendanceState.ViewState.Error(error.toUiText()),
+                    isLoadingAttendances = false
                 )
             }
         },
@@ -110,8 +106,7 @@ class SearchAttendanceViewModel(
 
     override fun handleAction(action: SearchAttendanceAction) {
         when (action) {
-            SearchAttendanceAction.BackButtonClick -> sendEvent(SearchAttendanceEvent.NavigateBack)
-            SearchAttendanceAction.DismissDialog -> updateState { it.copy(dialogState = null) }
+            SearchAttendanceAction.NavigateBack -> sendEvent(SearchAttendanceEvent.NavigateBack)
 
             // Search & Refresh
             is SearchAttendanceAction.UpdateSearchQuery -> updateState { it.copy(searchQuery = action.query) }

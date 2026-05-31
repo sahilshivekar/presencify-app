@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.schedule.timetable_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
@@ -70,60 +71,59 @@ class TimetableDetailsViewModel(
 
     override fun handleAction(action: TimetableDetailsAction) {
         when (action) {
-            is TimetableDetailsAction.BackButtonClick -> sendEvent(TimetableDetailsEvent.NavigateBack)
+            is TimetableDetailsAction.NavigateBack -> sendEvent(TimetableDetailsEvent.NavigateBack)
             is TimetableDetailsAction.DismissDialog -> updateState { it.copy(dialogState = null) }
             is TimetableDetailsAction.DayTabClick -> updateState { it.copy(selectedDay = action.day) }
             is TimetableDetailsAction.ToggleShowInactiveClasses -> updateState { it.copy(showInactiveClasses = !it.showInactiveClasses) }
             is TimetableDetailsAction.AddClassClick -> sendEvent(TimetableDetailsEvent.NavigateToAddClass(state.timetableId))
             is TimetableDetailsAction.ClassClick -> sendEvent(TimetableDetailsEvent.NavigateToClassDetails(action.classId))
-            is TimetableDetailsAction.RemoveTimetableClick -> updateState {
-                it.copy(
-                    dialogState = TimetableDetailsState.DialogState(
-                        dialogType = DialogType.CONFIRM_RISKY_ACTION,
-                        dialogIntention = DialogIntention.CONFIRM_REMOVE_TIMETABLE,
-                        title = "Remove Timetable",
-                        message = UiText.DynamicString(
-                            "Are you sure you want to remove this timetable (Version ${state.timetable?.timetableVersion ?: "N/A"})?"
-                        )
-                    )
-                )
-            }
-            is TimetableDetailsAction.ConfirmRemoveTimetable -> {
-                viewModelScope.launch {
-                    removeTimetable()
-                }
-            }
+            is TimetableDetailsAction.RemoveTimetableClick -> handleRemoveTimetable()
+            is TimetableDetailsAction.ConfirmRemoveTimetable -> confirmRemoveTimetable()
             is TimetableDetailsAction.EditTimetableClick -> sendEvent(TimetableDetailsEvent.NavigateToEditTimetable(state.timetableId))
         }
     }
 
-    private suspend fun removeTimetable() {
-        val timetableId = state.timetable?.id ?: return
+    private fun handleRemoveTimetable() {
+        updateState { it.copy(
+            dialogState = DialogState(
+                dialogType = DialogType.CONFIRM_RISKY_ACTION,
+                title = UiText.DynamicString("Remove Timetable"),
+                message = UiText.DynamicString("Are you sure you want to remove this timetable (Version ${state.timetable?.timetableVersion ?: "N/A"})?")
+            )
+        ) }
+    }
 
-        updateState { it.copy(isRemovingTimetable = true, dialogState = null) }
+    private fun confirmRemoveTimetable() {
+        updateState { it.copy(dialogState = null) }
+        removeTimetable()
+    }
 
-        timetableRepository.removeTimetable(timetableId)
-            .onSuccess {
-                updateState { it.copy(isRemovingTimetable = false) }
-                viewModelScope.launch {
+    private fun removeTimetable() {
+        viewModelScope.launch {
+            val timetableId = state.timetable?.id ?: return@launch
+
+            updateState { it.copy(isRemovingTimetable = true) }
+
+            timetableRepository.removeTimetable(timetableId)
+                .onSuccess {
+                    updateState { it.copy(isRemovingTimetable = false) }
                     SnackbarController.sendEvent(
                         SnackbarEvent(message = "Timetable removed successfully")
                     )
+                    sendEvent(TimetableDetailsEvent.NavigateBack)
                 }
-                sendEvent(TimetableDetailsEvent.NavigateBack)
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        isRemovingTimetable = false,
-                        dialogState = TimetableDetailsState.DialogState(
-                            dialogType = DialogType.ERROR,
-                            dialogIntention = DialogIntention.GENERIC,
-                            title = "Error Removing Timetable",
-                            message = error.toUiText()
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isRemovingTimetable = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                title = UiText.DynamicString("Error Removing Timetable"),
+                                message = error.toUiText()
+                            )
                         )
-                    )
+                    }
                 }
-            }
+        }
     }
 }

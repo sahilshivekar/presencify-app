@@ -1,8 +1,7 @@
 package edu.watumull.presencify.feature.academics.search_branch
 
 sealed interface SearchBranchAction {
-    data object BackButtonClick : SearchBranchAction
-    data object DismissDialog : SearchBranchAction
+    data object NavigateBack : SearchBranchAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchBranchAction

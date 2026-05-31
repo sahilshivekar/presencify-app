@@ -41,7 +41,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyBottomShee
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -73,7 +72,7 @@ fun SearchCourseScreen(
     }
 
     PresencifyBottomSheetScaffold(
-        backPress = { onAction(SearchCourseAction.BackButtonClick) },
+        backPress = { onAction(SearchCourseAction.NavigateBack) },
         topBarTitle = topBarTitle,
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -119,25 +118,6 @@ fun SearchCourseScreen(
                 )
             }
         }
-    }
-
-    state.dialogState?.let { dialogState ->
-        PresencifyAlertDialog(
-            isVisible = dialogState.isVisible,
-            dialogType = dialogState.dialogType,
-            title = dialogState.title,
-            message = dialogState.message.asString(),
-            onConfirm = {
-                when (dialogState.dialogIntention) {
-                    DialogIntention.GENERIC -> {
-                        // Handle generic dialog confirmation
-                    }
-                }
-            },
-            onDismiss = {
-                onAction(SearchCourseAction.DismissDialog)
-            }
-        )
     }
 }
 

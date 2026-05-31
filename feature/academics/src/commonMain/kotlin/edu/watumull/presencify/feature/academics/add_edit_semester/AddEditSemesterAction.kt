@@ -4,8 +4,9 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import kotlinx.datetime.LocalDate
 
 sealed interface AddEditSemesterAction {
-    data object BackButtonClick : AddEditSemesterAction
+    data object NavigateBack : AddEditSemesterAction
     data object DismissDialog : AddEditSemesterAction
+    data object ConfirmNavigateBack : AddEditSemesterAction
     data object SubmitClick : AddEditSemesterAction
 
     data class UpdateSemesterNumber(val semesterNumber: SemesterNumber) : AddEditSemesterAction
@@ -26,4 +27,3 @@ sealed interface AddEditSemesterAction {
     data class SelectOptionalCourse(val optionalCourse: String, val courseId: String) : AddEditSemesterAction
     data class ChangeOptionalCourseDropdownVisibility(val optionalCourse: String, val isVisible: Boolean) : AddEditSemesterAction
 }
-

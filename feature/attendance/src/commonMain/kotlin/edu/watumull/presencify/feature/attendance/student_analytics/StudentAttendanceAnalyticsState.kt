@@ -1,10 +1,10 @@
 package edu.watumull.presencify.feature.attendance.student_analytics
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
 import edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class StudentAttendanceAnalyticsState(
     val viewState: ViewState = ViewState.Loading,
@@ -33,16 +33,4 @@ data class StudentAttendanceAnalyticsState(
         data class Error(val message: UiText) : ViewState
         data object Content : ViewState
     }
-
-    data class DialogState(
-        val isVisible: Boolean = true,
-        val dialogType: DialogType = DialogType.INFO,
-        val dialogIntention: DialogIntention = DialogIntention.GENERIC,
-        val title: String = "",
-        val message: UiText? = null,
-    )
-}
-
-enum class DialogIntention {
-    GENERIC,
 }

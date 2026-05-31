@@ -46,15 +46,12 @@ fun AdminVerifyCodeScreen(
 
     // Dialog handling
     state.dialogState?.let { dialogState ->
-        if (dialogState.message != null) {
-            PresencifyAlertDialog(
-                isVisible = dialogState.isVisible,
-                dialogType = dialogState.dialogType,
-                title = dialogState.title,
-                message = dialogState.message.asString(),
-                onDismiss = { onAction(AdminVerifyCodeAction.DismissDialog) }
-            )
-        }
+        PresencifyAlertDialog(
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            dialogType = dialogState.dialogType,
+            onDismiss = { onAction(AdminVerifyCodeAction.DismissDialog) }
+        )
     }
 }
 

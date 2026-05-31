@@ -1,8 +1,7 @@
 package edu.watumull.presencify.feature.users.search_teacher
 
 sealed interface SearchTeacherAction {
-    data object BackButtonClick : SearchTeacherAction
-    data object DismissDialog : SearchTeacherAction
+    data object NavigateBack : SearchTeacherAction
 
     // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchTeacherAction
