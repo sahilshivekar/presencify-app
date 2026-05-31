@@ -1,6 +1,5 @@
 package edu.watumull.presencify.feature.users.update_password
 
-import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class UpdateUserPasswordState(

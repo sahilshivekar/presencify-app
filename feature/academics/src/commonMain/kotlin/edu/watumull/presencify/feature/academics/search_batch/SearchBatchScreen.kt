@@ -38,7 +38,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyBottomShee
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants

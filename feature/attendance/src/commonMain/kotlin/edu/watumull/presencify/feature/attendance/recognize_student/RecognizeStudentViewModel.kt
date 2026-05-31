@@ -44,6 +44,7 @@ class RecognizeStudentViewModel(
     private var globalTimeoutJob: Job? = null
 
     init {
+        ntpClock.startPeriodicSync(viewModelScope)
         Logger.d(TAG) { "VM init: loading student data for attendanceId=$attendanceId" }
         loadStudentData()
     }
@@ -54,7 +55,14 @@ class RecognizeStudentViewModel(
             val studentId = userRepository.getUserId().firstOrNull()
             Logger.d(TAG) { "loadStudentData(): userId=$studentId" }
             if (studentId == null) {
-                updateState { it.copy(isLoading = false, error = UiText.DynamicString("User not logged in")) }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        viewState = RecognizeStudentState.ViewState.Error(
+                            UiText.DynamicString("User not logged in")
+                        )
+                    )
+                }
                 return@launch
             }
 
@@ -66,6 +74,7 @@ class RecognizeStudentViewModel(
                     updateState {
                         it.copy(
                             isLoading = false,
+                            viewState = RecognizeStudentState.ViewState.Content,
                         )
                     }
                     showErrorDialog(UiText.DynamicString("Face not registered yet."))
@@ -73,11 +82,22 @@ class RecognizeStudentViewModel(
                     Logger.d(TAG) {
                         "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}"
                     }
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            viewState = RecognizeStudentState.ViewState.Content,
+                        )
+                    }
                     startLivenessCheck()
                 }
             }.onError { error ->
                 Logger.e(TAG) { "loadStudentData(): error=$error" }
-                updateState { it.copy(isLoading = false, error = error.toUiText()) }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        viewState = RecognizeStudentState.ViewState.Error(error.toUiText())
+                    )
+                }
             }
         }
     }
@@ -86,9 +106,20 @@ class RecognizeStudentViewModel(
      * Local helper for liveness timing. If you later introduce a true monotonic
      * clock abstraction, you can replace this implementation there.
      */
-    private fun nowMillis(): Long = ntpClock.getCurrentNtpTimeMs()
+    private fun nowMillis(): Long = ntpClock.now()
 
     private fun startLivenessCheck() {
+        if (!ntpClock.isSynced()) {
+            updateState {
+                it.copy(
+                    viewState = RecognizeStudentState.ViewState.Error(
+                        UiText.DynamicString("Unable to synchronize network time. Please check your internet connection and try again.")
+                    )
+                )
+            }
+            return
+        }
+
         val sequence = generateLivenessSequence()
         startTimeMillis = nowMillis()
         lastStepCompletedTime = startTimeMillis
@@ -97,6 +128,7 @@ class RecognizeStudentViewModel(
 
         updateState {
             it.copy(
+                viewState = RecognizeStudentState.ViewState.Content,
                 livenessSequence = sequence,
                 currentStep = 0,
                 isLivenessComplete = false,

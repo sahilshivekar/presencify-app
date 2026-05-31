@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import co.touchlab.kermit.Logger
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import qrscanner.CameraLens
 import qrscanner.QrScanner
@@ -15,30 +16,40 @@ fun ScanQrScreen(
     state: ScanQrState,
     onAction: (ScanQrAction) -> Unit
 ) {
-    if (!state.isQrScanSuccessful) {
-        PresencifyScaffold(
-            backPress = { onAction(ScanQrAction.NavigateBack) },
-            topBarTitle = "Scan QR"
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                QrScanner(
-                    modifier = Modifier.fillMaxSize(),
-                    flashlightOn = false,
-                    openImagePicker = false,
-                    onCompletion = { result ->
-                        onAction(ScanQrAction.Scanned(result))
-                    },
-                    imagePickerHandler = {},
-                    cameraLens = CameraLens.Back,
-                    onFailure = {
-                        Logger.d { "QR scan failed: $it" }
-                        onAction(ScanQrAction.ScanFailed)
-                    }
+    PresencifyScaffold(
+        backPress = { onAction(ScanQrAction.NavigateBack) },
+        topBarTitle = "Scan QR"
+    ) { paddingValues ->
+        when (state.viewState) {
+            is ScanQrState.ViewState.Error -> {
+                PresencifyNoResultsIndicator(
+                    text = state.viewState.message.asString()
                 )
+            }
+
+            is ScanQrState.ViewState.Content -> {
+                if (!state.isQrScanSuccessful) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                    ) {
+                        QrScanner(
+                            modifier = Modifier.fillMaxSize(),
+                            flashlightOn = false,
+                            openImagePicker = false,
+                            onCompletion = { result ->
+                                onAction(ScanQrAction.Scanned(result))
+                            },
+                            imagePickerHandler = {},
+                            cameraLens = CameraLens.Back,
+                            onFailure = {
+                                Logger.d { "QR scan failed: $it" }
+                                onAction(ScanQrAction.ScanFailed)
+                            }
+                        )
+                    }
+                }
             }
         }
     }

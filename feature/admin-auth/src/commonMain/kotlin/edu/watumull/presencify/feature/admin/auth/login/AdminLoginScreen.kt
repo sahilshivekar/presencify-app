@@ -41,7 +41,6 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
-import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.UiConstants

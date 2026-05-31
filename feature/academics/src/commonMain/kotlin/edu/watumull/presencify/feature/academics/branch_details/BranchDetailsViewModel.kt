@@ -10,7 +10,6 @@ import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
-import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController.sendEvent
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel

@@ -2,6 +2,7 @@ package edu.watumull.presencify
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import edu.watumull.presencify.core.domain.NtpClock
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.presentation.navigation.NavRoute
@@ -15,12 +16,20 @@ import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val userRepository: UserRepository,
+    private val ntpClock: NtpClock,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppState())
     val state = _state.asStateFlow()
 
     init {
+        initializeNtpSync()
         checkAuthentication()
+    }
+
+    private fun initializeNtpSync() {
+        viewModelScope.launch {
+            ntpClock.sync()
+        }
     }
 
     private fun checkAuthentication() {

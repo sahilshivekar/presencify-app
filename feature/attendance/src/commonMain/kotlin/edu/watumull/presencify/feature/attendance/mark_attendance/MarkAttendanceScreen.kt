@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
@@ -75,24 +75,10 @@ fun MarkAttendanceScreen(
                 }
 
                 is MarkAttendanceState.ViewState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
-                        ) {
-                            Text(
-                                text = state.viewState.message.asString(),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                            Button(onClick = { onAction(MarkAttendanceAction.NavigateBack) }) {
-                                Text("Go Back")
-                            }
-                        }
-                    }
+                    PresencifyNoResultsIndicator(
+                        text = state.viewState.message.asString(),
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
 
                 MarkAttendanceState.ViewState.Content -> {

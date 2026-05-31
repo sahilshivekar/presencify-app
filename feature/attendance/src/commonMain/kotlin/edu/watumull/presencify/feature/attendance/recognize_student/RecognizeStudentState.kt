@@ -16,6 +16,7 @@ data class RecognizeStudentDialogState(
 )
 
 data class RecognizeStudentState(
+    val viewState: ViewState = ViewState.Loading,
     val livenessSequence: List<HeadMovement> = emptyList(),
     val currentStep: Int = 0,
     val isLivenessComplete: Boolean = false,
@@ -24,11 +25,14 @@ data class RecognizeStudentState(
     val cameraPermissionGranted: Boolean = false,
     val error: UiText? = null,
     val isLoading: Boolean = false,
-    // New: flag suspicious behavior when face leaves camera during critical steps
     val isCheatingSuspected: Boolean = false,
-    // Add a nullable dialogState property
     val dialogState: RecognizeStudentDialogState? = null,
-    // Global screen-level timeout (90s) bookkeeping
     val isGlobalTimeoutActive: Boolean = false,
     val hasGlobalTimeoutFired: Boolean = false,
-)
+) {
+    sealed interface ViewState {
+        data object Loading : ViewState
+        data object Content : ViewState
+        data class Error(val message: UiText) : ViewState
+    }
+}

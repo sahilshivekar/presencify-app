@@ -3,19 +3,18 @@ package edu.watumull.presencify.feature.academics.add_edit_branch
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsBranchAbbreviation
 import edu.watumull.presencify.core.presentation.validation.validateAsBranchName
-import edu.watumull.presencify.feature.academics.add_edit_batch.AddEditBatchEvent
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
 import kotlinx.coroutines.launch
 

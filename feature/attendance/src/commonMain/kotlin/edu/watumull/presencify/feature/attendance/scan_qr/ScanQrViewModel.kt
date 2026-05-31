@@ -2,6 +2,7 @@ package edu.watumull.presencify.feature.attendance.scan_qr
 
 import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.domain.NtpClock
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
@@ -14,6 +15,10 @@ class ScanQrViewModel(
 ) : BaseViewModel<ScanQrState, ScanQrEvent, ScanQrAction>(
     initialState = ScanQrState()
 ) {
+    init {
+        ntpClock.startPeriodicSync(viewModelScope)
+    }
+
     override fun handleAction(action: ScanQrAction) {
         when (action) {
             is ScanQrAction.NavigateBack -> {
@@ -39,6 +44,17 @@ class ScanQrViewModel(
     private fun processQrContent(content: String) {
         viewModelScope.launch {
             if (stateFlow.value.isLoading) return@launch
+
+            if (!ntpClock.isSynced()) {
+                updateState {
+                    it.copy(
+                        viewState = ScanQrState.ViewState.Error(
+                            UiText.DynamicString("Unable to synchronize network time. Please check your internet connection and try again.")
+                        )
+                    )
+                }
+                return@launch
+            }
 
             updateState { it.copy(isLoading = true) }
 
@@ -83,7 +99,7 @@ class ScanQrViewModel(
                 return@launch
             }
 
-            val currentNtpTime = ntpClock.getCurrentNtpTimeMs()
+            val currentNtpTime = ntpClock.now()
 
             val diff = abs(currentNtpTime - timestamp)
 

@@ -26,6 +26,7 @@ class DynamicQRViewModel(
     private var timerJob: Job? = null
 
     init {
+        ntpClock.startPeriodicSync(viewModelScope)
         loadAttendance()
         startQrGeneration()
     }
@@ -63,9 +64,22 @@ class DynamicQRViewModel(
     private fun startQrGeneration() {
         if (timerJob?.isActive == true) return
 
+        if (!ntpClock.isSynced()) {
+            updateState {
+                it.copy(
+                    viewState = DynamicQRState.ViewState.Error(
+                        edu.watumull.presencify.core.presentation.UiText.DynamicString(
+                            "Unable to synchronize network time. Please check your internet connection and try again."
+                        )
+                    )
+                )
+            }
+            return
+        }
+
         timerJob = viewModelScope.launch {
             while (isActive) {
-                val timestamp = ntpClock.getCurrentNtpTimeMs()
+                val timestamp = ntpClock.now()
                 val rawContent = "$attendanceId|$timestamp"
                 val qrContent = DynamicQRCipher.encrypt(rawContent)
                 updateState { it.copy(qrCodeContent = qrContent, isStopped = false) }

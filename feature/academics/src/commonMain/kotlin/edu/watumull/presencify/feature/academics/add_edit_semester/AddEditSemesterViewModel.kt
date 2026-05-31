@@ -12,8 +12,8 @@ import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
-import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.Res
 import edu.watumull.presencify.core.designsystem.components.PresencifyButton
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
@@ -59,19 +59,10 @@ fun DynamicQRScreen(
             }
 
             is DynamicQRState.ViewState.Error -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
-                ) {
-                    Text(
-                        text = state.viewState.message.asString(),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                    Button(onClick = { onAction(DynamicQRAction.NavigateBack) }) {
-                        Text("Go Back")
-                    }
-                }
+                PresencifyNoResultsIndicator(
+                    text = state.viewState.message.asString(),
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
             DynamicQRState.ViewState.Content -> {

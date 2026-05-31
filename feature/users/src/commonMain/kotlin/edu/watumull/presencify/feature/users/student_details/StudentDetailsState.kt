@@ -1,12 +1,12 @@
 package edu.watumull.presencify.feature.users.student_details
 
-import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.domain.model.student.Dropout
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.domain.model.student.StudentBatch
 import edu.watumull.presencify.core.domain.model.student.StudentDivision
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class StudentDetailsState(
     val viewState: ViewState = ViewState.Loading,

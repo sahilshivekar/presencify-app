@@ -1,8 +1,8 @@
 package edu.watumull.presencify.feature.users.teacher_details
 
-import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class TeacherDetailsState(
     val viewState: ViewState = ViewState.Loading,

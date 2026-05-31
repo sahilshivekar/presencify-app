@@ -1,7 +1,5 @@
 package edu.watumull.presencify.feature.academics.add_edit_university
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
-import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class AddEditUniversityState(

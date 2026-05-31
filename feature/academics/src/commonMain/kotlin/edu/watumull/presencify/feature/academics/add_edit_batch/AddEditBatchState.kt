@@ -1,12 +1,9 @@
 package edu.watumull.presencify.feature.academics.add_edit_batch
 
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Division
 import edu.watumull.presencify.core.domain.model.academics.Semester
-import edu.watumull.presencify.core.presentation.UiText
-import edu.watumull.presencify.core.presentation.components.dialog.DialogPurpose
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class AddEditBatchState(

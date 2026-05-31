@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
@@ -41,56 +42,77 @@ fun RecognizeStudentScreen(
         topBarTitle = "Face Verification",
         backPress = { onAction(RecognizeStudentAction.NavigateBack) }
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            RecognizeStudentCamera(
-                modifier = Modifier.fillMaxSize(),
-                onFaceDetected = { yaw ->
-                    onAction(RecognizeStudentAction.OnFaceDetected(yaw))
-                },
-                onEmbeddingExtracted = { original, mirrored ->
-                    onAction(RecognizeStudentAction.OnRecognitionSuccess(original, mirrored))
-                    onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
-                },
-                isLivenessComplete = state.isLivenessComplete,
-                shouldCaptureEmbedding = state.shouldCaptureEmbedding,
-                cameraPermissionGranted = state.cameraPermissionGranted,
-                onPermissionResult = { isGranted ->
-                    onAction(RecognizeStudentAction.OnPermissionResult(isGranted))
-                },
-                onCheatingDetected = {
-                    onAction(RecognizeStudentAction.OnCheatingDetected)
-                }
-            )
-
-            // Liveness Instructions Overlay
-            if (!state.isLivenessComplete && state.error == null && state.cameraPermissionGranted) {
-                LivenessOverlay(
-                    sequence = state.livenessSequence,
-                    currentStep = state.currentStep,
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = DesignToken.spacing.xxl)
-                )
-            }
-
-            // Loading / Recognizing Indicator
-            if (state.isLoading || state.isRecognizing) {
+        when (state.viewState) {
+            is RecognizeStudentState.ViewState.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f)),
+                        .padding(padding),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
-                        Text(
-                            text = if (state.isRecognizing) "Verifying Identity..." else "Loading...",
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleMedium
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            }
+
+            is RecognizeStudentState.ViewState.Error -> {
+                PresencifyNoResultsIndicator(
+                    text = state.viewState.message.asString()
+                )
+            }
+
+            is RecognizeStudentState.ViewState.Content -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                ) {
+                    RecognizeStudentCamera(
+                        modifier = Modifier.fillMaxSize(),
+                        onFaceDetected = { yaw ->
+                            onAction(RecognizeStudentAction.OnFaceDetected(yaw))
+                        },
+                        onEmbeddingExtracted = { original, mirrored ->
+                            onAction(RecognizeStudentAction.OnRecognitionSuccess(original, mirrored))
+                            onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
+                        },
+                        isLivenessComplete = state.isLivenessComplete,
+                        shouldCaptureEmbedding = state.shouldCaptureEmbedding,
+                        cameraPermissionGranted = state.cameraPermissionGranted,
+                        onPermissionResult = { isGranted ->
+                            onAction(RecognizeStudentAction.OnPermissionResult(isGranted))
+                        },
+                        onCheatingDetected = {
+                            onAction(RecognizeStudentAction.OnCheatingDetected)
+                        }
+                    )
+
+                    // Liveness Instructions Overlay
+                    if (!state.isLivenessComplete && state.error == null && state.cameraPermissionGranted) {
+                        LivenessOverlay(
+                            sequence = state.livenessSequence,
+                            currentStep = state.currentStep,
+                            modifier = Modifier.align(Alignment.TopCenter).padding(top = DesignToken.spacing.xxl)
                         )
+                    }
+
+                    // Loading / Recognizing Indicator
+                    if (state.isLoading || state.isRecognizing) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.5f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
+                                Text(
+                                    text = if (state.isRecognizing) "Verifying Identity..." else "Loading...",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -142,7 +164,7 @@ private fun LivenessOverlay(
             Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
             Text(
                 text = instruction,
-                color = MaterialTheme.colorScheme.primary, // Or a visible color
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.headlineMedium
             )
         }

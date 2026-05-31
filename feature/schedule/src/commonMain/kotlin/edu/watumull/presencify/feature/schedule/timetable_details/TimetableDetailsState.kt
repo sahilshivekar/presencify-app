@@ -1,10 +1,10 @@
 package edu.watumull.presencify.feature.schedule.timetable_details
 
-import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.domain.model.schedule.Timetable
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class TimetableDetailsState(
     val viewState: ViewState = ViewState.Loading,

@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.academics.search_division
 
 import androidx.lifecycle.viewModelScope
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository

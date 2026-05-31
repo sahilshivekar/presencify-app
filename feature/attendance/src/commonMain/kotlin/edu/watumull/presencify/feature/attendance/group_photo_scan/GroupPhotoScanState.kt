@@ -1,6 +1,5 @@
 package edu.watumull.presencify.feature.attendance.group_photo_scan
 
-import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class GroupPhotoScanState(

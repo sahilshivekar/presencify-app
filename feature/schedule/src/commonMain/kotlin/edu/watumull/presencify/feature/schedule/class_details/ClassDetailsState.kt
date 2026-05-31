@@ -1,8 +1,8 @@
 package edu.watumull.presencify.feature.schedule.class_details
 
-import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class ClassDetailsState(
     val viewState: ViewState = ViewState.Loading,

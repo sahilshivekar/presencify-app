@@ -1,7 +1,6 @@
 package edu.watumull.presencify.feature.users.search_teacher
 
 import androidx.compose.runtime.Stable
-import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.model.teacher.Teacher
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.feature.users.navigation.SearchTeacherIntention
