@@ -189,8 +189,7 @@ fun AddEditClassScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Time Range (only show in add mode)
-                        if (!state.isEditMode) {
+                        // Time Range
                             Text(
                                 text = "Time Range",
                                 style = MaterialTheme.typography.titleMedium,
@@ -208,6 +207,7 @@ fun AddEditClassScreen(
                                     modifier = Modifier.weight(1f),
                                     supportingText = state.startTimeError,
                                     isError = state.startTimeError != null,
+                                    enabled = !state.isSubmitting && !state.isEditMode,
                                 )
                                 PresencifyTimePickerTextField(
                                     value = state.endTime,
@@ -216,9 +216,9 @@ fun AddEditClassScreen(
                                     modifier = Modifier.weight(1f),
                                     supportingText = state.endTimeError,
                                     isError = state.endTimeError != null,
+                                    enabled = !state.isSubmitting && !state.isEditMode,
                                 )
                             }
-                        }
 
                         // Active Date Range (always visible, editable in both add and edit mode)
                         Text(

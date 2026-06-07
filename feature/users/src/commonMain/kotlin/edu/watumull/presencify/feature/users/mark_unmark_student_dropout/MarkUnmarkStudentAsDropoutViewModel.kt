@@ -77,20 +77,6 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
         }
 
         if (!startYearValidation.successful || !endYearValidation.successful || yearRelationError != null) {
-            updateState {
-                it.copy(
-                    dialogState = DialogState(
-                        title = UiText.DynamicString("Validation Error"),
-                        message = UiText.DynamicString(
-                            startYearValidation.errorMessage
-                                ?: endYearValidation.errorMessage
-                                ?: yearRelationError
-                                ?: "Please fix the errors"
-                        ),
-                        dialogType = DialogType.ERROR,
-                    )
-                )
-            }
             return
         }
 

@@ -77,25 +77,7 @@ class AddEditRoomViewModel(
             )
         }
 
-        if (!roomNumberValidation.successful || !capacityValidation.successful) {
-            val errorMessage = listOfNotNull(
-                roomNumberValidation.errorMessage,
-                capacityValidation.errorMessage
-            ).firstOrNull() ?: "Please fix the errors"
-
-            updateState {
-                it.copy(
-                    dialogState = DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = UiText.DynamicString("Validation Error"),
-                        message = UiText.DynamicString(errorMessage)
-                    )
-                )
-            }
-            return false
-        }
-
-        return true
+        return !(!roomNumberValidation.successful || !capacityValidation.successful)
     }
 
     private fun submitRoom() {

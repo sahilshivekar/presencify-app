@@ -278,16 +278,6 @@ class AddEditClassViewModel(
                     activeFromValidation.errorMessage,
                     activeTillValidation.errorMessage
                 ).firstOrNull() ?: "Please fix the errors"
-
-                updateState {
-                    it.copy(
-                        dialogState = DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = UiText.DynamicString("Validation Error"),
-                            message = UiText.DynamicString(errorMessage),
-                        )
-                    )
-                }
                 return false
             }
 
@@ -341,16 +331,6 @@ class AddEditClassViewModel(
                 activeFromValidation.errorMessage,
                 activeTillValidation.errorMessage
             ).firstOrNull() ?: "Please fix the errors"
-
-            updateState {
-                it.copy(
-                    dialogState = DialogState(
-                        dialogType = DialogType.ERROR,
-                        title = UiText.DynamicString("Validation Error"),
-                        message = UiText.DynamicString(errorMessage),
-                    )
-                )
-            }
             return false
         }
 
