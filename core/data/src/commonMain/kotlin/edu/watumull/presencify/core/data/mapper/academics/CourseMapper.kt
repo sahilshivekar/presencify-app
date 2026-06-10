@@ -10,6 +10,7 @@ fun CourseDto.toDomain(): Course = Course(
     schemeId = schemeId,
     code = code,
     name = name,
+    courseType = courseType,
     optionalCourse = optionalCourse,
     scheme = scheme?.toDomain(),
     branchCourseSemesters = branchCourseSemesters?.map { it.toDomain() },

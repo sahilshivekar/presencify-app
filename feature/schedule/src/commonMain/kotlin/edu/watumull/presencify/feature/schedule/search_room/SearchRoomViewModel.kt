@@ -1,10 +1,12 @@
 package edu.watumull.presencify.feature.schedule.search_room
 
 import androidx.lifecycle.viewModelScope
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.pagination.Paginator
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
@@ -196,7 +198,11 @@ class SearchRoomViewModel(
 
             updateState {
                 it.copy(
-                    viewState = SearchRoomState.ViewState.Error(UiText.DynamicString(errorMessage))
+                    dialogState = DialogState(
+                        title = UiText.DynamicString("Validation Error"),
+                        message = UiText.DynamicString(errorMessage),
+                        dialogType = DialogType.ERROR
+                    )
                 )
             }
         }
@@ -210,6 +216,9 @@ class SearchRoomViewModel(
                 sendEvent(NavigateBack)
             }
 
+            SearchRoomAction.DismissDialog -> {
+                updateState { it.copy(dialogState = null) }
+            }
 
             is SearchRoomAction.UpdateSearchQuery -> {
                 updateState { it.copy(searchQuery = action.query) }

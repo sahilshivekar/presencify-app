@@ -23,7 +23,7 @@ import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.data.util.toApiTimeString
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -47,7 +47,7 @@ class KtorRemoteClassSessionDataSource(
         dayOfWeek: DayOfWeek?,
         roomId: String?,
         batchId: String?,
-        classType: ClassType?,
+        courseType: CourseType?,
         courseId: String?,
         semesterId: String?,
         semesterNumber: Int?,
@@ -72,7 +72,7 @@ class KtorRemoteClassSessionDataSource(
                 dayOfWeek?.value?.let { parameter("dayOfWeek", it) }
                 roomId?.let { parameter("roomId", it) }
                 batchId?.let { parameter("batchId", it) }
-                classType?.value?.let { parameter("classType", it) }
+                courseType?.value?.let { parameter("courseType", it) }
                 courseId?.let { parameter("courseId", it) }
                 semesterId?.let { parameter("semesterId", it) }
                 semesterNumber?.let { parameter("semesterNumber", it) }
@@ -96,7 +96,6 @@ class KtorRemoteClassSessionDataSource(
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassDto, DataError.Remote> {
@@ -113,7 +112,6 @@ class KtorRemoteClassSessionDataSource(
                         batchId = batchId,
                         activeFrom = activeFrom.toString(),
                         activeTill = activeTill.toString(),
-                        classType = classType.value,
                         courseId = courseId,
                         timetableId = timetableId
                     )
@@ -161,7 +159,6 @@ class KtorRemoteClassSessionDataSource(
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassDto, DataError.Remote> {
@@ -178,7 +175,6 @@ class KtorRemoteClassSessionDataSource(
                         batchId = batchId,
                         activeFrom = activeFrom.toString(),
                         activeTill = activeTill.toString(),
-                        classType = classType.value,
                         courseId = courseId,
                         timetableId = timetableId
                     )

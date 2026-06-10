@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.data.dto.academics.CourseDto
 import edu.watumull.presencify.core.data.dto.academics.CourseListWithTotalCountDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 
 interface RemoteCourseDataSource {
@@ -24,6 +25,7 @@ interface RemoteCourseDataSource {
         name: String,
         optionalCourse: String?,
         schemeId: String,
+        courseType: CourseType,
     ): Result<CourseDto, DataError.Remote>
 
     suspend fun getCourseById(id: String): Result<CourseDto, DataError.Remote>
@@ -34,6 +36,7 @@ interface RemoteCourseDataSource {
         name: String?,
         optionalCourse: String?,
         schemeId: String?,
+        courseType: CourseType?,
     ): Result<CourseDto, DataError.Remote>
 
     suspend fun addCourseToBranchWithSemesterNumber(

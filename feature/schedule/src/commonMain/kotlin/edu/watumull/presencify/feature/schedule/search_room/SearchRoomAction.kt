@@ -8,8 +8,9 @@ import kotlinx.datetime.LocalTime
 
 sealed interface SearchRoomAction {
     data object NavigateBack : SearchRoomAction
+    data object DismissDialog : SearchRoomAction
 
-    // Search & Refresh
+    // ...existing code...
     data class UpdateSearchQuery(val query: String) : SearchRoomAction
     data object Search : SearchRoomAction
     data object Refresh : SearchRoomAction

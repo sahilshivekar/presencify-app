@@ -1,6 +1,5 @@
 package edu.watumull.presencify.feature.schedule.add_edit_class
 
-import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Course
@@ -46,11 +45,6 @@ data class AddEditClassState(
     val availableBatches: ImmutableList<Batch> = persistentListOf(),
     val isLoadingBatches: Boolean = false,
     val isBatchDropdownOpen: Boolean = false,
-
-    val classType: ClassType? = null,
-    val classTypeError: String? = null,
-    val classTypeOptions: ImmutableList<ClassType> = ClassType.entries.toImmutableList(),
-    val isClassTypeDropdownOpen: Boolean = false,
 
     val dayOfWeek: DayOfWeek? = null,
     val dayOfWeekError: String? = null,

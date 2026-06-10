@@ -16,6 +16,7 @@ import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.UPDATE_C
 import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -59,7 +60,8 @@ class KtorRemoteCourseDataSource(
         code: String,
         name: String,
         optionalCourse: String?,
-        schemeId: String
+        schemeId: String,
+        courseType: CourseType
     ): Result<CourseDto, DataError.Remote> {
         return safeCall<CourseDto> {
             clientProvider.getClient().post(ADD_COURSE) {
@@ -69,6 +71,7 @@ class KtorRemoteCourseDataSource(
                     put("name", name)
                     optionalCourse?.let { put("optionalCourse", it) }
                     put("schemeId", schemeId)
+                    put("courseType", courseType.value)
                 })
             }
         }
@@ -85,7 +88,8 @@ class KtorRemoteCourseDataSource(
         code: String?,
         name: String?,
         optionalCourse: String?,
-        schemeId: String?
+        schemeId: String?,
+        courseType: CourseType?
     ): Result<CourseDto, DataError.Remote> {
         return safeCall<CourseDto> {
             clientProvider.getClient().put("$UPDATE_COURSE/$id") {
@@ -95,6 +99,7 @@ class KtorRemoteCourseDataSource(
                     name?.let { put("name", it) }
                     optionalCourse?.let { put("optionalCourse", it) }
                     schemeId?.let { put("schemeId", it) }
+                    courseType?.let { put("courseType", it.value) }
                 })
             }
         }

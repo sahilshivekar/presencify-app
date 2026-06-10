@@ -6,7 +6,7 @@ import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassListWithTotalCountDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -24,7 +24,7 @@ interface RemoteClassSessionDataSource {
         dayOfWeek: DayOfWeek?,
         roomId: String?,
         batchId: String?,
-        classType: ClassType?,
+        courseType: CourseType?,
         courseId: String?,
         semesterId: String?,
         semesterNumber: Int?,
@@ -46,7 +46,6 @@ interface RemoteClassSessionDataSource {
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassDto, DataError.Remote>
@@ -70,7 +69,6 @@ interface RemoteClassSessionDataSource {
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassDto, DataError.Remote>

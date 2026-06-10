@@ -1,6 +1,5 @@
 package edu.watumull.presencify.core.domain.model.schedule
 
-import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Course
@@ -19,7 +18,6 @@ data class ClassSession(
     val batchId: String?,
     val activeFrom: LocalDate,
     val activeTill: LocalDate,
-    val classType: ClassType,
     val courseId: String,
     val timetableId: String,
     val isExtraClass: Boolean,

@@ -1,6 +1,5 @@
 package edu.watumull.presencify.feature.schedule.add_edit_class
 
-import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -22,9 +21,6 @@ sealed interface AddEditClassAction {
 
     data class UpdateBatch(val batchId: String?) : AddEditClassAction
     data class ChangeBatchDropDownVisibility(val isVisible: Boolean) : AddEditClassAction
-
-    data class UpdateClassType(val classType: ClassType?) : AddEditClassAction
-    data class ChangeClassTypeDropDownVisibility(val isVisible: Boolean) : AddEditClassAction
 
     data class UpdateDayOfWeek(val dayOfWeek: DayOfWeek?) : AddEditClassAction
     data class ChangeDayOfWeekDropDownVisibility(val isVisible: Boolean) : AddEditClassAction

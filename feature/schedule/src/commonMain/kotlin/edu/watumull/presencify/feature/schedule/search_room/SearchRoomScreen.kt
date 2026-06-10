@@ -48,6 +48,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedBu
 import edu.watumull.presencify.core.designsystem.components.PresencifySearchBar
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
 import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.RoomSortBy
 import edu.watumull.presencify.core.domain.enums.RoomSortOrder
@@ -121,6 +122,15 @@ fun SearchRoomScreen(
                 )
             }
         }
+    }
+
+    state.dialogState?.let { dialogState ->
+        PresencifyAlertDialog(
+            dialogType = dialogState.dialogType,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onDismiss = { onAction(SearchRoomAction.DismissDialog) }
+        )
     }
 }
 

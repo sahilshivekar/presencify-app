@@ -21,6 +21,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.presentation.UiConstants
 
@@ -99,6 +100,21 @@ fun AddEditCourseScreen(
                     expanded = state.isSchemeDropdownOpen,
                     onDropDownVisibilityChanged = { onAction(AddEditCourseAction.ChangeSchemeDropDownVisibility(it)) },
                     supportingText = state.schemeError,
+                    enabled = !state.isLoading && !state.isSubmitting,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(DesignToken.spacing.lg))
+
+                PresencifyDropDownMenuBox<CourseType>(
+                    value = state.selectedCourseType?.toDisplayLabel() ?: "",
+                    options = CourseType.entries,
+                    onSelectItem = { onAction(AddEditCourseAction.UpdateSelectedCourseType(it)) },
+                    label = "Course Type *",
+                    itemToString = { it.toDisplayLabel() },
+                    expanded = state.isCourseTypeDropdownOpen,
+                    onDropDownVisibilityChanged = { onAction(AddEditCourseAction.ChangeCourseTypeDropDownVisibility(it)) },
+                    supportingText = state.courseTypeError,
                     enabled = !state.isLoading && !state.isSubmitting,
                     modifier = Modifier.fillMaxWidth()
                 )

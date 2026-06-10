@@ -61,7 +61,7 @@ class SearchClassViewModel(
 
             classSessionRepository.getClasses(
                 searchQuery = state.searchQuery.ifBlank { null },
-                classType = state.selectedClassTypes.firstOrNull(),
+                courseType = state.selectedCourseTypes.firstOrNull(),
                 isExtraClass = state.isExtraClass,
                 startTime = state.startTime,
                 endTime = state.endTime,
@@ -408,16 +408,16 @@ class SearchClassViewModel(
                 updateState { it.copy(selectedBatch = action.batch) }
             }
 
-            is SearchClassAction.ToggleClassType -> {
+            is SearchClassAction.ToggleCourseType -> {
                 updateState {
-                    val currentTypes = it.selectedClassTypes
-                    val newTypes = if (currentTypes.contains(action.classType)) {
-                        currentTypes.remove(action.classType)
+                    val currentTypes = it.selectedCourseTypes
+                    val newTypes = if (currentTypes.contains(action.courseType)) {
+                        currentTypes.remove(action.courseType)
                     } else {
                         // Server accepts only single value, so clear others
-                        persistentListOf(action.classType)
+                        persistentListOf(action.courseType)
                     }
-                    it.copy(selectedClassTypes = newTypes)
+                    it.copy(selectedCourseTypes = newTypes)
                 }
             }
 
@@ -496,7 +496,7 @@ class SearchClassViewModel(
                         academicEndYear = "",
                         selectedDivision = null,
                         selectedBatch = null,
-                        selectedClassTypes = persistentListOf(),
+                        selectedCourseTypes = persistentListOf(),
                         selectedRoomIds = persistentListOf(),
                         selectedTeacherIds = persistentListOf(),
                         isExtraClass = null,

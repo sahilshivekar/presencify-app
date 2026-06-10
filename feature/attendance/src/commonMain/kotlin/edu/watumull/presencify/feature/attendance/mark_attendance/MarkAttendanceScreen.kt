@@ -253,7 +253,7 @@ private fun ClassDetailsSection(
             dayOfWeek = classSession.dayOfWeek.toDisplayLabel(),
             activeFrom = classSession.activeFrom.toReadableString(),
             activeTill = classSession.activeTill.toReadableString(),
-            classType = classSession.classType.toDisplayLabel(),
+            classType = classSession.course?.courseType?.toDisplayLabel() ?: "Unknown",
             isExtraClass = classSession.isExtraClass,
             roomNumber = classSession.room?.roomNumber,
             divisionOrBatchText = divisionBatchText,

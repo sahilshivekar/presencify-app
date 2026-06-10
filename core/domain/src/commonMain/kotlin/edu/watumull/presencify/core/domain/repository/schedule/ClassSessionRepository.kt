@@ -2,7 +2,7 @@ package edu.watumull.presencify.core.domain.repository.schedule
 
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.schedule.CancelledClass
 import edu.watumull.presencify.core.domain.model.schedule.ClassListWithTotalCount
@@ -23,7 +23,7 @@ interface ClassSessionRepository {
         dayOfWeek: DayOfWeek? = null,
         roomId: String? = null,
         batchId: String? = null,
-        classType: ClassType? = null,
+        courseType: CourseType? = null,
         courseId: String? = null,
         semesterId: String? = null,
         semesterNumber: Int? = null,
@@ -45,7 +45,6 @@ interface ClassSessionRepository {
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassSession, DataError.Remote>
@@ -69,7 +68,6 @@ interface ClassSessionRepository {
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassSession, DataError.Remote>

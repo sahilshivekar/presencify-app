@@ -6,6 +6,7 @@ import edu.watumull.presencify.core.domain.enums.RoomSortOrder
 import edu.watumull.presencify.core.domain.enums.RoomType
 import edu.watumull.presencify.core.domain.model.schedule.Room
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -14,8 +15,9 @@ import kotlinx.datetime.LocalTime
 
 data class SearchRoomState(
     val viewState: ViewState = ViewState.Content,
+    val dialogState: DialogState? = null,
 
-    // Search & Filter
+    // ...existing code...
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 

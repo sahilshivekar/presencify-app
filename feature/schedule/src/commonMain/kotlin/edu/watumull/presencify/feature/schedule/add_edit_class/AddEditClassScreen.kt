@@ -29,7 +29,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTimePickerTextField
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Course
@@ -126,30 +126,8 @@ fun AddEditClassScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Class Type Dropdown
-                        PresencifyDropDownMenuBox<ClassType>(
-                            value = state.classType?.value ?: "",
-                            options = state.classTypeOptions,
-                            onSelectItem = { onAction(AddEditClassAction.UpdateClassType(it)) },
-                            label = "Class Type *",
-                            itemToString = { it.value },
-                            expanded = state.isClassTypeDropdownOpen,
-                            onDropDownVisibilityChanged = {
-                                onAction(
-                                    AddEditClassAction.ChangeClassTypeDropDownVisibility(
-                                        it
-                                    )
-                                )
-                            },
-                            supportingText = state.classTypeError,
-                            enabled = !state.isSubmitting && !state.isEditMode,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        // Batch Dropdown (Only for Practical or Tutorial)
-                        if (state.classType == ClassType.PRACTICAL ||
-                            state.classType == ClassType.TUTORIAL
-                        ) {
+                        // Batch Dropdown (Optional)
+                        if (state.selectedCourse?.courseType == CourseType.PRACTICAL) {
                             PresencifyDropDownMenuBox<Batch>(
                                 value = state.selectedBatch?.batchCode ?: "",
                                 options = state.availableBatches,
@@ -240,6 +218,7 @@ fun AddEditClassScreen(
                                 modifier = Modifier.weight(1f),
                                 supportingText = state.activeFromError,
                                 isError = state.activeFromError != null,
+                                enabled = !state.isSubmitting
                             )
                             PresencifyDatePickerTextField(
                                 value = state.activeTill,
@@ -250,6 +229,7 @@ fun AddEditClassScreen(
                                 modifier = Modifier.weight(1f),
                                 supportingText = state.activeTillError,
                                 isError = state.activeTillError != null,
+                                enabled = !state.isSubmitting
                             )
                         }
 

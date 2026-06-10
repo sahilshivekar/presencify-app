@@ -1,6 +1,7 @@
 package edu.watumull.presencify.core.domain.model.academics
 
 import edu.watumull.presencify.core.domain.DisplayLabelProvider
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.domain.model.teacher.TeacherTeachesCourse
 
@@ -9,6 +10,7 @@ data class Course(
     val schemeId: String,
     val code: String,
     val name: String,
+    val courseType: CourseType,
     val optionalCourse: String? = null,
     val scheme: Scheme? = null,
     val branchCourseSemesters: List<BranchCourseSemester>? = null,

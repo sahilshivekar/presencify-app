@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.schedule.search_class
 
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -26,8 +26,8 @@ sealed interface SearchClassAction {
     data class SelectDivision(val division: Division?) : SearchClassAction
     data class SelectBatch(val batch: Batch?) : SearchClassAction
 
-    // Filters - Class Type
-    data class ToggleClassType(val classType: ClassType) : SearchClassAction
+    // Filters - Course Type
+    data class ToggleCourseType(val courseType: CourseType) : SearchClassAction
 
     // Filters - Extra Class
     data class UpdateIsExtraClass(val isExtraClass: Boolean?) : SearchClassAction

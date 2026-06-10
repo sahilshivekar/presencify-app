@@ -1,6 +1,5 @@
 package edu.watumull.presencify.core.presentation.validation
 
-import edu.watumull.presencify.core.domain.enums.ClassType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import kotlinx.datetime.LocalDate
 
@@ -27,13 +26,6 @@ fun LocalDate?.validateAsClassActiveTill(activeFrom: LocalDate?): ValidationResu
     }
     if (activeFrom != null && this < activeFrom) {
         return ValidationResult(successful = false, errorMessage = "Active till date must be on or after active from date")
-    }
-    return ValidationResult(successful = true)
-}
-
-fun ClassType?.validateAsClassType(): ValidationResult {
-    if (this == null) {
-        return ValidationResult(successful = false, errorMessage = "Class type must be selected")
     }
     return ValidationResult(successful = true)
 }

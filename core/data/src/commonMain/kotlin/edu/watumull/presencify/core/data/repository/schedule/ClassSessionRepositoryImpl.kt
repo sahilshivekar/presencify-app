@@ -4,7 +4,7 @@ import edu.watumull.presencify.core.data.mapper.schedule.toDomain
 import edu.watumull.presencify.core.data.network.schedule.RemoteClassSessionDataSource
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.schedule.CancelledClass
@@ -30,7 +30,7 @@ class ClassSessionRepositoryImpl(
         dayOfWeek: DayOfWeek?,
         roomId: String?,
         batchId: String?,
-        classType: ClassType?,
+        courseType: CourseType?,
         courseId: String?,
         semesterId: String?,
         semesterNumber: Int?,
@@ -44,7 +44,7 @@ class ClassSessionRepositoryImpl(
     ): Result<ClassListWithTotalCount, DataError.Remote> {
         return remoteDataSource.getClasses(
             searchQuery, timetableId, divisionId, startTime, endTime, activeFrom, activeTill,
-            teacherId, dayOfWeek, roomId, batchId, classType, courseId, semesterId,
+            teacherId, dayOfWeek, roomId, batchId, courseType, courseId, semesterId,
             semesterNumber, academicStartYearOfSemester, academicEndYearOfSemester, branchId,
             isExtraClass, page, limit, getAll
         ).map { it.toDomain() }
@@ -59,13 +59,12 @@ class ClassSessionRepositoryImpl(
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassSession, DataError.Remote> {
         return remoteDataSource.addClass(
             teacherId, startTime, endTime, dayOfWeek, roomId, batchId, activeFrom, activeTill,
-            classType, courseId, timetableId
+            courseId, timetableId
         ).map { it.toDomain() }
     }
 
@@ -94,13 +93,12 @@ class ClassSessionRepositoryImpl(
         batchId: String?,
         activeFrom: LocalDate,
         activeTill: LocalDate,
-        classType: ClassType,
         courseId: String,
         timetableId: String
     ): Result<ClassSession, DataError.Remote> {
         return remoteDataSource.addExtraClass(
             teacherId, startTime, endTime, dayOfWeek, roomId, batchId, activeFrom, activeTill,
-            classType, courseId, timetableId
+            courseId, timetableId
         ).map { it.toDomain() }
     }
 

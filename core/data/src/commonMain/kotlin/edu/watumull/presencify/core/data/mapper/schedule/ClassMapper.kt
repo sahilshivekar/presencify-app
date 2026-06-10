@@ -18,7 +18,6 @@ fun ClassDto.toDomain(): ClassSession = ClassSession(
     dayOfWeek = dayOfWeek,
     activeFrom = activeFrom,
     activeTill = activeTill,
-    classType = classType,
     isExtraClass = isExtraClass,
     timetable = timetable?.toDomain(),
     batch = batch?.toDomain(),

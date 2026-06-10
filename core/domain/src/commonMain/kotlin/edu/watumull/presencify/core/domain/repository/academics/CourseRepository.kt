@@ -2,6 +2,7 @@ package edu.watumull.presencify.core.domain.repository.academics
 
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.CourseListWithTotalCount
@@ -23,7 +24,8 @@ interface CourseRepository {
         code: String,
         name: String,
         optionalCourse: String?,
-        schemeId: String
+        schemeId: String,
+        courseType: CourseType
     ): Result<Course, DataError.Remote>
 
     suspend fun getCourseById(id: String): Result<Course, DataError.Remote>
@@ -33,7 +35,8 @@ interface CourseRepository {
         code: String? = null,
         name: String? = null,
         optionalCourse: String? = null,
-        schemeId: String? = null
+        schemeId: String? = null,
+        courseType: CourseType? = null
     ): Result<Course, DataError.Remote>
 
     suspend fun removeCourse(id: String): Result<Unit, DataError.Remote>

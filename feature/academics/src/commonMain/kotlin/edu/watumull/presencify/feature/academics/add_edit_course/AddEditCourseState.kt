@@ -1,5 +1,6 @@
 package edu.watumull.presencify.feature.academics.add_edit_course
 
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
@@ -13,13 +14,16 @@ data class AddEditCourseState(
     val name: String = "",
     val optionalCourse: String = "",
     val selectedSchemeId: String = "",
+    val selectedCourseType: CourseType? = null,
     val schemeOptions: List<Scheme> = emptyList(),
 
     val codeError: String? = null,
     val nameError: String? = null,
     val schemeError: String? = null,
+    val courseTypeError: String? = null,
 
     val isSchemeDropdownOpen: Boolean = false,
+    val isCourseTypeDropdownOpen: Boolean = false,
 
     val dialogState: DialogState? = null,
 )

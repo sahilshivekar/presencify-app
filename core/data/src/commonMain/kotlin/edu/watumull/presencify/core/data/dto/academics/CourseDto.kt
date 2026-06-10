@@ -2,6 +2,7 @@ package edu.watumull.presencify.core.data.dto.academics
 
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.teacher.TeacherTeachesCourseDto
+import edu.watumull.presencify.core.domain.enums.CourseType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,6 +12,7 @@ data class CourseDto(
     val schemeId: String,
     val code: String,
     val name: String,
+    val courseType: CourseType,
     val optionalCourse: String? = null,
     val createdAt: String? = null,
     val updatedAt: String? = null,

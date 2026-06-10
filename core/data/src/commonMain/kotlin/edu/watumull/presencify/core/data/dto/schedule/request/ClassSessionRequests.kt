@@ -12,7 +12,6 @@ data class AddClassRequest(
     val batchId: String?,
     val activeFrom: String, // LocalDate as String
     val activeTill: String, // LocalDate as String
-    val classType: String,
     val courseId: String,
     val timetableId: String
 )

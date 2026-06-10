@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.data.mapper.academics.toDomain
 import edu.watumull.presencify.core.data.network.academics.RemoteCourseDataSource
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.academics.Course
@@ -42,9 +43,10 @@ class CourseRepositoryImpl(
         code: String,
         name: String,
         optionalCourse: String?,
-        schemeId: String
+        schemeId: String,
+        courseType: CourseType
     ): Result<Course, DataError.Remote> {
-        return remoteCourseDataSource.addCourse(code, name, optionalCourse, schemeId).map { it.toDomain() }
+        return remoteCourseDataSource.addCourse(code, name, optionalCourse, schemeId, courseType).map { it.toDomain() }
     }
 
     override suspend fun getCourseById(id: String): Result<Course, DataError.Remote> {
@@ -56,9 +58,10 @@ class CourseRepositoryImpl(
         code: String?,
         name: String?,
         optionalCourse: String?,
-        schemeId: String?
+        schemeId: String?,
+        courseType: CourseType?
     ): Result<Course, DataError.Remote> {
-        return remoteCourseDataSource.updateCourse(id, code, name, optionalCourse, schemeId).map { it.toDomain() }
+        return remoteCourseDataSource.updateCourse(id, code, name, optionalCourse, schemeId, courseType).map { it.toDomain() }
     }
 
     override suspend fun removeCourse(id: String): Result<Unit, DataError.Remote> {

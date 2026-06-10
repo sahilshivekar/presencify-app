@@ -206,7 +206,7 @@ private fun SearchClassScreenContent(
                             dayOfWeek = classSession.dayOfWeek.toDisplayLabel(),
                             activeFrom = classSession.activeFrom.toReadableString(),
                             activeTill = classSession.activeTill.toReadableString(),
-                            classType = classSession.classType.toDisplayLabel(),
+                            classType = classSession.course?.courseType?.toDisplayLabel() ?: "Unknown",
                             isExtraClass = classSession.isExtraClass,
                             roomNumber = classSession.room?.roomNumber,
                             divisionOrBatchText = divisionBatchText,
@@ -418,10 +418,10 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Class Type Filter
+        // Course Type Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
-                text = "Class Type",
+                text = "Course Type",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold
@@ -432,11 +432,11 @@ private fun SearchClassBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
-                state.classTypeOptions.forEach { classType ->
+                state.courseTypeOptions.forEach { courseType ->
                     FilterChip(
-                        selected = state.selectedClassTypes.contains(classType),
-                        onClick = { onAction(SearchClassAction.ToggleClassType(classType)) },
-                        label = { Text(text = classType.toDisplayLabel()) },
+                        selected = state.selectedCourseTypes.contains(courseType),
+                        onClick = { onAction(SearchClassAction.ToggleCourseType(courseType)) },
+                        label = { Text(text = courseType.toDisplayLabel()) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer

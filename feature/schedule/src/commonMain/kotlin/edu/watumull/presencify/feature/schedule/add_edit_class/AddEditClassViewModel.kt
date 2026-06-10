@@ -21,7 +21,6 @@ import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.validation.validateAsClassActiveFrom
 import edu.watumull.presencify.core.presentation.validation.validateAsClassActiveTill
-import edu.watumull.presencify.core.presentation.validation.validateAsClassType
 import edu.watumull.presencify.core.presentation.validation.validateAsCourse
 import edu.watumull.presencify.core.presentation.validation.validateAsDayOfWeek
 import edu.watumull.presencify.core.presentation.validation.validateAsEndTime
@@ -236,7 +235,6 @@ class AddEditClassViewModel(
                             selectedTeacher = classSession.teacher,
                             selectedRoom = classSession.room,
                             selectedBatch = classSession.batch,
-                            classType = classSession.classType,
                             dayOfWeek = classSession.dayOfWeek,
                             startTime = classSession.startTime,
                             endTime = classSession.endTime,
@@ -291,7 +289,6 @@ class AddEditClassViewModel(
         val dayOfWeekValidation = state.dayOfWeek.validateAsDayOfWeek()
         val activeFromValidation = state.activeFrom.validateAsClassActiveFrom(state.activeTill)
         val activeTillValidation = state.activeTill.validateAsClassActiveTill(state.activeFrom)
-        val classTypeValidation = state.classType.validateAsClassType()
         val startTimeValidation = state.startTime.validateAsStartTime(state.endTime)
         val endTimeValidation = state.endTime.validateAsEndTime(state.startTime)
 
@@ -300,7 +297,6 @@ class AddEditClassViewModel(
                 selectedCourseError = courseValidation.errorMessage,
                 selectedTeacherError = teacherValidation.errorMessage,
                 selectedRoomError = roomValidation.errorMessage,
-                classTypeError = classTypeValidation.errorMessage,
                 dayOfWeekError = dayOfWeekValidation.errorMessage,
                 startTimeError = startTimeValidation.errorMessage,
                 endTimeError = endTimeValidation.errorMessage,
@@ -315,7 +311,6 @@ class AddEditClassViewModel(
                 !dayOfWeekValidation.successful ||
                 !activeFromValidation.successful ||
                 !activeTillValidation.successful ||
-                !classTypeValidation.successful ||
                 !startTimeValidation.successful ||
                 !endTimeValidation.successful
 
@@ -324,7 +319,6 @@ class AddEditClassViewModel(
                 courseValidation.errorMessage,
                 teacherValidation.errorMessage,
                 roomValidation.errorMessage,
-                classTypeValidation.errorMessage,
                 dayOfWeekValidation.errorMessage,
                 startTimeValidation.errorMessage,
                 endTimeValidation.errorMessage,
@@ -363,7 +357,6 @@ class AddEditClassViewModel(
                     batchId = state.selectedBatch?.id,
                     activeFrom = state.activeFrom!!,
                     activeTill = state.activeTill!!,
-                    classType = state.classType!!,
                     courseId = state.selectedCourse!!.id,
                     timetableId = state.timetableId
                 )
@@ -378,7 +371,6 @@ class AddEditClassViewModel(
                     batchId = state.selectedBatch?.id,
                     activeFrom = state.activeFrom!!,
                     activeTill = state.activeTill!!,
-                    classType = state.classType!!,
                     courseId = state.selectedCourse!!.id,
                     timetableId = state.timetableId
                 )
@@ -457,14 +449,6 @@ class AddEditClassViewModel(
                 updateState { it.copy(isBatchDropdownOpen = action.isVisible) }
             }
 
-            is AddEditClassAction.UpdateClassType -> {
-                updateState { it.copy(classType = action.classType, classTypeError = null) }
-            }
-
-            is AddEditClassAction.ChangeClassTypeDropDownVisibility -> {
-                updateState { it.copy(isClassTypeDropdownOpen = action.isVisible) }
-            }
-
             is AddEditClassAction.UpdateDayOfWeek -> {
                 updateState { it.copy(dayOfWeek = action.dayOfWeek, dayOfWeekError = null) }
             }
@@ -526,7 +510,6 @@ class AddEditClassViewModel(
                 state.startTime == null ||
                 state.endTime == null ||
                 state.activeFrom == null ||
-                state.activeTill == null ||
-                state.classType == null
+                state.activeTill == null
     }
 }

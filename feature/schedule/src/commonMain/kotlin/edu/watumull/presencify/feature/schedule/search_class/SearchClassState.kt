@@ -1,6 +1,6 @@
 package edu.watumull.presencify.feature.schedule.search_class
 
-import edu.watumull.presencify.core.domain.enums.ClassType
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -54,9 +54,9 @@ data class SearchClassState(
     val selectedBatch: Batch? = null,
     val areBatchesLoading: Boolean = false,
 
-    // Filter Options - Class Type
-    val classTypeOptions: ImmutableList<ClassType> = ClassType.entries.toImmutableList(),
-    val selectedClassTypes: PersistentList<ClassType> = persistentListOf(),
+    // Filter Options - Course Type
+    val courseTypeOptions: ImmutableList<CourseType> = CourseType.entries.toImmutableList(),
+    val selectedCourseTypes: PersistentList<CourseType> = persistentListOf(),
 
     // Filter Options - Extra Class
     val isExtraClass: Boolean? = null,

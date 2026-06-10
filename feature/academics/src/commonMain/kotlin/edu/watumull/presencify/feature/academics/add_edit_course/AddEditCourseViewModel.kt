@@ -67,7 +67,8 @@ class AddEditCourseViewModel(
                         code = course.code,
                         name = course.name,
                         optionalCourse = course.optionalCourse ?: "",
-                        selectedSchemeId = course.schemeId
+                        selectedSchemeId = course.schemeId,
+                        selectedCourseType = course.courseType
                     )
                 }
             }
@@ -94,7 +95,9 @@ class AddEditCourseViewModel(
             is AddEditCourseAction.UpdateName -> updateState { it.copy(name = action.name, nameError = null) }
             is AddEditCourseAction.UpdateOptionalCourse -> updateState { it.copy(optionalCourse = action.optionalCourse) }
             is AddEditCourseAction.UpdateSelectedScheme -> updateState { it.copy(selectedSchemeId = action.schemeId, schemeError = null, isSchemeDropdownOpen = false) }
+            is AddEditCourseAction.UpdateSelectedCourseType -> updateState { it.copy(selectedCourseType = action.courseType, courseTypeError = null, isCourseTypeDropdownOpen = false) }
             is AddEditCourseAction.ChangeSchemeDropDownVisibility -> updateState { it.copy(isSchemeDropdownOpen = action.isVisible) }
+            is AddEditCourseAction.ChangeCourseTypeDropDownVisibility -> updateState { it.copy(isCourseTypeDropdownOpen = action.isVisible) }
             is AddEditCourseAction.SubmitClick -> { viewModelScope.launch { submitForm() } }
         }
     }
@@ -134,9 +137,11 @@ class AddEditCourseViewModel(
         val schemeValidation = state.selectedSchemeId.validateAsUUID()
         val schemeError = if (schemeValidation.successful) null else schemeValidation.errorMessage
 
-        updateState { it.copy(codeError = codeError, nameError = nameError, schemeError = schemeError) }
+        val courseTypeError = if (state.selectedCourseType != null) null else "Course type is required"
 
-        return codeError == null && nameError == null && schemeError == null
+        updateState { it.copy(codeError = codeError, nameError = nameError, schemeError = schemeError, courseTypeError = courseTypeError) }
+
+        return codeError == null && nameError == null && schemeError == null && courseTypeError == null
     }
 
     private suspend fun submitForm() {
@@ -146,9 +151,9 @@ class AddEditCourseViewModel(
 
         val result = if (state.isEditMode && state.courseId != null) {
             val id = state.courseId!!
-            courseRepository.updateCourse(id, code = state.code, name = state.name, optionalCourse = state.optionalCourse, schemeId = state.selectedSchemeId)
+            courseRepository.updateCourse(id, code = state.code, name = state.name, optionalCourse = state.optionalCourse, schemeId = state.selectedSchemeId, courseType = state.selectedCourseType)
         } else {
-            courseRepository.addCourse(code = state.code, name = state.name, optionalCourse = if (state.optionalCourse.isBlank()) null else state.optionalCourse, schemeId = state.selectedSchemeId)
+            courseRepository.addCourse(code = state.code, name = state.name, optionalCourse = if (state.optionalCourse.isBlank()) null else state.optionalCourse, schemeId = state.selectedSchemeId, courseType = state.selectedCourseType!!)
         }
 
         result

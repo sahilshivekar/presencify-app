@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.presentation.validation
 
+import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.model.academics.Course
 
 fun String.validateAsCourseCode(): ValidationResult {
@@ -35,6 +36,13 @@ fun String.validateAsOptionalCourse(): ValidationResult {
 fun Course?.validateAsCourse(): ValidationResult {
     if (this == null) {
         return ValidationResult(successful = false, errorMessage = "Course must be selected")
+    }
+    return ValidationResult(successful = true)
+}
+
+fun CourseType?.validateAsCourseType(): ValidationResult {
+    if (this == null) {
+        return ValidationResult(successful = false, errorMessage = "Course type must be selected")
     }
     return ValidationResult(successful = true)
 }
