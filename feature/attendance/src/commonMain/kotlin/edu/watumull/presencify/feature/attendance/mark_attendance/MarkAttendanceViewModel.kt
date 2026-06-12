@@ -30,7 +30,6 @@ class MarkAttendanceViewModel(
         when (action) {
             MarkAttendanceAction.NavigateBack -> sendEvent(MarkAttendanceEvent.NavigateBack)
             MarkAttendanceAction.DynamicQRClick -> sendEvent(MarkAttendanceEvent.NavigateToDynamicQR(attendanceId))
-            MarkAttendanceAction.GroupPhotoScanClick -> sendEvent(MarkAttendanceEvent.NavigateToGroupPhotoScan(attendanceId))
             MarkAttendanceAction.ShareAttendanceSummary -> shareAttendanceSummary()
             is MarkAttendanceAction.ToggleStudentAttendance -> toggleStudentAttendance(
                 action.studentId,

@@ -1,6 +1,7 @@
 package edu.watumull.presencify.core.domain.model.student
 
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.model.academics.Branch
 import edu.watumull.presencify.core.domain.model.academics.Scheme
@@ -34,5 +35,7 @@ data class Student(
     val studentDivisions: List<StudentDivision>? = null,
     val studentBatches: List<StudentBatch>? = null,
     val attendanceStudents: List<AttendanceStudent>? = null,
-    val faceDescriptor: List<Float>? = null
+    val faceDescriptor: List<Float>? = null,
+    val biometricVerificationStatus: BiometricVerificationStatus? = null,
+    val faceImageKeys: List<String>? = null
 )

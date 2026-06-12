@@ -113,11 +113,6 @@ fun HomeNavHost(
                 )
             },
             onNavigateToScanQr = rootNavController::navigateToScanQr,
-            onNavigateToSearchStudentForBiometrics = {
-                rootNavController.navigateToSearchStudent(
-                    intention = SearchStudentIntention.ADD_STUDENT_BIOMETRIC.name
-                )
-            },
             onNavigateToDefaulters = rootNavController::navigateToDefaulters
         )
 

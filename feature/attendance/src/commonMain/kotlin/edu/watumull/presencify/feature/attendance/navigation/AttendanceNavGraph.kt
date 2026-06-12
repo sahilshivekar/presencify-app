@@ -2,14 +2,12 @@ package edu.watumull.presencify.feature.attendance.navigation
 
 import androidx.navigation.NavGraphBuilder
 import edu.watumull.presencify.core.designsystem.components.composableWithSlideTransitions
-import edu.watumull.presencify.feature.attendance.add_student_biometrics.AddStudentBiometricsRoot
 import edu.watumull.presencify.feature.attendance.aggregate_analytics.AggregateAttendanceAnalyticsRoot
 import edu.watumull.presencify.feature.attendance.attendance_dashboard.AttendanceDashboardRoot
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsRoot
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceRoot
 import edu.watumull.presencify.feature.attendance.defaulters.DefaultersRoot
 import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
-import edu.watumull.presencify.feature.attendance.group_photo_scan.GroupPhotoScanRoot
 import edu.watumull.presencify.feature.attendance.mark_attendance.MarkAttendanceRoot
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
 import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
@@ -24,8 +22,7 @@ fun NavGraphBuilder.attendanceDashboard(
     onNavigateToCreateAttendance: () -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToScanQr: () -> Unit,
-    onNavigateToSearchStudentForBiometrics: () -> Unit,
-    onNavigateToDefaulters: () -> Unit, // New callback
+    onNavigateToDefaulters: () -> Unit,
 ) {
     composableWithSlideTransitions<AttendanceRoutes.AttendanceDashboard> {
         AttendanceDashboardRoot(
@@ -34,8 +31,7 @@ fun NavGraphBuilder.attendanceDashboard(
             onNavigateToAggregateAttendanceAnalytics = onNavigateToAggregateAttendanceAnalytics,
             onNavigateToSearchAttendance = onNavigateToSearchAttendance,
             onNavigateToCreateAttendance = onNavigateToCreateAttendance,
-            onNavigateToSearchStudentForBiometrics = onNavigateToSearchStudentForBiometrics,
-            onNavigateToDefaulters = onNavigateToDefaulters, // Pass callback
+            onNavigateToDefaulters = onNavigateToDefaulters,
         )
     }
 
@@ -58,7 +54,6 @@ fun NavGraphBuilder.attendanceNavGraph(
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToRecognizeStudent: (String) -> Unit,
     onNavigateToScanQr: () -> Unit,
-    onNavigateToGroupPhotoScan: (String) -> Unit,
 ) {
     // 2. Create/Update Sheet
     composableWithSlideTransitions<AttendanceRoutes.CreateAttendanceSheet> {
@@ -73,7 +68,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         MarkAttendanceRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToDynamicQR = onNavigateToDynamicQR,
-            onNavigateToGroupPhotoScan = onNavigateToGroupPhotoScan,
         )
     }
 
@@ -135,20 +129,7 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    composableWithSlideTransitions<AttendanceRoutes.AddStudentBiometrics> { backStackEntry ->
-        AddStudentBiometricsRoot(
-            onNavigateBack = onNavigateBack
-        )
-    }
-
-    // 10. Group Photo Scan
-    composableWithSlideTransitions<AttendanceRoutes.GroupPhotoScan> {
-        GroupPhotoScanRoot(
-            onNavigateBack = onNavigateBack,
-        )
-    }
-
-    // 11. Defaulters
+    // 10. Defaulters
     composableWithSlideTransitions<AttendanceRoutes.Defaulters> {
         DefaultersRoot(
             onNavigateBack = onNavigateBack,

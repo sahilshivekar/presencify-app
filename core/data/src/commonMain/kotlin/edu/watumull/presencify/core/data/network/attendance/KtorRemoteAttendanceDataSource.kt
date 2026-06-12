@@ -7,7 +7,6 @@ import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.attendance.CreateAttendanceRequestDto
-import edu.watumull.presencify.core.data.dto.attendance.GroupPhotoScanResponseDto
 import edu.watumull.presencify.core.data.dto.attendance.UpdateStudentAttendanceRequestDto
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.BULK_UPDATE_STUDENT_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.CREATE_ATTENDANCE
@@ -17,18 +16,15 @@ import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_ALL
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_SELF
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_STUDENT
-import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GROUP_PHOTO_SCAN
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.MARK_MY_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.REMOVE_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.SEND_ATTENDANCE_REPORT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.UPDATE_STUDENT_ATTENDANCE
 import edu.watumull.presencify.core.data.repository.safeCall
-import edu.watumull.presencify.core.data.util.FileMimeUtils
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.datetime.LocalDate
 
@@ -268,34 +264,6 @@ class KtorRemoteAttendanceDataSource(
             clientProvider.getClient().get(GET_ACTIVE_ATTENDANCE_SHEET) {
                 parameter("studentId", studentId)
                 parameter("divisionId", divisionId)
-            }
-        }
-    }
-
-    override suspend fun groupPhotoScan(
-        attendanceId: String,
-        images: List<ByteArray>,
-    ): Result<GroupPhotoScanResponseDto, DataError.Remote> {
-        return safeCall<GroupPhotoScanResponseDto> {
-            clientProvider.getClient().post(GROUP_PHOTO_SCAN) {
-                setBody(
-                    MultiPartFormDataContent(
-                        formData {
-                            append("attendanceId", attendanceId)
-                            images.forEachIndexed { index, imageBytes ->
-                                val mimeType = FileMimeUtils.getMimeType(imageBytes)
-                                val extension = FileMimeUtils.getExtensionFromMime(mimeType) ?: "jpg"
-                                append("studentsGroupPhotos", imageBytes, Headers.build {
-                                    append(HttpHeaders.ContentType, mimeType)
-                                    append(
-                                        HttpHeaders.ContentDisposition,
-                                        "filename=\"group_photo_$index.$extension\""
-                                    )
-                                })
-                            }
-                        }
-                    )
-                )
             }
         }
     }

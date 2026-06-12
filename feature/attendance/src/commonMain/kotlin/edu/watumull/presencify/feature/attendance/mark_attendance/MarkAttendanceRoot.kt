@@ -10,7 +10,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MarkAttendanceRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDynamicQR: (String) -> Unit,
-    onNavigateToGroupPhotoScan: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<MarkAttendanceViewModel>()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -19,7 +18,6 @@ fun MarkAttendanceRoot(
         when (event) {
             MarkAttendanceEvent.NavigateBack -> onNavigateBack()
             is MarkAttendanceEvent.NavigateToDynamicQR -> onNavigateToDynamicQR(event.attendanceId)
-            is MarkAttendanceEvent.NavigateToGroupPhotoScan -> onNavigateToGroupPhotoScan(event.attendanceId)
         }
     }
 

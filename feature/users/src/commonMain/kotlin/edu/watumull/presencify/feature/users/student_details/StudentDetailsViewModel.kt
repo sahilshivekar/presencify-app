@@ -51,7 +51,8 @@ class StudentDetailsViewModel(
                         student = student,
                         studentSemesters = student.studentSemesters,
                         studentDivisions = student.studentDivisions,
-                        studentBatches = student.studentBatches
+                        studentBatches = student.studentBatches,
+                        biometricStatus = student.biometricVerificationStatus
                     )
                 }
             }
@@ -148,6 +149,18 @@ class StudentDetailsViewModel(
 
             is StudentDetailsAction.ClickUpdatePassword -> {
                 sendEvent(StudentDetailsEvent.NavigateToUpdatePassword)
+            }
+
+            is StudentDetailsAction.ClickAddUpdateBiometrics -> {
+                sendEvent(StudentDetailsEvent.NavigateToSubmitBiometrics)
+            }
+
+            is StudentDetailsAction.ClickVerifyBiometrics -> {
+                sendEvent(StudentDetailsEvent.NavigateToReviewBiometrics(state.studentId))
+            }
+
+            is StudentDetailsAction.ClickViewBiometrics -> {
+                sendEvent(StudentDetailsEvent.NavigateToReviewBiometrics(state.studentId))
             }
         }
     }

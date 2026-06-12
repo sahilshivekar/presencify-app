@@ -12,4 +12,7 @@ sealed interface StudentDetailsAction {
     data object EditStudentDetailsClick : StudentDetailsAction
     data object ClickUpdatePassword : StudentDetailsAction
     data object LogoutClick : StudentDetailsAction
+    data object ClickAddUpdateBiometrics : StudentDetailsAction
+    data object ClickVerifyBiometrics : StudentDetailsAction
+    data object ClickViewBiometrics : StudentDetailsAction
 }

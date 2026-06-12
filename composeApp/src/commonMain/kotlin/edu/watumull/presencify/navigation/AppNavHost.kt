@@ -31,7 +31,6 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdd
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTeacher
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditUniversity
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddStudentBiometrics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminLogin
@@ -44,9 +43,9 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCou
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCreateAttendanceSheet
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDivisionDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDynamicQR
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToGroupPhotoScan
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkStudentAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToReviewStudentBiometrics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
@@ -59,6 +58,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStu
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentLogin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentVerifyCode
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSubmitStudentBiometrics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherForgotPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherLogin
@@ -135,10 +135,7 @@ fun AppNavHost(
             onNavigateToRecognizeStudent = { attendanceId ->
                 rootNavController.navigateToRecognizeStudent(attendanceId)
             },
-            onNavigateToScanQr = { rootNavController.navigateToScanQr() },
-            onNavigateToGroupPhotoScan = { attendanceId ->
-                rootNavController.navigateToGroupPhotoScan(attendanceId)
-            },
+            onNavigateToScanQr = { rootNavController.navigateToScanQr() }
         )
 
         usersNavGraph(
@@ -150,9 +147,8 @@ fun AppNavHost(
                     studentId = studentId
                 )
             },
-            onNavigateToAddStudentBiometrics = { studentId ->
-                rootNavController.navigateToAddStudentBiometrics(studentId)
-            },
+            onNavigateToSubmitStudentBiometrics = { rootNavController.navigateToSubmitStudentBiometrics() },
+            onNavigateToReviewStudentBiometrics = { studentId -> rootNavController.navigateToReviewStudentBiometrics(studentId) },
             onNavigateToSearchStudentForAssignUnassignSemester = { semesterId, branchId ->
                 rootNavController.navigateToSearchStudent(
                     intention = SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_SEMESTER.name,

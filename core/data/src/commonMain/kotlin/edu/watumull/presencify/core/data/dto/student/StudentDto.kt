@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.data.dto.academics.BranchDto
 import edu.watumull.presencify.core.data.dto.academics.SchemeDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.Gender
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -43,5 +44,9 @@ data class StudentDto(
     val studentBatches: List<StudentBatchDto>? = null,
     @SerialName("AttendanceStudents")
     val attendanceStudents: List<AttendanceStudentDto>? = null,
-    val faceDescriptor: List<Float>? = null
+    val faceDescriptor: List<Float>? = null,
+    @SerialName("biometricVerificationStatus")
+    val biometricVerificationStatus: BiometricVerificationStatus? = null,
+    @SerialName("faceImageKeys")
+    val faceImageKeys: List<String>? = null
 )

@@ -13,7 +13,6 @@ fun AttendanceDashboardRoot(
     onNavigateToAggregateAttendanceAnalytics: () -> Unit,
     onNavigateToSearchAttendance: () -> Unit,
     onNavigateToCreateAttendance: () -> Unit,
-    onNavigateToSearchStudentForBiometrics: () -> Unit,
     onNavigateToDefaulters: () -> Unit,
     viewModel: AttendanceDashboardViewModel = koinViewModel()
 ) {
@@ -26,7 +25,6 @@ fun AttendanceDashboardRoot(
             AttendanceDashboardEvent.NavigateToAggregateAttendanceAnalytics -> onNavigateToAggregateAttendanceAnalytics()
             AttendanceDashboardEvent.NavigateToSearchAttendance -> onNavigateToSearchAttendance()
             AttendanceDashboardEvent.NavigateToCreateAttendance -> onNavigateToCreateAttendance()
-            AttendanceDashboardEvent.NavigateToSearchStudentForBiometrics -> onNavigateToSearchStudentForBiometrics()
             AttendanceDashboardEvent.NavigateToDefaulters -> onNavigateToDefaulters()
         }
     }

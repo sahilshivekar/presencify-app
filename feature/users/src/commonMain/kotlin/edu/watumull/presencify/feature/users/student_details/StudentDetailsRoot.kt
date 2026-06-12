@@ -11,6 +11,8 @@ fun StudentDetailsRoot(
     onNavigateBack: () -> Unit,
     onNavigateToEditStudent: (String) -> Unit,
     onNavigateToUpdatePassword: () -> Unit,
+    onNavigateToSubmitBiometrics: () -> Unit,
+    onNavigateToReviewBiometrics: (String) -> Unit,
 ) {
     val viewModel: StudentDetailsViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -20,6 +22,8 @@ fun StudentDetailsRoot(
             is StudentDetailsEvent.NavigateBack -> onNavigateBack()
             is StudentDetailsEvent.NavigateToEditStudent -> onNavigateToEditStudent(event.studentId)
             is StudentDetailsEvent.NavigateToUpdatePassword -> onNavigateToUpdatePassword()
+            is StudentDetailsEvent.NavigateToSubmitBiometrics -> onNavigateToSubmitBiometrics()
+            is StudentDetailsEvent.NavigateToReviewBiometrics -> onNavigateToReviewBiometrics(event.studentId)
         }
     }
 

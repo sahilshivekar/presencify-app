@@ -70,6 +70,7 @@ kotlin {
                 implementation(project(":core:presentation"))
                 implementation(project(":core:designsystem"))
                 implementation(project(":core:domain"))
+                implementation(project(":feature:attendance"))
                 implementation(libs.kotlin.stdlib)
                 // Presentation/UI
                 implementation("org.jetbrains.compose.runtime:runtime:1.10.0")

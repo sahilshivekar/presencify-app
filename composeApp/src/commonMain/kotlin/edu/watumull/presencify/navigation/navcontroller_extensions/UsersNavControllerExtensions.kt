@@ -234,3 +234,19 @@ fun NavController.navigateToImportTeachers() {
 fun NavController.navigateToUpdateUserPassword() {
     navigate(UsersRoutes.UpdateUserPassword)
 }
+
+/**
+ * Navigate to Submit Student Biometrics screen
+ */
+fun NavController.navigateToSubmitStudentBiometrics() {
+    navigate(UsersRoutes.SubmitStudentBiometrics)
+}
+
+/**
+ * Navigate to Review Student Biometrics screen
+ *
+ * @param studentId The ID of the student to review biometrics for
+ */
+fun NavController.navigateToReviewStudentBiometrics(studentId: String) {
+    navigate(UsersRoutes.ReviewStudentBiometrics(studentId))
+}

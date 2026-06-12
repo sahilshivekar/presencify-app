@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.domain.model.student.StudentBatch
+import edu.watumull.presencify.core.domain.model.student.StudentBiometrics
 import edu.watumull.presencify.core.domain.model.student.StudentDivision
 import edu.watumull.presencify.core.domain.model.student.StudentListWithTotalCount
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
@@ -141,8 +142,13 @@ interface StudentRepository {
 
     suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote>
 
-    suspend fun enrollStudentFace(
-        studentId: String,
+    // Biometric operations
+    suspend fun submitBiometrics(
         images: List<ByteArray>,
+        faceDescriptor: List<Float>
     ): Result<Unit, DataError.Remote>
+
+    suspend fun getStudentBiometrics(studentId: String): Result<StudentBiometrics, DataError.Remote>
+
+    suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote>
 }

@@ -151,4 +151,10 @@ sealed interface UsersRoutes : NavRoute {
     @Serializable
     data object UpdateUserPassword : UsersRoutes
 
+    @Serializable
+    data object SubmitStudentBiometrics : UsersRoutes
+
+    @Serializable
+    data class ReviewStudentBiometrics(val studentId: String) : UsersRoutes
+
 }

@@ -6,6 +6,5 @@ sealed interface AttendanceDashboardAction {
     data object NavigateToAggregateAttendanceAnalytics : AttendanceDashboardAction
     data object NavigateToSearchAttendance : AttendanceDashboardAction
     data object NavigateToCreateAttendance : AttendanceDashboardAction
-    data object NavigateToSearchStudentForBiometrics : AttendanceDashboardAction
     data object NavigateToDefaulters : AttendanceDashboardAction
 }

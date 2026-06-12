@@ -22,9 +22,6 @@ class AttendanceDashboardViewModel : BaseViewModel<AttendanceDashboardState, Att
             AttendanceDashboardAction.NavigateToCreateAttendance -> {
                 sendEvent(AttendanceDashboardEvent.NavigateToCreateAttendance)
             }
-            AttendanceDashboardAction.NavigateToSearchStudentForBiometrics -> {
-                sendEvent(AttendanceDashboardEvent.NavigateToSearchStudentForBiometrics)
-            }
             AttendanceDashboardAction.NavigateToDefaulters -> {
                 sendEvent(AttendanceDashboardEvent.NavigateToDefaulters)
             }

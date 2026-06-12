@@ -13,9 +13,11 @@ import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersRoot
 import edu.watumull.presencify.feature.users.mark_unmark_student_dropout.MarkUnmarkStudentAsDropoutRoot
 import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchRoot
 import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionRoot
+import edu.watumull.presencify.feature.users.review_student_biometrics.ReviewStudentBiometricsRoot
 import edu.watumull.presencify.feature.users.search_student.SearchStudentRoot
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherRoot
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsRoot
+import edu.watumull.presencify.feature.users.submit_student_biometrics.SubmitStudentBiometricsRoot
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsRoot
 import edu.watumull.presencify.feature.users.update_password.UpdateUserPasswordRoot
 
@@ -90,8 +92,9 @@ fun NavGraphBuilder.usersNavGraph(
     onNavigateToTeacherDetails: (String) -> Unit,
     onNavigateToAddEditTeacher: (String?) -> Unit,
     onNavigateToAssignUnassignCourses: (String) -> Unit,
-    onNavigateToAddStudentBiometrics: (String) -> Unit,
     onNavigateToUpdateUserPassword: () -> Unit,
+    onNavigateToSubmitStudentBiometrics: () -> Unit,
+    onNavigateToReviewStudentBiometrics: (studentId: String) -> Unit,
 ) {
 
     composableWithSlideTransitions<UsersRoutes.ImportStudents> {
@@ -116,8 +119,7 @@ fun NavGraphBuilder.usersNavGraph(
             onNavigateBack = onNavigateBack,
             onNavigateToStudentDetails = onNavigateToStudentDetails,
             onNavigateToAddEditStudent = onNavigateToAddEditStudent,
-            onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics,
-            onNavigateToAddStudentBiometrics = onNavigateToAddStudentBiometrics
+            onNavigateToStudentAttendanceAnalytics = onNavigateToStudentAttendanceAnalytics
         )
     }
     composableWithSlideTransitions<UsersRoutes.AssignUnassignStudentToSemester> {
@@ -178,7 +180,9 @@ fun NavGraphBuilder.usersNavGraph(
         StudentDetailsRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToEditStudent = onNavigateToAddEditStudent,
-            onNavigateToUpdatePassword = onNavigateToUpdateUserPassword
+            onNavigateToUpdatePassword = onNavigateToUpdateUserPassword,
+            onNavigateToSubmitBiometrics = onNavigateToSubmitStudentBiometrics,
+            onNavigateToReviewBiometrics = onNavigateToReviewStudentBiometrics
         )
     }
     composableWithSlideTransitions<UsersRoutes.AddEditTeacher> {
@@ -212,6 +216,18 @@ fun NavGraphBuilder.usersNavGraph(
         UpdateUserPasswordRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToMyDetails = onNavigateBack,
+        )
+    }
+
+    composableWithSlideTransitions<UsersRoutes.SubmitStudentBiometrics> {
+        SubmitStudentBiometricsRoot(
+            onNavigateBack = onNavigateBack
+        )
+    }
+
+    composableWithSlideTransitions<UsersRoutes.ReviewStudentBiometrics> {
+        ReviewStudentBiometricsRoot(
+            onNavigateBack = onNavigateBack
         )
     }
 }

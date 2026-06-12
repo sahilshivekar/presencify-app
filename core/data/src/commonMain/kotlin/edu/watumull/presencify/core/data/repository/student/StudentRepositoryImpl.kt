@@ -10,6 +10,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.domain.model.student.StudentBatch
+import edu.watumull.presencify.core.domain.model.student.StudentBiometrics
 import edu.watumull.presencify.core.domain.model.student.StudentDivision
 import edu.watumull.presencify.core.domain.model.student.StudentListWithTotalCount
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
@@ -295,10 +296,18 @@ class StudentRepositoryImpl(
         return remoteDataSource.bulkCreateStudentsFromCSV(csvData)
     }
 
-    override suspend fun enrollStudentFace(
-        studentId: String,
+    override suspend fun submitBiometrics(
         images: List<ByteArray>,
+        faceDescriptor: List<Float>
     ): Result<Unit, DataError.Remote> {
-        return remoteDataSource.enrollStudentFace(studentId, images)
+        return remoteDataSource.submitBiometrics(images, faceDescriptor)
+    }
+
+    override suspend fun getStudentBiometrics(studentId: String): Result<StudentBiometrics, DataError.Remote> {
+        return remoteDataSource.getStudentBiometrics(studentId).map { it.toDomain() }
+    }
+
+    override suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote> {
+        return remoteDataSource.verifyStudentBiometrics(studentId)
     }
 }

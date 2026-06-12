@@ -59,6 +59,7 @@ data class AppIconSizes(
     val lg: Dp = 32.dp,
     val xl: Dp = 40.dp,
     val xxl: Dp = 48.dp,
+    val xxxl: Dp = 96.dp,
 )
 
 val LocalIconSizes = staticCompositionLocalOf {

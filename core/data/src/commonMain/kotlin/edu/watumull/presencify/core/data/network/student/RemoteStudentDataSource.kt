@@ -1,6 +1,7 @@
 package edu.watumull.presencify.core.data.network.student
 
 import edu.watumull.presencify.core.data.dto.student.StudentBatchDto
+import edu.watumull.presencify.core.data.dto.student.StudentBiometricsDto
 import edu.watumull.presencify.core.data.dto.student.StudentDivisionDto
 import edu.watumull.presencify.core.data.dto.student.StudentDto
 import edu.watumull.presencify.core.data.dto.student.StudentListWithTotalCountDto
@@ -159,8 +160,12 @@ interface RemoteStudentDataSource {
 
     suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote>
 
-    suspend fun enrollStudentFace(
-        studentId: String,
+    suspend fun submitBiometrics(
         images: List<ByteArray>,
+        faceDescriptor: List<Float>,
     ): Result<Unit, DataError.Remote>
+
+    suspend fun getStudentBiometrics(studentId: String): Result<StudentBiometricsDto, DataError.Remote>
+
+    suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote>
 }

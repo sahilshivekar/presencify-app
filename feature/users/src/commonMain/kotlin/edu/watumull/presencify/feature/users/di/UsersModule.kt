@@ -11,9 +11,11 @@ import edu.watumull.presencify.feature.users.import_teachers.ImportTeachersViewM
 import edu.watumull.presencify.feature.users.mark_unmark_student_dropout.MarkUnmarkStudentAsDropoutViewModel
 import edu.watumull.presencify.feature.users.modify_student_batch.ModifyStudentBatchViewModel
 import edu.watumull.presencify.feature.users.modify_student_division.ModifyStudentDivisionViewModel
+import edu.watumull.presencify.feature.users.review_student_biometrics.ReviewStudentBiometricsViewModel
 import edu.watumull.presencify.feature.users.search_student.SearchStudentViewModel
 import edu.watumull.presencify.feature.users.search_teacher.SearchTeacherViewModel
 import edu.watumull.presencify.feature.users.student_details.StudentDetailsViewModel
+import edu.watumull.presencify.feature.users.submit_student_biometrics.SubmitStudentBiometricsViewModel
 import edu.watumull.presencify.feature.users.teacher_details.TeacherDetailsViewModel
 import edu.watumull.presencify.feature.users.update_password.UpdateUserPasswordViewModel
 import org.koin.core.module.dsl.viewModel
@@ -108,4 +110,7 @@ val usersModule = module {
             userRepository = get(),
         )
     }
+
+    viewModel { SubmitStudentBiometricsViewModel(get()) }
+    viewModel { ReviewStudentBiometricsViewModel(get(), get()) }
 }

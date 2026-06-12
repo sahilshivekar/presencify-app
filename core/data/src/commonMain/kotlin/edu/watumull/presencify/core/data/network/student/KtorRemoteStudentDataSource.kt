@@ -2,6 +2,7 @@ package edu.watumull.presencify.core.data.network.student
 
 import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.dto.student.StudentBatchDto
+import edu.watumull.presencify.core.data.dto.student.StudentBiometricsDto
 import edu.watumull.presencify.core.data.dto.student.StudentDivisionDto
 import edu.watumull.presencify.core.data.dto.student.StudentDto
 import edu.watumull.presencify.core.data.dto.student.StudentListWithTotalCountDto
@@ -20,9 +21,9 @@ import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ADD_STUDEN
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.BULK_CREATE_STUDENTS_FROM_CSV
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.CHANGE_STUDENT_BATCH
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.CHANGE_STUDENT_DIVISION
-import edu.watumull.presencify.core.data.network.student.ApiEndpoints.ENROLL_STUDENT_FACE
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENTS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_BATCHES
+import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_BIOMETRICS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_BY_ID
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_DIVISIONS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.GET_STUDENT_SEMESTERS
@@ -33,9 +34,11 @@ import edu.watumull.presencify.core.data.network.student.ApiEndpoints.REVERT_ADD
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.REVERT_ADD_STUDENT_TO_DIVISION
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.REVERT_CHANGE_STUDENT_BATCH
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.REVERT_CHANGE_STUDENT_DIVISION
+import edu.watumull.presencify.core.data.network.student.ApiEndpoints.SUBMIT_BIOMETRICS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.UPDATE_STUDENT_DETAILS
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.UPDATE_STUDENT_IMAGE
 import edu.watumull.presencify.core.data.network.student.ApiEndpoints.UPDATE_STUDENT_PASSWORD
+import edu.watumull.presencify.core.data.network.student.ApiEndpoints.VERIFY_STUDENT_BIOMETRICS
 import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.data.util.FileMimeUtils
 import edu.watumull.presencify.core.domain.DataError
@@ -47,6 +50,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.json.Json
 
 class KtorRemoteStudentDataSource(
     private val clientProvider: HttpClientProvider,
@@ -488,30 +492,46 @@ class KtorRemoteStudentDataSource(
         }
     }
 
-    override suspend fun enrollStudentFace(
-        studentId: String,
+    override suspend fun submitBiometrics(
         images: List<ByteArray>,
+        faceDescriptor: List<Float>,
     ): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
-            clientProvider.getClient().post(ENROLL_STUDENT_FACE) {
+            clientProvider.getClient().post(SUBMIT_BIOMETRICS) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
-                            append("studentId", studentId)
                             images.forEachIndexed { index, imageBytes ->
                                 val mimeType = FileMimeUtils.getMimeType(imageBytes)
                                 val extension = FileMimeUtils.getExtensionFromMime(mimeType) ?: "jpg"
-                                append("faceImages", imageBytes, Headers.build {
+                                append("biometricImages", imageBytes, Headers.build {
                                     append(HttpHeaders.ContentType, mimeType)
                                     append(
                                         HttpHeaders.ContentDisposition,
-                                        "filename=\"face_$index.$extension\""
+                                        "filename=\"biometric_$index.$extension\""
                                     )
                                 })
                             }
+                            append("faceDescriptor", Json.encodeToString(faceDescriptor))
                         }
                     )
                 )
+
+            }
+        }
+    }
+
+    override suspend fun getStudentBiometrics(studentId: String): Result<StudentBiometricsDto, DataError.Remote> {
+        return safeCall<StudentBiometricsDto> {
+            clientProvider.getClient().get("$GET_STUDENT_BIOMETRICS/$studentId/biometrics")
+        }
+    }
+
+    override suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
+            clientProvider.getClient().patch("$VERIFY_STUDENT_BIOMETRICS/$studentId/biometrics/verify") {
+                contentType(ContentType.Application.Json)
+                setBody("{}")
             }
         }
     }

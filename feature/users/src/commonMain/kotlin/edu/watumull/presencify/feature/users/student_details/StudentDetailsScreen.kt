@@ -44,6 +44,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import edu.watumull.presencify.core.designsystem.Res
 import edu.watumull.presencify.core.designsystem.baseline_account_circle_24
+import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
 import edu.watumull.presencify.core.designsystem.components.PresencifyButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyCard
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
@@ -52,6 +53,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.model.academics.Semester
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.student.StudentBatch
@@ -210,7 +212,41 @@ private fun StudentDetailsScreenContent(
                             }
                         }
                     }
+
+                    if (
+                        state.showSelfActions &&
+                        LocalUserRole.current == UserRole.STUDENT &&
+                        state.studentId == LocalUserId.current
+                    ) {
+                        PresencifyActionBar(
+                            text = "Add / Update Biometrics",
+                            onClick = { onAction(StudentDetailsAction.ClickAddUpdateBiometrics) }
+                        )
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
+                        Text(
+                            text = "Biometric verification status: ${state.biometricStatus?.value}",
+                        )
+                    }
+
+                    if (state.biometricStatus == BiometricVerificationStatus.PENDING_REVIEW &&
+                        LocalUserRole.current != UserRole.STUDENT
+                    ) {
+                        PresencifyActionBar(
+                            text = "Verify Biometrics",
+                            onClick = { onAction(StudentDetailsAction.ClickVerifyBiometrics) }
+                        )
+                    }
+
+                    if (state.biometricStatus == BiometricVerificationStatus.APPROVED &&
+                        LocalUserRole.current != UserRole.STUDENT
+                    ) {
+                        PresencifyActionBar(
+                            text = "View Biometrics",
+                            onClick = { onAction(StudentDetailsAction.ClickViewBiometrics) }
+                        )
+                    }
                 }
+
 
                 SemesterDetailsContainer(state = state)
 
@@ -918,7 +954,10 @@ private fun DetailRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = DesignToken.spacing.lg)
-            .padding(top = DesignToken.spacing.lg, bottom = if (isLast) DesignToken.spacing.lg else DesignToken.spacing.none),
+            .padding(
+                top = DesignToken.spacing.lg,
+                bottom = if (isLast) DesignToken.spacing.lg else DesignToken.spacing.none
+            ),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

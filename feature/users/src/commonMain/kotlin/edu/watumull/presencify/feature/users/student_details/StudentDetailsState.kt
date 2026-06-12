@@ -1,5 +1,6 @@
 package edu.watumull.presencify.feature.users.student_details
 
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.model.student.Dropout
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.domain.model.student.StudentBatch
@@ -25,6 +26,7 @@ data class StudentDetailsState(
     val isLoggingOut: Boolean = false,
     val dropoutDetails: List<Dropout> = emptyList(),
     val areDropoutDetailsLoading: Boolean = false,
+    val biometricStatus: BiometricVerificationStatus? = null,
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

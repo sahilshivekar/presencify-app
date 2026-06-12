@@ -33,5 +33,7 @@ fun StudentDto.toDomain(): Student = Student(
     studentDivisions = studentDivisions?.map { it.toDomain() },
     studentBatches = studentBatches?.map { it.toDomain() },
     attendanceStudents = attendanceStudents?.map { it.toDomain() },
-    faceDescriptor = faceDescriptor
+    faceDescriptor = faceDescriptor,
+    biometricVerificationStatus = biometricVerificationStatus,
+    faceImageKeys = faceImageKeys
 )
