@@ -123,7 +123,7 @@ fun RecognizeStudentScreen(
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,
-            title = dialogState.title,
+            title = dialogState.title?.asString(),
             message = dialogState.message.asString(),
             onConfirm = {
                 onAction(RecognizeStudentAction.OnRetryFromDialog)

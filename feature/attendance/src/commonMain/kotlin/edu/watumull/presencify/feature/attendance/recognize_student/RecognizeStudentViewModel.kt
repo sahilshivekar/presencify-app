@@ -12,6 +12,7 @@ import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepos
 import edu.watumull.presencify.core.domain.repository.auth.UserRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
@@ -342,9 +343,11 @@ class RecognizeStudentViewModel(
                 HeadMovement.LEFT -> {
                     if (previousMovement == HeadMovement.STRAIGHT) yaw < -20f else false
                 }
+
                 HeadMovement.RIGHT -> {
                     if (previousMovement == HeadMovement.STRAIGHT) yaw > 20f else false
                 }
+
                 HeadMovement.STRAIGHT -> {
                     if (previousMovement == HeadMovement.LEFT) {
                         yaw < -20f
@@ -402,10 +405,9 @@ class RecognizeStudentViewModel(
                 isCheatingSuspected = isCheating,
                 error = null,
                 currentStep = 0, // FIX 2: Hard-reset the step counter so they can't resume
-                dialogState = RecognizeStudentDialogState(
-                    isVisible = true,
+                dialogState = DialogState(
                     dialogType = DialogType.ERROR,
-                    title = if (isCheating) "Cheating Suspected" else "Face Not Recognized",
+                    title = UiText.DynamicString(if (isCheating) "Cheating Suspected" else "Face Not Recognized"),
                     message = message,
                 )
             )
