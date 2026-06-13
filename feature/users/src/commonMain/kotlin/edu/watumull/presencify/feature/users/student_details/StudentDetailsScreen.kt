@@ -63,6 +63,7 @@ import edu.watumull.presencify.core.domain.model.student.StudentDivision
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
+import edu.watumull.presencify.core.presentation.isDesktopPlatform
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
@@ -238,7 +239,7 @@ private fun StudentDetailsScreenContent(
                     if (
                         state.showSelfActions &&
                         LocalUserRole.current == UserRole.STUDENT &&
-                        state.studentId == LocalUserId.current
+                        state.studentId == LocalUserId.current && !isDesktopPlatform()
                     ) {
                         PresencifyActionBar(
                             text = "Add / Update Biometrics",

@@ -6,6 +6,7 @@ import androidx.navigation.toRoute
 import co.touchlab.kermit.Logger
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.NtpClock
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
@@ -70,15 +71,15 @@ class RecognizeStudentViewModel(
             val result = studentRepository.getStudentById(studentId)
             result.onSuccess { student ->
                 storedFaceDescriptor = student.faceDescriptor
-                if (storedFaceDescriptor == null) {
-                    Logger.d(TAG) { "Student profile has no Face Descriptor registered!" }
+                val biometricVerificationStatus = student.biometricVerificationStatus
+                if (biometricVerificationStatus != BiometricVerificationStatus.APPROVED) {
+                    Logger.d(TAG) { "Biometric verification is not approved yet!" }
                     updateState {
                         it.copy(
                             isLoading = false,
-                            viewState = RecognizeStudentState.ViewState.Content,
+                            viewState = RecognizeStudentState.ViewState.Error(UiText.DynamicString("Biometric verification is not approved yet!")),
                         )
                     }
-                    showErrorDialog(UiText.DynamicString("Face not registered yet."))
                 } else {
                     Logger.d(TAG) {
                         "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}"

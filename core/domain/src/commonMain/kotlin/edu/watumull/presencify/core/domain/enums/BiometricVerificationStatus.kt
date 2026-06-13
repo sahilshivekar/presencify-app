@@ -5,13 +5,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class BiometricVerificationStatus(val value: String) {
-    @SerialName("not_submitted")
-    NOT_SUBMITTED("Not submitted"),
-    @SerialName("pending_review")
-    PENDING_REVIEW("Pending review"),
-    @SerialName("approved")
-    APPROVED("approved"),
-    @SerialName("rejected")
+    @SerialName("Not Submitted")
+    NOT_SUBMITTED("Not Submitted"),
+    @SerialName("Pending Review")
+    PENDING_REVIEW("Pending Review"),
+    @SerialName("Approved")
+    APPROVED("Approved"),
+    @SerialName("Rejected")
     REJECTED("Rejected");
 
     companion object {

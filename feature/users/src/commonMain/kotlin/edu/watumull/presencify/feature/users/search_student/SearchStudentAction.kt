@@ -1,6 +1,7 @@
 package edu.watumull.presencify.feature.users.search_student
 
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -24,6 +25,7 @@ sealed interface SearchStudentAction {
     data class SelectAdmissionYear(val year: String?) : SearchStudentAction
     data class UpdateDropoutStartYear(val year: String) : SearchStudentAction
     data class UpdateDropoutEndYear(val year: String) : SearchStudentAction
+    data class SelectBiometricVerificationStatus(val status: BiometricVerificationStatus?) : SearchStudentAction
     data class SelectScheme(val scheme: Scheme?) : SearchStudentAction
     data class SelectDivision(val division: Division?) : SearchStudentAction
     data class SelectBatch(val batch: Batch?) : SearchStudentAction

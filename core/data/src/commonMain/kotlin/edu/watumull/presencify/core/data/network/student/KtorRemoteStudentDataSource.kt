@@ -44,6 +44,7 @@ import edu.watumull.presencify.core.data.util.FileMimeUtils
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import io.ktor.client.request.*
@@ -71,6 +72,7 @@ class KtorRemoteStudentDataSource(
         dropoutAcademicEndYear: Int?,
         admissionTypes: List<AdmissionType>?,
         admissionYear: Int?,
+        biometricVerificationStatus: BiometricVerificationStatus?,
         currentBatch: Boolean?,
         currentDivision: Boolean?,
         currentSemester: Boolean?,
@@ -84,7 +86,6 @@ class KtorRemoteStudentDataSource(
         return safeCall<StudentListWithTotalCountDto> {
             clientProvider.getClient().get(GET_STUDENTS) {
                 searchQuery?.let { parameter("searchQuery", it) }
-                // Send array parameters - each item individually with same parameter name
                 branchIds?.forEach { parameter("branchIds", it) }
                 semesterNumbers?.forEach { parameter("semesterNumbers", it) }
                 academicStartYearOfSemester?.let { parameter("academicStartYearOfSemester", it) }
@@ -95,9 +96,9 @@ class KtorRemoteStudentDataSource(
                 divisionId?.let { parameter("divisionId", it) }
                 dropoutAcademicStartYear?.let { parameter("dropoutAcademicStartYear", it) }
                 dropoutAcademicEndYear?.let { parameter("dropoutAcademicEndYear", it) }
-                // Send admissionTypes array - each item individually with same parameter name
-                admissionTypes?.forEach { parameter("admissionTypes", it.value) }
+                admissionTypes?.forEach { parameter("admissionTypes", it) }
                 admissionYear?.let { parameter("admissionYear", it) }
+                biometricVerificationStatus?.let { parameter("biometricVerificationStatus", it.value) }
                 currentBatch?.let { parameter("currentBatch", it) }
                 currentDivision?.let { parameter("currentDivision", it) }
                 currentSemester?.let { parameter("currentSemester", it) }

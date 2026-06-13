@@ -149,6 +149,7 @@ class SearchStudentViewModel(
                 admissionYear = state.admissionYear?.toIntOrNull(),
                 dropoutAcademicStartYear = dropoutStartYear,
                 dropoutAcademicEndYear = dropoutEndYear,
+                biometricVerificationStatus = state.selectedBiometricVerificationStatus,
                 schemeId = state.selectedScheme?.id,
                 divisionId = state.selectedDivision?.id,
                 batchId = state.selectedBatch?.id,
@@ -1358,6 +1359,10 @@ class SearchStudentViewModel(
                 updateState { it.copy(dropoutEndYear = action.year) }
             }
 
+            is SearchStudentAction.SelectBiometricVerificationStatus -> {
+                updateState { it.copy(selectedBiometricVerificationStatus = action.status) }
+            }
+
             is SearchStudentAction.SelectScheme -> {
                 updateState { it.copy(selectedScheme = action.scheme) }
             }
@@ -1381,6 +1386,7 @@ class SearchStudentViewModel(
                         admissionYear = null,
                         dropoutStartYear = "",
                         dropoutEndYear = "",
+                        selectedBiometricVerificationStatus = null,
                         selectedScheme = null,
                         selectedDivision = null,
                         selectedBatch = null

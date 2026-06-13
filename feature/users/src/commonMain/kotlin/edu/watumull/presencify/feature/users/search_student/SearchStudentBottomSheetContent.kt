@@ -26,6 +26,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -187,6 +188,30 @@ fun SearchStudentBottomSheetContent(
                         label = "End Year",
                         modifier = Modifier.weight(1f)
                     )
+                }
+            }
+
+            // Biometric Verification Status Filter
+            FilterSection(title = "Biometric Verification Status") {
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
+                ) {
+                    state.biometricVerificationStatusOptions.forEach { status ->
+                        FilterChip(
+                            selected = state.selectedBiometricVerificationStatus == status,
+                            onClick = {
+                                val newStatus = if (state.selectedBiometricVerificationStatus == status) null else status
+                                onAction(SearchStudentAction.SelectBiometricVerificationStatus(newStatus))
+                            },
+                            label = { Text(status.value) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        )
+                    }
                 }
             }
 

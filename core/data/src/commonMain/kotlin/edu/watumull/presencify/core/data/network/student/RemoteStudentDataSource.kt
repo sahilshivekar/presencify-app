@@ -9,6 +9,7 @@ import edu.watumull.presencify.core.data.dto.student.StudentSemesterDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import kotlinx.datetime.LocalDate
@@ -28,6 +29,7 @@ interface RemoteStudentDataSource {
         dropoutAcademicEndYear: Int?,
         admissionTypes: List<AdmissionType>?,
         admissionYear: Int?,
+        biometricVerificationStatus: BiometricVerificationStatus?,
         currentBatch: Boolean?,
         currentDivision: Boolean?,
         currentSemester: Boolean?,

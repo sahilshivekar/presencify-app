@@ -3,6 +3,7 @@ package edu.watumull.presencify.core.domain.repository.student
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.student.Student
@@ -28,6 +29,7 @@ interface StudentRepository {
         dropoutAcademicEndYear: Int? = null,
         admissionTypes: List<AdmissionType>? = null,
         admissionYear: Int? = null,
+        biometricVerificationStatus: BiometricVerificationStatus? = null,
         currentBatch: Boolean? = null,
         currentDivision: Boolean? = null,
         currentSemester: Boolean? = null,

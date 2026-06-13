@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.data.network.student.RemoteStudentDataSource
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.Gender
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
@@ -35,6 +36,7 @@ class StudentRepositoryImpl(
         dropoutAcademicEndYear: Int?,
         admissionTypes: List<AdmissionType>?,
         admissionYear: Int?,
+        biometricVerificationStatus: BiometricVerificationStatus?,
         currentBatch: Boolean?,
         currentDivision: Boolean?,
         currentSemester: Boolean?,
@@ -59,6 +61,7 @@ class StudentRepositoryImpl(
             dropoutAcademicEndYear,
             admissionTypes,
             admissionYear,
+            biometricVerificationStatus,
             currentBatch,
             currentDivision,
             currentSemester,

@@ -2,6 +2,7 @@ package edu.watumull.presencify.feature.users.search_student
 
 import androidx.compose.runtime.Stable
 import edu.watumull.presencify.core.domain.enums.AdmissionType
+import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Batch
 import edu.watumull.presencify.core.domain.model.academics.Branch
@@ -74,6 +75,10 @@ data class SearchStudentState(
     // Filter Options - Dropout Year
     val dropoutStartYear: String = "",
     val dropoutEndYear: String = "",
+
+    // Filter Options - Biometric Verification Status
+    val biometricVerificationStatusOptions: ImmutableList<BiometricVerificationStatus> = BiometricVerificationStatus.entries.toImmutableList(),
+    val selectedBiometricVerificationStatus: BiometricVerificationStatus? = null,
 
     // Filter Options - Scheme
     val schemeOptions: PersistentList<Scheme> = persistentListOf(),
