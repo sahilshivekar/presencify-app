@@ -310,4 +310,8 @@ class StudentRepositoryImpl(
     override suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote> {
         return remoteDataSource.verifyStudentBiometrics(studentId)
     }
+
+    override suspend fun rejectStudentBiometrics(studentId: String): Result<Unit, DataError.Remote> {
+        return remoteDataSource.rejectStudentBiometrics(studentId)
+    }
 }

@@ -168,4 +168,6 @@ interface RemoteStudentDataSource {
     suspend fun getStudentBiometrics(studentId: String): Result<StudentBiometricsDto, DataError.Remote>
 
     suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote>
+
+    suspend fun rejectStudentBiometrics(studentId: String): Result<Unit, DataError.Remote>
 }

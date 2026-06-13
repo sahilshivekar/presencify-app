@@ -61,7 +61,7 @@ class SubmitStudentBiometricsViewModel(
 
             val descriptors = extractFaceDescriptors(state.images)
 
-            if (descriptors == null || descriptors.isEmpty()) {
+            if (descriptors.isNullOrEmpty()) {
                 updateState {
                     it.copy(
                         isLoading = false,

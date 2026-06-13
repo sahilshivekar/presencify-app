@@ -32,6 +32,7 @@ class ReviewStudentBiometricsViewModel(
         when (action) {
             ReviewStudentBiometricsAction.NavigateBack -> sendEvent(ReviewStudentBiometricsEvent.NavigateBack)
             ReviewStudentBiometricsAction.ApproveStudentBiometrics -> approveBiometrics()
+            ReviewStudentBiometricsAction.RejectStudentBiometrics -> rejectBiometrics()
             ReviewStudentBiometricsAction.DismissDialog -> dismissDialog()
             ReviewStudentBiometricsAction.RetryLoad -> loadBiometrics()
         }
@@ -74,6 +75,30 @@ class ReviewStudentBiometricsViewModel(
                 updateState {
                     it.copy(
                         isApproving = false,
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error"),
+                            message = error.toUiText(),
+                            dialogType = DialogType.ERROR
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun rejectBiometrics() {
+        viewModelScope.launch {
+            updateState { it.copy(isRejecting = true) }
+
+            val result = studentRepository.rejectStudentBiometrics(state.studentId)
+
+            result.onSuccess {
+                SnackbarController.sendEvent(SnackbarEvent("Biometrics rejected successfully"))
+                sendEvent(ReviewStudentBiometricsEvent.NavigateBack)
+            }.onError { error ->
+                updateState {
+                    it.copy(
+                        isRejecting = false,
                         dialogState = DialogState(
                             title = UiText.DynamicString("Error"),
                             message = error.toUiText(),

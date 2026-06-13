@@ -26,6 +26,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -213,6 +215,26 @@ private fun StudentDetailsScreenContent(
                         }
                     }
 
+                }
+
+
+                SemesterDetailsContainer(state = state)
+
+                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
+
+                Column(
+                    modifier = Modifier.widthIn(max = UiConstants.MAX_CONTENT_WIDTH).fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xxs),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Biometric Verification Status:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                    state.biometricStatus?.let {
+                        BiometricStatusChip(status = it)
+                    }
                     if (
                         state.showSelfActions &&
                         LocalUserRole.current == UserRole.STUDENT &&
@@ -221,10 +243,6 @@ private fun StudentDetailsScreenContent(
                         PresencifyActionBar(
                             text = "Add / Update Biometrics",
                             onClick = { onAction(StudentDetailsAction.ClickAddUpdateBiometrics) }
-                        )
-                        Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
-                        Text(
-                            text = "Biometric verification status: ${state.biometricStatus?.value}",
                         )
                     }
 
@@ -247,10 +265,8 @@ private fun StudentDetailsScreenContent(
                     }
                 }
 
-
-                SemesterDetailsContainer(state = state)
-
                 Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
+
             }
         }
     }
@@ -980,6 +996,58 @@ private fun DetailRow(
             color = MaterialTheme.colorScheme.onSurface
         )
     }
+}
+
+@Composable
+private fun BiometricStatusChip(status: BiometricVerificationStatus) {
+    val (backgroundColor, labelColor, label) = when (status) {
+        BiometricVerificationStatus.APPROVED -> {
+            Triple(
+                MaterialTheme.colorScheme.primaryContainer,
+                MaterialTheme.colorScheme.onPrimaryContainer,
+                "✓ Approved"
+            )
+        }
+
+        BiometricVerificationStatus.REJECTED -> {
+            Triple(
+                MaterialTheme.colorScheme.errorContainer,
+                MaterialTheme.colorScheme.onErrorContainer,
+                "✗ Rejected"
+            )
+        }
+
+        BiometricVerificationStatus.PENDING_REVIEW -> {
+            Triple(
+                MaterialTheme.colorScheme.secondaryContainer,
+                MaterialTheme.colorScheme.onSecondaryContainer,
+                "⏳ Pending Review"
+            )
+        }
+
+        BiometricVerificationStatus.NOT_SUBMITTED -> {
+            Triple(
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer,
+                "○ Not Submitted"
+            )
+        }
+    }
+
+    AssistChip(
+        onClick = {},
+        label = {
+            Text(
+                text = label,
+                color = labelColor,
+                style = MaterialTheme.typography.labelMedium
+            )
+        },
+        colors = AssistChipDefaults.assistChipColors(
+            containerColor = backgroundColor
+        ),
+        shape = MaterialTheme.shapes.medium
+    )
 }
 
 

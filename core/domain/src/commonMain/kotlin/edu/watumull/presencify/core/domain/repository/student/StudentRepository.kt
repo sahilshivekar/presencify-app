@@ -151,4 +151,6 @@ interface StudentRepository {
     suspend fun getStudentBiometrics(studentId: String): Result<StudentBiometrics, DataError.Remote>
 
     suspend fun verifyStudentBiometrics(studentId: String): Result<Unit, DataError.Remote>
+
+    suspend fun rejectStudentBiometrics(studentId: String): Result<Unit, DataError.Remote>
 }

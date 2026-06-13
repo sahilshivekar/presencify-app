@@ -36,7 +36,9 @@ fun PresencifyActionBar(
     leadingImageVector: ImageVector? = null,
     trailingIcon: ImageVector = Icons.Default.ChevronRight,
     leadingIconTint: Color = MaterialTheme.colorScheme.primary,
-    trailingIconTint: Color = MaterialTheme.colorScheme.outline
+    trailingIconTint: Color = MaterialTheme.colorScheme.outline,
+    headlineContentColor: Color = MaterialTheme.colorScheme.onSurface,
+    enabled: Boolean = true
 ) {
     PresencifyListItem(
         modifier = modifier,
@@ -44,7 +46,7 @@ fun PresencifyActionBar(
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = headlineContentColor
             )
         },
         leadingContent = if (leadingImageVector != null || leadingIcon != null) {
@@ -72,6 +74,6 @@ fun PresencifyActionBar(
                 tint = trailingIconTint
             )
         },
-        onClick = onClick
+        onClick = if (enabled) onClick else null
     )
 }

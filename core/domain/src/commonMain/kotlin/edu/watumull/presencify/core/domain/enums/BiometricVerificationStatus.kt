@@ -10,7 +10,9 @@ enum class BiometricVerificationStatus(val value: String) {
     @SerialName("pending_review")
     PENDING_REVIEW("Pending review"),
     @SerialName("approved")
-    APPROVED("approved");
+    APPROVED("approved"),
+    @SerialName("rejected")
+    REJECTED("Rejected");
 
     companion object {
         fun fromValue(value: String): BiometricVerificationStatus? = entries.find { it.value == value }

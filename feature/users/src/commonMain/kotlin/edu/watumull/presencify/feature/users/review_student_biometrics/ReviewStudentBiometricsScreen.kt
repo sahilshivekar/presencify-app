@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,22 +36,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
-import edu.watumull.presencify.core.designsystem.Res
-import edu.watumull.presencify.core.designsystem.baseline_account_circle_24
 import edu.watumull.presencify.core.designsystem.components.PresencifyButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.components.shimmerEffect
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.BiometricVerificationStatus
 import edu.watumull.presencify.core.presentation.UiConstants
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ReviewStudentBiometricsScreen(
@@ -93,15 +94,19 @@ fun ReviewStudentBiometricsScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.CenterStart
                             ) {
-                                AssistChip(
-                                    label = {
-                                        Text(
-                                            state.biometricStatus.value,
-                                            style = MaterialTheme.typography.labelMedium
-                                        )
-                                    },
-                                    onClick = {}
-                                )
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xxs),
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    Text(
+                                        text = "Biometric Verification Status:",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    state.biometricStatus?.let {
+                                        BiometricStatusChip(status = it)
+                                    }
+                                }
                             }
                         }
 
@@ -127,7 +132,7 @@ fun ReviewStudentBiometricsScreen(
                                         model = state.presignedUrls[index],
                                         contentDescription = "Biometric image $index",
                                         contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier.fillMaxSize().padding(DesignToken.spacing.sm),
                                         loading = {
                                             Box(
                                                 modifier = Modifier
@@ -181,9 +186,33 @@ fun ReviewStudentBiometricsScreen(
                                         )
                                     },
                                     isLoading = state.isApproving,
+                                    enabled = !state.isRejecting,
                                     modifier = Modifier.padding(
                                         horizontal = DesignToken.spacing.lg
                                     )
+                                )
+                            }
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
+                            }
+                        }
+
+                        if (state.biometricStatus == BiometricVerificationStatus.PENDING_REVIEW ||
+                            state.biometricStatus == BiometricVerificationStatus.APPROVED) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                PresencifyOutlinedButton(
+                                    text = "Reject Biometrics",
+                                    onClick = {
+                                        onAction(
+                                            ReviewStudentBiometricsAction.RejectStudentBiometrics
+                                        )
+                                    },
+                                    isLoading = state.isRejecting,
+                                    enabled = !state.isApproving,
+                                    modifier = Modifier
+                                        .widthIn(max = 800.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = DesignToken.spacing.lg)
                                 )
                             }
                         }
@@ -207,4 +236,55 @@ fun ReviewStudentBiometricsScreen(
         )
     }
 }
+
+
+@Composable
+private fun BiometricStatusChip(status: BiometricVerificationStatus) {
+    val (backgroundColor, labelColor, label) = when (status) {
+        BiometricVerificationStatus.APPROVED -> {
+            Triple(
+                MaterialTheme.colorScheme.primaryContainer,
+                MaterialTheme.colorScheme.onPrimaryContainer,
+                "✓ Approved"
+            )
+        }
+        BiometricVerificationStatus.REJECTED -> {
+            Triple(
+                MaterialTheme.colorScheme.errorContainer,
+                MaterialTheme.colorScheme.onErrorContainer,
+                "✗ Rejected"
+            )
+        }
+        BiometricVerificationStatus.PENDING_REVIEW -> {
+            Triple(
+                MaterialTheme.colorScheme.secondaryContainer,
+                MaterialTheme.colorScheme.onSecondaryContainer,
+                "⏳ Pending Review"
+            )
+        }
+        BiometricVerificationStatus.NOT_SUBMITTED -> {
+            Triple(
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer,
+                "○ Not Submitted"
+            )
+        }
+    }
+
+    AssistChip(
+        onClick = {},
+        label = {
+            Text(
+                text = label,
+                color = labelColor,
+                style = MaterialTheme.typography.labelMedium
+            )
+        },
+        colors = AssistChipDefaults.assistChipColors(
+            containerColor = backgroundColor
+        ),
+        shape = MaterialTheme.shapes.medium
+    )
+}
+
 

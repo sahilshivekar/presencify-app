@@ -535,4 +535,13 @@ class KtorRemoteStudentDataSource(
             }
         }
     }
+
+    override suspend fun rejectStudentBiometrics(studentId: String): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
+            clientProvider.getClient().patch("$VERIFY_STUDENT_BIOMETRICS/$studentId/biometrics/reject") {
+                contentType(ContentType.Application.Json)
+                setBody("{}")
+            }
+        }
+    }
 }

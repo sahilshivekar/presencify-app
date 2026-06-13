@@ -10,6 +10,7 @@ data class ReviewStudentBiometricsState(
     val biometricStatus: BiometricVerificationStatus = BiometricVerificationStatus.NOT_SUBMITTED,
     val presignedUrls: List<String> = emptyList(),
     val isApproving: Boolean = false,
+    val isRejecting: Boolean = false,
     val dialogState: DialogState? = null
 ) {
     sealed interface ViewState {
