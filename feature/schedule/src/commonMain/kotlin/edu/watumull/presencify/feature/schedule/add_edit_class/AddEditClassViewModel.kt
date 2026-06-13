@@ -6,6 +6,8 @@ import androidx.navigation.toRoute
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
+import edu.watumull.presencify.core.domain.enums.CourseType
+import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
@@ -27,10 +29,13 @@ import edu.watumull.presencify.core.presentation.validation.validateAsEndTime
 import edu.watumull.presencify.core.presentation.validation.validateAsRoom
 import edu.watumull.presencify.core.presentation.validation.validateAsStartTime
 import edu.watumull.presencify.core.presentation.validation.validateAsTeacher
+import edu.watumull.presencify.core.presentation.validation.validateAsBatch
+import edu.watumull.presencify.core.presentation.validation.ValidationResult
 import edu.watumull.presencify.feature.schedule.add_edit_class.AddEditClassEvent.NavigateBack
 import edu.watumull.presencify.feature.schedule.navigation.ScheduleRoutes
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalTime
 
 class AddEditClassViewModel(
     private val classSessionRepository: ClassSessionRepository,
@@ -75,30 +80,38 @@ class AddEditClassViewModel(
         timetableRepository.getTimetableById(state.timetableId)
             .onSuccess { timetable ->
                 timetable.division?.semester?.id?.let { semesterId ->
-                    // Load courses for this semester
-                    semesterRepository.getCoursesOfSemester(semesterId)
-                        .onSuccess { courses ->
-                            updateState {
-                                val newState = it.copy(
-                                    availableCourses = courses.toImmutableList(),
-                                    isLoadingCourses = false
-                                )
-                                // If in edit mode and a course is already selected, ensure we use the instance from availableCourses
-                                if (it.isEditMode && it.selectedCourse != null) {
-                                    val matchedCourse = courses.find { course -> course.id == it.selectedCourse?.id }
-                                    if (matchedCourse != null) {
-                                        newState.copy(selectedCourse = matchedCourse)
+                    // Load courses and semester details in parallel
+                    viewModelScope.launch {
+                        val coursesResult = semesterRepository.getCoursesOfSemester(semesterId)
+                        val semesterResult = semesterRepository.getSemesterById(semesterId)
+
+                        coursesResult.onSuccess { courses ->
+                            semesterResult.onSuccess { semester ->
+                                updateState {
+                                    val newState = it.copy(
+                                        availableCourses = courses.toImmutableList(),
+                                        isLoadingCourses = false,
+                                        activeFrom = it.activeFrom ?: semester.startDate,
+                                        activeTill = it.activeTill ?: semester.endDate
+                                    )
+                                    if (it.isEditMode && it.selectedCourse != null) {
+                                        val matchedCourse = courses.find { course -> course.id == it.selectedCourse?.id }
+                                        if (matchedCourse != null) {
+                                            newState.copy(selectedCourse = matchedCourse)
+                                        } else {
+                                            newState
+                                        }
                                     } else {
                                         newState
                                     }
-                                } else {
-                                    newState
                                 }
+                            }.onError {
+                                updateState { it.copy(isLoadingCourses = false) }
                             }
-                        }
-                        .onError {
+                        }.onError {
                             updateState { it.copy(isLoadingCourses = false) }
                         }
+                    }
                 } ?: run {
                     updateState {
                         it.copy(
@@ -126,9 +139,9 @@ class AddEditClassViewModel(
             }
     }
 
-    private suspend fun loadTeachers() {
+    private suspend fun loadTeachers(courseId: String? = null) {
         updateState { it.copy(isLoadingTeachers = true) }
-        teacherRepository.getTeachers(getAll = true)
+        teacherRepository.getTeachers(courseId = courseId, getAll = true)
             .onSuccess { teachersWithCount ->
                 updateState {
                     val newState = it.copy(
@@ -154,22 +167,30 @@ class AddEditClassViewModel(
             }
     }
 
-    private suspend fun loadRooms() {
+    private suspend fun loadRooms(
+        dayOfWeek: DayOfWeek? = null,
+        startTime: LocalTime? = null,
+        endTime: LocalTime? = null
+    ) {
         updateState { it.copy(isLoadingRooms = true) }
-        roomRepository.getRooms(getAll = true)
+        roomRepository.getRooms(
+            getAll = true,
+            dayOfWeek = dayOfWeek,
+            freeBetweenStartTime = startTime,
+            freeBetweenEndTime = endTime
+        )
             .onSuccess { roomsWithCount ->
                 updateState {
                     val newState = it.copy(
                         availableRooms = roomsWithCount.rooms.toImmutableList(),
                         isLoadingRooms = false
                     )
-                    // If in edit mode and a room is already selected, ensure we use the instance from availableRooms
-                    if (it.isEditMode && it.selectedRoom != null) {
+                    if (it.selectedRoom != null) {
                         val matchedRoom = roomsWithCount.rooms.find { room -> room.id == it.selectedRoom?.id }
-                        if (matchedRoom != null) {
-                            newState.copy(selectedRoom = matchedRoom)
-                        } else {
-                            newState
+                        when {
+                            matchedRoom != null -> newState.copy(selectedRoom = matchedRoom)
+                            it.isEditMode       -> newState
+                            else                -> newState.copy(selectedRoom = null, selectedRoomError = null)
                         }
                     } else {
                         newState
@@ -254,6 +275,29 @@ class AddEditClassViewModel(
         }
     }
 
+    private fun reloadRoomsIfNeeded() {
+        if (state.isEditMode) return
+        val s = stateFlow.value
+        viewModelScope.launch {
+            if (s.dayOfWeek != null && s.startTime != null && s.endTime != null) {
+                loadRooms(dayOfWeek = s.dayOfWeek, startTime = s.startTime, endTime = s.endTime)
+            } else {
+                loadRooms()
+            }
+        }
+    }
+
+    private fun calculateEndTime(startTime: LocalTime, courseType: CourseType): LocalTime {
+        val hoursToAdd = when (courseType) {
+            CourseType.LECTURE -> 1
+            CourseType.PRACTICAL -> 2
+        }
+        val totalMinutes = startTime.hour * 60 + startTime.minute + (hoursToAdd * 60)
+        val endHour = (totalMinutes / 60) % 24
+        val endMinute = totalMinutes % 60
+        return LocalTime(endHour, endMinute)
+    }
+
     private fun validateFields(): Boolean {
         val state = stateFlow.value
 
@@ -292,6 +336,13 @@ class AddEditClassViewModel(
         val startTimeValidation = state.startTime.validateAsStartTime(state.endTime)
         val endTimeValidation = state.endTime.validateAsEndTime(state.startTime)
 
+        // Batch is required if course type is Practical
+        val batchValidation = if (state.selectedCourse?.courseType == CourseType.PRACTICAL) {
+            state.selectedBatch.validateAsBatch()
+        } else {
+            ValidationResult(successful = true)
+        }
+
         updateState {
             it.copy(
                 selectedCourseError = courseValidation.errorMessage,
@@ -301,7 +352,8 @@ class AddEditClassViewModel(
                 startTimeError = startTimeValidation.errorMessage,
                 endTimeError = endTimeValidation.errorMessage,
                 activeFromError = activeFromValidation.errorMessage,
-                activeTillError = activeTillValidation.errorMessage
+                activeTillError = activeTillValidation.errorMessage,
+                selectedBatchError = batchValidation.errorMessage
             )
         }
 
@@ -312,7 +364,8 @@ class AddEditClassViewModel(
                 !activeFromValidation.successful ||
                 !activeTillValidation.successful ||
                 !startTimeValidation.successful ||
-                !endTimeValidation.successful
+                !endTimeValidation.successful ||
+                !batchValidation.successful
 
         if (hasError) {
             val errorMessage = listOfNotNull(
@@ -323,7 +376,8 @@ class AddEditClassViewModel(
                 startTimeValidation.errorMessage,
                 endTimeValidation.errorMessage,
                 activeFromValidation.errorMessage,
-                activeTillValidation.errorMessage
+                activeTillValidation.errorMessage,
+                batchValidation.errorMessage
             ).firstOrNull() ?: "Please fix the errors"
             return false
         }
@@ -415,7 +469,23 @@ class AddEditClassViewModel(
 
             is AddEditClassAction.UpdateCourse -> {
                 val course = state.availableCourses.find { it.id == action.courseId }
-                updateState { it.copy(selectedCourse = course, selectedCourseError = null) }
+                val newEndTime = if (course != null && state.startTime != null) {
+                    calculateEndTime(state.startTime!!, course.courseType)
+                } else {
+                    state.endTime
+                }
+                updateState {
+                    it.copy(
+                        selectedCourse = course,
+                        selectedCourseError = null,
+                        endTime = newEndTime,
+                        selectedTeacher = if (!it.isEditMode) null else it.selectedTeacher,
+                        selectedTeacherError = if (!it.isEditMode) null else it.selectedTeacherError
+                    )
+                }
+                if (!state.isEditMode) {
+                    viewModelScope.launch { loadTeachers(courseId = course?.id) }
+                }
             }
 
             is AddEditClassAction.ChangeCourseDropDownVisibility -> {
@@ -442,7 +512,7 @@ class AddEditClassViewModel(
 
             is AddEditClassAction.UpdateBatch -> {
                 val batch = state.availableBatches.find { it.id == action.batchId }
-                updateState { it.copy(selectedBatch = batch) }
+                updateState { it.copy(selectedBatch = batch, selectedBatchError = null) }
             }
 
             is AddEditClassAction.ChangeBatchDropDownVisibility -> {
@@ -451,6 +521,7 @@ class AddEditClassViewModel(
 
             is AddEditClassAction.UpdateDayOfWeek -> {
                 updateState { it.copy(dayOfWeek = action.dayOfWeek, dayOfWeekError = null) }
+                reloadRoomsIfNeeded()
             }
 
             is AddEditClassAction.ChangeDayOfWeekDropDownVisibility -> {
@@ -458,11 +529,24 @@ class AddEditClassViewModel(
             }
 
             is AddEditClassAction.UpdateStartTime -> {
-                updateState { it.copy(startTime = action.startTime, startTimeError = null) }
+                val newEndTime = if (state.selectedCourse != null && action.startTime != null) {
+                    calculateEndTime(action.startTime, state.selectedCourse!!.courseType)
+                } else {
+                    state.endTime
+                }
+                updateState {
+                    it.copy(
+                        startTime = action.startTime,
+                        startTimeError = null,
+                        endTime = newEndTime
+                    )
+                }
+                reloadRoomsIfNeeded()
             }
 
             is AddEditClassAction.UpdateEndTime -> {
                 updateState { it.copy(endTime = action.endTime, endTimeError = null) }
+                reloadRoomsIfNeeded()
             }
 
             is AddEditClassAction.UpdateActiveFrom -> {

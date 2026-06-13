@@ -42,6 +42,7 @@ data class AddEditClassState(
     val isRoomDropdownOpen: Boolean = false,
 
     val selectedBatch: Batch? = null,
+    val selectedBatchError: String? = null,
     val availableBatches: ImmutableList<Batch> = persistentListOf(),
     val isLoadingBatches: Boolean = false,
     val isBatchDropdownOpen: Boolean = false,

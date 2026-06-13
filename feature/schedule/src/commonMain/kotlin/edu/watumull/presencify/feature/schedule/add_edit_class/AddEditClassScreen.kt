@@ -112,19 +112,6 @@ fun AddEditClassScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Room Dropdown
-                        PresencifyDropDownMenuBox<Room>(
-                            value = state.selectedRoom?.roomNumber ?: "",
-                            options = state.availableRooms,
-                            onSelectItem = { onAction(AddEditClassAction.UpdateRoom(it.id)) },
-                            label = "Room *",
-                            itemToString = { it.roomNumber },
-                            expanded = state.isRoomDropdownOpen,
-                            onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeRoomDropDownVisibility(it)) },
-                            supportingText = state.selectedRoomError,
-                            enabled = !state.isSubmitting && !state.isEditMode,
-                            modifier = Modifier.fillMaxWidth()
-                        )
 
                         // Batch Dropdown (Optional)
                         if (state.selectedCourse?.courseType == CourseType.PRACTICAL) {
@@ -132,7 +119,7 @@ fun AddEditClassScreen(
                                 value = state.selectedBatch?.batchCode ?: "",
                                 options = state.availableBatches,
                                 onSelectItem = { onAction(AddEditClassAction.UpdateBatch(it?.id)) },
-                                label = "Batch (Optional)",
+                                label = "Batch *",
                                 itemToString = { it.batchCode },
                                 expanded = state.isBatchDropdownOpen,
                                 onDropDownVisibilityChanged = {
@@ -142,6 +129,7 @@ fun AddEditClassScreen(
                                         )
                                     )
                                 },
+                                supportingText = state.selectedBatchError,
                                 enabled = !state.isSubmitting && !state.isEditMode,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -167,42 +155,42 @@ fun AddEditClassScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Time Range
-                            Text(
-                                text = "Time Range",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            PresencifyTimePickerTextField(
+                                value = state.startTime,
+                                onValueChange = { onAction(AddEditClassAction.UpdateStartTime(it)) },
+                                label = "Start Time *",
+                                modifier = Modifier.weight(1f),
+                                supportingText = state.startTimeError,
+                                isError = state.startTimeError != null,
+                                enabled = !state.isSubmitting && !state.isEditMode,
                             )
+                            PresencifyTimePickerTextField(
+                                value = state.endTime,
+                                onValueChange = { onAction(AddEditClassAction.UpdateEndTime(it)) },
+                                label = "End Time *",
+                                modifier = Modifier.weight(1f),
+                                supportingText = state.endTimeError,
+                                isError = state.endTimeError != null,
+                                enabled = !state.isSubmitting && !state.isEditMode,
+                            )
+                        }
 
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                PresencifyTimePickerTextField(
-                                    value = state.startTime,
-                                    onValueChange = { onAction(AddEditClassAction.UpdateStartTime(it)) },
-                                    label = "Start Time *",
-                                    modifier = Modifier.weight(1f),
-                                    supportingText = state.startTimeError,
-                                    isError = state.startTimeError != null,
-                                    enabled = !state.isSubmitting && !state.isEditMode,
-                                )
-                                PresencifyTimePickerTextField(
-                                    value = state.endTime,
-                                    onValueChange = { onAction(AddEditClassAction.UpdateEndTime(it)) },
-                                    label = "End Time *",
-                                    modifier = Modifier.weight(1f),
-                                    supportingText = state.endTimeError,
-                                    isError = state.endTimeError != null,
-                                    enabled = !state.isSubmitting && !state.isEditMode,
-                                )
-                            }
-
-                        // Active Date Range (always visible, editable in both add and edit mode)
-                        Text(
-                            text = "Active Date Range",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
+                        // Room Dropdown
+                        PresencifyDropDownMenuBox<Room>(
+                            value = state.selectedRoom?.roomNumber ?: "",
+                            options = state.availableRooms,
+                            onSelectItem = { onAction(AddEditClassAction.UpdateRoom(it.id)) },
+                            label = "Room *",
+                            itemToString = { it.roomNumber },
+                            expanded = state.isRoomDropdownOpen,
+                            onDropDownVisibilityChanged = { onAction(AddEditClassAction.ChangeRoomDropDownVisibility(it)) },
+                            supportingText = state.selectedRoomError,
+                            enabled = !state.isSubmitting && !state.isEditMode,
+                            modifier = Modifier.fillMaxWidth()
                         )
 
                         Row(
