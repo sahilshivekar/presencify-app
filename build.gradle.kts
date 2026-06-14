@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.androidKotlinMultiplatformLibrary) apply false
     alias(libs.plugins.androidLint) apply false
+    alias(libs.plugins.google.services) apply false
 }
 // In your TOP-LEVEL root build.gradle.kts
 // In your TOP-LEVEL root build.gradle.kts
@@ -24,7 +25,8 @@ allprojects {
 
             resolutionStrategy.eachDependency {
                 if (requested.group == "org.jetbrains.compose.material" &&
-                    requested.name.startsWith("material-icons")) {
+                    requested.name.startsWith("material-icons")
+                ) {
 
                     // ONLY add -desktop if the name doesn't already have it
                     if (!requested.name.endsWith("-desktop")) {

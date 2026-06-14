@@ -12,23 +12,27 @@ class StudentFCMRepositoryImpl(
     private val remoteDataSource: RemoteStudentFCMTokenDataSource
 ) : StudentFCMRepository {
 
-    override suspend fun addStudentFCMTokens(
+    override suspend fun upsertStudentFCMTokens(
         studentId: String,
-        fcmToken: String
+        fcmToken: String,
+        deviceId: String,
+        deviceModel: String?,
+        osVersion: String?,
+        appVersion: String?,
+        deviceType: String
     ): Result<StudentFCMToken, DataError.Remote> {
-        return remoteDataSource.addStudentFCMTokens(studentId, fcmToken)
-            .map { it.toDomain() }
+        return remoteDataSource.upsertStudentFCMTokens(
+            studentId = studentId,
+            fcmToken = fcmToken,
+            deviceId = deviceId,
+            deviceModel = deviceModel,
+            osVersion = osVersion,
+            appVersion = appVersion,
+            deviceType = deviceType
+        ).map { it.toDomain() }
     }
 
-    override suspend fun updateStudentFCMTokens(
-        studentId: String,
-        fcmToken: String
-    ): Result<StudentFCMToken, DataError.Remote> {
-        return remoteDataSource.updateStudentFCMTokens(studentId, fcmToken)
-            .map { it.toDomain() }
-    }
-
-    override suspend fun removeStudentFCMTokens(studentId: String): Result<Unit, DataError.Remote> {
-        return remoteDataSource.removeStudentFCMTokens(studentId)
+    override suspend fun removeStudentFCMTokens(studentId: String, deviceId: String): Result<Unit, DataError.Remote> {
+        return remoteDataSource.removeStudentFCMTokens(studentId, deviceId)
     }
 }

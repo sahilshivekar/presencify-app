@@ -46,14 +46,12 @@ fun StudentVerifyCodeScreen(
 
     // Dialog handling
     state.dialogState?.let { dialogState ->
-        if (dialogState.message != null) {
-            PresencifyAlertDialog(
-                title = dialogState.title?.asString(),
-                message = dialogState.message.asString(),
-                dialogType = dialogState.dialogType,
-                onDismiss = { onAction(StudentVerifyCodeAction.DismissDialog) }
-            )
-        }
+        PresencifyAlertDialog(
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            dialogType = dialogState.dialogType,
+            onDismiss = { onAction(StudentVerifyCodeAction.DismissDialog) }
+        )
     }
 }
 

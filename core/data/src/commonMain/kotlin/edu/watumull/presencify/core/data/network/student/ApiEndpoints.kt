@@ -55,7 +55,6 @@ object ApiEndpoints {
 
     // FCM Token endpoints (Mounted at /api/v1/student-fcm-tokens in app.js)
     const val ADD_STUDENT_FCM_TOKENS = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_FCM_TOKENS_ROOT"
-    const val UPDATE_STUDENT_FCM_TOKENS = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_FCM_TOKENS_ROOT"
     const val REMOVE_STUDENT_FCM_TOKENS = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_FCM_TOKENS_ROOT"
 
     // Biometric endpoints

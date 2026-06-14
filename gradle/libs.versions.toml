@@ -44,7 +44,8 @@ kronos = "0.0.2"
 qr-kit = "3.1.3"
 kermit = "2.0.3"
 onnxruntime = "1.24.3"
-
+firebaseBom = "33.1.0"
+firebaseMessaging = "24.0.0"
 
 [libraries]
 # --- EXISTING ---
@@ -156,6 +157,8 @@ vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatfor
 vico-multiplatform-m3 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m3", version.ref = "vico" }
 
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 
 
 [plugins]
@@ -164,6 +167,7 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 
 # --- NEW PLUGINS ---
 #ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

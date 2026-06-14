@@ -7,8 +7,12 @@ import kotlinx.serialization.Serializable
 data class StudentFCMTokenDto(
     val id: String,
     val studentId: String,
-    val token: String,
-    val deviceInfo: String? = null,
+    val fcmToken: String,
+    val deviceId: String,
+    val deviceModel: String? = null,
+    val osVersion: String? = null,
+    val appVersion: String? = null,
+    val deviceType: String,
     val createdAt: String,
     val updatedAt: String,
     @SerialName("Student")
