@@ -2,6 +2,7 @@ package edu.watumull.presencify
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import edu.watumull.presencify.core.data.repository.student.FCMSyncService
 import edu.watumull.presencify.core.domain.NtpClock
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.repository.auth.UserRepository
@@ -10,13 +11,16 @@ import edu.watumull.presencify.feature.onboarding.navigation.OnboardingRoutes
 import edu.watumull.presencify.navigation.home.Home
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val userRepository: UserRepository,
     private val ntpClock: NtpClock,
+    private val fcmSyncService: FCMSyncService,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AppState())
     val state = _state.asStateFlow()
@@ -24,6 +28,7 @@ class AppViewModel(
     init {
         initializeNtpSync()
         checkAuthentication()
+        syncFcmIfNeeded()
     }
 
     private fun initializeNtpSync() {
@@ -61,6 +66,18 @@ class AppViewModel(
             it.copy(
                 startDestination = destination
             )
+        }
+    }
+
+    private fun syncFcmIfNeeded() {
+        viewModelScope.launch {
+            combine(userRepository.getUserRole(), userRepository.getUserId()) { role, id ->
+                Pair(role, id)
+            }.collectLatest { (role, userId) ->
+                if (role == UserRole.STUDENT && userId != null) {
+                    runCatching { fcmSyncService.syncIfNeeded(userId) }
+                }
+            }
         }
     }
 }

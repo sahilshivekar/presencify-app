@@ -30,8 +30,10 @@ import edu.watumull.presencify.core.data.network.schedule.RemoteRoomDataSource
 import edu.watumull.presencify.core.data.network.schedule.RemoteTimetableDataSource
 import edu.watumull.presencify.core.data.network.student.KtorRemoteDropoutDataSource
 import edu.watumull.presencify.core.data.network.student.KtorRemoteStudentDataSource
+import edu.watumull.presencify.core.data.network.student.KtorRemoteStudentFCMTokenDataSource
 import edu.watumull.presencify.core.data.network.student.RemoteDropoutDataSource
 import edu.watumull.presencify.core.data.network.student.RemoteStudentDataSource
+import edu.watumull.presencify.core.data.network.student.RemoteStudentFCMTokenDataSource
 import edu.watumull.presencify.core.data.network.student_auth.KtorRemoteStudentAuthDataSource
 import edu.watumull.presencify.core.data.network.student_auth.RemoteStudentAuthDataSource
 import edu.watumull.presencify.core.data.network.teacher.KtorRemoteTeacherDataSource
@@ -84,6 +86,7 @@ val networkModule: Module = module {
     // Student Data Sources
     single<RemoteStudentDataSource> { KtorRemoteStudentDataSource(get()) }
     single<RemoteDropoutDataSource> { KtorRemoteDropoutDataSource(get()) }
+    single<RemoteStudentFCMTokenDataSource> { KtorRemoteStudentFCMTokenDataSource(get()) }
     single<RemoteStudentAuthDataSource> { KtorRemoteStudentAuthDataSource(get()) }
 
     // Teacher Data Sources

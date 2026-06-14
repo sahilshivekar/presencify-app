@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.androidLint)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.google.services)
 }
 
 kotlin {
@@ -123,6 +124,12 @@ kotlin {
 
                 // Koin Android for androidContext()
                 implementation(libs.koin.android)
+
+                // Import the Firebase BoM using the catalog reference
+                implementation(project.dependencies.platform(libs.firebase.bom))
+
+                // Add the dependency for FCM (version is managed automatically by the BoM)
+                implementation(libs.firebase.messaging)
             }
         }
 

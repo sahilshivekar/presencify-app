@@ -4,18 +4,21 @@ import edu.watumull.presencify.core.data.HttpClientProvider
 import edu.watumull.presencify.core.data.network.student_auth.RemoteStudentAuthDataSource
 import edu.watumull.presencify.core.data.repository.auth.TokenRepository
 import edu.watumull.presencify.core.data.repository.auth.UserRepositoryImpl
+import edu.watumull.presencify.core.data.repository.student.FCMSyncService
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
+import kotlinx.coroutines.flow.first
 
 class StudentAuthRepositoryImpl(
     private val remoteDataSource: RemoteStudentAuthDataSource,
     private val tokenRepository: TokenRepository,
     private val userRepositoryImpl: UserRepositoryImpl,
-    private val httpClientProvider: HttpClientProvider
+    private val httpClientProvider: HttpClientProvider,
+    private val fcmSyncService: FCMSyncService
 ) : StudentAuthRepository {
 
     override suspend fun loginStudent(emailOrPRN: String, password: String): Result<Unit, DataError.Remote> {
@@ -53,6 +56,10 @@ class StudentAuthRepositoryImpl(
     }
 
     override suspend fun logout(): Result<Unit, DataError.Remote> {
+        val studentId = userRepositoryImpl.getUserId().first()
+        if (studentId != null) {
+            runCatching { fcmSyncService.remove(studentId) }
+        }
         return remoteDataSource.logout().onSuccess {
             tokenRepository.clearTokens()
             userRepositoryImpl.clearUserDetails()

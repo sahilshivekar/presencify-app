@@ -20,7 +20,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         config?.invoke(this)
         modules(
             module {
-                viewModel { AppViewModel(get(), get()) }
+                viewModel { AppViewModel(get(), get(), get()) }
             },
 
             coreDataModule,

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import edu.watumull.presencify.core.data.local.BasicObfuscationCipher
 import edu.watumull.presencify.core.data.local.DataStoreFactory
+import edu.watumull.presencify.core.data.local.FCMTokenProvider
 import edu.watumull.presencify.core.data.local.PlatformContext
 import edu.watumull.presencify.core.data.local.SettingsFactory
 import edu.watumull.presencify.core.data.local.StringCipher
@@ -17,4 +18,6 @@ actual val platformStorageModule = module {
     single<DataStore<Preferences>> {
         DataStoreFactory.create { dataStorePath() }
     }
+    // FCMTokenProvider for JVM (no-op)
+    single { FCMTokenProvider(PlatformContext()) }
 }

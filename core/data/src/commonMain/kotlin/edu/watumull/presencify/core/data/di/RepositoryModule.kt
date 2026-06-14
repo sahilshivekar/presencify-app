@@ -13,7 +13,9 @@ import edu.watumull.presencify.core.data.repository.attendance.AttendanceReposit
 import edu.watumull.presencify.core.data.repository.schedule.ClassSessionRepositoryImpl
 import edu.watumull.presencify.core.data.repository.schedule.RoomRepositoryImpl
 import edu.watumull.presencify.core.data.repository.schedule.TimetableRepositoryImpl
+import edu.watumull.presencify.core.data.repository.student.FCMSyncService
 import edu.watumull.presencify.core.data.repository.student.StudentDropoutRepositoryImpl
+import edu.watumull.presencify.core.data.repository.student.StudentFCMRepositoryImpl
 import edu.watumull.presencify.core.data.repository.student.StudentRepositoryImpl
 import edu.watumull.presencify.core.data.repository.student_auth.StudentAuthRepositoryImpl
 import edu.watumull.presencify.core.data.repository.teacher.TeacherRepositoryImpl
@@ -32,6 +34,7 @@ import edu.watumull.presencify.core.domain.repository.schedule.ClassSessionRepos
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
 import edu.watumull.presencify.core.domain.repository.schedule.TimetableRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentDropoutRepository
+import edu.watumull.presencify.core.domain.repository.student.StudentFCMRepository
 import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.domain.repository.student_auth.StudentAuthRepository
 import edu.watumull.presencify.core.domain.repository.teacher.TeacherRepository
@@ -66,7 +69,9 @@ val repositoryModule: Module = module {
     // Student Repositories
     single { StudentRepositoryImpl(get()) } bind StudentRepository::class
     single { StudentDropoutRepositoryImpl(get()) } bind StudentDropoutRepository::class
-    single { StudentAuthRepositoryImpl(get(), get(), get(), get()) } bind StudentAuthRepository::class
+    single { StudentFCMRepositoryImpl(get()) } bind StudentFCMRepository::class
+    single { FCMSyncService(get(), get(), get()) }
+    single { StudentAuthRepositoryImpl(get(), get(), get(), get(), get()) } bind StudentAuthRepository::class
 
     // Teacher Repositories
     single { TeacherRepositoryImpl(get()) } bind TeacherRepository::class
