@@ -824,15 +824,13 @@ private fun DivisionItem(
                     it.batch?.divisionId == studentDivision.division?.id &&
                             it.startDate >= studentDivision.startDate &&
                             (
-                                    (it.endDate == null && studentDivision.endDate == null) ||
-                                            (studentDivision.endDate?.let { divEnd ->
-                                                it.endDate?.let { batchEnd ->
-                                                    batchEnd <= divEnd
-                                                }
-                                            } == true)
+                                    it.endDate == null ||                           // Batch still ongoing
+                                            studentDivision.endDate == null ||               // Division still ongoing
+                                            it.endDate!! <= studentDivision.endDate!!            // Batch ended before division ended
                                     )
                 }
                 ?.sortedBy { it.startDate }
+
 
             pastBatches?.forEach { studentBatch ->
                 BatchItem(studentBatch = studentBatch)

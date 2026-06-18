@@ -1135,7 +1135,7 @@ class SearchStudentViewModel(
                         it.copy(
                             loadingStudentIds = it.loadingStudentIds - studentId,
                             studentFeedback = it.studentFeedback + (studentId to ListItemFeedback.Error(
-                                UiText.DynamicString("Student is not assigned to any division in this semester")
+                                UiText.DynamicString("Student is not assigned to the same division as the batch")
                             ))
                         )
                     }
