@@ -613,7 +613,7 @@ class SearchStudentViewModel(
         val student = state.students.find { it.id == studentId } ?: return
 
         // Check if student is already assigned to this division
-        val studentDivision = student.studentDivisions?.find { it.division?.id == divisionId }
+        val studentDivision = student.studentDivisions?.find { it.division?.id == divisionId && it.endDate == null }
         val isAssigned = studentDivision != null
 
         // Mark student as loading
@@ -940,7 +940,7 @@ class SearchStudentViewModel(
         val student = state.students.find { it.id == studentId } ?: return
 
         // Check if student is already assigned to this batch
-        val studentBatch = student.studentBatches?.find { it.batch?.id == batchId }
+        val studentBatch = student.studentBatches?.find { it.batch?.id == batchId && it.endDate == null }
         val isAssigned = studentBatch != null
 
         // Mark student as loading

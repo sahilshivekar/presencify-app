@@ -331,7 +331,7 @@ private fun SearchStudentScreenContent(
 
                                     SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_BATCH -> {
                                         val isAssigned =
-                                            student.studentBatches?.any { it.batch?.id == state.batchId } == true
+                                            student.studentBatches?.any { it.batch?.id == state.batchId && it.endDate == null } == true
                                         {
                                             Column(
                                                 verticalArrangement = Arrangement.Top,
