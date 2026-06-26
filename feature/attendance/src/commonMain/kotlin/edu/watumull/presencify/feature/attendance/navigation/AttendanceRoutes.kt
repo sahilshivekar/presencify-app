@@ -10,6 +10,9 @@ sealed interface AttendanceRoutes : NavRoute {
     data object AttendanceDashboard : AttendanceRoutes
 
     @Serializable
+    data object StudentAttendanceDashboard : AttendanceRoutes
+
+    @Serializable
     data class CreateAttendanceSheet(val classId: String) : AttendanceRoutes
 
     @Serializable

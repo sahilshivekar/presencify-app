@@ -50,7 +50,7 @@ fun HomeBottomNavigationBar(
         contentColor = MaterialTheme.colorScheme.onSurface
     ) {
         val attendanceTabRoute: NavRoute = if (LocalUserRole.current == UserRole.STUDENT) {
-            AttendanceRoutes.StudentAttendanceAnalytics()
+            AttendanceRoutes.StudentAttendanceDashboard
         } else {
             AttendanceRoutes.AttendanceDashboard
         }
@@ -86,6 +86,7 @@ fun HomeBottomNavigationBar(
             val isSelected = when (item.route) {
                 attendanceTabRoute -> {
                     currentDestination?.hasRoute<AttendanceRoutes.AttendanceDashboard>() == true ||
+                            currentDestination?.hasRoute<AttendanceRoutes.StudentAttendanceDashboard>() == true ||
                             currentDestination?.hasRoute<AttendanceRoutes.StudentAttendanceAnalytics>() == true
                 }
 

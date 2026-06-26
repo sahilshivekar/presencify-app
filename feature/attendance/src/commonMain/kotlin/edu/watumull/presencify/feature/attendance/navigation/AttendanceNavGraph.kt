@@ -13,6 +13,7 @@ import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStu
 import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
 import edu.watumull.presencify.feature.attendance.search_attendance.SearchAttendanceRoot
 import edu.watumull.presencify.feature.attendance.student_analytics.StudentAttendanceAnalyticsRoot
+import edu.watumull.presencify.feature.attendance.student_attendance_dashboard.StudentAttendanceDashboardRoot
 
 fun NavGraphBuilder.attendanceDashboard(
     onNavigateBack: () -> Unit,
@@ -36,8 +37,8 @@ fun NavGraphBuilder.attendanceDashboard(
     }
 
     // for student dashboard when role is student
-    composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
-        StudentAttendanceAnalyticsRoot(
+    composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceDashboard> {
+        StudentAttendanceDashboardRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
             onNavigateToScanQr = onNavigateToScanQr
@@ -81,6 +82,14 @@ fun NavGraphBuilder.attendanceNavGraph(
 
     composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
         StudentAttendanceAnalyticsRoot(
+            onNavigateBack = onNavigateBack,
+            onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
+            onNavigateToScanQr = onNavigateToScanQr
+        )
+    }
+
+    composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceDashboard> {
+        StudentAttendanceDashboardRoot(
             onNavigateBack = onNavigateBack,
             onNavigateToSearchAttendanceForCourse = onNavigateToSearchAttendanceForCourseAndStudent,
             onNavigateToScanQr = onNavigateToScanQr

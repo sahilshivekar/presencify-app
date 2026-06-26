@@ -46,7 +46,7 @@ fun HomeNavigationRail(
         Spacer(Modifier.height(DesignToken.spacing.lg))
 
         val attendanceTabRoute: NavRoute = if (LocalUserRole.current == UserRole.STUDENT) {
-            AttendanceRoutes.StudentAttendanceAnalytics()
+            AttendanceRoutes.StudentAttendanceDashboard
         } else {
             AttendanceRoutes.AttendanceDashboard
         }
@@ -82,6 +82,7 @@ fun HomeNavigationRail(
             val isSelected = when (item.route) {
                 attendanceTabRoute -> {
                     currentDestination?.hasRoute<AttendanceRoutes.AttendanceDashboard>() == true ||
+                            currentDestination?.hasRoute<AttendanceRoutes.StudentAttendanceDashboard>() == true ||
                             currentDestination?.hasRoute<AttendanceRoutes.StudentAttendanceAnalytics>() == true
                 }
 

@@ -50,7 +50,7 @@ fun HomeNavHost(
     modifier: Modifier = Modifier
 ) {
     val attendanceTabRoute: NavRoute = if (LocalUserRole.current == UserRole.STUDENT) {
-        AttendanceRoutes.StudentAttendanceAnalytics()
+        AttendanceRoutes.StudentAttendanceDashboard
     } else {
         AttendanceRoutes.AttendanceDashboard
     }
