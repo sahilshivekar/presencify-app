@@ -7,9 +7,11 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.map
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.schedule.CancelledClass
 import edu.watumull.presencify.core.domain.model.schedule.ClassListWithTotalCount
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
+import edu.watumull.presencify.core.domain.model.schedule.UpcomingClass
 import edu.watumull.presencify.core.domain.repository.schedule.ClassSessionRepository
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -17,6 +19,18 @@ import kotlinx.datetime.LocalTime
 class ClassSessionRepositoryImpl(
     private val remoteDataSource: RemoteClassSessionDataSource
 ) : ClassSessionRepository {
+
+    override suspend fun getUpcomingClasses(role: UserRole): Result<List<UpcomingClass>, DataError.Remote> {
+        val result = when (role) {
+            UserRole.STUDENT -> remoteDataSource.getStudentUpcomingClasses()
+            UserRole.TEACHER -> remoteDataSource.getTeacherUpcomingClasses()
+            UserRole.ADMIN -> return Result.Error(DataError.Remote.Forbidden)
+        }
+
+        return result.map { response ->
+            response.classes.map { it.toDomain() }
+        }
+    }
 
     override suspend fun getClasses(
         searchQuery: String?,

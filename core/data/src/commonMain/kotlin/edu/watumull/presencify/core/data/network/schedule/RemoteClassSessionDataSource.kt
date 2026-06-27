@@ -4,14 +4,23 @@ import edu.watumull.presencify.core.data.dto.schedule.CancelledClassDto
 import edu.watumull.presencify.core.data.dto.schedule.CancelledClassListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.schedule.UpcomingClassesResponseDto
+import edu.watumull.presencify.core.data.repository.safeCall
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 interface RemoteClassSessionDataSource {
+
+    suspend fun getStudentUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote>
+
+    suspend fun getTeacherUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote>
+
     suspend fun getClasses(
         searchQuery: String?,
         timetableId: String?,

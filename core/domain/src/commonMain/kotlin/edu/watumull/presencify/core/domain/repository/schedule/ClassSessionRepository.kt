@@ -4,13 +4,18 @@ import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
+import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.domain.model.schedule.CancelledClass
 import edu.watumull.presencify.core.domain.model.schedule.ClassListWithTotalCount
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
+import edu.watumull.presencify.core.domain.model.schedule.UpcomingClass
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 interface ClassSessionRepository {
+
+    suspend fun getUpcomingClasses(role: UserRole): Result<List<UpcomingClass>, DataError.Remote>
+
     suspend fun getClasses(
         searchQuery: String? = null,
         timetableId: String? = null,

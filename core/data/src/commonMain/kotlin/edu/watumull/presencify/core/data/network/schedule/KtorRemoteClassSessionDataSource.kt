@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.data.dto.schedule.CancelledClassDto
 import edu.watumull.presencify.core.data.dto.schedule.CancelledClassListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassListWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.schedule.UpcomingClassesResponseDto
 import edu.watumull.presencify.core.data.dto.schedule.request.AddClassRequest
 import edu.watumull.presencify.core.data.dto.schedule.request.BulkDeleteClassesRequest
 import edu.watumull.presencify.core.data.dto.schedule.request.CancelClassRequest
@@ -25,6 +26,7 @@ import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
+import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.datetime.LocalDate
@@ -33,7 +35,18 @@ import kotlinx.datetime.LocalTime
 class KtorRemoteClassSessionDataSource(
     private val clientProvider: HttpClientProvider
 ) : RemoteClassSessionDataSource {
-    
+
+    override suspend fun getStudentUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote> {
+        return safeCall {
+            clientProvider.getClient().get("/students/upcoming").body()
+        }
+    }
+
+    override suspend fun getTeacherUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote> {
+        return safeCall {
+            clientProvider.getClient().get("/teachers/upcoming").body()
+        }
+    }
 
     override suspend fun getClasses(
         searchQuery: String?,
