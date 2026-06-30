@@ -31,7 +31,7 @@ import kotlinx.datetime.LocalDate
 class KtorRemoteAttendanceDataSource(
     private val clientProvider: HttpClientProvider
 ) : RemoteAttendanceDataSource {
-    
+
 
     override suspend fun createAttendance(classId: String, date: LocalDate): Result<AttendanceDto, DataError.Remote> {
         return safeCall<AttendanceDto> {
@@ -79,7 +79,10 @@ class KtorRemoteAttendanceDataSource(
         }
     }
 
-    override suspend fun markAttendance(attendanceId: String, studentId: String): Result<AttendanceStudentDto, DataError.Remote> {
+    override suspend fun markAttendance(
+        attendanceId: String,
+        studentId: String
+    ): Result<AttendanceStudentDto, DataError.Remote> {
         return safeCall<AttendanceStudentDto> {
             clientProvider.getClient().post(MARK_MY_ATTENDANCE) {
                 contentType(ContentType.Application.Json)
@@ -234,6 +237,7 @@ class KtorRemoteAttendanceDataSource(
         academicStartYear: Int?,
         academicEndYear: Int?,
         branchId: String?,
+        teacherId: String?,
         page: Int,
         limit: Int
     ): Result<AttendanceWithTotalCountDto, DataError.Remote> {
@@ -242,6 +246,7 @@ class KtorRemoteAttendanceDataSource(
                 date?.let { parameter("date", it) }
                 classId?.let { parameter("classId", it) }
                 studentId?.let { parameter("studentId", it) }
+                teacherId?.let { parameter("teacherId", it) }
                 courseId?.let { parameter("courseId", it) }
                 semesterId?.let { parameter("semesterId", it) }
                 divisionId?.let { parameter("divisionId", it) }

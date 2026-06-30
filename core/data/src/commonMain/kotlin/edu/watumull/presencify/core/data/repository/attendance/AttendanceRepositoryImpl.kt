@@ -81,10 +81,10 @@ class AttendanceRepositoryImpl(
     override suspend fun getAttendances(
         date: LocalDate?, classId: String?, studentId: String?, courseId: String?, semesterId: String?,
         divisionId: String?, batchId: String?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,
-        branchId: String?, page: Int, limit: Int
+        branchId: String?, teacherId: String?, page: Int, limit: Int
     ): Result<AttendanceWithTotalCount, DataError.Remote> {
         return remoteDataSource.getAttendances(
-            date, classId, studentId, courseId, semesterId, divisionId, batchId, semesterNumber, academicStartYear, academicEndYear, branchId, page, limit
+            date, classId, studentId, courseId, semesterId, divisionId, batchId, semesterNumber, academicStartYear, academicEndYear, branchId, teacherId, page, limit
         ).map { it.toDomain() }
     }
 

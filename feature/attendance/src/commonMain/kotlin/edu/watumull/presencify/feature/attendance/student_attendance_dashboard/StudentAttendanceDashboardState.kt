@@ -1,6 +1,7 @@
 package edu.watumull.presencify.feature.attendance.student_attendance_dashboard
 
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
+import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.domain.model.student.StudentSemester
@@ -19,6 +20,8 @@ data class StudentAttendanceDashboardState(
     val selectedCourseIds: Set<String> = setOf(OVERALL_ATTENDANCE_COURSE_ID),
     val semesterAttendanceData: Map<String, List<AggregatedAttendance>> = emptyMap(),
     val semesterDetailedAttendance: Map<String, Map<String, List<DetailedAttendanceRecord>>> = emptyMap(),
+    val recentAttendances: List<Attendance> = emptyList(),
+    val isLoadingRecentAttendances: Boolean = false,
     val loadingSemesterIds: Set<String> = emptySet(),
 ) {
     val selectedAttendanceData: List<AggregatedAttendance>

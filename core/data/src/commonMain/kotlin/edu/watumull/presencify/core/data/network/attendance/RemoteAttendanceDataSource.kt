@@ -96,6 +96,7 @@ interface RemoteAttendanceDataSource {
         academicStartYear: Int?,
         academicEndYear: Int?,
         branchId: String?,
+        teacherId: String?,
         page: Int,
         limit: Int,
     ): Result<AttendanceWithTotalCountDto, DataError.Remote>

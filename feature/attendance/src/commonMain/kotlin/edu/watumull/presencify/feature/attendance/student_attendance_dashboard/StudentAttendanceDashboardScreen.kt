@@ -6,6 +6,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,9 +55,12 @@ import edu.watumull.presencify.core.designsystem.components.shimmerEffect
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.academics.Semester
 import edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance
+import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord
 import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.components.AttendanceListItem
 import edu.watumull.presencify.core.presentation.isDesktopPlatform
+import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
 
 private val DashboardChartHeight: Dp = 240.dp
@@ -221,6 +225,14 @@ private fun StudentAttendanceDashboardContent(
                         DonutGraphsSection(
                             attendanceData = state.selectedAttendanceData,
                             onAction = onAction
+                        )
+                    }
+
+                    item {
+                        RecentAttendancesSection(
+                            attendances = state.recentAttendances,
+                            studentId = state.studentId,
+                            isLoading = state.isLoadingRecentAttendances,
                         )
                     }
                 }
@@ -480,6 +492,91 @@ private fun DonutGraphsSection(
                         )
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        content()
+    }
+}
+
+@Composable
+private fun RecentAttendancesSection(
+    attendances: List<Attendance>,
+    studentId: String?,
+    isLoading: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    DashboardSection(
+        title = "Recent Attendances",
+        modifier = modifier
+    ) {
+        when {
+            isLoading -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
+                ) {
+                    repeat(3) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(DesignToken.images.sm)
+                                .shimmerEffect()
+                        )
+                    }
+                }
+            }
+
+            attendances.isEmpty() -> {
+                PresencifyNoResultsIndicator(
+                    text = "No recent attendances found"
+                )
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
+                ) {
+                    attendances.forEach { attendance ->
+                        val classSession = attendance.klass
+                        if (classSession != null) {
+                            AttendanceListItem(
+                                attendanceDate = attendance.date.toReadableString(),
+                                courseName = classSession.course?.name,
+                                teacherName = classSession.teacher?.let {
+                                    "${it.firstName} ${it.lastName}"
+                                } ?: "Unknown Teacher",
+                                startTime = classSession.startTime.toReadableString(),
+                                endTime = classSession.endTime.toReadableString(),
+                                dayOfWeek = classSession.dayOfWeek.toDisplayLabel(),
+                                isPresent = attendance.attendanceStudents
+                                    ?.find { it.studentId == studentId }
+                                    ?.attendanceStatus,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
             }
         }
     }

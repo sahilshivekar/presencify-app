@@ -77,12 +77,53 @@ class StudentAttendanceDashboardViewModel(
                 }
 
                 selectedSemesterId?.let { loadSemesterAttendance(it) }
+                loadRecentAttendances(studentId)
             }
             .onError { error ->
                 updateState {
                     it.copy(
                         viewState = StudentAttendanceDashboardState.ViewState.Error(
                             message = error.toUiText()
+                        )
+                    )
+                }
+            }
+    }
+
+    private suspend fun loadRecentAttendances(studentId: String) {
+        updateState { it.copy(isLoadingRecentAttendances = true) }
+
+        attendanceRepository.getAttendances(
+            date = null,
+            classId = null,
+            studentId = studentId,
+            courseId = null,
+            semesterId = null,
+            divisionId = null,
+            batchId = null,
+            semesterNumber = null,
+            academicStartYear = null,
+            academicEndYear = null,
+            branchId = null,
+            page = 1,
+            limit = 10
+        )
+            .onSuccess { attendanceResult ->
+                updateState {
+                    it.copy(
+                        recentAttendances = attendanceResult.attendances,
+                        isLoadingRecentAttendances = false
+                    )
+                }
+            }
+            .onError { error ->
+                updateState {
+                    it.copy(
+                        isLoadingRecentAttendances = false,
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error Loading Recent Attendances"),
+                            message = error.toUiText(),
+                            dialogType = DialogType.ERROR,
                         )
                     )
                 }

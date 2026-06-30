@@ -96,6 +96,7 @@ interface AttendanceRepository {
         academicStartYear: Int?,
         academicEndYear: Int?,
         branchId: String?,
+        teacherId: String? = null,
         page: Int,
         limit: Int,
     ): Result<AttendanceWithTotalCount, DataError.Remote>
