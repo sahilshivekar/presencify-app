@@ -14,7 +14,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val scheduleModule = module {
-    viewModel { ScheduleDashboardViewModel() }
+    viewModel { ScheduleDashboardViewModel(classSessionRepository = get()) }
     viewModel { SearchRoomViewModel(roomRepository = get()) }
     viewModel { AddEditRoomViewModel(roomRepository = get(), savedStateHandle = get()) }
     viewModel { RoomDetailsViewModel(roomRepository = get(), savedStateHandle = get()) }

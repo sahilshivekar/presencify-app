@@ -38,13 +38,13 @@ class KtorRemoteClassSessionDataSource(
 
     override suspend fun getStudentUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote> {
         return safeCall {
-            clientProvider.getClient().get("/students/upcoming").body()
+            clientProvider.getClient().get("$GET_CLASSES/students/upcoming").body()
         }
     }
 
     override suspend fun getTeacherUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote> {
         return safeCall {
-            clientProvider.getClient().get("/teachers/upcoming").body()
+            clientProvider.getClient().get("$GET_CLASSES/teachers/upcoming").body()
         }
     }
 
