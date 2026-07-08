@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.data.mapper.academics.toDomain
 import edu.watumull.presencify.core.data.mapper.attendance.toDomain
 import edu.watumull.presencify.core.data.mapper.teacher.toDomain
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
+import kotlinx.datetime.LocalDate
 
 fun ClassDto.toDomain(): ClassSession = ClassSession(
     id = id,
@@ -20,6 +21,7 @@ fun ClassDto.toDomain(): ClassSession = ClassSession(
     activeTill = activeTill,
     isExtraClass = isExtraClass,
     timetable = timetable?.toDomain(),
+    nextClassDate = nextClassDate,
     batch = batch?.toDomain(),
     room = room?.toDomain(),
     course = course?.toDomain(),

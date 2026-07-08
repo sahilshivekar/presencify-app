@@ -16,13 +16,15 @@ import edu.watumull.presencify.feature.schedule.timetable_details.TimetableDetai
 fun NavGraphBuilder.scheduleDashboard(
     onNavigateToSearchRoom: () -> Unit,
     onNavigateToSearchClass: () -> Unit,
-    onNavigateToSearchTimetable: () -> Unit
+    onNavigateToSearchTimetable: () -> Unit,
+    onNavigateToClassDetails: (String) -> Unit
 ) {
     composableWithSlideTransitions<ScheduleRoutes.ScheduleDashboard> {
         ScheduleDashboardRoot(
             onNavigateToSearchRoom = onNavigateToSearchRoom,
             onNavigateToSearchClass = onNavigateToSearchClass,
-            onNavigateToSearchTimetable = onNavigateToSearchTimetable
+            onNavigateToSearchTimetable = onNavigateToSearchTimetable,
+            onNavigateToClassDetails = onNavigateToClassDetails
         )
     }
 }
@@ -73,7 +75,8 @@ fun NavGraphBuilder.scheduleNavGraph(
     composableWithSlideTransitions<ScheduleRoutes.ClassDetails> {
         ClassDetailsRoot(
             onNavigateBack = onNavigateBack,
-            onNavigateToEditClass = onNavigateToAddEditClass
+            onNavigateToEditClass = onNavigateToAddEditClass,
+            onNavigateToCreateAttendanceSheet = onNavigateToCreateAttendanceSheet
         )
     }
 

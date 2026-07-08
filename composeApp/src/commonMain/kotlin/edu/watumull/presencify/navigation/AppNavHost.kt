@@ -18,6 +18,7 @@ import edu.watumull.presencify.feature.users.navigation.SearchStudentIntention
 import edu.watumull.presencify.feature.users.navigation.usersNavGraph
 import edu.watumull.presencify.navigation.home.Home
 import edu.watumull.presencify.navigation.home.navigateToHome
+import edu.watumull.presencify.navigation.notification.ScheduleNotificationDeepLink
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddAdmin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAddEditBranch
@@ -66,10 +67,14 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateUserPassword
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetailsWithSyntheticBackStack
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun AppNavHost(
     startDestination: NavRoute,
+    scheduleNotificationDeepLink: ScheduleNotificationDeepLink? = null,
+    onDeepLinkConsumed: () -> Unit = {}
 ) {
     val rootNavController = rememberNavController()
 
@@ -78,7 +83,11 @@ fun AppNavHost(
         startDestination = startDestination
     ) {
         composable<Home> {
-            Home(rootNavController = rootNavController)
+            Home(
+                rootNavController = rootNavController,
+                scheduleNotificationDeepLink  = scheduleNotificationDeepLink,
+                onDeepLinkConsumed = onDeepLinkConsumed,
+            )
         }
 
         academicsNavGraph(
@@ -148,7 +157,11 @@ fun AppNavHost(
                 )
             },
             onNavigateToSubmitStudentBiometrics = { rootNavController.navigateToSubmitStudentBiometrics() },
-            onNavigateToReviewStudentBiometrics = { studentId -> rootNavController.navigateToReviewStudentBiometrics(studentId) },
+            onNavigateToReviewStudentBiometrics = { studentId ->
+                rootNavController.navigateToReviewStudentBiometrics(
+                    studentId
+                )
+            },
             onNavigateToSearchStudentForAssignUnassignSemester = { semesterId, branchId ->
                 rootNavController.navigateToSearchStudent(
                     intention = SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_SEMESTER.name,

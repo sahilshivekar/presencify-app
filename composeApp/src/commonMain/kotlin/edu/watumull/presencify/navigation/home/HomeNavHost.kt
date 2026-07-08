@@ -1,6 +1,7 @@
 package edu.watumull.presencify.navigation.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -24,6 +25,8 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToLin
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkUnmarkStudentAsDropout
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentBatch
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToModifyStudentDivision
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetailsWithSyntheticBackStack
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchBatch
@@ -38,6 +41,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTeacher
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchTimetable
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUniversityDetails
+import edu.watumull.presencify.navigation.notification.ScheduleNotificationDeepLink
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -47,7 +51,9 @@ data object Home : NavRoute
 fun HomeNavHost(
     homeNavController: NavHostController,
     rootNavController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scheduleNotificationDeepLink: ScheduleNotificationDeepLink? = null,
+    onDeepLinkConsumed: () -> Unit = {}
 ) {
     val attendanceTabRoute: NavRoute = if (LocalUserRole.current == UserRole.STUDENT) {
         AttendanceRoutes.StudentAttendanceDashboard
@@ -132,8 +138,17 @@ fun HomeNavHost(
         scheduleDashboard(
             onNavigateToSearchClass = rootNavController::navigateToSearchClass,
             onNavigateToSearchTimetable = rootNavController::navigateToSearchTimetable,
-            onNavigateToSearchRoom = rootNavController::navigateToSearchRoom
+            onNavigateToSearchRoom = rootNavController::navigateToSearchRoom,
+            onNavigateToClassDetails = rootNavController::navigateToClassDetails
         )
+    }
+    LaunchedEffect(scheduleNotificationDeepLink) {
+        val deepLink = scheduleNotificationDeepLink ?: return@LaunchedEffect
+        if (deepLink.type == "ExtraLectureAdded") {
+            homeNavController.navigateToClassDetailsWithSyntheticBackStack(deepLink.classId, rootNavController)
+        }
+        // Mark as consumed to prevent duplicate navigation on recomposition (e.g., screen rotation)
+        onDeepLinkConsumed()
     }
 }
 

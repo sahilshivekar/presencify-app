@@ -20,6 +20,7 @@ data class ClassSession(
     val activeTill: LocalDate,
     val courseId: String,
     val timetableId: String,
+    val nextClassDate: LocalDate? = null,
     val isExtraClass: Boolean,
     val teacher: Teacher? = null,
     val room: Room? = null,

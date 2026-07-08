@@ -10,6 +10,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ClassDetailsRoot(
     onNavigateBack: () -> Unit,
     onNavigateToEditClass: (timetableId: String, classId: String) -> Unit,
+    onNavigateToCreateAttendanceSheet: (classId: String) -> Unit,
     viewModel: ClassDetailsViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -18,6 +19,7 @@ fun ClassDetailsRoot(
         when (event) {
             ClassDetailsEvent.NavigateBack -> onNavigateBack()
             is ClassDetailsEvent.NavigateToEditClass -> onNavigateToEditClass(event.timetableId, event.classId)
+            is ClassDetailsEvent.NavigateToCreateAttendanceSheet -> onNavigateToCreateAttendanceSheet(event.classId)
         }
     }
 

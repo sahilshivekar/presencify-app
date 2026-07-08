@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,9 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -38,7 +42,7 @@ import edu.watumull.presencify.core.designsystem.components.shimmerEffect
 import edu.watumull.presencify.core.designsystem.round_menu_book_24
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
-import edu.watumull.presencify.core.domain.model.schedule.UpcomingClass
+import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.core.presentation.utils.toReadableString
@@ -71,7 +75,10 @@ fun ScheduleDashboardScreen(
                                 upcomingClasses = state.upcomingClasses,
                                 userRole = currentUserRole,
                                 isLoading = state.isLoadingUpcomingClasses,
-                                errorMessage = state.upcomingClassesError?.asString()
+                                errorMessage = state.upcomingClassesError?.asString(),
+                                onClassClick = { classId ->
+                                    onAction(ScheduleDashboardAction.ClickUpcomingClass(classId))
+                                }
                             )
                         }
                     }
@@ -106,15 +113,17 @@ fun ScheduleDashboardScreen(
 
 @Composable
 private fun UpcomingClassesGrid(
-    upcomingClasses: List<UpcomingClass>,
+    upcomingClasses: List<ClassSession>,
     userRole: UserRole,
     isLoading: Boolean,
-    errorMessage: String?
+    errorMessage: String?,
+    onClassClick: (String) -> Unit
 ) {
     when {
         isLoading -> {
             UpcomingClassesShimmer()
         }
+
         errorMessage != null -> {
             Text(
                 text = errorMessage,
@@ -122,6 +131,7 @@ private fun UpcomingClassesGrid(
                 color = MaterialTheme.colorScheme.error
             )
         }
+
         upcomingClasses.isEmpty() -> {
             Text(
                 text = "No upcoming classes",
@@ -129,24 +139,40 @@ private fun UpcomingClassesGrid(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+
         else -> {
-            LazyHorizontalGrid(
-                rows = GridCells.Fixed(4),
+            // Determine the number of rows based on the size of upcomingClasses
+            val rowsCount = when {
+                upcomingClasses.size <= 4 -> 1
+                upcomingClasses.size <= 8 -> 2
+                upcomingClasses.size <= 12 -> 3
+                else -> 4
+            }
+
+            // Group the list into chunks (columns) based on the calculated rowsCount
+            val chunkedClasses = upcomingClasses.chunked(rowsCount)
+
+            LazyRow(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(DesignToken.spacing.huge * 6),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
-                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
             ) {
                 items(
-                    items = upcomingClasses,
-                    key = { it.id }
-                ) { upcomingClass ->
-                    UpcomingClassListItem(
-                        upcomingClass = upcomingClass,
-                        userRole = userRole,
-                        modifier = Modifier.width(DesignToken.spacing.huge * 5)
-                    )
+                    items = chunkedClasses,
+                ) { columnItems ->
+                    Column(
+                        modifier = Modifier.width(IntrinsicSize.Max),
+                        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
+                    ) {
+                        columnItems.forEach { upcomingClass ->
+                            UpcomingClassListItem(
+                                upcomingClass = upcomingClass,
+                                userRole = userRole,
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = { onClassClick(upcomingClass.id) }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -155,39 +181,60 @@ private fun UpcomingClassesGrid(
 
 @Composable
 private fun UpcomingClassesShimmer() {
-    LazyHorizontalGrid(
-        rows = GridCells.Fixed(4),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(DesignToken.spacing.huge * 6),
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
-        verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
-        items(count = 8) {
-            Box(
-                modifier = Modifier
-                    .width(DesignToken.spacing.huge * 5)
-                    .height(DesignToken.spacing.huge)
-                    .shimmerEffect()
-            )
+        // Render a few fake columns for the loading state
+        items(count = 3) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
+            ) {
+                repeat(4) {
+                    Box(
+                        modifier = Modifier
+                            // Use a standard estimated width for the shimmer
+                            .width(DesignToken.spacing.huge * 5)
+                            .height(DesignToken.spacing.huge * 1.5f) // Estimated height of a card
+                            .shimmerEffect()
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun UpcomingClassListItem(
-    upcomingClass: UpcomingClass,
+    upcomingClass: ClassSession,
     userRole: UserRole,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     PresencifyListItem(
         modifier = modifier,
         headlineContent = {
-            Text(
-                text = upcomingClass.course.name,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    UpcomingClassDateLabel(upcomingClass = upcomingClass)
+                    Spacer(modifier = Modifier.width(DesignToken.spacing.md))
+                    Text(
+                        text = upcomingClass.nextClassDate!!.toReadableString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Text(
+                    text = upcomingClass.course?.name ?: "Unknown Course",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         },
         supportingContent = {
             Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xs)) {
@@ -197,30 +244,21 @@ private fun UpcomingClassListItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "${upcomingClass.startTime.toReadableString()} - ${upcomingClass.endTime.toReadableString()} | ${upcomingClass.room.roomNumber}",
+                    text = "${upcomingClass.startTime.toReadableString()} - ${upcomingClass.endTime.toReadableString()} | ${upcomingClass.room?.roomNumber ?: "-"}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
-        leadingContent = {
-            Icon(
-                imageVector = Icons.Default.Schedule,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(DesignToken.icons.md)
-            )
-        },
-        trailingContent = {
-            UpcomingClassDateLabel(upcomingClass = upcomingClass)
-        }
+        onClick = onClick
     )
 }
 
 @Composable
-private fun UpcomingClassDateLabel(upcomingClass: UpcomingClass) {
+private fun UpcomingClassDateLabel(upcomingClass: ClassSession) {
     val today = DateTimeUtils.getCurrentDate()
-    val daysUntilClass = upcomingClass.nextClassDate.toEpochDays() - today.toEpochDays()
+    val nextDate = upcomingClass.nextClassDate ?: today
+    val daysUntilClass = nextDate.toEpochDays() - today.toEpochDays()
     val currentTime = DateTimeUtils.getCurrentTime()
     val label = when (daysUntilClass) {
         0L -> {
@@ -229,6 +267,7 @@ private fun UpcomingClassDateLabel(upcomingClass: UpcomingClass) {
             val remainingHours = ((remainingMinutes.coerceAtLeast(0) + 59) / 60)
             "today ${remainingHours}h"
         }
+
         1L -> "tomorrow"
         else -> if (daysUntilClass > 1L) "${daysUntilClass}d" else null
     }
@@ -257,33 +296,33 @@ private fun UpcomingClassDateLabel(upcomingClass: UpcomingClass) {
     }
 }
 
-private fun UpcomingClass.supportingText(userRole: UserRole): String {
+private fun ClassSession.supportingText(userRole: UserRole): String {
     return when (userRole) {
-        UserRole.STUDENT -> "Prof. ${teacher.firstName} ${teacher.lastName}"
+        UserRole.STUDENT -> "Prof. ${teacher?.firstName ?: ""} ${teacher?.lastName ?: ""}".trim()
         UserRole.TEACHER -> teacherClassContext()
         UserRole.ADMIN -> ""
     }
 }
 
-private fun UpcomingClass.teacherClassContext(): String {
-    val matchingClass = course.classes?.firstOrNull { it.id == id }
-    val batch = matchingClass?.batch
-    val division = matchingClass?.timetable?.division ?: batch?.division
-    val semester = division?.semester ?: course.branchCourseSemesters?.firstOrNull()?.semesterNumber
+private fun ClassSession.teacherClassContext(): String {
+    val matchingClass = course?.classes?.firstOrNull { it.id == id }
+    val currentBatch = batch ?: matchingClass?.batch
+    val division = timetable?.division ?: currentBatch?.division
+    val semester = division?.semester ?: course?.branchCourseSemesters?.firstOrNull()?.semesterNumber
     val semesterText = when (semester) {
         is edu.watumull.presencify.core.domain.model.academics.Semester -> "Sem ${semester.semesterNumber.value}"
         is edu.watumull.presencify.core.domain.enums.SemesterNumber -> "Sem ${semester.value}"
         else -> null
     }
     val divisionOrBatchText = when {
-        batch != null -> "Batch ${batch.batchCode}"
+        currentBatch != null -> "Batch ${currentBatch.batchCode}"
         division != null -> "Div ${division.divisionCode}"
         else -> null
     }
 
     return listOfNotNull(semesterText, divisionOrBatchText)
         .joinToString(" - ")
-        .ifBlank { course.code }
+        .ifBlank { course?.code ?: "" }
 }
 
 @Composable
@@ -344,4 +383,3 @@ private fun RowScope.DashboardItem(
         onClick = onClick
     )
 }
-

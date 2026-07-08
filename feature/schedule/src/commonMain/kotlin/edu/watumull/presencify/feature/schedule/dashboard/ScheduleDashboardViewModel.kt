@@ -23,6 +23,9 @@ class ScheduleDashboardViewModel(
             ScheduleDashboardAction.ClickRoom -> sendEvent(ScheduleDashboardEvent.NavigateToRoom)
             ScheduleDashboardAction.ClickClasses -> sendEvent(ScheduleDashboardEvent.NavigateToClasses)
             ScheduleDashboardAction.ClickTimetable -> sendEvent(ScheduleDashboardEvent.NavigateToTimetable)
+            is ScheduleDashboardAction.ClickUpcomingClass -> {
+                sendEvent(ScheduleDashboardEvent.NavigateToClassDetails(action.classId))
+            }
             is ScheduleDashboardAction.LoadUpcomingClasses -> loadUpcomingClasses(action.userRole)
             ScheduleDashboardAction.ClearUpcomingClasses -> {
                 loadedUserRole = null

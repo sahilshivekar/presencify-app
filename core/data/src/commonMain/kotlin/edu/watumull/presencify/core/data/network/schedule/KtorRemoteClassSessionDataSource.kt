@@ -5,7 +5,6 @@ import edu.watumull.presencify.core.data.dto.schedule.CancelledClassDto
 import edu.watumull.presencify.core.data.dto.schedule.CancelledClassListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassDto
 import edu.watumull.presencify.core.data.dto.schedule.ClassListWithTotalCountDto
-import edu.watumull.presencify.core.data.dto.schedule.UpcomingClassesResponseDto
 import edu.watumull.presencify.core.data.dto.schedule.request.AddClassRequest
 import edu.watumull.presencify.core.data.dto.schedule.request.BulkDeleteClassesRequest
 import edu.watumull.presencify.core.data.dto.schedule.request.CancelClassRequest
@@ -36,13 +35,13 @@ class KtorRemoteClassSessionDataSource(
     private val clientProvider: HttpClientProvider
 ) : RemoteClassSessionDataSource {
 
-    override suspend fun getStudentUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote> {
+    override suspend fun getStudentUpcomingClasses(): Result<ClassListWithTotalCountDto, DataError.Remote> {
         return safeCall {
             clientProvider.getClient().get("$GET_CLASSES/students/upcoming").body()
         }
     }
 
-    override suspend fun getTeacherUpcomingClasses(): Result<UpcomingClassesResponseDto, DataError.Remote> {
+    override suspend fun getTeacherUpcomingClasses(): Result<ClassListWithTotalCountDto, DataError.Remote> {
         return safeCall {
             clientProvider.getClient().get("$GET_CLASSES/teachers/upcoming").body()
         }

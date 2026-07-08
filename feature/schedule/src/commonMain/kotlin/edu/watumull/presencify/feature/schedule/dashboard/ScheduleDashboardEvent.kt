@@ -4,5 +4,6 @@ sealed interface ScheduleDashboardEvent {
     data object NavigateToRoom : ScheduleDashboardEvent
     data object NavigateToClasses : ScheduleDashboardEvent
     data object NavigateToTimetable : ScheduleDashboardEvent
+    data class NavigateToClassDetails(val classId: String) : ScheduleDashboardEvent
 }
 

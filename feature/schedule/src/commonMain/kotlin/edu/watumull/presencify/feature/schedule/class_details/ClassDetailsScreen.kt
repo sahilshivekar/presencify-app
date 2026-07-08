@@ -11,22 +11,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import edu.watumull.presencify.core.designsystem.components.PresencifyDefaultLoadingScreen
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
+import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
+import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 
 @Composable
@@ -104,6 +111,47 @@ fun ClassDetailsScreen(
                                 onClick = null,
                                 modifier = Modifier.fillMaxWidth()
                             )
+
+                            if (classSession.isActiveForAttendance() &&
+                                (LocalUserRole.current == UserRole.TEACHER || LocalUserRole.current == UserRole.ADMIN)
+                            ) {
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
+
+                                Text(
+                                    text = "Attendance",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
+
+                                PresencifyListItem(
+                                    headlineContent = {
+                                        Text(
+                                            text = "Mark attendance",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    },
+                                    supportingContent = {
+                                        Text(
+                                            text = "Open attendance creation for this class",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    },
+                                    leadingContent = {
+                                        Icon(
+                                            imageVector = Icons.Filled.CheckCircle,
+                                            contentDescription = "Mark attendance",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    },
+                                    onClick = { onAction(ClassDetailsAction.MarkAttendanceClick) },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                         if (LocalUserRole.current == UserRole.ADMIN) {
                             Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
@@ -156,4 +204,9 @@ fun ClassDetailsScreen(
             onDismiss = { onAction(ClassDetailsAction.DismissDialog) }
         )
     }
+}
+
+private fun ClassSession.isActiveForAttendance(): Boolean {
+    val today = DateTimeUtils.getCurrentDate()
+    return today in activeFrom..activeTill
 }

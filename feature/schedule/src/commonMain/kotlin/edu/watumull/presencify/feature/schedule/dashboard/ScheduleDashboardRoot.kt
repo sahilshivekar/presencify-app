@@ -14,6 +14,7 @@ fun ScheduleDashboardRoot(
     onNavigateToSearchRoom: () -> Unit,
     onNavigateToSearchClass: () -> Unit,
     onNavigateToSearchTimetable: () -> Unit,
+    onNavigateToClassDetails: (String) -> Unit,
     viewModel: ScheduleDashboardViewModel = koinViewModel()
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -33,6 +34,7 @@ fun ScheduleDashboardRoot(
             ScheduleDashboardEvent.NavigateToRoom -> onNavigateToSearchRoom()
             ScheduleDashboardEvent.NavigateToClasses -> onNavigateToSearchClass()
             ScheduleDashboardEvent.NavigateToTimetable -> onNavigateToSearchTimetable()
+            is ScheduleDashboardEvent.NavigateToClassDetails -> onNavigateToClassDetails(event.classId)
         }
     }
 

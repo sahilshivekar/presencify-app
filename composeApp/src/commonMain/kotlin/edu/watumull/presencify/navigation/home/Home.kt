@@ -18,11 +18,14 @@ import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRol
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
+import edu.watumull.presencify.navigation.notification.ScheduleNotificationDeepLink
 
 @Composable
 fun Home(
     rootNavController: NavHostController,
-) {
+    scheduleNotificationDeepLink: ScheduleNotificationDeepLink? = null,
+    onDeepLinkConsumed: () -> Unit = {}
+    ) {
 
     val homeNavController = rememberNavController()
     val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
@@ -93,7 +96,9 @@ fun Home(
             HomeNavHost(
                 modifier = Modifier.weight(1f),
                 homeNavController = homeNavController,
-                rootNavController = rootNavController
+                rootNavController = rootNavController,
+                scheduleNotificationDeepLink  = scheduleNotificationDeepLink,
+                onDeepLinkConsumed = onDeepLinkConsumed,
             )
         }
     }

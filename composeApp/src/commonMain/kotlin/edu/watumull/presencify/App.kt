@@ -35,13 +35,17 @@ import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRol
 import edu.watumull.presencify.core.presentation.global_snackbar.ObserveAsEvents
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
 import edu.watumull.presencify.navigation.AppNavHost
+import edu.watumull.presencify.navigation.notification.ScheduleNotificationDeepLink
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
-fun App() {
+fun App(
+    scheduleNotificationDeepLink: ScheduleNotificationDeepLink? = null,
+    onDeepLinkConsumed: () -> Unit = {}
+) {
     val viewModel = koinViewModel<AppViewModel>()
     val state by viewModel.state.collectAsState()
 
@@ -83,7 +87,11 @@ fun App() {
                     },
                     contentWindowInsets = WindowInsets(0.dp)
                 ) {
-                    AppNavHost(destination)
+                    AppNavHost(
+                        startDestination = destination,
+                        scheduleNotificationDeepLink = scheduleNotificationDeepLink,
+                        onDeepLinkConsumed = onDeepLinkConsumed
+                    )
                 }
             } ?: SplashScreen()
         }

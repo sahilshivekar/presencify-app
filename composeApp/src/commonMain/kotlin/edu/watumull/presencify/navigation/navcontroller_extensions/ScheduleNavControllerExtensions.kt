@@ -11,6 +11,20 @@ fun NavController.navigateToScheduleDashboard() {
 }
 
 /**
+ * Navigate from a notification tap into class details while keeping
+ * ScheduleDashboard underneath it in the back stack.
+ */
+fun NavController.navigateToClassDetailsWithSyntheticBackStack(classId: String, rootNavController: NavController) {
+    navigate(ScheduleRoutes.ScheduleDashboard) {
+        popUpTo(graph.startDestinationId) {
+            inclusive = false
+        }
+        launchSingleTop = true
+    }
+    rootNavController.navigate(ScheduleRoutes.ClassDetails(classId = classId))
+}
+
+/**
  * Navigate to Add/Edit Class screen
  *
  * @param timetableId The ID of the timetable for the class

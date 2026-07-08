@@ -74,30 +74,26 @@ fun StudentAttendanceDashboardScreen(
     state: StudentAttendanceDashboardState,
     onAction: (StudentAttendanceDashboardAction) -> Unit,
 ) {
-    PresencifyScaffold(
-        backPress = { onAction(StudentAttendanceDashboardAction.NavigateBack) },
-        topBarTitle = null,
-    ) { paddingValues ->
-        when (state.viewState) {
-            StudentAttendanceDashboardState.ViewState.Loading -> {
-                PresencifyDefaultLoadingScreen()
-            }
 
-            is StudentAttendanceDashboardState.ViewState.Error -> {
-                PresencifyNoResultsIndicator(
-                    text = state.viewState.message.asString()
-                )
-            }
+    when (state.viewState) {
+        StudentAttendanceDashboardState.ViewState.Loading -> {
+            PresencifyDefaultLoadingScreen()
+        }
 
-            StudentAttendanceDashboardState.ViewState.Content -> {
-                StudentAttendanceDashboardContent(
-                    state = state,
-                    onAction = onAction,
-                    modifier = Modifier.padding(paddingValues)
-                )
-            }
+        is StudentAttendanceDashboardState.ViewState.Error -> {
+            PresencifyNoResultsIndicator(
+                text = state.viewState.message.asString()
+            )
+        }
+
+        StudentAttendanceDashboardState.ViewState.Content -> {
+            StudentAttendanceDashboardContent(
+                state = state,
+                onAction = onAction,
+            )
         }
     }
+
 
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
@@ -131,8 +127,6 @@ private fun StudentAttendanceDashboardContent(
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-
         LazyColumn(
             modifier = Modifier
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)

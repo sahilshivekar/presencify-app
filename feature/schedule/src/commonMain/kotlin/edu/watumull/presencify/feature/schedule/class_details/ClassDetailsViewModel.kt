@@ -55,6 +55,11 @@ class ClassDetailsViewModel(
                     sendEvent(ClassDetailsEvent.NavigateToEditClass(timetableId, state.classId))
                 }
             }
+
+            ClassDetailsAction.MarkAttendanceClick -> {
+                val classId = state.classSession?.id ?: return
+                sendEvent(ClassDetailsEvent.NavigateToCreateAttendanceSheet(classId))
+            }
         }
     }
 

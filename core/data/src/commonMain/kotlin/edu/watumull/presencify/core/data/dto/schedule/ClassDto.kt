@@ -21,6 +21,7 @@ data class ClassDto(
     val batchId: String? = null,
     val activeFrom: LocalDate,
     val activeTill: LocalDate,
+    val nextClassDate: LocalDate? = null,
     val courseId: String,
     val createdAt: String,
     val updatedAt: String,

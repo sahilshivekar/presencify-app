@@ -6,6 +6,7 @@ sealed interface ScheduleDashboardAction {
     data object ClickRoom : ScheduleDashboardAction
     data object ClickClasses : ScheduleDashboardAction
     data object ClickTimetable : ScheduleDashboardAction
+    data class ClickUpcomingClass(val classId: String) : ScheduleDashboardAction
     data class LoadUpcomingClasses(val userRole: UserRole) : ScheduleDashboardAction
     data object ClearUpcomingClasses : ScheduleDashboardAction
 }

@@ -108,8 +108,8 @@ fun TimetableDetailsScreen(
                                 )
                             }
                             Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
-                            
-                            if (LocalUserRole.current == UserRole.ADMIN) {
+
+                            if (LocalUserRole.current != UserRole.STUDENT) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
@@ -133,22 +133,23 @@ fun TimetableDetailsScreen(
 //                                            color = MaterialTheme.colorScheme.primary
 //                                        )
 //                                    }
-
-                                    PresencifyTextButton(
-                                        onClick = { onAction(TimetableDetailsAction.RemoveTimetableClick) },
-                                        enabled = !state.isRemovingTimetable
-                                    ) {
-                                        if (state.isRemovingTimetable) {
-                                            CircularProgressIndicator(
-                                                color = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.size(DesignToken.components.progressMd),
-                                                strokeWidth = DesignToken.strokes.md,
-                                            )
-                                        } else {
-                                            Text(
-                                                text = "Remove timetable",
-                                                color = MaterialTheme.colorScheme.error
-                                            )
+                                    if (LocalUserRole.current == UserRole.ADMIN) {
+                                        PresencifyTextButton(
+                                            onClick = { onAction(TimetableDetailsAction.RemoveTimetableClick) },
+                                            enabled = !state.isRemovingTimetable
+                                        ) {
+                                            if (state.isRemovingTimetable) {
+                                                CircularProgressIndicator(
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(DesignToken.components.progressMd),
+                                                    strokeWidth = DesignToken.strokes.md,
+                                                )
+                                            } else {
+                                                Text(
+                                                    text = "Remove timetable",
+                                                    color = MaterialTheme.colorScheme.error
+                                                )
+                                            }
                                         }
                                     }
                                 }

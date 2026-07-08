@@ -6,4 +6,5 @@ sealed interface ClassDetailsAction {
     data object RemoveClassClick : ClassDetailsAction
     data object ConfirmRemoveClass : ClassDetailsAction
     data object EditClassClick : ClassDetailsAction
+    data object MarkAttendanceClick : ClassDetailsAction
 }
