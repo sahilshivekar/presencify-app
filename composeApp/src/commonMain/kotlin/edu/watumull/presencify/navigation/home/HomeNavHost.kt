@@ -118,7 +118,6 @@ fun HomeNavHost(
                     studentId = studentId
                 )
             },
-            onNavigateToScanQr = rootNavController::navigateToScanQr,
             onNavigateToDefaulters = rootNavController::navigateToDefaulters
         )
 

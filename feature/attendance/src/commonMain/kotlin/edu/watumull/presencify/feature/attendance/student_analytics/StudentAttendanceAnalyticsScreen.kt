@@ -140,14 +140,6 @@ private fun StudentAttendanceAnalyticsScreenContent(
                 year = student.studentSemesters?.firstOrNull()?.semester?.semesterNumber?.toAcademicYear()
             )
 
-            if (LocalUserRole.current == UserRole.STUDENT && !isDesktopPlatform()) {
-                Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
-                PresencifyActionBar(
-                    text = "Scan QR for attendance",
-                    onClick = { onAction(StudentAttendanceAnalyticsAction.ScanQrClick) }
-                )
-            }
-
             Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
             // Semesters List

@@ -234,10 +234,6 @@ class StudentAttendanceDashboardViewModel(
                 updateState { it.copy(dialogState = null) }
             }
 
-            StudentAttendanceDashboardAction.ScanQrClick -> {
-                sendEvent(StudentAttendanceDashboardEvent.NavigateToScanQr)
-            }
-
             is StudentAttendanceDashboardAction.SelectSemester -> {
                 if (stateFlow.value.selectedSemesterId == action.semesterId) return
                 updateState {

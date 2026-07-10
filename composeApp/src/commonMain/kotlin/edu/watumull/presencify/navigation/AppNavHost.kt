@@ -144,7 +144,6 @@ fun AppNavHost(
             onNavigateToRecognizeStudent = { attendanceId ->
                 rootNavController.navigateToRecognizeStudent(attendanceId)
             },
-            onNavigateToScanQr = { rootNavController.navigateToScanQr() }
         )
 
         usersNavGraph(

@@ -311,13 +311,6 @@ private fun DashboardHeader(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-
-        if (!isDesktopPlatform()) {
-            PresencifyActionBar(
-                text = "Scan QR for attendance",
-                onClick = { onAction(StudentAttendanceDashboardAction.ScanQrClick) }
-            )
-        }
     }
 }
 

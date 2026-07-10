@@ -10,7 +10,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun StudentAttendanceDashboardRoot(
     onNavigateBack: () -> Unit,
     onNavigateToSearchAttendanceForCourse: (courseId: String, studentId: String) -> Unit,
-    onNavigateToScanQr: () -> Unit,
 ) {
     val viewModel: StudentAttendanceDashboardViewModel = koinViewModel()
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -21,7 +20,6 @@ fun StudentAttendanceDashboardRoot(
             is StudentAttendanceDashboardEvent.NavigateToSearchAttendanceForCourse -> {
                 onNavigateToSearchAttendanceForCourse(event.courseId, event.studentId)
             }
-            StudentAttendanceDashboardEvent.NavigateToScanQr -> onNavigateToScanQr()
         }
     }
 

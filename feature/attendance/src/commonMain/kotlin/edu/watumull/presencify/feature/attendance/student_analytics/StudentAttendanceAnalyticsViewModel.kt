@@ -242,9 +242,6 @@ class StudentAttendanceAnalyticsViewModel(
                 }
             }
 
-            StudentAttendanceAnalyticsAction.ScanQrClick -> {
-                sendEvent(StudentAttendanceAnalyticsEvent.NavigateToScanQr)
-            }
         }
     }
 }

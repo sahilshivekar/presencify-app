@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,9 @@ import androidx.compose.ui.Modifier
 import edu.watumull.presencify.core.designsystem.Res
 import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
+import edu.watumull.presencify.core.domain.model.auth.UserRole
+import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
+import edu.watumull.presencify.core.presentation.isDesktopPlatform
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +34,7 @@ import org.jetbrains.compose.resources.painterResource
 fun HomeTopBar(
     modifier: Modifier = Modifier,
     onProfileIconButtonClick: () -> Unit,
+    onScanQrIconButtonClick: () -> Unit,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
 ) {
     TopAppBar(
@@ -51,6 +56,17 @@ fun HomeTopBar(
             .fillMaxWidth()
             .wrapContentHeight(),
         actions = {
+            if (!isDesktopPlatform() && LocalUserRole.current == UserRole.STUDENT) {
+                IconButton(
+                    onClick = onScanQrIconButtonClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.QrCodeScanner,
+                        contentDescription = "Scan QR Code",
+                        modifier = Modifier.size(DesignToken.icons.md)
+                    )
+                }
+            }
             IconButton(
                 onClick = onProfileIconButtonClick
             ) {

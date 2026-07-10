@@ -16,6 +16,7 @@ import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserId
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToAdminDetails
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToStudentDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTeacherDetails
 import edu.watumull.presencify.navigation.notification.ScheduleNotificationDeepLink
@@ -49,6 +50,7 @@ fun Home(
                         null -> Unit
                     }
                 },
+                onScanQrIconButtonClick = rootNavController::navigateToScanQr
             )
         },
 
