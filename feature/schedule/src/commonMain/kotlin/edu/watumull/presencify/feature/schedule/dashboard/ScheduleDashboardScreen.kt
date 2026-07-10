@@ -259,28 +259,46 @@ private fun UpcomingClassDateLabel(upcomingClass: ClassSession) {
     val today = DateTimeUtils.getCurrentDate()
     val nextDate = upcomingClass.nextClassDate ?: today
     val daysUntilClass = nextDate.toEpochDays() - today.toEpochDays()
+
     val currentTime = DateTimeUtils.getCurrentTime()
-    val label = when (daysUntilClass) {
-        0L -> {
-            val remainingMinutes = (upcomingClass.startTime.hour * 60 + upcomingClass.startTime.minute) -
-                    (currentTime.hour * 60 + currentTime.minute)
+
+    // 1. Convert current time and class times into total minutes for easy comparison
+    val currentMinutes = currentTime.hour * 60 + currentTime.minute
+    val classStartMinutes = upcomingClass.startTime.hour * 60 + upcomingClass.startTime.minute
+    val classEndMinutes = upcomingClass.endTime.toReadableString().let {
+        // Using total minutes from local time values
+        upcomingClass.endTime.hour * 60 + upcomingClass.endTime.minute
+    }
+
+    // 2. Check if the class belongs to today and has already finished
+    val isOver = daysUntilClass == 0L && currentMinutes >= classEndMinutes
+
+    val label = when {
+        isOver -> "over" // Show the over tag if the class has finished today
+
+        daysUntilClass == 0L -> {
+            val remainingMinutes = classStartMinutes - currentMinutes
             val remainingHours = ((remainingMinutes.coerceAtLeast(0) + 59) / 60)
             "today ${remainingHours}h"
         }
 
-        1L -> "tomorrow"
+        daysUntilClass == 1L -> "tomorrow"
         else -> if (daysUntilClass > 1L) "${daysUntilClass}d" else null
     }
 
     if (label != null) {
-        val containerColor = when (daysUntilClass) {
-            0L -> MaterialTheme.colorScheme.errorContainer
-            1L -> MaterialTheme.colorScheme.tertiaryContainer
+        // 3. Style the "over" tag differently (e.g., using a muted grey/outline variant)
+        val containerColor = when {
+            isOver -> MaterialTheme.colorScheme.surfaceVariant
+            daysUntilClass == 0L -> MaterialTheme.colorScheme.errorContainer
+            daysUntilClass == 1L -> MaterialTheme.colorScheme.tertiaryContainer
             else -> MaterialTheme.colorScheme.secondaryContainer
         }
-        val contentColor = when (daysUntilClass) {
-            0L -> MaterialTheme.colorScheme.onErrorContainer
-            1L -> MaterialTheme.colorScheme.onTertiaryContainer
+
+        val contentColor = when {
+            isOver -> MaterialTheme.colorScheme.onSurfaceVariant
+            daysUntilClass == 0L -> MaterialTheme.colorScheme.onErrorContainer
+            daysUntilClass == 1L -> MaterialTheme.colorScheme.onTertiaryContainer
             else -> MaterialTheme.colorScheme.onSecondaryContainer
         }
 
