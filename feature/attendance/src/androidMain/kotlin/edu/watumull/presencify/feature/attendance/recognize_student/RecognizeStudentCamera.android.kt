@@ -43,18 +43,19 @@ private const val TAG = "RecognizeStudentCam"
 actual fun RecognizeStudentCamera(
     modifier: Modifier,
     onFaceDetected: (Float) -> Unit,
-    onEmbeddingExtracted: (FloatArray, FloatArray) -> Unit,
+    onRecognitionCompleted: (Float) -> Unit,
     isLivenessComplete: Boolean,
     shouldCaptureEmbedding: Boolean,
     cameraPermissionGranted: Boolean,
     onPermissionResult: (Boolean) -> Unit,
-    onCheatingDetected: () -> Unit
+    onCheatingDetected: () -> Unit,
+    storedFaceDescriptor: List<Float>
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val currentOnFaceDetected by rememberUpdatedState(onFaceDetected)
-    val currentOnEmbeddingExtracted by rememberUpdatedState(onEmbeddingExtracted)
+    val currentOnRecognitionCompleted by rememberUpdatedState(onRecognitionCompleted)
     val currentIsLivenessComplete by rememberUpdatedState(isLivenessComplete)
     val currentShouldCaptureEmbedding by rememberUpdatedState(shouldCaptureEmbedding)
 
@@ -98,8 +99,20 @@ actual fun RecognizeStudentCamera(
                     val newAnalyzer = FaceAnalyzer(
                         faceEmbeddingExtractor = extractor,
                         onFaceDetected = { currentOnFaceDetected(it) },
-                        onEmbeddingExtracted = { arr1, arr2 ->
-                            currentOnEmbeddingExtracted(arr1, arr2)
+                        onEmbeddingExtracted = { originalEmbedding, mirroredEmbedding ->
+                            val simOriginal = extractor.compare(
+                                originalEmbedding,
+                                storedFaceDescriptor.toFloatArray()
+                            )
+
+                            val simMirrored = extractor.compare(
+                                mirroredEmbedding,
+                                storedFaceDescriptor.toFloatArray()
+                            )
+
+                            val best = maxOf(simOriginal, simMirrored)
+
+                            currentOnRecognitionCompleted(best)
                         },
                         isLivenessCompleteProvider = { currentIsLivenessComplete },
                         shouldCaptureEmbeddingProvider = { currentShouldCaptureEmbedding },
@@ -286,6 +299,7 @@ class FaceAnalyzer(
                                         // 3. Final Handoff
                                         if (originalEmbedding != null && mirroredEmbedding != null) {
                                             Log.d(TAG, "Both ONNX embeddings extracted successfully. Passing to ViewModel...")
+
                                             onEmbeddingExtracted(originalEmbedding, mirroredEmbedding)
                                         } else {
                                             Log.e(TAG, "One or both ONNX embeddings returned null. Resetting capture flag.")

@@ -15,6 +15,7 @@ import edu.watumull.presencify.core.domain.repository.student.StudentRepository
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController.sendEvent
 import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
@@ -22,6 +23,7 @@ import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 
@@ -39,8 +41,8 @@ class RecognizeStudentViewModel(
 
     private var startTimeMillis: Long = 0
     private var lastStepCompletedTime: Long = 0
-    private var storedFaceDescriptor: List<Float>? = null
     private var timeoutActive: Boolean = false
+    private val FACE_MATCH_THRESHOLD = 0.363f
 
     // Global 90s timeout job; scoped to screen lifetime
     private var globalTimeoutJob: Job? = null
@@ -70,7 +72,8 @@ class RecognizeStudentViewModel(
 
             val result = studentRepository.getStudentById(studentId)
             result.onSuccess { student ->
-                storedFaceDescriptor = student.faceDescriptor
+                mutableStateFlow.update { it.copy(storedFaceDescriptor = student.faceDescriptor) }
+
                 val biometricVerificationStatus = student.biometricVerificationStatus
                 if (biometricVerificationStatus != BiometricVerificationStatus.APPROVED) {
                     Logger.d(TAG) { "Biometric verification is not approved yet!" }
@@ -82,7 +85,7 @@ class RecognizeStudentViewModel(
                     }
                 } else {
                     Logger.d(TAG) {
-                        "Successfully loaded DB Face Descriptor. Size: ${storedFaceDescriptor?.size}"
+                        "Successfully loaded DB Face Descriptor. Size: ${state.storedFaceDescriptor?.size}"
                     }
                     updateState {
                         it.copy(
@@ -183,7 +186,7 @@ class RecognizeStudentViewModel(
             }
 
             is RecognizeStudentAction.OnRecognitionSuccess -> {
-                compareFaceEmbeddingWithMirror(action.original, action.mirrored)
+                compareSimilarityWithThreshold(action.similarity)
             }
 
             is RecognizeStudentAction.OnFailure -> {
@@ -350,12 +353,18 @@ class RecognizeStudentViewModel(
                 }
 
                 HeadMovement.STRAIGHT -> {
-                    if (previousMovement == HeadMovement.LEFT) {
-                        yaw < -20f
-                    } else if (previousMovement == HeadMovement.RIGHT) {
-                        yaw > 20f
-                    } else {
-                        yaw > 20f || yaw < -20f
+                    when (previousMovement) {
+                        HeadMovement.LEFT -> {
+                            yaw < -20f
+                        }
+
+                        HeadMovement.RIGHT -> {
+                            yaw > 20f
+                        }
+
+                        else -> {
+                            yaw > 20f || yaw < -20f
+                        }
                     }
                 }
             }
@@ -415,82 +424,21 @@ class RecognizeStudentViewModel(
         }
     }
 
-    private fun compareFaceEmbeddingWithMirror(originalEmbedding: FloatArray, mirroredEmbedding: FloatArray) {
-        val stored = storedFaceDescriptor
-        if (stored == null) {
-            Logger.e(TAG) { "FATAL: compareFaceEmbeddingWithMirror called but storedFaceDescriptor is NULL." }
-            showErrorDialog(UiText.DynamicString("No face registered"))
-            return
-        }
-
-        val dbArray = stored.toFloatArray()
-
-        Logger.d(TAG) {
-            "Comparing Arrays (mirror-aware) -> Original Size: ${originalEmbedding.size}, Mirrored Size: ${mirroredEmbedding.size}, DB Size: ${dbArray.size}"
-        }
-
-        // Size Mismatch Check
-        if (originalEmbedding.size != dbArray.size || mirroredEmbedding.size != dbArray.size) {
-            val errorMsg = "CRITICAL AI MISMATCH: Embedding sizes do not match database descriptor."
-            Logger.e(TAG) { errorMsg }
-            showErrorDialog(UiText.DynamicString(errorMsg))
-            startLivenessCheck()
-            return
-        }
-
-        try {
-            // NOTE: Redundant l2Normalize calls removed. The ONNX extractor and
-            // the Node.js backend already guarantee perfectly normalized arrays.
-
-            Logger.d(TAG) { "Original Camera Array: ${originalEmbedding.take(5).joinToString(", ")}" }
-            Logger.d(TAG) { "Mirrored Camera Array: ${mirroredEmbedding.take(5).joinToString(", ")}" }
-            Logger.d(TAG) { "Database Array: ${dbArray.take(5).joinToString(", ")}" }
-
-            val simOriginal = cosineSimilarity(originalEmbedding, dbArray)
-            val simMirrored = cosineSimilarity(mirroredEmbedding, dbArray)
-
-            val bestSim = (simOriginal + simMirrored) / 2f
-
-            Logger.d(TAG) { "Mirror-aware Cosine Similarity: original=$simOriginal, mirrored=$simMirrored, best=$bestSim" }
-
-            // The official OpenCV SFace Cosine Similarity Threshold is 0.363, but they used RetinaFace model for detection and preprocessing and we are
-            // using a diff model yunet hence the threshold needs to be changed
-            if (bestSim >= 0.40f) {
-                Logger.d(TAG) { "Best similarity >= 0.48f Marking attendance..." }
-                markAttendance()
-            } else {
-                Logger.d(TAG) { "Best similarity < 0.48f. Recognition Failed." }
-
-                val score = (bestSim * 100).toInt().coerceAtLeast(0)
-                showErrorDialog(
-                    UiText.DynamicString(
-                        "Face not recognized (Score: $score). Try again."
-                    )
+    private fun compareSimilarityWithThreshold(similarity: Float) {
+        if (similarity >= FACE_MATCH_THRESHOLD) {
+            Logger.d(TAG) { "Similarity = $similarity" }
+            Logger.d(TAG) { "Similarity >= $FACE_MATCH_THRESHOLD Marking attendance..." }
+            markAttendance()
+        } else {
+            Logger.d(TAG) { "Similarity < $FACE_MATCH_THRESHOLD Recognition Failed." }
+            val score = (similarity * 100).toInt().coerceAtLeast(0)
+            showErrorDialog(
+                UiText.DynamicString(
+                    "Face not recognized. Try again."
                 )
-                startLivenessCheck()
-            }
-        } catch (e: Exception) {
-            Logger.e(TAG, e) { "Math crash in cosineSimilarity (mirror-aware)" }
-            showErrorDialog(UiText.DynamicString("Math Error: ${e.message}"))
+            )
             startLivenessCheck()
         }
-    }
-
-    /**
-     * Calculates Cosine Similarity.
-     * Returns a value between -1.0 and 1.0 (Higher means more similar).
-     */
-    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
-        if (a.size != b.size) return -1f
-        var dotProduct = 0f
-        var normA = 0f
-        var normB = 0f
-        for (i in a.indices) {
-            dotProduct += a[i] * b[i]
-            normA += a[i] * a[i]
-            normB += b[i] * b[i]
-        }
-        return if (normA == 0f || normB == 0f) 0f else (dotProduct / (sqrt(normA) * sqrt(normB)))
     }
 
     private fun markAttendance() {

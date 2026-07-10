@@ -7,10 +7,11 @@ import androidx.compose.ui.Modifier
 expect fun RecognizeStudentCamera(
     modifier: Modifier = Modifier,
     onFaceDetected: (Float) -> Unit,
-    onEmbeddingExtracted: (FloatArray, FloatArray) -> Unit,
+    onRecognitionCompleted: (Float) -> Unit,
     isLivenessComplete: Boolean,
     shouldCaptureEmbedding: Boolean,
     cameraPermissionGranted: Boolean,
     onPermissionResult: (Boolean) -> Unit,
-    onCheatingDetected: () -> Unit
+    onCheatingDetected: () -> Unit,
+    storedFaceDescriptor: List<Float>
 )

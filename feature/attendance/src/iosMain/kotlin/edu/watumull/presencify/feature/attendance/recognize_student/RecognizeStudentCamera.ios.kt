@@ -10,12 +10,13 @@ import androidx.compose.ui.Modifier
 actual fun RecognizeStudentCamera(
     modifier: Modifier,
     onFaceDetected: (Float) -> Unit,
-    onEmbeddingExtracted: (FloatArray, FloatArray) -> Unit,
+    onRecognitionCompleted: (Float) -> Unit,
     isLivenessComplete: Boolean,
     shouldCaptureEmbedding: Boolean,
     cameraPermissionGranted: Boolean,
     onPermissionResult: (Boolean) -> Unit,
-    onCheatingDetected: () -> Unit
+    onCheatingDetected: () -> Unit,
+    storedFaceDescriptor: List<Float>
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Text("Camera Not Implemented on iOS")

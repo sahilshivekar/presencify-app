@@ -136,6 +136,8 @@ kotlin {
 //                implementation(libs.tensorflow.lite)
 //                implementation(libs.tensorflow.lite.support)
                 implementation(libs.onnxruntime.android)
+                implementation(libs.opencv)
+                implementation(libs.androidx.exifinterface)
             }
         }
 

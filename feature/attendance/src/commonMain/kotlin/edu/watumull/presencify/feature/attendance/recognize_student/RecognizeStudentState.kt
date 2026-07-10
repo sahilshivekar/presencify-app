@@ -23,6 +23,7 @@ data class RecognizeStudentState(
     val dialogState: DialogState? = null,
     val isGlobalTimeoutActive: Boolean = false,
     val hasGlobalTimeoutFired: Boolean = false,
+    val storedFaceDescriptor: List<Float>? = null
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

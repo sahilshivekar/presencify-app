@@ -46,6 +46,8 @@ kermit = "2.0.3"
 onnxruntime = "1.24.3"
 firebaseBom = "33.1.0"
 firebaseMessaging = "24.0.0"
+opencv = "4.12.0"
+exifinterface = "1.4.1"
 
 [libraries]
 # --- EXISTING ---
@@ -157,6 +159,8 @@ vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatfor
 vico-multiplatform-m3 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m3", version.ref = "vico" }
 
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
+opencv = { group = "org.opencv", name = "opencv", version.ref = "opencv" }
+androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 

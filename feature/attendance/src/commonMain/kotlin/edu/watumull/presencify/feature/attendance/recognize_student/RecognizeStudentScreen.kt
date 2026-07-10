@@ -71,8 +71,8 @@ fun RecognizeStudentScreen(
                         onFaceDetected = { yaw ->
                             onAction(RecognizeStudentAction.OnFaceDetected(yaw))
                         },
-                        onEmbeddingExtracted = { original, mirrored ->
-                            onAction(RecognizeStudentAction.OnRecognitionSuccess(original, mirrored))
+                        onRecognitionCompleted = { similarity ->
+                            onAction(RecognizeStudentAction.OnRecognitionSuccess(similarity))
                             onAction(RecognizeStudentAction.OnEmbeddingCaptureConsumed)
                         },
                         isLivenessComplete = state.isLivenessComplete,
@@ -83,7 +83,8 @@ fun RecognizeStudentScreen(
                         },
                         onCheatingDetected = {
                             onAction(RecognizeStudentAction.OnCheatingDetected)
-                        }
+                        },
+                        storedFaceDescriptor = state.storedFaceDescriptor!! // if the ViewState is Success then the face descriptor must be non-null, otherwise the screen would not have been navigated to in the first place
                     )
 
                     // Liveness Instructions Overlay

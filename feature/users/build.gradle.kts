@@ -125,6 +125,7 @@ kotlin {
                 // dependencies declared in commonMain.
                 implementation(libs.compose.material.icons.core)
                 implementation(libs.compose.material.icons.extended)
+                implementation(libs.androidx.exifinterface)
             }
         }
 
