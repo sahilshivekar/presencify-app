@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.domain.model.attendance.Attendance
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.ListItemFeedback
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
 data class MarkAttendanceState(
     val viewState: ViewState = ViewState.Loading,
@@ -13,7 +14,10 @@ data class MarkAttendanceState(
     val presentStudents: Int = 0,
     val absentStudents: Int = 0,
     val studentLoadingStates: Map<String, Boolean> = emptyMap(),
-    val studentFeedbacks: Map<String, ListItemFeedback> = emptyMap()
+    val studentFeedbacks: Map<String, ListItemFeedback> = emptyMap(),
+    val isMarkingAllPresent: Boolean = false,
+    val isMarkingAllAbsent: Boolean = false,
+    val dialogState: DialogState? = null,
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

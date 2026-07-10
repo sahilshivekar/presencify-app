@@ -105,4 +105,7 @@ interface RemoteAttendanceDataSource {
         studentId: String,
         divisionId: String,
     ): Result<List<AttendanceDto>, DataError.Remote>
+
+    suspend fun markAllPresent(attendanceId: String): Result<Unit, DataError.Remote>
+    suspend fun markAllAbsent(attendanceId: String): Result<Unit, DataError.Remote>
 }

@@ -105,4 +105,6 @@ interface AttendanceRepository {
         studentId: String,
         divisionId: String,
     ): Result<List<Attendance>, DataError.Remote>
+    suspend fun markAllPresent(attendanceId: String): Result<Unit, DataError.Remote>
+    suspend fun markAllAbsent(attendanceId: String): Result<Unit, DataError.Remote>
 }

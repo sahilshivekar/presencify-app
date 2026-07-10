@@ -3,10 +3,15 @@ package edu.watumull.presencify.feature.attendance.mark_attendance
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
+import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.ListItemFeedback
+import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarController
+import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.utils.ShareUtils
@@ -35,6 +40,12 @@ class MarkAttendanceViewModel(
                 action.studentId,
                 action.currentStatus
             )
+
+            is MarkAttendanceAction.ClickMarkAllPresent -> markAllPresent()
+            is MarkAttendanceAction.ClickMarkAllAbsent -> markAllAbsent()
+            is MarkAttendanceAction.DismissDialog -> {
+                updateState { it.copy(dialogState = null) }
+            }
         }
     }
 
@@ -47,19 +58,97 @@ class MarkAttendanceViewModel(
                     val totalCount = attendanceStudents.size
                     val absentCount = totalCount - presentCount
 
-                    updateState { it.copy(
-                        viewState = MarkAttendanceState.ViewState.Content,
-                        attendance = attendance,
-                        classSession = attendance.klass,
-                        totalStudents = totalCount,
-                        presentStudents = presentCount,
-                        absentStudents = absentCount
-                    ) }
+                    updateState {
+                        it.copy(
+                            viewState = MarkAttendanceState.ViewState.Content,
+                            attendance = attendance,
+                            classSession = attendance.klass,
+                            totalStudents = totalCount,
+                            presentStudents = presentCount,
+                            absentStudents = absentCount
+                        )
+                    }
                 }
                 .onError { error ->
-                    updateState { it.copy(
-                        viewState = MarkAttendanceState.ViewState.Error(error.toUiText())
-                    ) }
+                    updateState {
+                        it.copy(
+                            viewState = MarkAttendanceState.ViewState.Error(error.toUiText())
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun markAllPresent() {
+        val currentAttendanceId = state.attendance?.id ?: return
+
+        updateState { it.copy(isMarkingAllPresent = true) }
+
+        viewModelScope.launch {
+            attendanceRepository.markAllPresent(currentAttendanceId)
+                .onSuccess {
+                    SnackbarController.sendEvent(
+                        SnackbarEvent("All students marked present")
+                    )
+                    updateState {
+                        val updatedAttendance = state.attendance?.copy(
+                            attendanceStudents = state.attendance?.attendanceStudents?.map { attendanceStudent ->
+                                attendanceStudent.copy(attendanceStatus = true)
+                            }
+                        )
+                        it.copy(
+                            isMarkingAllPresent = false,
+                            attendance = updatedAttendance
+                        )
+                    }
+                }
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isMarkingAllPresent = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                message = error.toUiText()
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun markAllAbsent() {
+        val currentAttendanceId = state.attendance?.id ?: return
+
+        updateState { it.copy(isMarkingAllAbsent = true) }
+
+        viewModelScope.launch {
+            attendanceRepository.markAllAbsent(currentAttendanceId)
+                .onSuccess {
+                    SnackbarController.sendEvent(
+                        SnackbarEvent("All students marked absent")
+                    )
+                    updateState {
+                        val updatedAttendance = state.attendance?.copy(
+                            attendanceStudents = state.attendance?.attendanceStudents?.map { attendanceStudent ->
+                                attendanceStudent.copy(attendanceStatus = false)
+                            }
+                        )
+                        it.copy(
+                            isMarkingAllAbsent = false,
+                            attendance = updatedAttendance
+                        )
+                    }
+                }
+                .onError { error ->
+                    updateState {
+                        it.copy(
+                            isMarkingAllAbsent = false,
+                            dialogState = DialogState(
+                                dialogType = DialogType.ERROR,
+                                message = error.toUiText()
+                            )
+                        )
+                    }
                 }
         }
     }
@@ -160,10 +249,12 @@ class MarkAttendanceViewModel(
 
     private fun toggleStudentAttendance(studentId: String, currentStatus: Boolean) {
         // Set loading state for this student
-        updateState { it.copy(
-            studentLoadingStates = it.studentLoadingStates + (studentId to true),
-            studentFeedbacks = it.studentFeedbacks - studentId // Clear previous feedback
-        ) }
+        updateState {
+            it.copy(
+                studentLoadingStates = it.studentLoadingStates + (studentId to true),
+                studentFeedbacks = it.studentFeedbacks - studentId // Clear previous feedback
+            )
+        }
 
         viewModelScope.launch {
             val newStatus = !currentStatus
@@ -175,36 +266,42 @@ class MarkAttendanceViewModel(
                 .onSuccess { updatedAttendanceStudent ->
                     // Update the attendance student in the list
                     val currentState = state
-                    val updatedAttendanceStudents = currentState.attendance?.attendanceStudents?.map { attendanceStudent ->
-                        if (attendanceStudent.studentId == studentId) {
-                            attendanceStudent.copy(attendanceStatus = updatedAttendanceStudent.attendanceStatus)
-                        } else {
-                            attendanceStudent
+                    val updatedAttendanceStudents =
+                        currentState.attendance?.attendanceStudents?.map { attendanceStudent ->
+                            if (attendanceStudent.studentId == studentId) {
+                                attendanceStudent.copy(attendanceStatus = updatedAttendanceStudent.attendanceStatus)
+                            } else {
+                                attendanceStudent
+                            }
                         }
-                    }
 
                     // Recalculate counts
                     val presentCount = updatedAttendanceStudents?.count { it.attendanceStatus } ?: 0
                     val totalCount = updatedAttendanceStudents?.size ?: 0
                     val absentCount = totalCount - presentCount
 
-                    updateState { it.copy(
-                        attendance = it.attendance?.copy(attendanceStudents = updatedAttendanceStudents),
-                        presentStudents = presentCount,
-                        absentStudents = absentCount,
-                        studentLoadingStates = it.studentLoadingStates - studentId
-                        // No feedback for success
-                    ) }
+                    updateState {
+                        it.copy(
+                            attendance = it.attendance?.copy(attendanceStudents = updatedAttendanceStudents),
+                            presentStudents = presentCount,
+                            absentStudents = absentCount,
+                            studentLoadingStates = it.studentLoadingStates - studentId
+                            // No feedback for success
+                        )
+                    }
                 }
                 .onError { error ->
                     // Show error feedback permanently - user must take action to fix
-                    updateState { it.copy(
-                        studentLoadingStates = it.studentLoadingStates - studentId,
-                        studentFeedbacks = it.studentFeedbacks + (studentId to ListItemFeedback.Error(
-                            error.toUiText()
-                        ))
-                    ) }
+                    updateState {
+                        it.copy(
+                            studentLoadingStates = it.studentLoadingStates - studentId,
+                            studentFeedbacks = it.studentFeedbacks + (studentId to ListItemFeedback.Error(
+                                error.toUiText()
+                            ))
+                        )
+                    }
                 }
+
         }
     }
 }

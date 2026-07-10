@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.attendance.CreateAttendanceRequestDto
+import edu.watumull.presencify.core.data.dto.attendance.MarkAllAttendanceRequestDto
 import edu.watumull.presencify.core.data.dto.attendance.UpdateStudentAttendanceRequestDto
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.BULK_UPDATE_STUDENT_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.CREATE_ATTENDANCE
@@ -269,6 +270,24 @@ class KtorRemoteAttendanceDataSource(
             clientProvider.getClient().get(GET_ACTIVE_ATTENDANCE_SHEET) {
                 parameter("studentId", studentId)
                 parameter("divisionId", divisionId)
+            }
+        }
+    }
+
+    override suspend fun markAllPresent(attendanceId: String): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
+            clientProvider.getClient().put(ApiEndpoints.MARK_ALL_PRESENT) {
+                contentType(ContentType.Application.Json)
+                setBody(MarkAllAttendanceRequestDto(attendanceId = attendanceId))
+            }
+        }
+    }
+
+    override suspend fun markAllAbsent(attendanceId: String): Result<Unit, DataError.Remote> {
+        return safeCall<Unit> {
+            clientProvider.getClient().put(ApiEndpoints.MARK_ALL_ABSENT) {
+                contentType(ContentType.Application.Json)
+                setBody(MarkAllAttendanceRequestDto(attendanceId = attendanceId))
             }
         }
     }

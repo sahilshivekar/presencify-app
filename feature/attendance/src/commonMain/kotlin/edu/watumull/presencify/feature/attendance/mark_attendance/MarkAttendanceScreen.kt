@@ -29,14 +29,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
+import edu.watumull.presencify.core.designsystem.components.PresencifyButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
+import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.components.StudentListItem
 import edu.watumull.presencify.core.presentation.utils.toReadableString
+import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsAction
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -134,6 +138,34 @@ fun MarkAttendanceScreen(
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.SemiBold
                                 )
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    val isMarkAllAbsentEnabled =
+                                        state.attendance?.attendanceStudents?.any { it.attendanceStatus }
+                                    val isMarkAllPresentEnabled = state.attendance?.attendanceStudents?.any {
+                                        !it.attendanceStatus
+                                    }
+
+                                    PresencifyOutlinedButton(
+                                        text = "Mark All Absent",
+                                        onClick = { onAction(MarkAttendanceAction.ClickMarkAllAbsent) },
+                                        // Enable only if there's someone to mark absent AND neither operation is currently loading
+                                        enabled = isMarkAllAbsentEnabled == true && !state.isMarkingAllAbsent && !state.isMarkingAllPresent,
+                                        isLoading = state.isMarkingAllAbsent,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
+                                    PresencifyButton(
+                                        text = "Mark All Present",
+                                        onClick = { onAction(MarkAttendanceAction.ClickMarkAllPresent) },
+                                        // Enable only if there's someone to mark present AND neither operation is currently loading
+                                        enabled = isMarkAllPresentEnabled == true && !state.isMarkingAllPresent && !state.isMarkingAllAbsent,
+                                        isLoading = state.isMarkingAllPresent,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
                                 Spacer(modifier = Modifier.height(DesignToken.spacing.md))
                             }
                         }
@@ -204,6 +236,16 @@ fun MarkAttendanceScreen(
                 }
             }
         }
+    }
+
+    // Dialog handling
+    state.dialogState?.let { dialogState ->
+        PresencifyAlertDialog(
+            dialogType = dialogState.dialogType,
+            title = dialogState.title?.asString(),
+            message = dialogState.message.asString(),
+            onDismiss = { onAction(MarkAttendanceAction.DismissDialog) }
+        )
     }
 }
 

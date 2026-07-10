@@ -91,4 +91,12 @@ class AttendanceRepositoryImpl(
     override suspend fun getActiveAttendanceSheet(studentId: String, divisionId: String): Result<List<Attendance>, DataError.Remote> {
         return remoteDataSource.getActiveAttendanceSheet(studentId, divisionId).map { list -> list.map { it.toDomain() } }
     }
+
+    override suspend fun markAllPresent(attendanceId: String): Result<Unit, DataError.Remote> {
+        return remoteDataSource.markAllPresent(attendanceId)
+    }
+
+    override suspend fun markAllAbsent(attendanceId: String): Result<Unit, DataError.Remote> {
+        return remoteDataSource.markAllAbsent(attendanceId)
+    }
 }

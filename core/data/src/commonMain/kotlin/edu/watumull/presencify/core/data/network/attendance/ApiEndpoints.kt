@@ -1,5 +1,6 @@
 package edu.watumull.presencify.core.data.network.attendance
 
+import edu.watumull.presencify.core.data.network.BaseApiEndpoints
 import edu.watumull.presencify.core.data.network.BaseApiEndpoints.API_V1
 import edu.watumull.presencify.core.data.network.BaseApiEndpoints.ATTENDANCES
 import edu.watumull.presencify.core.data.network.BaseApiEndpoints.PRESENCIFY_BASE_URL
@@ -23,4 +24,6 @@ object ApiEndpoints {
     const val SEND_ATTENDANCE_REPORT = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/report"
     const val GET_ACTIVE_ATTENDANCE_SHEET = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/active"
     const val MARK_MY_ATTENDANCE = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/me/mark"
+    const val MARK_ALL_PRESENT = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/bulk/mark-all-present"
+    const val MARK_ALL_ABSENT = "$PRESENCIFY_BASE_URL/$API_V1/$ATTENDANCES/bulk/mark-all-absent"
 }
