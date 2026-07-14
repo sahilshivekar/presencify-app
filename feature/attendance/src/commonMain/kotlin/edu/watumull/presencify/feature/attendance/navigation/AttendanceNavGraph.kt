@@ -53,6 +53,7 @@ fun NavGraphBuilder.attendanceNavGraph(
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
     onNavigateToRecognizeStudent: (String) -> Unit,
     onNavigateBackFromMarkAttendanceScreen: (String) -> Unit,
+    onRefreshDashboard: () -> Unit,
 ) {
     // 2. Create/Update Sheet
     composableWithSlideTransitions<AttendanceRoutes.CreateAttendanceSheet> {
@@ -129,7 +130,7 @@ fun NavGraphBuilder.attendanceNavGraph(
     // 9. Face Scan
     composableWithSlideTransitions<AttendanceRoutes.RecognizeStudent> { backStackEntry ->
          RecognizeStudentRoot(
-            onNavigateBack = onNavigateBack,
+            onNavigateBack = onRefreshDashboard,
             onSuccess = onNavigateBack
         )
     }

@@ -3,7 +3,9 @@ package edu.watumull.presencify.navigation.navcontroller_extensions
 import androidx.navigation.NavController
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import edu.watumull.presencify.feature.schedule.navigation.ScheduleRoutes
+
 
 /**
  * Navigate to Attendance Dashboard screen
@@ -45,6 +47,25 @@ fun NavController.navigateToMarkStudentAttendance(attendanceId: String) {
                 }
             }
         }
+    }
+}
+
+
+/**
+ * Pops the entire backstack down to the root destination, clearing its state,
+ * and launches a fresh instance of the root screen to force a full page refresh.
+ */
+fun NavController.refreshRootDestination() {
+    val rootDestination = graph.findStartDestination()
+
+    // Navigate back to the start destination
+    navigate(rootDestination.id) {
+        // Pop up to the start destination itself to clear its saved instance/state
+        popUpTo(rootDestination.id) {
+            inclusive = true
+        }
+        // Avoid multi-instances of the root if clicked repeatedly
+        launchSingleTop = true
     }
 }
 
