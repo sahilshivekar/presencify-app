@@ -9,6 +9,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -47,8 +48,27 @@ fun PresencifyDatePickerTextField(
     isError: Boolean = false,
     pickerIconContentDescription: String = "Select date",
     clearIconContentDescription: String = "Clear date",
+    isDateAllowed: (LocalDate) -> Boolean = { true },
 ) {
-    val datePickerState = rememberDatePickerState()
+
+    val selectableDates = remember(isDateAllowed) {
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                // Convert UTC millis to LocalDate using kotlinx.datetime
+                val localDate = Instant.fromEpochMilliseconds(utcTimeMillis)
+                    .toLocalDateTime(TimeZone.UTC) // DatePicker API operates in UTC
+                    .date
+
+                return isDateAllowed(localDate)
+            }
+
+            // Optional: Block users from skipping to future/past years if needed
+            override fun isSelectableYear(year: Int): Boolean = true
+        }
+    }
+    val datePickerState = rememberDatePickerState(
+        selectableDates = selectableDates
+    )
 
 
     var showPicker by remember { mutableStateOf(false) }

@@ -69,6 +69,7 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpd
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateUserPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetailsWithSyntheticBackStack
 import androidx.compose.runtime.LaunchedEffect
+import edu.watumull.presencify.navigation.navcontroller_extensions.navigateBackFromMarkAttendanceScreen
 
 @Composable
 fun AppNavHost(
@@ -144,6 +145,7 @@ fun AppNavHost(
             onNavigateToRecognizeStudent = { attendanceId ->
                 rootNavController.navigateToRecognizeStudent(attendanceId)
             },
+            onNavigateBackFromMarkAttendanceScreen = rootNavController::navigateBackFromMarkAttendanceScreen
         )
 
         usersNavGraph(

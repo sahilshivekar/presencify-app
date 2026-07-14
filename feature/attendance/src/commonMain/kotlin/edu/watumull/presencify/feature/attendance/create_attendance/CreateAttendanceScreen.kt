@@ -26,8 +26,10 @@ import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
+import edu.watumull.presencify.core.presentation.utils.DateTimeUtils.getCurrentDate
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -195,7 +197,6 @@ private fun DateSelectionSection(
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
-
         PresencifyDatePickerTextField(
             value = selectedDate,
             onValueChange = {
@@ -205,6 +206,9 @@ private fun DateSelectionSection(
             modifier = Modifier.fillMaxWidth(),
             supportingText = dateError,
             isError = dateError != null,
+            isDateAllowed = { date ->
+                date <= getCurrentDate()
+            }
         )
     }
 }

@@ -2,6 +2,8 @@ package edu.watumull.presencify.navigation.navcontroller_extensions
 
 import androidx.navigation.NavController
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
+import androidx.navigation.NavDestination.Companion.hasRoute
+import edu.watumull.presencify.feature.schedule.navigation.ScheduleRoutes
 
 /**
  * Navigate to Attendance Dashboard screen
@@ -18,10 +20,57 @@ fun NavController.navigateToCreateAttendanceSheet(classId: String) {
 }
 
 /**
- * Navigate to Mark Student Attendance screen
+ * Navigate to Mark Student Attendance screen.
+ * Automatically pops the CreateAttendanceSheet screen if it is the current destination.
  */
 fun NavController.navigateToMarkStudentAttendance(attendanceId: String) {
-    navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId = attendanceId))
+    val currentDestination = currentBackStackEntry?.destination
+    val previousDestination = previousBackStackEntry?.destination
+
+    val isCurrentlyOnCreateSheet = currentDestination?.hasRoute<AttendanceRoutes.CreateAttendanceSheet>() == true
+    val isPreviousSearchClass = previousDestination?.hasRoute<ScheduleRoutes.SearchClass>() == true
+
+    navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId = attendanceId)) {
+        if (isCurrentlyOnCreateSheet) {
+            if (isPreviousSearchClass) {
+                // If the flow was SearchClass -> CreateAttendanceSheet,
+                // pop SearchClass inclusively to clear the entire sequence.
+                popUpTo<ScheduleRoutes.SearchClass> {
+                    inclusive = true
+                }
+            } else {
+                // Otherwise, just pop the CreateAttendanceSheet screen.
+                popUpTo<AttendanceRoutes.CreateAttendanceSheet> {
+                    inclusive = true
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Handles going back from the Mark Student Attendance screen.
+ * - If the user came from Attendance Details, it clears the history and re-routes
+ *   to a fresh, completely refreshed details screen.
+ * - Otherwise, it falls back to a standard backward pop.
+ */
+fun NavController.navigateBackFromMarkAttendanceScreen(attendanceId: String) {
+    // If the stale details screen was popped inclusively during the forward navigation,
+    // the previous backstack entry will now be the screen *before* details (e.g., Dashboard).
+    val isLaunchedFromDetailsScreen = previousBackStackEntry?.destination
+        ?.hasRoute<AttendanceRoutes.AttendanceDetails>() == true
+
+    if (isLaunchedFromDetailsScreen) {
+        // Clear out the Mark screen and load a brand new, refreshed Details instance
+        navigate(AttendanceRoutes.AttendanceDetails(attendanceId = attendanceId)) {
+            popUpTo<AttendanceRoutes.AttendanceDetails> {
+                inclusive = true
+            }
+        }
+    } else {
+        // Fall back normally (handles the post-creation sheet flows)
+        navigateUp()
+    }
 }
 
 /**
