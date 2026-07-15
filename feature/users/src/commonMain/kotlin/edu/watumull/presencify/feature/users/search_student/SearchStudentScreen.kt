@@ -491,8 +491,6 @@ private fun SearchStudentScreenContent(
                     )
                 }
             }
-
-
         }
     }
 }

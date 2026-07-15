@@ -35,6 +35,12 @@ fun SearchStudentBottomSheetContent(
     onAction: (SearchStudentAction) -> Unit,
     onDismiss: () -> Unit = {},
 ) {
+
+    val hasValidationErrors = state.academicStartYearError != null ||
+            state.academicEndYearError != null ||
+            state.dropoutStartYearError != null ||
+            state.dropoutEndYearError != null || state.admissionYearError != null
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,13 +127,17 @@ fun SearchStudentBottomSheetContent(
                         value = state.academicStartYear,
                         onValueChange = { onAction(SearchStudentAction.UpdateAcademicStartYear(it)) },
                         label = "Start Year *",
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        isError = state.academicStartYearError != null,
+                        supportingText = state.academicStartYearError,
                     )
                     PresencifyTextField(
                         value = state.academicEndYear,
                         onValueChange = { onAction(SearchStudentAction.UpdateAcademicEndYear(it)) },
                         label = "End Year *",
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        isError = state.academicEndYearError != null,
+                        supportingText = state.academicEndYearError,
                     )
                 }
             }
@@ -142,6 +152,8 @@ fun SearchStudentBottomSheetContent(
                     },
                     label = "Admission Year",
                     modifier = Modifier.fillMaxWidth(),
+                    isError = state.admissionYearError != null,
+                    supportingText = state.admissionYearError,
                 )
             }
 
@@ -180,13 +192,17 @@ fun SearchStudentBottomSheetContent(
                         value = state.dropoutStartYear,
                         onValueChange = { onAction(SearchStudentAction.UpdateDropoutStartYear(it)) },
                         label = "Start Year",
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        isError = state.dropoutStartYearError != null,
+                        supportingText = state.dropoutStartYearError,
                     )
                     PresencifyTextField(
                         value = state.dropoutEndYear,
                         onValueChange = { onAction(SearchStudentAction.UpdateDropoutEndYear(it)) },
                         label = "End Year",
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        isError = state.dropoutEndYearError != null,
+                        supportingText = state.dropoutEndYearError,
                     )
                 }
             }
@@ -202,7 +218,8 @@ fun SearchStudentBottomSheetContent(
                         FilterChip(
                             selected = state.selectedBiometricVerificationStatus == status,
                             onClick = {
-                                val newStatus = if (state.selectedBiometricVerificationStatus == status) null else status
+                                val newStatus =
+                                    if (state.selectedBiometricVerificationStatus == status) null else status
                                 onAction(SearchStudentAction.SelectBiometricVerificationStatus(newStatus))
                             },
                             label = { Text(status.value) },
@@ -252,8 +269,10 @@ fun SearchStudentBottomSheetContent(
                             state.academicStartYear.isEmpty() ||
                             state.academicEndYear.isEmpty() ->
                         "Select semester, branch, and academic year to load divisions"
+
                     state.divisionOptions.isEmpty() ->
                         "No divisions found for selected filters"
+
                     else -> null
                 }
             ) {
@@ -289,8 +308,10 @@ fun SearchStudentBottomSheetContent(
                             state.academicStartYear.isEmpty() ||
                             state.academicEndYear.isEmpty() ->
                         "Select semester, branch, and academic year to load batches"
+
                     state.batchOptions.isEmpty() ->
                         "No batches found for selected filters"
+
                     else -> null
                 }
             ) {
@@ -326,7 +347,8 @@ fun SearchStudentBottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = DesignToken.spacing.lg),
-            text = "Apply Filters"
+            text = "Apply Filters",
+            enabled = !hasValidationErrors
         )
     }
 }
@@ -358,6 +380,7 @@ private fun FilterSection(
                         .padding(top = DesignToken.spacing.xs)
                 )
             }
+
             emptyMessage != null -> {
                 Text(
                     text = emptyMessage,
@@ -366,6 +389,7 @@ private fun FilterSection(
                     fontSize = 12.sp
                 )
             }
+
             else -> {
                 content()
             }

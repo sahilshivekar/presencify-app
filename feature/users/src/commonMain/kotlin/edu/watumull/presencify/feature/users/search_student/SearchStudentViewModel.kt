@@ -202,6 +202,49 @@ class SearchStudentViewModel(
         }
     }
 
+    // Rule 1: ViewModel Private Validation Helpers
+    private fun validateAcademicYearRange(start: String, end: String): Pair<String?, String?> {
+        if (start.isBlank() && end.isBlank()) return Pair(null, null)
+
+        var startError: String? = null
+        var endError: String? = null
+
+        if (start.isNotBlank() && end.isBlank()) endError = "End year is required"
+        if (end.isNotBlank() && start.isBlank()) startError = "Start year is required"
+
+        val startInt = start.toIntOrNull()
+        val endInt = end.toIntOrNull()
+
+        if (start.isNotBlank() && startInt == null) startError = "Must be a valid number"
+        if (end.isNotBlank() && endInt == null) endError = "Must be a valid number"
+
+        if (startInt != null && endInt != null && startInt > endInt) {
+            startError = "Start year must be before end year"
+        }
+        return Pair(startError, endError)
+    }
+
+    private fun validateDropoutYearRange(start: String, end: String): Pair<String?, String?> {
+        if (start.isBlank() && end.isBlank()) return Pair(null, null)
+
+        var startError: String? = null
+        var endError: String? = null
+
+        if (start.isNotBlank() && end.isBlank()) endError = "End year is required"
+        if (end.isNotBlank() && start.isBlank()) startError = "Start year is required"
+
+        val startInt = start.toIntOrNull()
+        val endInt = end.toIntOrNull()
+
+        if (start.isNotBlank() && startInt == null) startError = "Must be a valid number"
+        if (end.isNotBlank() && endInt == null) endError = "Must be a valid number"
+
+        if (startInt != null && endInt != null && startInt > endInt) {
+            startError = "Start year must be before end year"
+        }
+        return Pair(startError, endError)
+    }
+
     private suspend fun initializeFilterSelections() {
         if (routeParams.branchId != null) {
             val selectedBranch = stateFlow.value.branchOptions.find { it.id == routeParams.branchId }
@@ -800,8 +843,8 @@ class SearchStudentViewModel(
                 // Check if student is already in the target division for this semester (with endDate = null)
                 val targetDivisionRecord = student.studentDivisions?.find {
                     it.division?.id == targetDivisionId &&
-                    it.division?.semesterId == semesterId &&
-                    it.endDate == null
+                            it.division?.semesterId == semesterId &&
+                            it.endDate == null
                 }
 
                 if (targetDivisionRecord != null) {
@@ -1146,8 +1189,8 @@ class SearchStudentViewModel(
                 // Filter batches where batch's divisionId is in semesterDivisionIds
                 val targetBatchRecord = student.studentBatches?.find {
                     it.batch?.id == targetBatchId &&
-                    it.batch?.divisionId in semesterDivisionIds &&
-                    it.endDate == null
+                            it.batch?.divisionId in semesterDivisionIds &&
+                            it.endDate == null
                 }
 
                 if (targetBatchRecord != null) {
@@ -1323,17 +1366,36 @@ class SearchStudentViewModel(
                 }
             }
 
+            // Rule 2: ViewModel Real-Time State Updates
             is SearchStudentAction.UpdateAcademicStartYear -> {
-                updateState { it.copy(academicStartYear = action.year) }
-                viewModelScope.launch {
-                    loadDivisionsAndBatches()
+                val errors = validateAcademicYearRange(action.year, stateFlow.value.academicEndYear)
+                updateState {
+                    it.copy(
+                        academicStartYear = action.year,
+                        academicStartYearError = errors.first,
+                        academicEndYearError = errors.second
+                    )
+                }
+                if (errors.first == null && errors.second == null) {
+                    viewModelScope.launch {
+                        loadDivisionsAndBatches()
+                    }
                 }
             }
 
             is SearchStudentAction.UpdateAcademicEndYear -> {
-                updateState { it.copy(academicEndYear = action.year) }
-                viewModelScope.launch {
-                    loadDivisionsAndBatches()
+                val errors = validateAcademicYearRange(stateFlow.value.academicStartYear, action.year)
+                updateState {
+                    it.copy(
+                        academicEndYear = action.year,
+                        academicStartYearError = errors.first,
+                        academicEndYearError = errors.second
+                    )
+                }
+                if (errors.first == null && errors.second == null) {
+                    viewModelScope.launch {
+                        loadDivisionsAndBatches()
+                    }
                 }
             }
 
@@ -1348,15 +1410,38 @@ class SearchStudentViewModel(
             }
 
             is SearchStudentAction.SelectAdmissionYear -> {
-                updateState { it.copy(admissionYear = action.year) }
+                val error = if (action.year != null && (action.year.toIntOrNull() ?: 0) < 2000) {
+                    "Must be 2000 or later"
+                } else null
+
+                updateState {
+                    it.copy(
+                        admissionYear = action.year,
+                        admissionYearError = error
+                    )
+                }
             }
 
             is SearchStudentAction.UpdateDropoutStartYear -> {
-                updateState { it.copy(dropoutStartYear = action.year) }
+                val errors = validateDropoutYearRange(action.year, stateFlow.value.dropoutEndYear)
+                updateState {
+                    it.copy(
+                        dropoutStartYear = action.year,
+                        dropoutStartYearError = errors.first,
+                        dropoutEndYearError = errors.second
+                    )
+                }
             }
 
             is SearchStudentAction.UpdateDropoutEndYear -> {
-                updateState { it.copy(dropoutEndYear = action.year) }
+                val errors = validateDropoutYearRange(stateFlow.value.dropoutStartYear, action.year)
+                updateState {
+                    it.copy(
+                        dropoutEndYear = action.year,
+                        dropoutStartYearError = errors.first,
+                        dropoutEndYearError = errors.second
+                    )
+                }
             }
 
             is SearchStudentAction.SelectBiometricVerificationStatus -> {
@@ -1375,6 +1460,7 @@ class SearchStudentViewModel(
                 updateState { it.copy(selectedBatch = action.batch) }
             }
 
+            // Rule 3: Reset clears error states, Apply executed immediately
             is SearchStudentAction.ResetFilters -> {
                 updateState {
                     it.copy(
@@ -1385,11 +1471,16 @@ class SearchStudentViewModel(
                         selectedAdmissionTypes = persistentListOf(),
                         admissionYear = null,
                         dropoutStartYear = "",
+                        admissionYearError = null,
                         dropoutEndYear = "",
                         selectedBiometricVerificationStatus = null,
                         selectedScheme = null,
                         selectedDivision = null,
-                        selectedBatch = null
+                        selectedBatch = null,
+                        academicStartYearError = null,
+                        academicEndYearError = null,
+                        dropoutStartYearError = null,
+                        dropoutEndYearError = null
                     )
                 }
             }

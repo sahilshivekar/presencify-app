@@ -232,11 +232,11 @@ private fun SearchClassScreenContent(
 
                 }
                 if (state.isRefreshing) {
-                PullRefreshIndicator(
-                    refreshing = state.isRefreshing,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )}
+                    PullRefreshIndicator(
+                        refreshing = state.isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )}
             }
         }
     }
@@ -335,12 +335,16 @@ private fun SearchClassBottomSheetContent(
                     value = state.academicStartYear,
                     onValueChange = { onAction(SearchClassAction.UpdateAcademicStartYear(it)) },
                     label = "Start Year *",
+                    supportingText = state.academicStartYearError,
+                    isError = state.academicStartYearError != null,
                     modifier = Modifier.weight(1f)
                 )
                 PresencifyTextField(
                     value = state.academicEndYear,
                     onValueChange = { onAction(SearchClassAction.UpdateAcademicEndYear(it)) },
                     label = "End Year *",
+                    supportingText = state.academicEndYearError,
+                    isError = state.academicEndYearError != null,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -604,12 +608,20 @@ private fun SearchClassBottomSheetContent(
                 modifier = Modifier.weight(1f)
             )
 
+            val hasValidationErrors = state.academicStartYearError != null ||
+                    state.academicEndYearError != null ||
+                    state.startTimeError != null ||
+                    state.endTimeError != null ||
+                    state.activeFromError != null ||
+                    state.activeTillError != null
+
             PresencifyButton(
                 onClick = {
                     onAction(SearchClassAction.ApplyFilters)
                     onDismiss()
                 },
                 text = "Apply",
+                enabled = !hasValidationErrors, // Button is enabled only if there are NO errors
                 modifier = Modifier.weight(1f)
             )
         }

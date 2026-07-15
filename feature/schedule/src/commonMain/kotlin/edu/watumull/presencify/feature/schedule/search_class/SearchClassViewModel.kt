@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 class SearchClassViewModel(
     private val classSessionRepository: ClassSessionRepository,
@@ -147,7 +149,7 @@ class SearchClassViewModel(
         val startYear = state.academicStartYear.toIntOrNull()
         val endYear = state.academicEndYear.toIntOrNull()
 
-        if (semester != null && branchId != null && startYear != null && endYear != null) {
+        if (semester != null && branchId != null && startYear != null && endYear != null && state.academicStartYearError == null && state.academicEndYearError == null) {
 
             // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
@@ -280,63 +282,72 @@ class SearchClassViewModel(
         loadNextClasses()
     }
 
-    private fun validateFilters(): Boolean {
-        val state = stateFlow.value
-        var isValid: Boolean
+    // Custom Validation Helpers
+    private fun validateAcademicYears(startYear: String, endYear: String): Pair<String?, String?> {
+        var startError: String? = null
+        var endError: String? = null
 
-        // Validate time range
-        var startTimeError: String? = null
-        var endTimeError: String? = null
+        val startInt = startYear.toIntOrNull()
+        val endInt = endYear.toIntOrNull()
 
-        if (state.startTime != null && state.endTime == null) {
-            endTimeError = "End time is required when start time is selected"
-        } else if (state.startTime == null && state.endTime != null) {
-            startTimeError = "Start time is required when end time is selected"
-        } else if (state.startTime != null && state.endTime != null) {
-            if (state.startTime >= state.endTime) {
-                endTimeError = "End time must be after start time"
+        if (startYear.isNotBlank()) {
+            if (startInt == null) startError = "Must be a valid number"
+            else if (startInt < 2000) startError = "Must be 2000 or later"
+        }
+
+        if (endYear.isNotBlank()) {
+            if (endInt == null) endError = "Must be a valid number"
+            else if (endInt < 2000) endError = "Must be 2000 or later"
+        }
+
+        if (startYear.isNotBlank() && endYear.isBlank()) {
+            endError = "End year is required"
+        } else if (endYear.isNotBlank() && startYear.isBlank()) {
+            startError = "Start year is required"
+        }
+
+        if (startError == null && endError == null && startInt != null && endInt != null) {
+            if (startInt >= endInt) {
+                startError = "Must be before end year"
+                endError = "Must be after start year"
             }
         }
 
-        // Validate date range
-        var activeFromError: String? = null
-        var activeTillError: String? = null
+        return Pair(startError, endError)
+    }
 
-        if (state.activeFrom != null && state.activeTill == null) {
-            activeTillError = "Active till date is required when active from date is selected"
-        } else if (state.activeFrom == null && state.activeTill != null) {
-            activeFromError = "Active from date is required when active till date is selected"
-        } else if (state.activeFrom != null && state.activeTill != null) {
-            if (state.activeFrom > state.activeTill) {
-                activeTillError = "Active till date must be after active from date"
+    private fun validateTimeRange(startTime: LocalTime?, endTime: LocalTime?): Pair<String?, String?> {
+        var startError: String? = null
+        var endError: String? = null
+
+        if (startTime != null && endTime == null) {
+            endError = "End time is required"
+        } else if (endTime != null && startTime == null) {
+            startError = "Start time is required"
+        } else if (startTime != null && endTime != null) {
+            if (startTime >= endTime) {
+                endError = "Must be after start time"
             }
         }
 
-        updateState {
-            it.copy(
-                startTimeError = startTimeError,
-                endTimeError = endTimeError,
-                activeFromError = activeFromError,
-                activeTillError = activeTillError
-            )
-        }
+        return Pair(startError, endError)
+    }
 
-        isValid = startTimeError == null && endTimeError == null &&
-                  activeFromError == null && activeTillError == null
+    private fun validateDateRange(activeFrom: LocalDate?, activeTill: LocalDate?): Pair<String?, String?> {
+        var fromError: String? = null
+        var tillError: String? = null
 
-        if (!isValid) {
-            val errorMessage = listOfNotNull(
-                startTimeError, endTimeError, activeFromError, activeTillError
-            ).firstOrNull() ?: "Invalid filter values"
-
-            updateState {
-                it.copy(
-                    viewState = SearchClassState.ViewState.Error(UiText.DynamicString(errorMessage))
-                )
+        if (activeFrom != null && activeTill == null) {
+            tillError = "Active till is required"
+        } else if (activeTill != null && activeFrom == null) {
+            fromError = "Active from is required"
+        } else if (activeFrom != null && activeTill != null) {
+            if (activeFrom > activeTill) {
+                tillError = "Must be after active from"
             }
         }
 
-        return isValid
+        return Pair(fromError, tillError)
     }
 
     override fun handleAction(action: SearchClassAction) {
@@ -363,7 +374,6 @@ class SearchClassViewModel(
                 val newBranches = if (currentBranches.contains(action.branch)) {
                     currentBranches - action.branch
                 } else {
-                    // Server accepts only single value, so clear others
                     persistentListOf(action.branch)
                 }
                 updateState { it.copy(selectedBranches = newBranches.toPersistentList()) }
@@ -377,7 +387,6 @@ class SearchClassViewModel(
                 val newSemesters = if (currentSemesters.contains(action.semester)) {
                     currentSemesters - action.semester
                 } else {
-                    // Server accepts only single value, so clear others
                     persistentListOf(action.semester)
                 }
                 updateState { it.copy(selectedSemesters = newSemesters.toPersistentList()) }
@@ -387,14 +396,34 @@ class SearchClassViewModel(
             }
 
             is SearchClassAction.UpdateAcademicStartYear -> {
-                updateState { it.copy(academicStartYear = action.year) }
+                val startYear = action.year
+                val endYear = stateFlow.value.academicEndYear
+                val (startError, endError) = validateAcademicYears(startYear, endYear)
+
+                updateState {
+                    it.copy(
+                        academicStartYear = startYear,
+                        academicStartYearError = startError,
+                        academicEndYearError = endError
+                    )
+                }
                 viewModelScope.launch {
                     loadDivisionsAndBatches()
                 }
             }
 
             is SearchClassAction.UpdateAcademicEndYear -> {
-                updateState { it.copy(academicEndYear = action.year) }
+                val startYear = stateFlow.value.academicStartYear
+                val endYear = action.year
+                val (startError, endError) = validateAcademicYears(startYear, endYear)
+
+                updateState {
+                    it.copy(
+                        academicEndYear = endYear,
+                        academicStartYearError = startError,
+                        academicEndYearError = endError
+                    )
+                }
                 viewModelScope.launch {
                     loadDivisionsAndBatches()
                 }
@@ -414,7 +443,6 @@ class SearchClassViewModel(
                     val newTypes = if (currentTypes.contains(action.courseType)) {
                         currentTypes.remove(action.courseType)
                     } else {
-                        // Server accepts only single value, so clear others
                         persistentListOf(action.courseType)
                     }
                     it.copy(selectedCourseTypes = newTypes)
@@ -427,7 +455,6 @@ class SearchClassViewModel(
                     val newRooms = if (currentRooms.contains(action.roomId)) {
                         currentRooms.remove(action.roomId)
                     } else {
-                        // Server accepts only single value, so clear others
                         persistentListOf(action.roomId)
                     }
                     it.copy(selectedRoomIds = newRooms)
@@ -440,7 +467,6 @@ class SearchClassViewModel(
                     val newTeachers = if (currentTeachers.contains(action.teacherId)) {
                         currentTeachers.remove(action.teacherId)
                     } else {
-                        // Server accepts only single value, so clear others
                         persistentListOf(action.teacherId)
                     }
                     it.copy(selectedTeacherIds = newTeachers)
@@ -452,37 +478,57 @@ class SearchClassViewModel(
             }
 
             is SearchClassAction.UpdateStartTime -> {
+                val startTime = action.time
+                val endTime = stateFlow.value.endTime
+                val (startError, endError) = validateTimeRange(startTime, endTime)
+
                 updateState {
                     it.copy(
-                        startTime = action.time,
-                        startTimeError = null
+                        startTime = startTime,
+                        startTimeError = startError,
+                        endTimeError = endError
                     )
                 }
             }
 
             is SearchClassAction.UpdateEndTime -> {
+                val startTime = stateFlow.value.startTime
+                val endTime = action.time
+                val (startError, endError) = validateTimeRange(startTime, endTime)
+
                 updateState {
                     it.copy(
-                        endTime = action.time,
-                        endTimeError = null
+                        endTime = endTime,
+                        startTimeError = startError,
+                        endTimeError = endError
                     )
                 }
             }
 
             is SearchClassAction.UpdateActiveFrom -> {
+                val activeFrom = action.date
+                val activeTill = stateFlow.value.activeTill
+                val (fromError, tillError) = validateDateRange(activeFrom, activeTill)
+
                 updateState {
                     it.copy(
-                        activeFrom = action.date,
-                        activeFromError = null
+                        activeFrom = activeFrom,
+                        activeFromError = fromError,
+                        activeTillError = tillError
                     )
                 }
             }
 
             is SearchClassAction.UpdateActiveTill -> {
+                val activeFrom = stateFlow.value.activeFrom
+                val activeTill = action.date
+                val (fromError, tillError) = validateDateRange(activeFrom, activeTill)
+
                 updateState {
                     it.copy(
-                        activeTill = action.date,
-                        activeTillError = null
+                        activeTill = activeTill,
+                        activeFromError = fromError,
+                        activeTillError = tillError
                     )
                 }
             }
@@ -494,6 +540,8 @@ class SearchClassViewModel(
                         selectedSemesters = persistentListOf(),
                         academicStartYear = "",
                         academicEndYear = "",
+                        academicStartYearError = null,
+                        academicEndYearError = null,
                         selectedDivision = null,
                         selectedBatch = null,
                         selectedCourseTypes = persistentListOf(),
@@ -513,9 +561,7 @@ class SearchClassViewModel(
             }
 
             SearchClassAction.ApplyFilters -> {
-                if (validateFilters()) {
-                    refreshSearch()
-                }
+                refreshSearch()
             }
 
             is SearchClassAction.ClassCardClick -> {

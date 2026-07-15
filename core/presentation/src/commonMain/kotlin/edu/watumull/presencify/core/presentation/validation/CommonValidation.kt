@@ -140,8 +140,8 @@ fun String?.validateAsAcademicStartYear(endYear: String?): ValidationResult {
         errorMessage = "Academic start year must be a valid number"
     )
 
-    if (start !in 1900..3000) {
-        return ValidationResult(successful = false, errorMessage = "Academic start year must be between 1900 and 3000")
+    if (start !in 2000..3000) {
+        return ValidationResult(successful = false, errorMessage = "Academic start year must be between 2000 and 3000")
     }
 
     if (endYear != null) {
@@ -164,8 +164,8 @@ fun String?.validateAsAcademicEndYear(startYear: String?): ValidationResult {
         errorMessage = "Academic end year must be a valid number"
     )
 
-    if (end !in 1900..3000) {
-        return ValidationResult(successful = false, errorMessage = "Academic end year must be between 1900 and 3000")
+    if (end !in 2000..3000) {
+        return ValidationResult(successful = false, errorMessage = "Academic end year must be between 2000 and 3000")
     }
 
     if (startYear != null) {

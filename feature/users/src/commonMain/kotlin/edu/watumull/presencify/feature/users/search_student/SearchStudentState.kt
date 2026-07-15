@@ -97,7 +97,13 @@ data class SearchStudentState(
 
     // Pagination
     val currentPage: Int = 1,
-    val isLoadingMore: Boolean = false
+    val isLoadingMore: Boolean = false,
+
+    val academicStartYearError: String? = null,
+    val academicEndYearError: String? = null,
+    val dropoutStartYearError: String? = null,
+    val dropoutEndYearError: String? = null,
+    val admissionYearError: String? = null,
 ) {
     sealed interface ViewState {
         data object Loading : ViewState
