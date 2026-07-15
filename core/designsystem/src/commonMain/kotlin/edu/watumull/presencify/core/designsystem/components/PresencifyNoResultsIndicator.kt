@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,7 @@ import edu.watumull.presencify.core.designsystem.theme.DesignToken
 fun PresencifyNoResultsIndicator(
     modifier: Modifier = Modifier,
     text: String,
+    onRetry: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(DesignToken.spacing.lg),
@@ -46,6 +49,30 @@ fun PresencifyNoResultsIndicator(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = .5f),
             textAlign = TextAlign.Center,
         )
+
+        if (onRetry != null) {
+            Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
+            PresencifyButton(
+                onClick = onRetry,
+                shape = MaterialTheme.shapes.large,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Retry",
+                    modifier = Modifier
+                        .height(DesignToken.icons.sm)
+                        .width(DesignToken.icons.sm)
+                )
+
+                Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
+
+                Text(
+                    text = "Retry",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
 
     }
 }
