@@ -43,12 +43,10 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCla
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCourseDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToCreateAttendanceSheet
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDivisionDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToDynamicQR
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToMarkStudentAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRecognizeStudent
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToReviewStudentBiometrics
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToRoomDetails
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToScanQr
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSchemeDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchAttendance
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToSearchCourse
@@ -67,8 +65,6 @@ import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTea
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToTimetableDetails
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateAdminPassword
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToUpdateUserPassword
-import edu.watumull.presencify.navigation.navcontroller_extensions.navigateToClassDetailsWithSyntheticBackStack
-import androidx.compose.runtime.LaunchedEffect
 import edu.watumull.presencify.navigation.navcontroller_extensions.navigateBackFromMarkAttendanceScreen
 import edu.watumull.presencify.navigation.navcontroller_extensions.refreshRootDestination
 
@@ -133,7 +129,6 @@ fun AppNavHost(
             onNavigateToMarkAttendance = { attendanceId ->
                 rootNavController.navigateToMarkStudentAttendance(attendanceId)
             },
-            onNavigateToDynamicQR = { attendanceId -> rootNavController.navigateToDynamicQR(attendanceId) },
             onNavigateToAttendanceDetails = { attendanceId ->
                 rootNavController.navigateToAttendanceDetails(attendanceId)
             },

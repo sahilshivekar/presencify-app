@@ -18,6 +18,9 @@ data class MarkAttendanceState(
     val isMarkingAllPresent: Boolean = false,
     val isMarkingAllAbsent: Boolean = false,
     val dialogState: DialogState? = null,
+    val qrCodeContent: String = "",
+    val isQrVisible: Boolean = false,
+    val isStudentListLoading: Boolean = false
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

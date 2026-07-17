@@ -8,7 +8,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MarkAttendanceRoot(
-    onNavigateToDynamicQR: (String) -> Unit,
     onNavigateBackFromMarkAttendanceScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<MarkAttendanceViewModel>()
@@ -17,7 +16,6 @@ fun MarkAttendanceRoot(
     EventsEffect(viewModel.eventFlow) { event ->
         when (event) {
             is MarkAttendanceEvent.NavigateBack -> onNavigateBackFromMarkAttendanceScreen(event.attendanceId)
-            is MarkAttendanceEvent.NavigateToDynamicQR -> onNavigateToDynamicQR(event.attendanceId)
         }
     }
 

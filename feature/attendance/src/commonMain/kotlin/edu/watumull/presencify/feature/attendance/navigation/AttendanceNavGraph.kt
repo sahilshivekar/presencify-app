@@ -7,7 +7,6 @@ import edu.watumull.presencify.feature.attendance.attendance_dashboard.Attendanc
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsRoot
 import edu.watumull.presencify.feature.attendance.create_attendance.CreateAttendanceRoot
 import edu.watumull.presencify.feature.attendance.defaulters.DefaultersRoot
-import edu.watumull.presencify.feature.attendance.dynamic_qr.DynamicQRRoot
 import edu.watumull.presencify.feature.attendance.mark_attendance.MarkAttendanceRoot
 import edu.watumull.presencify.feature.attendance.recognize_student.RecognizeStudentRoot
 import edu.watumull.presencify.feature.attendance.scan_qr.ScanQrRoot
@@ -47,7 +46,6 @@ fun NavGraphBuilder.attendanceDashboard(
 fun NavGraphBuilder.attendanceNavGraph(
     onNavigateBack: () -> Unit,
     onNavigateToMarkAttendance: (String) -> Unit,
-    onNavigateToDynamicQR: (String) -> Unit,
     onNavigateToAttendanceDetails: (String) -> Unit,
     onNavigateToSearchAttendanceForCourse: (String, String?) -> Unit,
     onNavigateToSearchAttendanceForCourseAndStudent: (courseId: String, studentId: String) -> Unit,
@@ -66,18 +64,10 @@ fun NavGraphBuilder.attendanceNavGraph(
     // 3. Mark Attendance
     composableWithSlideTransitions<AttendanceRoutes.MarkStudentAttendance> {
         MarkAttendanceRoot(
-            onNavigateToDynamicQR = onNavigateToDynamicQR,
             onNavigateBackFromMarkAttendanceScreen = onNavigateBackFromMarkAttendanceScreen
         )
     }
 
-    // 4. Dynamic QR
-    composableWithSlideTransitions<AttendanceRoutes.DynamicQR> {
-        DynamicQRRoot(
-            onNavigateBack = onNavigateBack,
-            onNavigateToDetails = onNavigateToAttendanceDetails
-        )
-    }
 
     composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceAnalytics> {
         StudentAttendanceAnalyticsRoot(

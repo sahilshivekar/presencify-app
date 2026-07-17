@@ -194,10 +194,6 @@ fun NavController.navigateToAttendanceDetails(attendanceId: String) {
     navigate(AttendanceRoutes.AttendanceDetails(attendanceId = attendanceId))
 }
 
-fun NavController.navigateToDynamicQR(attendanceId: String) {
-    navigate(AttendanceRoutes.DynamicQR(attendanceId = attendanceId))
-}
-
 fun NavController.navigateToScanQr() {
     navigate(AttendanceRoutes.ScanQr)
 }

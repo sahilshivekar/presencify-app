@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
+import edu.watumull.presencify.core.domain.NtpClock
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.attendance.AttendanceRepository
@@ -16,25 +17,32 @@ import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.core.presentation.utils.ShareUtils
 import edu.watumull.presencify.core.presentation.utils.toReadableString
+import edu.watumull.presencify.feature.attendance.mark_attendance.DynamicQRCipher
 import edu.watumull.presencify.feature.attendance.navigation.AttendanceRoutes
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MarkAttendanceViewModel(
     private val attendanceRepository: AttendanceRepository,
+    private val ntpClock: NtpClock,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<MarkAttendanceState, MarkAttendanceEvent, MarkAttendanceAction>(
     initialState = MarkAttendanceState()
 ) {
     private val attendanceId: String = savedStateHandle.toRoute<AttendanceRoutes.MarkStudentAttendance>().attendanceId
+    private var timerJob: Job? = null
 
     init {
+        ntpClock.startPeriodicSync(viewModelScope)
         loadAttendance()
     }
 
     override fun handleAction(action: MarkAttendanceAction) {
         when (action) {
+            MarkAttendanceAction.ToggleQRVisibility -> toggleQrVisibility()
             MarkAttendanceAction.NavigateBack -> sendEvent(MarkAttendanceEvent.NavigateBack(attendanceId))
-            MarkAttendanceAction.DynamicQRClick -> sendEvent(MarkAttendanceEvent.NavigateToDynamicQR(attendanceId))
             MarkAttendanceAction.ShareAttendanceSummary -> shareAttendanceSummary()
             is MarkAttendanceAction.ToggleStudentAttendance -> toggleStudentAttendance(
                 action.studentId,
@@ -49,7 +57,63 @@ class MarkAttendanceViewModel(
         }
     }
 
-    private fun loadAttendance() {
+    private fun toggleQrVisibility() {
+        if (state.isQrVisible) {
+            stopQrGeneration()
+        } else {
+            startQrGeneration()
+        }
+    }
+
+    private fun startQrGeneration() {
+        updateState { it.copy(isQrVisible = true) }
+
+        if (timerJob?.isActive == true) return
+
+        if (!ntpClock.isSynced()) {
+            updateState {
+                it.copy(
+                    dialogState = DialogState(
+                        dialogType = DialogType.ERROR,
+                        message = UiText.DynamicString("Unable to synchronize network time. Please check your internet connection.")
+                    )
+                )
+            }
+            stopQrGeneration()
+            return
+        }
+
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                val timestamp = ntpClock.now()
+                val rawContent = "$attendanceId|$timestamp"
+                val qrContent = DynamicQRCipher.encrypt(rawContent)
+                updateState { it.copy(qrCodeContent = qrContent) }
+                delay(1000L)
+            }
+        }
+    }
+
+    private fun stopQrGeneration() {
+        timerJob?.cancel()
+        timerJob = null
+        updateState { it.copy(isQrVisible = false, qrCodeContent = "") }
+
+        // Fetch fresh data when QR is stopped
+        loadAttendance(isRefresh = true)
+    }
+
+    // 5. Ensure the job is cancelled when the ViewModel is cleared
+    override fun onCleared() {
+        super.onCleared()
+        timerJob?.cancel()
+    }
+
+    private fun loadAttendance(isRefresh: Boolean = false) {
+        if (isRefresh) {
+            updateState { it.copy(isStudentListLoading = true) }
+        }
+
         viewModelScope.launch {
             attendanceRepository.getAttendanceById(attendanceId)
                 .onSuccess { attendance ->
@@ -65,14 +129,16 @@ class MarkAttendanceViewModel(
                             classSession = attendance.klass,
                             totalStudents = totalCount,
                             presentStudents = presentCount,
-                            absentStudents = absentCount
+                            absentStudents = absentCount,
+                            isStudentListLoading = false // Ensure loading is disabled on success
                         )
                     }
                 }
                 .onError { error ->
                     updateState {
                         it.copy(
-                            viewState = MarkAttendanceState.ViewState.Error(error.toUiText())
+                            viewState = MarkAttendanceState.ViewState.Error(error.toUiText()),
+                            isStudentListLoading = false // Ensure loading is disabled on error
                         )
                     }
                 }

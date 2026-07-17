@@ -1,21 +1,25 @@
 package edu.watumull.presencify.feature.attendance.mark_attendance
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,14 +30,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImagePainter.State.Empty.painter
+import edu.watumull.presencify.core.designsystem.Res
 import edu.watumull.presencify.core.designsystem.components.PresencifyActionBar
 import edu.watumull.presencify.core.designsystem.components.PresencifyButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyOutlinedButton
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
+import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
+import edu.watumull.presencify.core.designsystem.components.shimmerEffect
+import edu.watumull.presencify.core.designsystem.presencify_logo_circle_svg
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
@@ -41,7 +52,15 @@ import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.components.StudentListItem
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsAction
+import io.github.alexzhirkevich.qrose.options.QrBallShape
+import io.github.alexzhirkevich.qrose.options.QrBrush
+import io.github.alexzhirkevich.qrose.options.QrFrameShape
+import io.github.alexzhirkevich.qrose.options.QrLogoPadding
+import io.github.alexzhirkevich.qrose.options.roundCorners
+import io.github.alexzhirkevich.qrose.options.solid
+import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun MarkAttendanceScreen(
@@ -100,21 +119,69 @@ fun MarkAttendanceScreen(
                                     .padding(vertical = DesignToken.spacing.lg),
                                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                             ) {
-                                // Class Details Section
+
                                 state.classSession?.let { classSession ->
                                     ClassDetailsSection(classSession = classSession, date = state.attendance?.date!!)
                                 }
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                ) {
 
-                                    PresencifyActionBar(
-                                        text = "Mark attendance with Dynamic QR",
-                                        onClick = { onAction(MarkAttendanceAction.DynamicQRClick) },
-                                        modifier = Modifier.fillMaxWidth()
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    PresencifyTextButton(
+                                        content = {
+                                            Text(
+                                                text = if (state.isQrVisible) "Hide Dynamic QR" else "Show Dynamic QR"
+                                            )
+                                        },
+                                        onClick = { onAction(MarkAttendanceAction.ToggleQRVisibility) },
+                                        modifier = Modifier.wrapContentWidth(),
+                                        colors = ButtonDefaults.textButtonColors(
+                                            containerColor = Color.Transparent,
+                                            disabledContainerColor = Color.Transparent,
+                                            contentColor = MaterialTheme.colorScheme.primary,
+                                            disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                                        ),
                                     )
+
+                                    // 2. Render the QR code when visible
+                                    if (state.isQrVisible && state.qrCodeContent.isNotEmpty()) {
+                                        val logo = painterResource(resource = Res.drawable.presencify_logo_circle_svg)
+
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(vertical = DesignToken.spacing.lg)
+                                                .background(Color.White, MaterialTheme.shapes.extraLarge),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            val painter = rememberQrCodePainter(state.qrCodeContent) {
+                                                logo {
+                                                    painter = logo
+                                                    padding = QrLogoPadding.Natural(.1f)
+                                                    size = 0.2f
+                                                }
+                                                shapes {
+                                                    ball = QrBallShape.roundCorners(.25f)
+                                                    frame = QrFrameShape.roundCorners(.25f)
+                                                }
+                                                colors {
+                                                    dark = QrBrush.solid(Color.Black)
+                                                    light = QrBrush.solid(Color.White)
+                                                    frame = QrBrush.solid(Color.Black)
+                                                    ball = QrBrush.solid(Color.Black)
+                                                }
+                                            }
+                                            Image(
+                                                painter = painter,
+                                                contentDescription = "Dynamic QR Code",
+                                                modifier = Modifier
+                                                    .padding(DesignToken.spacing.md)
+                                                    .aspectRatio(1f)
+                                            )
+                                        }
+                                    }
                                 }
+
 
                                 // Stats Cards Section
                                 AttendanceStatsSection(
@@ -171,64 +238,83 @@ fun MarkAttendanceScreen(
                         }
 
                         // Students List
-                        val attendanceStudents = state.attendance?.attendanceStudents ?: emptyList()
-                        items(
-                            items = attendanceStudents,
-                            key = { it.id }
-                        ) { attendanceStudent ->
-                            val student = attendanceStudent.student
-                            if (student != null) {
-                                val isLoading = state.studentLoadingStates[student.id] == true
-                                val feedback = state.studentFeedbacks[student.id]
-
+                        if (state.isStudentListLoading) {
+                            items(10) {
                                 Column(
                                     modifier = Modifier
                                         .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                                         .fillMaxWidth()
                                 ) {
-                                    StudentListItem(
-                                        studentName = "${student.firstName} ${student.lastName}",
-                                        studentImageUrl = student.studentImageUrl,
-                                        prn = student.prn,
-                                        feedback = feedback,
-                                        trailingContent = {
-                                            Column(
-                                                verticalArrangement = Arrangement.Top,
-                                                horizontalAlignment = Alignment.End,
-                                            ) {
-                                                Text(
-                                                    text = if (attendanceStudent.attendanceStatus) "Present" else "Absent",
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = if (attendanceStudent.attendanceStatus)
-                                                        MaterialTheme.colorScheme.primary
-                                                    else
-                                                        MaterialTheme.colorScheme.error
-                                                )
-                                                Switch(
-                                                    checked = attendanceStudent.attendanceStatus,
-                                                    onCheckedChange = {
-                                                        onAction(
-                                                            MarkAttendanceAction.ToggleStudentAttendance(
-                                                                studentId = student.id,
-                                                                currentStatus = attendanceStudent.attendanceStatus
-                                                            )
-                                                        )
-                                                    },
-                                                    enabled = !isLoading,
-                                                    thumbContent = if (isLoading) {
-                                                        {
-                                                            CircularProgressIndicator(
-                                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                                strokeWidth = DesignToken.strokes.md
-                                                            )
-                                                        }
-                                                    } else null
-                                                )
-                                            }
-                                        },
-                                        onClick = null
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(72.dp) // Approximate height of StudentListItem
+                                            .shimmerEffect()
                                     )
                                     Spacer(modifier = Modifier.height(DesignToken.spacing.md))
+                                }
+                            }
+                        } else {
+
+                            val attendanceStudents = state.attendance?.attendanceStudents ?: emptyList()
+                            items(
+                                items = attendanceStudents,
+                                key = { it.id }
+                            ) { attendanceStudent ->
+                                val student = attendanceStudent.student
+                                if (student != null) {
+                                    val isLoading = state.studentLoadingStates[student.id] == true
+                                    val feedback = state.studentFeedbacks[student.id]
+
+                                    Column(
+                                        modifier = Modifier
+                                            .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
+                                            .fillMaxWidth()
+                                    ) {
+                                        StudentListItem(
+                                            studentName = "${student.firstName} ${student.lastName}",
+                                            studentImageUrl = student.studentImageUrl,
+                                            prn = student.prn,
+                                            feedback = feedback,
+                                            trailingContent = {
+                                                Column(
+                                                    verticalArrangement = Arrangement.Top,
+                                                    horizontalAlignment = Alignment.End,
+                                                ) {
+                                                    Text(
+                                                        text = if (attendanceStudent.attendanceStatus) "Present" else "Absent",
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = if (attendanceStudent.attendanceStatus)
+                                                            MaterialTheme.colorScheme.primary
+                                                        else
+                                                            MaterialTheme.colorScheme.error
+                                                    )
+                                                    Switch(
+                                                        checked = attendanceStudent.attendanceStatus,
+                                                        onCheckedChange = {
+                                                            onAction(
+                                                                MarkAttendanceAction.ToggleStudentAttendance(
+                                                                    studentId = student.id,
+                                                                    currentStatus = attendanceStudent.attendanceStatus
+                                                                )
+                                                            )
+                                                        },
+                                                        enabled = !isLoading,
+                                                        thumbContent = if (isLoading) {
+                                                            {
+                                                                CircularProgressIndicator(
+                                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                                    strokeWidth = DesignToken.strokes.md
+                                                                )
+                                                            }
+                                                        } else null
+                                                    )
+                                                }
+                                            },
+                                            onClick = null
+                                        )
+                                        Spacer(modifier = Modifier.height(DesignToken.spacing.md))
+                                    }
                                 }
                             }
                         }
