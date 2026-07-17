@@ -6,12 +6,12 @@ import edu.watumull.presencify.core.data.network.BaseApiEndpoints.PRESENCIFY_BAS
 
 object ApiEndpoints {
     // Path segments
-    const val ME = "me"
+    val ME = "me"
 
     // Admin endpoints
-    const val ADD_ADMIN = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS"
-    const val UPDATE_ADMIN_DETAILS = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS/$ME"
-    const val REMOVE_ADMIN = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS/$ME"
-    const val GET_ADMINS = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS"
-    const val GET_ADMIN_DETAILS = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS/$ME"
+    val ADD_ADMIN = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS"
+    val UPDATE_ADMIN_DETAILS = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS/$ME"
+    val REMOVE_ADMIN = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS/$ME"
+    val GET_ADMINS = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS"
+    val GET_ADMIN_DETAILS = "$PRESENCIFY_BASE_URL/$API_V1/$ADMINS/$ME"
 }

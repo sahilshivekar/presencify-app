@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidLint)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -149,4 +150,27 @@ kotlin {
         }
     }
 
+}
+
+buildkonfig {
+    packageName = "edu.watumull.presencify.core.data.network"
+    objectName = "BuildKonfig"
+
+    defaultConfigs {
+        // This acts as your Debug/Development environment
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "PRESENCIFY_BASE_URL",
+            "http://localhost:4444"
+        )
+    }
+
+    defaultConfigs("release") {
+        // This overrides the default for your Release/Production environment
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "PRESENCIFY_BASE_URL",
+            "https://api.yourproductionurl.com"
+        )
+    }
 }

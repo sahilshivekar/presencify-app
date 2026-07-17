@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.androidKotlinMultiplatformLibrary) apply false
     alias(libs.plugins.androidLint) apply false
     alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.buildkonfig) apply false
 }
 // In your TOP-LEVEL root build.gradle.kts
 // In your TOP-LEVEL root build.gradle.kts

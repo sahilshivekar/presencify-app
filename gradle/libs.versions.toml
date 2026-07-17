@@ -48,6 +48,7 @@ firebaseBom = "33.1.0"
 firebaseMessaging = "24.0.0"
 opencv = "4.12.0"
 exifinterface = "1.4.1"
+buildkonfig = "0.15.1"
 
 [libraries]
 # --- EXISTING ---
@@ -172,7 +173,7 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMul
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
-
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 # --- NEW PLUGINS ---
 #ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 #room = { id = "androidx.room", version.ref = "room" }

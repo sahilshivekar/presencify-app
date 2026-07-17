@@ -5,13 +5,13 @@ import edu.watumull.presencify.core.data.network.BaseApiEndpoints.PRESENCIFY_BAS
 
 object ApiEndpoints {
     // Path segments
-    const val STUDENT_AUTH = "auth/students"
+    val STUDENT_AUTH = "auth/students"
     
     // Student authentication endpoints
-    const val LOGIN_STUDENT = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/login"
-    const val SEND_VERIFICATION_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/send-verification-code"
-    const val VERIFY_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/verify-code"
-    const val UPDATE_PASSWORD = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/update-password"
-    const val REFRESH_TOKENS = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/access-token"
-    const val LOGOUT = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/logout"
+    val LOGIN_STUDENT = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/login"
+    val SEND_VERIFICATION_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/send-verification-code"
+    val VERIFY_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/verify-code"
+    val UPDATE_PASSWORD = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/update-password"
+    val REFRESH_TOKENS = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/access-token"
+    val LOGOUT = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/logout"
 }
