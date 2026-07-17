@@ -50,6 +50,7 @@ import edu.watumull.presencify.core.domain.model.schedule.ClassSession
 import edu.watumull.presencify.core.presentation.UiConstants
 import edu.watumull.presencify.core.presentation.components.ClassListItem
 import edu.watumull.presencify.core.presentation.components.StudentListItem
+import edu.watumull.presencify.core.presentation.isDesktopPlatform
 import edu.watumull.presencify.core.presentation.utils.toReadableString
 import edu.watumull.presencify.feature.attendance.attendance_details.AttendanceDetailsAction
 import io.github.alexzhirkevich.qrose.options.QrBallShape
@@ -150,7 +151,7 @@ fun MarkAttendanceScreen(
 
                                         Box(
                                             modifier = Modifier
-                                                .padding(vertical = DesignToken.spacing.lg)
+                                                .padding(vertical = DesignToken.spacing.md, horizontal = if(isDesktopPlatform()) DesignToken.spacing.xxl else DesignToken.spacing.none)
                                                 .background(Color.White, MaterialTheme.shapes.extraLarge),
                                             contentAlignment = Alignment.Center
                                         ) {

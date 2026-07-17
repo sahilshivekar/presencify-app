@@ -29,6 +29,9 @@ class ScanQrViewModel(
             is ScanQrAction.Scanned -> {
                 processQrContent(action.content)
             }
+            is ScanQrAction.CameraZoomLevelChange -> {
+                updateState { it.copy(cameraZoomLevel = action.zoomLevel) }
+            }
             ScanQrAction.ScanFailed -> {
                 viewModelScope.launch {
                     SnackbarController.sendEvent(

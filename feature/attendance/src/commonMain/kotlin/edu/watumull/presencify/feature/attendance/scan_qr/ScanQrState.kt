@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.presentation.UiText
 
 data class ScanQrState(
     val viewState: ViewState = ViewState.Content,
+    val cameraZoomLevel: Float = 1f,
     val isLoading: Boolean = false,
     val lastScannedContent: String? = null,
     val isQrScanSuccessful: Boolean = false
