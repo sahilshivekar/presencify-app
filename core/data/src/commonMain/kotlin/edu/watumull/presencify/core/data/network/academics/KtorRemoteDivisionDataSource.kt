@@ -1,9 +1,12 @@
 package edu.watumull.presencify.core.data.network.academics
 
 import edu.watumull.presencify.core.data.HttpClientProvider
+import edu.watumull.presencify.core.data.dto.academics.AddEditDivisionRequestDto
 import edu.watumull.presencify.core.data.dto.academics.DivisionDto
+import edu.watumull.presencify.core.data.dto.academics.DivisionCoursesDto
 import edu.watumull.presencify.core.data.dto.academics.DivisionListWithTotalCountDto
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.ADD_DIVISION
+import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.GET_DIVISION_COURSES
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.GET_DIVISIONS
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.GET_DIVISION_BY_ID
 import edu.watumull.presencify.core.data.network.academics.ApiEndpoints.REMOVE_DIVISION
@@ -48,15 +51,19 @@ class KtorRemoteDivisionDataSource(
 
     override suspend fun addDivision(
         divisionCode: String,
-        semesterId: String
+        semesterId: String,
+        optionalCourseIds: List<String>?
     ): Result<DivisionDto, DataError.Remote> {
         return safeCall<DivisionDto> {
             clientProvider.getClient().post(ADD_DIVISION) {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "divisionCode" to divisionCode,
-                    "semesterId" to semesterId
-                ))
+                setBody(
+                    AddEditDivisionRequestDto(
+                        divisionCode = divisionCode,
+                        semesterId = semesterId,
+                        optionalCourseIds = optionalCourseIds
+                    )
+                )
             }
         }
     }
@@ -69,14 +76,18 @@ class KtorRemoteDivisionDataSource(
 
     override suspend fun updateDivision(
         id: String,
-        divisionCode: String
+        divisionCode: String?,
+        optionalCourseIds: List<String>?
     ): Result<DivisionDto, DataError.Remote> {
         return safeCall<DivisionDto> {
             clientProvider.getClient().put("$UPDATE_DIVISION/$id") {
                 contentType(ContentType.Application.Json)
-                setBody(mapOf(
-                    "divisionCode" to divisionCode
-                ))
+                setBody(
+                    AddEditDivisionRequestDto(
+                        divisionCode = divisionCode.orEmpty(),
+                        optionalCourseIds = optionalCourseIds
+                    )
+                )
             }
         }
     }
@@ -84,6 +95,14 @@ class KtorRemoteDivisionDataSource(
     override suspend fun removeDivision(id: String): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
             clientProvider.getClient().delete("$REMOVE_DIVISION/$id")
+        }
+    }
+
+    override suspend fun getCoursesOfDivision(divisionId: String): Result<DivisionCoursesDto, DataError.Remote> {
+        return safeCall<DivisionCoursesDto> {
+            clientProvider.getClient().get(GET_DIVISION_COURSES) {
+                parameter("divisionId", divisionId)
+            }
         }
     }
 }

@@ -104,8 +104,8 @@ class StudentAttendanceAnalyticsViewModel(
         var courseFetchFailed = false
 
         coursesResult
-            .onSuccess { fetchedCourses: List<Course> ->
-                courses = fetchedCourses
+            .onSuccess { fetchedCourses ->
+                courses = fetchedCourses.compulsoryCourses + fetchedCourses.optionalCourses.mapNotNull { it.course }.distinctBy { it.id }
             }
             .onError { error: edu.watumull.presencify.core.domain.DataError.Remote ->
                 courseFetchFailed = true

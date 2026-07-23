@@ -157,11 +157,13 @@ fun SemesterDetailsScreen(
                                     items = state.courses,
                                     key = { course -> course.id }
                                 ) { course ->
+                                    val optionalCourseDivisionCodes = state.optionalCourseDivisionCodes[course.id].orEmpty()
                                     CourseListItem(
                                         name = course.name,
                                         code = course.code,
                                         schemeName = course.scheme?.name ?: "N/A",
                                         optionalCourse = course.optionalCourse,
+                                        optionalCourseDivisionCodes = optionalCourseDivisionCodes,
                                         onClick = { },
                                         modifier = Modifier.fillMaxWidth()
                                     )

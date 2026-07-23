@@ -6,6 +6,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +36,7 @@ fun CourseListItem(
     code: String,
     schemeName: String,
     optionalCourse: String? = null,
+    optionalCourseDivisionCodes: List<String> = emptyList(),
     feedback: ListItemFeedback? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     containerColor: Color? = null,
@@ -62,14 +65,31 @@ fun CourseListItem(
                 )
                 optionalCourse?.let {
                     Spacer(modifier = Modifier.height(DesignToken.spacing.xs))
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    ) {
-                        Text(
-                            text = "Optional: $it",
-                            style = MaterialTheme.typography.labelSmall
-                        )
+                    Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xs)) {
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ) {
+                            Text(
+                                text = "Optional: $it",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                        if (optionalCourseDivisionCodes.isNotEmpty()) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.xs)) {
+                                optionalCourseDivisionCodes.forEach { divisionCode ->
+                                    Badge(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    ) {
+                                        Text(
+                                            text = divisionCode,
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 AnimatedVisibility(

@@ -19,7 +19,7 @@ val scheduleModule = module {
     viewModel { AddEditRoomViewModel(roomRepository = get(), savedStateHandle = get()) }
     viewModel { RoomDetailsViewModel(roomRepository = get(), savedStateHandle = get()) }
     viewModel { SearchClassViewModel(classSessionRepository = get(), roomRepository = get(), teacherRepository = get(), branchRepository = get(), divisionRepository = get(), batchRepository = get(), savedStateHandle = get()) }
-    viewModel { AddEditClassViewModel(classSessionRepository = get(), timetableRepository = get(), courseRepository = get(), semesterRepository = get(), teacherRepository = get(), roomRepository = get(), batchRepository = get(), savedStateHandle = get()) }
+    viewModel { AddEditClassViewModel(classSessionRepository = get(), timetableRepository = get(), courseRepository = get(), semesterRepository = get(), teacherRepository = get(), roomRepository = get(), batchRepository = get(), divisionRepository = get(), savedStateHandle = get()) }
     viewModel { ClassDetailsViewModel(classSessionRepository = get(), savedStateHandle = get()) }
     viewModel { SearchTimetableViewModel(timetableRepository = get(), branchRepository = get()) }
     viewModel { AddEditTimetableViewModel(branchRepository = get(), divisionRepository = get(), batchRepository = get(), timetableRepository = get(), savedStateHandle = get()) }

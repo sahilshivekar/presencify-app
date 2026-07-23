@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Division
 import edu.watumull.presencify.core.domain.model.academics.DivisionListWithTotalCount
+import edu.watumull.presencify.core.domain.model.academics.DivisionCourses
 
 interface DivisionRepository {
     suspend fun getDivisions(
@@ -21,15 +22,19 @@ interface DivisionRepository {
 
     suspend fun addDivision(
         divisionCode: String,
-        semesterId: String
+        semesterId: String,
+        optionalCourseIds: List<String>? = null
     ): Result<Division, DataError.Remote>
 
     suspend fun getDivisionById(id: String): Result<Division, DataError.Remote>
 
     suspend fun updateDivision(
         id: String,
-        divisionCode: String
+        divisionCode: String? = null,
+        optionalCourseIds: List<String>? = null
     ): Result<Division, DataError.Remote>
 
     suspend fun removeDivision(id: String): Result<Unit, DataError.Remote>
+
+    suspend fun getCoursesOfDivision(divisionId: String): Result<DivisionCourses, DataError.Remote>
 }

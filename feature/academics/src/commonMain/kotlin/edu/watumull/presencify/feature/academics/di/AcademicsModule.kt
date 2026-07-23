@@ -45,7 +45,7 @@ val academicsModule = module {
     viewModel { AddEditSchemeViewModel(get(), get(), savedStateHandle = get()) }
     viewModel { AddEditUniversityViewModel(get(), savedStateHandle = get()) }
     viewModel { AddEditCourseViewModel(get(), get(), savedStateHandle = get()) }
-    viewModel { AddEditSemesterViewModel(get(), get(), get(), get(), savedStateHandle = get()) }
-    viewModel { AddEditDivisionViewModel(get(), get(), get(), savedStateHandle = get()) }
+    viewModel { AddEditSemesterViewModel(get(), get(), get(), get()) }
+    viewModel { AddEditDivisionViewModel(get(), get(), get(), get(), savedStateHandle = get()) }
     viewModel { AddEditBatchViewModel(get(), get(), get(), get(), get()) }
 }

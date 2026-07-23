@@ -1,6 +1,7 @@
 package edu.watumull.presencify.feature.academics.division_details
 
 import edu.watumull.presencify.core.domain.model.academics.Division
+import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
@@ -10,6 +11,8 @@ data class DivisionDetailsState(
     val divisionId: String = "",
     val division: Division? = null,
     val isRemovingDivision: Boolean = false,
+    val courses: List<Course> = emptyList(),
+    val isLoadingCourses: Boolean = false,
 ) {
     sealed interface ViewState {
         data object Loading : ViewState

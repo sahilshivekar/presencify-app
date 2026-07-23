@@ -7,6 +7,7 @@ import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
 import edu.watumull.presencify.core.domain.model.academics.Division
+import edu.watumull.presencify.core.domain.model.academics.DivisionCourses
 import edu.watumull.presencify.core.domain.model.academics.DivisionListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 
@@ -32,9 +33,10 @@ class DivisionRepositoryImpl(
 
     override suspend fun addDivision(
         divisionCode: String,
-        semesterId: String
+        semesterId: String,
+        optionalCourseIds: List<String>?
     ): Result<Division, DataError.Remote> {
-        return remoteDivisionDataSource.addDivision(divisionCode, semesterId).map { it.toDomain() }
+        return remoteDivisionDataSource.addDivision(divisionCode, semesterId, optionalCourseIds).map { it.toDomain() }
     }
 
     override suspend fun getDivisionById(id: String): Result<Division, DataError.Remote> {
@@ -43,12 +45,17 @@ class DivisionRepositoryImpl(
 
     override suspend fun updateDivision(
         id: String,
-        divisionCode: String
+        divisionCode: String?,
+        optionalCourseIds: List<String>?
     ): Result<Division, DataError.Remote> {
-        return remoteDivisionDataSource.updateDivision(id, divisionCode).map { it.toDomain() }
+        return remoteDivisionDataSource.updateDivision(id, divisionCode, optionalCourseIds).map { it.toDomain() }
     }
 
     override suspend fun removeDivision(id: String): Result<Unit, DataError.Remote> {
         return remoteDivisionDataSource.removeDivision(id)
+    }
+
+    override suspend fun getCoursesOfDivision(divisionId: String): Result<DivisionCourses, DataError.Remote> {
+        return remoteDivisionDataSource.getCoursesOfDivision(divisionId).map { it.toDomain() }
     }
 }

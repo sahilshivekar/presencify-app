@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
+import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
+import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.presentation.UiText
@@ -27,21 +29,22 @@ class AddEditDivisionViewModel(
     private val divisionRepository: DivisionRepository,
     private val semesterRepository: SemesterRepository,
     private val branchRepository: BranchRepository,
+    private val courseRepository: CourseRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<AddEditDivisionState, AddEditDivisionEvent, AddEditDivisionAction>(
     initialState = AddEditDivisionState(
         divisionId = savedStateHandle.toRoute<AcademicsRoutes.AddEditDivision>().divisionId,
-        isEditMode = savedStateHandle.toRoute<AcademicsRoutes.AddEditDivision>().divisionId != null
+        isEditMode = savedStateHandle.toRoute<AcademicsRoutes.AddEditDivision>().divisionId != null,
+        isLoadingDivision = savedStateHandle.toRoute<AcademicsRoutes.AddEditDivision>().divisionId != null
     )
 ) {
 
     init {
         viewModelScope.launch {
+            loadBranches()
             val divisionId = state.divisionId
             if (state.isEditMode && divisionId != null) {
                 loadDivisionForEdit(divisionId)
-            } else {
-                loadBranches()
             }
         }
     }
@@ -54,6 +57,12 @@ class AddEditDivisionViewModel(
                 // Fetch the semester to get full details
                 semesterRepository.getSemesterById(division.semesterId)
                     .onSuccess { semester ->
+                        loadOptionalCourses(
+                            semesterNumber = semester.semesterNumber,
+                            branchId = semester.branchId,
+                            schemeId = semester.schemeId,
+                            divisionId = division.id
+                        )
                         updateState {
                             it.copy(
                                 isLoadingDivision = false,
@@ -118,8 +127,26 @@ class AddEditDivisionViewModel(
             is AddEditDivisionAction.UpdateAcademicEndYear -> updateState { it.copy(academicEndYear = action.year, academicEndYearError = null) }
             is AddEditDivisionAction.UpdateSelectedBranch -> updateState { it.copy(selectedBranchId = action.branchId, branchError = null, isBranchDropdownOpen = false) }
             is AddEditDivisionAction.UpdateDivisionCode -> updateState { it.copy(divisionCode = action.code, divisionCodeError = null) }
+            is AddEditDivisionAction.SelectOptionalCourse -> {
+                updateState {
+                    it.copy(
+                        selectedOptionalCourses = it.selectedOptionalCourses + (action.optionalCourse to action.courseId),
+                        openOptionalDropdowns = it.openOptionalDropdowns - action.optionalCourse
+                    )
+                }
+            }
             is AddEditDivisionAction.ChangeSemesterNumberDropDownVisibility -> updateState { it.copy(isSemesterNumberDropdownOpen = action.isVisible) }
             is AddEditDivisionAction.ChangeBranchDropDownVisibility -> updateState { it.copy(isBranchDropdownOpen = action.isVisible) }
+            is AddEditDivisionAction.ChangeOptionalCourseDropdownVisibility -> {
+                updateState {
+                    val newSet = if (action.isVisible) {
+                        it.openOptionalDropdowns + action.optionalCourse
+                    } else {
+                        it.openOptionalDropdowns - action.optionalCourse
+                    }
+                    it.copy(openOptionalDropdowns = newSet)
+                }
+            }
             is AddEditDivisionAction.FindSemesterClick -> { viewModelScope.launch { findSemester() } }
             is AddEditDivisionAction.SubmitClick -> { viewModelScope.launch { submitForm() } }
         }
@@ -147,7 +174,7 @@ class AddEditDivisionViewModel(
     }
 
     private fun hasUnsavedChanges(): Boolean {
-        return state.divisionCode.isNotBlank() || state.foundSemester != null
+        return state.divisionCode.isNotBlank() || state.foundSemester != null || state.selectedOptionalCourses.isNotEmpty()
     }
 
     private suspend fun findSemester() {
@@ -170,7 +197,13 @@ class AddEditDivisionViewModel(
                 val semesters = result.semesters
                 if (semesters.isNotEmpty()) {
                     // Use the first matching semester
-                    updateState { it.copy(isLoading = false, foundSemester = semesters[0], showDivisionInput = true, divisionCodeError = null) }
+                    val semester = semesters[0]
+                    updateState { it.copy(isLoading = false, foundSemester = semester, showDivisionInput = true, divisionCodeError = null) }
+                    loadOptionalCourses(
+                        semesterNumber = semester.semesterNumber,
+                        branchId = semester.branchId,
+                        schemeId = semester.schemeId
+                    )
                 } else {
                     updateState {
                         it.copy(
@@ -226,21 +259,102 @@ class AddEditDivisionViewModel(
         return codeError == null
     }
 
+    private suspend fun loadOptionalCourses(
+        semesterNumber: SemesterNumber,
+        branchId: String,
+        schemeId: String,
+        divisionId: String? = null
+    ) {
+        updateState { it.copy(isFetchingOptionalCourses = true) }
+
+        courseRepository.getCourses(
+            semesterNumber = semesterNumber,
+            branchId = branchId,
+            schemeId = schemeId,
+            onlyOptional = true,
+            getAll = true
+        )
+            .onSuccess { coursesResult ->
+                val groupedCourses = coursesResult.courses
+                    .filter { it.optionalCourse != null }
+                    .groupBy { it.optionalCourse!! }
+
+                if (divisionId == null) {
+                    updateState {
+                        it.copy(
+                            isFetchingOptionalCourses = false,
+                            optionalCourseGroups = groupedCourses,
+                            selectedOptionalCourses = emptyMap(),
+                            openOptionalDropdowns = emptySet()
+                        )
+                    }
+                } else {
+                    divisionRepository.getCoursesOfDivision(divisionId)
+                        .onSuccess { divisionCourses ->
+                            updateState {
+                                it.copy(
+                                    isFetchingOptionalCourses = false,
+                                    optionalCourseGroups = groupedCourses,
+                                    selectedOptionalCourses = divisionCourses.optionalCourses
+                                        .mapNotNull { it.course }
+                                        .filter { it.optionalCourse != null }
+                                        .associate { course ->
+                                            course.optionalCourse!! to course.id
+                                        },
+                                    openOptionalDropdowns = emptySet()
+                                )
+                            }
+                        }
+                        .onError { error ->
+                            updateState {
+                                it.copy(
+                                    isFetchingOptionalCourses = false,
+                                    dialogState = DialogState(
+                                        dialogType = DialogType.ERROR,
+                                        title = UiText.DynamicString("Error Loading Division Courses"),
+                                        message = error.toUiText()
+                                    )
+                                )
+                            }
+                        }
+                }
+            }
+            .onError { error ->
+                updateState {
+                    it.copy(
+                        isFetchingOptionalCourses = false,
+                        dialogState = DialogState(
+                            dialogType = DialogType.ERROR,
+                            title = UiText.DynamicString("Error Loading Optional Courses"),
+                            message = error.toUiText()
+                        )
+                    )
+                }
+            }
+    }
+
     private suspend fun submitForm() {
         if (!validateDivisionCode() || state.foundSemester == null) return
 
         updateState { it.copy(isSubmitting = true) }
 
         val divisionId = state.divisionId
+        val optionalCourseIds = if (state.selectedOptionalCourses.isNotEmpty()) {
+            state.selectedOptionalCourses.values.toList()
+        } else {
+            null
+        }
         val result = if (state.isEditMode && divisionId != null) {
             divisionRepository.updateDivision(
                 id = divisionId,
-                divisionCode = state.divisionCode
+                divisionCode = state.divisionCode,
+                optionalCourseIds = optionalCourseIds
             )
         } else {
             divisionRepository.addDivision(
                 divisionCode = state.divisionCode,
-                semesterId = state.foundSemester!!.id
+                semesterId = state.foundSemester!!.id,
+                optionalCourseIds = optionalCourseIds
             )
         }
 

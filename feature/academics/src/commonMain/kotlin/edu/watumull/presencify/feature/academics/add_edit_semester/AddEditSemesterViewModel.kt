@@ -5,11 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.onError
 import edu.watumull.presencify.core.domain.onSuccess
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
-import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
 import edu.watumull.presencify.core.domain.repository.academics.SchemeRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.presentation.UiText
@@ -31,7 +29,6 @@ class AddEditSemesterViewModel(
     private val semesterRepository: SemesterRepository,
     private val branchRepository: BranchRepository,
     private val schemeRepository: SchemeRepository,
-    private val courseRepository: CourseRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<AddEditSemesterState, AddEditSemesterEvent, AddEditSemesterAction>(
     initialState = AddEditSemesterState(
@@ -102,8 +99,6 @@ class AddEditSemesterViewModel(
                     )
                 }
 
-                // Fetch optional courses for editing after loading semester details
-                fetchOptionalCourses(semester.semesterNumber, semester.branchId, semester.schemeId, semester.courses)
             }
             .onError { error ->
                 updateState {
@@ -132,7 +127,6 @@ class AddEditSemesterViewModel(
                         isSemesterNumberDropdownOpen = false
                     )
                 }
-                fetchOptionalCoursesIfReady()
             }
 
             is AddEditSemesterAction.UpdateAcademicStartYear -> updateState {
@@ -173,7 +167,6 @@ class AddEditSemesterViewModel(
                         isBranchDropdownOpen = false
                     )
                 }
-                fetchOptionalCoursesIfReady()
             }
 
             is AddEditSemesterAction.UpdateSelectedScheme -> {
@@ -184,7 +177,6 @@ class AddEditSemesterViewModel(
                         isSchemeDropdownOpen = false
                     )
                 }
-                fetchOptionalCoursesIfReady()
             }
 
             is AddEditSemesterAction.ChangeSemesterNumberDropDownVisibility -> updateState {
@@ -197,26 +189,6 @@ class AddEditSemesterViewModel(
             is AddEditSemesterAction.ChangeSchemeDropDownVisibility -> updateState { it.copy(isSchemeDropdownOpen = action.isVisible) }
             is AddEditSemesterAction.ChangeStartDatePickerVisibility -> updateState { it.copy(isStartDatePickerVisible = action.isVisible) }
             is AddEditSemesterAction.ChangeEndDatePickerVisibility -> updateState { it.copy(isEndDatePickerVisible = action.isVisible) }
-            is AddEditSemesterAction.SelectOptionalCourse -> {
-                updateState {
-                    it.copy(
-                        selectedOptionalCourses = it.selectedOptionalCourses + (action.optionalCourse to action.courseId),
-                        openOptionalDropdowns = it.openOptionalDropdowns - action.optionalCourse
-                    )
-                }
-            }
-
-            is AddEditSemesterAction.ChangeOptionalCourseDropdownVisibility -> {
-                updateState {
-                    val newSet = if (action.isVisible) {
-                        it.openOptionalDropdowns + action.optionalCourse
-                    } else {
-                        it.openOptionalDropdowns - action.optionalCourse
-                    }
-                    it.copy(openOptionalDropdowns = newSet)
-                }
-            }
-
             is AddEditSemesterAction.SubmitClick -> {
                 viewModelScope.launch { submitForm() }
             }
@@ -237,87 +209,6 @@ class AddEditSemesterViewModel(
         } else {
             sendEvent(AddEditSemesterEvent.NavigateBack)
         }
-    }
-
-    private fun fetchOptionalCoursesIfReady() {
-        val semesterNumber = state.semesterNumber
-        val branchId = state.selectedBranchId
-        val schemeId = state.selectedSchemeId
-
-        // Fetch if all required filters are selected
-        if (semesterNumber != null && branchId.isNotBlank() && schemeId.isNotBlank()) {
-            viewModelScope.launch {
-                // In edit mode, pass null for existing courses since we're changing filters
-                fetchOptionalCourses(semesterNumber, branchId, schemeId, existingCourses = null)
-            }
-        } else {
-            // Clear optional courses if conditions are not met
-            updateState {
-                it.copy(
-                    optionalCourseGroups = emptyMap(),
-                    selectedOptionalCourses = emptyMap(),
-                    openOptionalDropdowns = emptySet()
-                )
-            }
-        }
-    }
-
-    private suspend fun fetchOptionalCourses(
-        semesterNumber: SemesterNumber,
-        branchId: String,
-        schemeId: String,
-        existingCourses: List<Course>? = null
-    ) {
-        updateState { it.copy(isFetchingOptionalCourses = true) }
-
-        courseRepository.getCourses(
-            semesterNumber = semesterNumber,
-            branchId = branchId,
-            schemeId = schemeId,
-            onlyOptional = true,
-            getAll = true
-        )
-            .onSuccess { result ->
-                // Group courses by optionalCourse
-                val groupedCourses = result.courses
-                    .filter { it.optionalCourse != null }
-                    .groupBy { it.optionalCourse!! }
-
-                // Pre-select existing courses if in edit mode
-                val preSelectedCourses = if (existingCourses != null) {
-                    // Filter only optional courses from existing courses
-                    val existingOptionalCourses = existingCourses.filter { it.optionalCourse != null }
-
-                    // Create map of optionalCourse -> courseId
-                    existingOptionalCourses.associate { course ->
-                        course.optionalCourse!! to course.id
-                    }
-                } else {
-                    emptyMap()
-                }
-
-                updateState {
-                    it.copy(
-                        isFetchingOptionalCourses = false,
-                        optionalCourseGroups = groupedCourses,
-                        // Pre-select existing courses or clear selections
-                        selectedOptionalCourses = preSelectedCourses,
-                        openOptionalDropdowns = emptySet()
-                    )
-                }
-            }
-            .onError { error ->
-                updateState {
-                    it.copy(
-                        isFetchingOptionalCourses = false,
-                        dialogState = DialogState(
-                            dialogType = DialogType.ERROR,
-                            title = UiText.DynamicString("Error Loading Optional Courses"),
-                            message = error.toUiText()
-                        )
-                    )
-                }
-            }
     }
 
     private fun confirmNavigateBack() {
@@ -372,20 +263,12 @@ class AddEditSemesterViewModel(
         val startDt = state.startDate ?: return
         val endDt = state.endDate ?: return
 
-        // Collect selected optional course IDs (for both add and edit modes)
-        val optionalCourseIds = if (state.selectedOptionalCourses.isNotEmpty()) {
-            state.selectedOptionalCourses.values.toList()
-        } else {
-            null
-        }
-
         val result = if (state.isEditMode && state.semesterId != null) {
             val id = state.semesterId!!
             semesterRepository.updateSemester(
                 id = id,
                 startDate = startDt,
-                endDate = endDt,
-                optionalCourseIds = optionalCourseIds
+                endDate = endDt
             )
         } else {
             semesterRepository.addSemester(
@@ -395,8 +278,7 @@ class AddEditSemesterViewModel(
                 academicEndYear = endYear,
                 startDate = startDt,
                 endDate = endDt,
-                schemeId = state.selectedSchemeId,
-                optionalCourseIds = optionalCourseIds
+                schemeId = state.selectedSchemeId
             )
         }
 

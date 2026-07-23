@@ -175,7 +175,10 @@ class DefaultersViewModel(
                 is Result.Success -> {
                     updateState {
                         it.copy(
-                            courseOptions = coursesResult.data,
+                            courseOptions = coursesResult.data.compulsoryCourses + coursesResult.data.optionalCourses.mapNotNull { optionalCourse ->
+                                optionalCourse.course
+                            }.distinctBy { course ->
+                                course.id },
                             areCoursesLoading = false
                         )
                     }
@@ -271,7 +274,12 @@ class DefaultersViewModel(
 
             // 2. Fetch courses for the semester
             val coursesResult = semesterRepository.getCoursesOfSemester(semesterId)
-            val courses = (coursesResult as? Result.Success)?.data ?: emptyList()
+            val courses = (coursesResult as? Result.Success)?.data?.let {
+                it.compulsoryCourses +
+                        it.optionalCourses
+                            .mapNotNull { optional -> optional.course }
+                            .distinctBy { course -> course.id }
+            } ?: emptyList()
             if (courses.isEmpty()) {
                 clearLoadingStateForStudents(students)
                 return@launch
@@ -404,8 +412,10 @@ class DefaultersViewModel(
                 val semesterName = currentState.selectedSemesterNumber?.toDisplayLabel() ?: "N/A"
                 val academicYear = "${currentState.academicStartYear}-${currentState.academicEndYear}"
                 val branchName = currentState.selectedBranch?.name ?: "N/A"
-                val startDateStr = if (currentState.startDate != null) "=\"${currentState.startDate.toReadableString()}\"" else "N/A"
-                val endDateStr = if (currentState.endDate != null) "=\"${currentState.endDate.toReadableString()}\"" else "N/A"
+                val startDateStr =
+                    if (currentState.startDate != null) "=\"${currentState.startDate.toReadableString()}\"" else "N/A"
+                val endDateStr =
+                    if (currentState.endDate != null) "=\"${currentState.endDate.toReadableString()}\"" else "N/A"
 
                 csvBuilder.append("Semester Details\n")
                 csvBuilder.append("Semester Number,Academic Year,Branch,Start Date,End Date\n")

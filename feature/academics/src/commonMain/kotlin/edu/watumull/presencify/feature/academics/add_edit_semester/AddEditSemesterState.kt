@@ -2,7 +2,6 @@ package edu.watumull.presencify.feature.academics.add_edit_semester
 
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
-import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Scheme
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.datetime.LocalDate
@@ -12,7 +11,6 @@ data class AddEditSemesterState(
     val isEditMode: Boolean = false,
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,
-    val isFetchingOptionalCourses: Boolean = false,
 
     val semesterNumber: SemesterNumber? = null,
     val academicStartYear: String = "",
@@ -24,13 +22,6 @@ data class AddEditSemesterState(
 
     val branchOptions: List<Branch> = emptyList(),
     val schemeOptions: List<Scheme> = emptyList(),
-
-    // Optional courses grouped by optionalCourse
-    val optionalCourseGroups: Map<String, List<Course>> = emptyMap(),
-    // Selected course for each optional course group
-    val selectedOptionalCourses: Map<String, String> = emptyMap(),
-    // Track which dropdown is open for each optional course
-    val openOptionalDropdowns: Set<String> = emptySet(),
 
     val semesterNumberError: String? = null,
     val academicStartYearError: String? = null,

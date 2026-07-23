@@ -14,6 +14,7 @@ import edu.watumull.presencify.core.presentation.global_snackbar.SnackbarEvent
 import edu.watumull.presencify.core.presentation.toUiText
 import edu.watumull.presencify.core.presentation.utils.BaseViewModel
 import edu.watumull.presencify.feature.academics.navigation.AcademicsRoutes
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
 class SemesterDetailsViewModel(
@@ -50,8 +51,29 @@ class SemesterDetailsViewModel(
         updateState { it.copy(isLoadingCourses = true) }
 
         semesterRepository.getCoursesOfSemester(semesterId)
-            .onSuccess { courses ->
-                updateState { it.copy(courses = courses, isLoadingCourses = false) }
+            .onSuccess { coursesResult ->
+                val optionalCourseDivisionCodes = coursesResult.optionalCourses
+                    .mapNotNull { divisionCourse ->
+                        val course = divisionCourse.course ?: return@mapNotNull null
+                        val divisionCode = divisionCourse.division?.divisionCode ?: return@mapNotNull null
+                        course.id to divisionCode
+                    }
+                    .groupBy(
+                        keySelector = { it.first },
+                        valueTransform = { it.second }
+                    )
+                    .mapValues { (_, divisionCodes) ->
+                        divisionCodes.distinct().toPersistentList()
+                    }
+
+                val courses = coursesResult.compulsoryCourses + coursesResult.optionalCourses.mapNotNull { it.course }.distinctBy { it.id }
+                updateState {
+                    it.copy(
+                        courses = courses,
+                        optionalCourseDivisionCodes = optionalCourseDivisionCodes,
+                        isLoadingCourses = false
+                    )
+                }
             }
             .onError { _ ->
                 updateState { it.copy(isLoadingCourses = false) }

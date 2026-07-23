@@ -1,12 +1,26 @@
 package edu.watumull.presencify.core.data.mapper.academics
 
-import edu.watumull.presencify.core.data.dto.academics.SemesterCourseDto
-import edu.watumull.presencify.core.domain.model.academics.SemesterCourse
+import edu.watumull.presencify.core.data.dto.academics.DivisionCourseDto
+import edu.watumull.presencify.core.data.dto.academics.DivisionCoursesDto
+import edu.watumull.presencify.core.data.dto.academics.SemesterCoursesDto
+import edu.watumull.presencify.core.domain.model.academics.DivisionCourse
+import edu.watumull.presencify.core.domain.model.academics.DivisionCourses
+import edu.watumull.presencify.core.domain.model.academics.SemesterCourses
 
-fun SemesterCourseDto.toDomain(): SemesterCourse = SemesterCourse(
+fun DivisionCourseDto.toDomain(): DivisionCourse = DivisionCourse(
     id = id,
-    semesterId = semesterId,
+    divisionId = divisionId,
     courseId = courseId,
-    semester = semester?.toDomain(),
-    course = course?.toDomain()
+    course = course?.toDomain(),
+    division = division?.toDomain()
+)
+
+fun SemesterCoursesDto.toDomain(): SemesterCourses = SemesterCourses(
+    compulsoryCourses = compulsoryCourses.map { it.toDomain() },
+    optionalCourses = optionalCourses.map { it.toDomain() }
+)
+
+fun DivisionCoursesDto.toDomain(): DivisionCourses = DivisionCourses(
+    compulsoryCourses = compulsoryCourses.map { it.toDomain() },
+    optionalCourses = optionalCourses.map { it.toDomain() }
 )

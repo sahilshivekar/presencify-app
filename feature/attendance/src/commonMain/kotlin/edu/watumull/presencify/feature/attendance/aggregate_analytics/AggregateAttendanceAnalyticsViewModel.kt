@@ -183,7 +183,9 @@ class AggregateAttendanceAnalyticsViewModel(
         var courseFetchFailed = false
 
         semesterRepository.getCoursesOfSemester(semesterId)
-            .onSuccess { fetchedCourses -> courses = fetchedCourses }
+            .onSuccess { fetchedCourses ->
+                courses = fetchedCourses.compulsoryCourses + fetchedCourses.optionalCourses.mapNotNull { it.course }.distinctBy { it.id }
+            }
             .onError { error ->
                 courseFetchFailed = true
                 updateState {

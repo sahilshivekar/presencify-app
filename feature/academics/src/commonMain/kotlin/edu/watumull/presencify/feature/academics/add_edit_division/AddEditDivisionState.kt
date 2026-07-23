@@ -2,6 +2,7 @@ package edu.watumull.presencify.feature.academics.add_edit_division
 
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
+import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 
@@ -24,6 +25,10 @@ data class AddEditDivisionState(
     val foundSemester: Semester? = null,
     val divisionCode: String = "",
     val showDivisionInput: Boolean = false,
+    val isFetchingOptionalCourses: Boolean = false,
+    val optionalCourseGroups: Map<String, List<Course>> = emptyMap(),
+    val selectedOptionalCourses: Map<String, String> = emptyMap(),
+    val openOptionalDropdowns: Set<String> = emptySet(),
 
     // Error states
     val semesterNumberError: String? = null,

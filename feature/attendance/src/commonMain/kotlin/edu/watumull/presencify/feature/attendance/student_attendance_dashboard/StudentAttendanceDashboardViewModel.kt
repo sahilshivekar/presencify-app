@@ -154,7 +154,7 @@ class StudentAttendanceDashboardViewModel(
 
         coursesResult
             .onSuccess { fetchedCourses ->
-                courses = fetchedCourses
+                courses = fetchedCourses.compulsoryCourses + fetchedCourses.optionalCourses.mapNotNull { it.course }.distinctBy { it.id }
             }
             .onError { error ->
                 courseFetchFailed = true

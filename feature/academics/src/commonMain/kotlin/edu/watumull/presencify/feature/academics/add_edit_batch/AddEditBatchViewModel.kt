@@ -34,7 +34,8 @@ class AddEditBatchViewModel(
 ) : BaseViewModel<AddEditBatchState, AddEditBatchEvent, AddEditBatchAction>(
     initialState = AddEditBatchState(
         batchId = savedStateHandle.toRoute<AcademicsRoutes.AddEditBatch>().batchId,
-        isEditMode = savedStateHandle.toRoute<AcademicsRoutes.AddEditBatch>().batchId != null
+        isEditMode = savedStateHandle.toRoute<AcademicsRoutes.AddEditBatch>().batchId != null,
+        isLoadingBatchDetails = savedStateHandle.toRoute<AcademicsRoutes.AddEditBatch>().batchId != null
     )
 ) {
 
@@ -66,6 +67,7 @@ class AddEditBatchViewModel(
                             .onSuccess { semester ->
                                 updateState {
                                     it.copy(
+                                        isLoadingBatchDetails = false,
                                         foundDivision = division,
                                         foundSemester = semester,
                                         batchCode = batch.batchCode,
@@ -76,6 +78,7 @@ class AddEditBatchViewModel(
                             .onError { error ->
                                 updateState {
                                     it.copy(
+                                        isLoadingBatchDetails = false,
                                         dialogState = DialogState(
                                             dialogType = DialogType.ERROR,
                                             title = UiText.DynamicString("Error Loading Semester"),
@@ -88,6 +91,7 @@ class AddEditBatchViewModel(
                     .onError { error ->
                         updateState {
                             it.copy(
+                                isLoadingBatchDetails = false,
                                 dialogState = DialogState(
                                     dialogType = DialogType.ERROR,
                                     title = UiText.DynamicString("Error Loading Division"),
@@ -100,6 +104,7 @@ class AddEditBatchViewModel(
             .onError { error ->
                 updateState {
                     it.copy(
+                        isLoadingBatchDetails = false,
                         dialogState = DialogState(
                             dialogType = DialogType.ERROR,
                             title = UiText.DynamicString("Error Loading Batch"),

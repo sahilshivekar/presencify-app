@@ -2,6 +2,7 @@ package edu.watumull.presencify.feature.academics.division_details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +27,7 @@ import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAle
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.model.auth.UserRole
 import edu.watumull.presencify.core.presentation.UiConstants
+import edu.watumull.presencify.core.presentation.components.CourseListItem
 import edu.watumull.presencify.core.presentation.components.DivisionListItem
 import edu.watumull.presencify.core.presentation.composition_locals.LocalUserRole
 import kotlinx.collections.immutable.toPersistentList
@@ -78,6 +83,7 @@ fun DivisionDetailsScreen(
                             }
                         }
 
+
                         Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                         if (LocalUserRole.current == UserRole.ADMIN) {
                             Row(
@@ -113,6 +119,49 @@ fun DivisionDetailsScreen(
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
+                        Text(
+                            text = "Courses of this division",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.height(DesignToken.spacing.md))
+
+                        if (state.isLoadingCourses) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = DesignToken.spacing.xxl),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                androidx.compose.material3.CircularProgressIndicator(
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else if (state.courses.isEmpty()) {
+                            PresencifyNoResultsIndicator(text = "No courses found for this division")
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
+                            ) {
+                                items(
+                                    items = state.courses,
+                                    key = { course -> course.id }
+                                ) { course ->
+                                    CourseListItem(
+                                        name = course.name,
+                                        code = course.code,
+                                        schemeName = course.scheme?.name ?: "N/A",
+                                        optionalCourse = course.optionalCourse,
+                                        onClick = { },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
+                        }
+
+
                     }
                 }
             }

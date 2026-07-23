@@ -28,6 +28,7 @@ class DivisionDetailsViewModel(
     init {
         viewModelScope.launch {
             loadDivision()
+            loadCoursesOfDivision()
         }
     }
 
@@ -40,6 +41,26 @@ class DivisionDetailsViewModel(
             }
             .onError { error ->
                 updateState { it.copy(viewState = DivisionDetailsState.ViewState.Error(error.toUiText())) }
+            }
+    }
+
+    private suspend fun loadCoursesOfDivision() {
+        val divisionId = state.divisionId
+
+        updateState { it.copy(isLoadingCourses = true) }
+
+        divisionRepository.getCoursesOfDivision(divisionId)
+            .onSuccess { coursesResult ->
+                val courses = coursesResult.compulsoryCourses + coursesResult.optionalCourses.mapNotNull { it.course }.distinctBy { it.id }
+                updateState {
+                    it.copy(
+                        courses = courses,
+                        isLoadingCourses = false
+                    )
+                }
+            }
+            .onError { _ ->
+                updateState { it.copy(isLoadingCourses = false) }
             }
     }
 

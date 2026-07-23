@@ -1,6 +1,6 @@
 package edu.watumull.presencify.core.data.network.academics
 
-import edu.watumull.presencify.core.data.dto.academics.CourseDto
+import edu.watumull.presencify.core.data.dto.academics.SemesterCoursesDto
 import edu.watumull.presencify.core.data.dto.academics.SemesterDto
 import edu.watumull.presencify.core.data.dto.academics.SemesterListWithTotalCountDto
 import edu.watumull.presencify.core.domain.DataError
@@ -29,8 +29,7 @@ interface RemoteSemesterDataSource {
         academicEndYear: Int,
         startDate: LocalDate,
         endDate: LocalDate,
-        schemeId: String,
-        optionalCourseIds: List<String>? = null
+        schemeId: String
     ): Result<SemesterDto, DataError.Remote>
 
     suspend fun getSemesterById(id: String): Result<SemesterDto, DataError.Remote>
@@ -38,13 +37,12 @@ interface RemoteSemesterDataSource {
     suspend fun updateSemester(
         id: String,
         startDate: LocalDate,
-        endDate: LocalDate,
-        optionalCourseIds: List<String>? = null
+        endDate: LocalDate
     ): Result<SemesterDto, DataError.Remote>
 
     suspend fun removeSemester(id: String): Result<Unit, DataError.Remote>
 
-    suspend fun getCoursesOfSemester(semesterId: String): Result<List<CourseDto>, DataError.Remote>
+    suspend fun getCoursesOfSemester(semesterId: String): Result<SemesterCoursesDto, DataError.Remote>
 
     suspend fun bulkCreateSemesters(semesters: List<Map<String, Any>>): Result<List<SemesterDto>, DataError.Remote>
 

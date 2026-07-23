@@ -14,7 +14,9 @@ sealed interface AddEditDivisionAction {
     data class UpdateAcademicEndYear(val year: String) : AddEditDivisionAction
     data class UpdateSelectedBranch(val branchId: String) : AddEditDivisionAction
     data class UpdateDivisionCode(val code: String) : AddEditDivisionAction
+    data class SelectOptionalCourse(val optionalCourse: String, val courseId: String) : AddEditDivisionAction
 
     data class ChangeSemesterNumberDropDownVisibility(val isVisible: Boolean) : AddEditDivisionAction
     data class ChangeBranchDropDownVisibility(val isVisible: Boolean) : AddEditDivisionAction
+    data class ChangeOptionalCourseDropdownVisibility(val optionalCourse: String, val isVisible: Boolean) : AddEditDivisionAction
 }

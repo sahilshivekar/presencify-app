@@ -4,6 +4,7 @@ import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
+import kotlinx.collections.immutable.PersistentList
 
 data class SemesterDetailsState(
     val viewState: ViewState = ViewState.Loading,
@@ -12,6 +13,7 @@ data class SemesterDetailsState(
     val semester: Semester? = null,
     val isRemovingSemester: Boolean = false,
     val courses: List<Course> = emptyList(),
+    val optionalCourseDivisionCodes: Map<String, PersistentList<String>> = emptyMap(),
     val isLoadingCourses: Boolean = false,
 ) {
     sealed interface ViewState {

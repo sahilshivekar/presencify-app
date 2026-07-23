@@ -5,6 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UpdateSemesterRequestDto(
     val startDate: String,
-    val endDate: String,
-    val optionalCourseIds: List<String>? = null
+    val endDate: String
 )

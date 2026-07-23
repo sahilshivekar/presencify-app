@@ -328,9 +328,11 @@ class SearchAttendanceViewModel(
                     // Fetch courses for this semester
                     semesterRepository.getCoursesOfSemester(semester.id)
                         .onSuccess { courses ->
+                            val combinedCourses = courses.compulsoryCourses + courses.optionalCourses.mapNotNull { divisionCourse ->
+                                divisionCourse.course }.distinctBy { it.id }
                             updateState {
                                 it.copy(
-                                    courseOptions = courses.toPersistentList(),
+                                    courseOptions = combinedCourses.toPersistentList(),
                                     areCoursesLoading = false
                                 )
                             }

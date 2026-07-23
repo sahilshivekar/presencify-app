@@ -6,8 +6,8 @@ import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.map
-import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
+import edu.watumull.presencify.core.domain.model.academics.SemesterCourses
 import edu.watumull.presencify.core.domain.model.academics.SemesterListWithTotalCount
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import kotlinx.datetime.LocalDate
@@ -45,11 +45,10 @@ class SemesterRepositoryImpl(
         academicEndYear: Int,
         startDate: LocalDate,
         endDate: LocalDate,
-        schemeId: String,
-        optionalCourseIds: List<String>?
+        schemeId: String
     ): Result<Semester, DataError.Remote> {
         return remoteSemesterDataSource.addSemester(
-            branchId, semesterNumber, academicStartYear, academicEndYear, startDate, endDate, schemeId, optionalCourseIds
+            branchId, semesterNumber, academicStartYear, academicEndYear, startDate, endDate, schemeId
         ).map { it.toDomain() }
     }
 
@@ -60,18 +59,17 @@ class SemesterRepositoryImpl(
     override suspend fun updateSemester(
         id: String,
         startDate: LocalDate,
-        endDate: LocalDate,
-        optionalCourseIds: List<String>?
+        endDate: LocalDate
     ): Result<Semester, DataError.Remote> {
-        return remoteSemesterDataSource.updateSemester(id, startDate, endDate, optionalCourseIds).map { it.toDomain() }
+        return remoteSemesterDataSource.updateSemester(id, startDate, endDate).map { it.toDomain() }
     }
 
     override suspend fun removeSemester(id: String): Result<Unit, DataError.Remote> {
         return remoteSemesterDataSource.removeSemester(id)
     }
 
-    override suspend fun getCoursesOfSemester(semesterId: String): Result<List<Course>, DataError.Remote> {
-        return remoteSemesterDataSource.getCoursesOfSemester(semesterId).map { it.map { course -> course.toDomain() } }
+    override suspend fun getCoursesOfSemester(semesterId: String): Result<SemesterCourses, DataError.Remote> {
+        return remoteSemesterDataSource.getCoursesOfSemester(semesterId).map { it.toDomain() }
     }
 
     override suspend fun bulkCreateSemesters(semesters: List<Map<String, Any>>): Result<List<Semester>, DataError.Remote> {

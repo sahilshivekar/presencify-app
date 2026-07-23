@@ -10,6 +10,7 @@ import edu.watumull.presencify.core.domain.enums.CourseType
 import edu.watumull.presencify.core.domain.enums.DayOfWeek
 import edu.watumull.presencify.core.domain.repository.academics.BatchRepository
 import edu.watumull.presencify.core.domain.repository.academics.CourseRepository
+import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
 import edu.watumull.presencify.core.domain.repository.schedule.ClassSessionRepository
 import edu.watumull.presencify.core.domain.repository.schedule.RoomRepository
@@ -41,6 +42,7 @@ class AddEditClassViewModel(
     private val classSessionRepository: ClassSessionRepository,
     private val timetableRepository: TimetableRepository,
     private val courseRepository: CourseRepository,
+    private val divisionRepository: DivisionRepository,
     private val semesterRepository: SemesterRepository,
     private val teacherRepository: TeacherRepository,
     private val roomRepository: RoomRepository,
@@ -79,23 +81,28 @@ class AddEditClassViewModel(
         // First get the timetable to find the division and semester
         timetableRepository.getTimetableById(state.timetableId)
             .onSuccess { timetable ->
-                timetable.division?.semester?.id?.let { semesterId ->
-                    // Load courses and semester details in parallel
+                val divisionId = timetable.division?.id
+                val semesterId = timetable.division?.semester?.id
+
+                if (divisionId != null && semesterId != null) {
+                    // Load division courses and semester details in parallel
                     viewModelScope.launch {
-                        val coursesResult = semesterRepository.getCoursesOfSemester(semesterId)
+                        val coursesResult = divisionRepository.getCoursesOfDivision(divisionId)
                         val semesterResult = semesterRepository.getSemesterById(semesterId)
 
                         coursesResult.onSuccess { courses ->
                             semesterResult.onSuccess { semester ->
                                 updateState {
+                                    val combinedCourses = courses.compulsoryCourses + courses.optionalCourses.mapNotNull { divisionCourse ->
+                                        divisionCourse.course }.distinctBy { course -> course.id }
                                     val newState = it.copy(
-                                        availableCourses = courses.toImmutableList(),
+                                        availableCourses = combinedCourses.toImmutableList(),
                                         isLoadingCourses = false,
                                         activeFrom = it.activeFrom ?: semester.startDate,
                                         activeTill = it.activeTill ?: semester.endDate
                                     )
                                     if (it.isEditMode && it.selectedCourse != null) {
-                                        val matchedCourse = courses.find { course -> course.id == it.selectedCourse?.id }
+                                        val matchedCourse = combinedCourses.find { course -> course.id == it.selectedCourse?.id }
                                         if (matchedCourse != null) {
                                             newState.copy(selectedCourse = matchedCourse)
                                         } else {
@@ -112,14 +119,15 @@ class AddEditClassViewModel(
                             updateState { it.copy(isLoadingCourses = false) }
                         }
                     }
-                } ?: run {
+                } else {
+                    val missingEntity = if (divisionId == null) "Division" else "Semester"
                     updateState {
                         it.copy(
                             isLoadingCourses = false,
                             dialogState = DialogState(
                                 dialogType = DialogType.ERROR,
                                 title = UiText.DynamicString("Error"),
-                                message = UiText.DynamicString("Semester not found for this timetable"),
+                                message = UiText.DynamicString("$missingEntity not found for this timetable"),
                             )
                         )
                     }

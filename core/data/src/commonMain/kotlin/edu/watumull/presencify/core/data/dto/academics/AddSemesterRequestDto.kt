@@ -10,6 +10,5 @@ data class AddSemesterRequestDto(
     val academicEndYear: String,
     val startDate: String,
     val endDate: String,
-    val schemeId: String,
-    val optionalCourseIds: List<String>? = null
+    val schemeId: String
 )

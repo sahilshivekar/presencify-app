@@ -9,6 +9,7 @@ import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 data class AddEditBatchState(
     val batchId: String? = null,
     val isEditMode: Boolean = false,
+    val isLoadingBatchDetails: Boolean = false,
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,
 

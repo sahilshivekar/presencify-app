@@ -22,8 +22,4 @@ sealed interface AddEditSemesterAction {
     data class ChangeSchemeDropDownVisibility(val isVisible: Boolean) : AddEditSemesterAction
     data class ChangeStartDatePickerVisibility(val isVisible: Boolean) : AddEditSemesterAction
     data class ChangeEndDatePickerVisibility(val isVisible: Boolean) : AddEditSemesterAction
-
-    // Optional course actions
-    data class SelectOptionalCourse(val optionalCourse: String, val courseId: String) : AddEditSemesterAction
-    data class ChangeOptionalCourseDropdownVisibility(val optionalCourse: String, val isVisible: Boolean) : AddEditSemesterAction
 }

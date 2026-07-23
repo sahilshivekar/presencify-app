@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -160,54 +159,6 @@ fun AddEditSemesterScreen(
                     enabled = !state.isLoading && !state.isSubmitting && !state.isEditMode,
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                // Optional Courses Section
-                if (state.optionalCourseGroups.isNotEmpty()) {
-                    Spacer(Modifier.height(DesignToken.spacing.xl))
-
-                    Text(
-                        text = "Optional Courses",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = DesignToken.spacing.md)
-                    )
-
-                    // Dynamically create a dropdown for each optional course group
-                    state.optionalCourseGroups.keys.sorted().forEach { optionalCourse ->
-                        val courses = state.optionalCourseGroups[optionalCourse] ?: emptyList()
-                        val selectedCourseId = state.selectedOptionalCourses[optionalCourse]
-                        val selectedCourse = courses.find { it.id == selectedCourseId }
-                        val isDropdownOpen = state.openOptionalDropdowns.contains(optionalCourse)
-
-                        PresencifyDropDownMenuBox<edu.watumull.presencify.core.domain.model.academics.Course>(
-                            value = selectedCourse?.toDisplayLabel() ?: "",
-                            options = courses,
-                            onSelectItem = { course ->
-                                onAction(AddEditSemesterAction.SelectOptionalCourse(optionalCourse, course.id))
-                            },
-                            label = "$optionalCourse *",
-                            itemToString = { it.toDisplayLabel() },
-                            expanded = isDropdownOpen,
-                            onDropDownVisibilityChanged = { isVisible ->
-                                onAction(AddEditSemesterAction.ChangeOptionalCourseDropdownVisibility(optionalCourse, isVisible))
-                            },
-                            enabled = !state.isLoading && !state.isSubmitting && !state.isFetchingOptionalCourses,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(Modifier.height(DesignToken.spacing.lg))
-                    }
-                }
-
-                // Show loading indicator when fetching optional courses
-                if (state.isFetchingOptionalCourses) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.padding(DesignToken.spacing.lg),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
 
                 Spacer(Modifier.height(DesignToken.spacing.xl))
 

@@ -3,8 +3,8 @@ package edu.watumull.presencify.core.domain.repository.academics
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
-import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.academics.Semester
+import edu.watumull.presencify.core.domain.model.academics.SemesterCourses
 import edu.watumull.presencify.core.domain.model.academics.SemesterListWithTotalCount
 import kotlinx.datetime.LocalDate
 
@@ -29,8 +29,7 @@ interface SemesterRepository {
         academicEndYear: Int,
         startDate: LocalDate,
         endDate: LocalDate,
-        schemeId: String,
-        optionalCourseIds: List<String>? = null
+        schemeId: String
     ): Result<Semester, DataError.Remote>
 
     suspend fun getSemesterById(id: String): Result<Semester, DataError.Remote>
@@ -38,13 +37,12 @@ interface SemesterRepository {
     suspend fun updateSemester(
         id: String,
         startDate: LocalDate,
-        endDate: LocalDate,
-        optionalCourseIds: List<String>? = null
+        endDate: LocalDate
     ): Result<Semester, DataError.Remote>
 
     suspend fun removeSemester(id: String): Result<Unit, DataError.Remote>
 
-    suspend fun getCoursesOfSemester(semesterId: String): Result<List<Course>, DataError.Remote>
+    suspend fun getCoursesOfSemester(semesterId: String): Result<SemesterCourses, DataError.Remote>
 
     suspend fun bulkCreateSemesters(semesters: List<Map<String, Any>>): Result<List<Semester>, DataError.Remote>
 
