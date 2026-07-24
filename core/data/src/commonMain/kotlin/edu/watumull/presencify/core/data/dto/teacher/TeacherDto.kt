@@ -22,7 +22,7 @@ data class TeacherDto(
     val password: String? = null,
     val createdAt: String,
     val updatedAt: String,
-    val isActive: Boolean = true,
+    val isActive: Boolean,
     val refreshToken: String? = null,
     @SerialName("Classes")
     val classes: List<ClassDto>? = null,

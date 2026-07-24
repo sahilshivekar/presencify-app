@@ -173,6 +173,7 @@ private fun SearchTeacherScreenContent(
                             teacherName = teacherName,
                             role = teacher.role,
                             teacherImageUrl = teacher.teacherImageUrl,
+                            isActive = teacher.isActive,
                             trailingContent = if (state.isSelectable) {
                                 {
                                     Icon(

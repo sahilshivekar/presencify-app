@@ -198,7 +198,7 @@ class SearchCourseViewModel(
 
     private suspend fun loadTeachers() {
         updateState { it.copy(areTeachersLoading = true) }
-        teacherRepository.getTeachers(searchQuery = null, getAll = true)
+        teacherRepository.getTeachers(searchQuery = null, getAll = true, isActive = true)
             .onSuccess { response ->
                 updateState {
                     it.copy(

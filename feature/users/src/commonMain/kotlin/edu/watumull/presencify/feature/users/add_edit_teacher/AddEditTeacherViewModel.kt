@@ -57,6 +57,8 @@ class AddEditTeacherViewModel(
                         gender = teacher.gender,
                         highestQualification = teacher.highestQualification ?: "",
                         role = teacher.role,
+                        isActive = teacher.isActive,
+                        originalIsActive = teacher.isActive,
                         email = teacher.email,
                         phoneNumber = teacher.phoneNumber,
                         teacherImageUrl = teacher.teacherImageUrl
@@ -117,6 +119,9 @@ class AddEditTeacherViewModel(
             is AddEditTeacherAction.ChangeRoleDropDownVisibility -> updateState {
                 it.copy(isRoleDropdownOpen = action.isVisible)
             }
+            is AddEditTeacherAction.UpdateIsActive -> updateState {
+                it.copy(isActive = action.isActive)
+            }
 
             // Contact Details
             is AddEditTeacherAction.UpdateEmail -> {
@@ -176,7 +181,8 @@ class AddEditTeacherViewModel(
         return state.firstName.isNotBlank() ||
                 state.lastName.isNotBlank() ||
                 state.email.isNotBlank() ||
-                state.phoneNumber.isNotBlank()
+                state.phoneNumber.isNotBlank() ||
+                (state.originalIsActive != null && state.isActive != state.originalIsActive)
     }
 
     private fun validateForm(): Boolean {
@@ -270,9 +276,9 @@ class AddEditTeacherViewModel(
         email = state.email,
         phoneNumber = state.phoneNumber,
         gender = state.gender!!,
-        highestQualification = state.highestQualification.takeIf { it.isNotBlank() },
-        role = state.role!!,
-        isActive = true,
+                highestQualification = state.highestQualification.takeIf { it.isNotBlank() },
+                role = state.role!!,
+        isActive = state.isActive,
         teacherImage = state.teacherImageBytes
     )
 
@@ -286,5 +292,6 @@ class AddEditTeacherViewModel(
         gender = state.gender,
         highestQualification = state.highestQualification.takeIf { it.isNotBlank() },
         phoneNumber = state.phoneNumber,
+        isActive = state.isActive,
     )
 }

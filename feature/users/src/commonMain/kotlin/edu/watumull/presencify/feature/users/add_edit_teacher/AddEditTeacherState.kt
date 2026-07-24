@@ -28,6 +28,8 @@ data class AddEditTeacherState(
     val role: TeacherRole? = null,
     val roleError: String? = null,
     val isRoleDropdownOpen: Boolean = false,
+    val isActive: Boolean = true,
+    val originalIsActive: Boolean? = null,
 
     // Contact Details
     val email: String = "",

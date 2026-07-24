@@ -15,6 +15,7 @@ interface RemoteTeacherDataSource {
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null,
+        isActive: Boolean = false,
     ): Result<TeacherListWithTotalCountDto, DataError.Remote>
 
     suspend fun addTeacher(
@@ -40,6 +41,7 @@ interface RemoteTeacherDataSource {
         gender: Gender?,
         highestQualification: String?,
         phoneNumber: String?,
+        isActive: Boolean?,
     ): Result<TeacherDto, DataError.Remote>
 
     suspend fun updateTeacherPassword(

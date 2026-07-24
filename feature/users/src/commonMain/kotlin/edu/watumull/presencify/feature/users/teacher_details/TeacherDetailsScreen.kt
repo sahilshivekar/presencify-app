@@ -368,6 +368,11 @@ private fun TeacherDetailsContainer(state: TeacherDetailsState) {
         DetailRow(
             label = "Role",
             value = state.teacher?.role?.toDisplayLabel() ?: "",
+        )
+
+        DetailRow(
+            label = "Status",
+            value = if (state.teacher?.isActive == true) "Active" else "Inactive",
             isLast = true
         )
     }

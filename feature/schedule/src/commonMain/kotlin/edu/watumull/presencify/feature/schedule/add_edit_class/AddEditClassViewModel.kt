@@ -149,7 +149,7 @@ class AddEditClassViewModel(
 
     private suspend fun loadTeachers(courseId: String? = null) {
         updateState { it.copy(isLoadingTeachers = true) }
-        teacherRepository.getTeachers(courseId = courseId, getAll = true)
+        teacherRepository.getTeachers(courseId = courseId, getAll = true, isActive = true)
             .onSuccess { teachersWithCount ->
                 updateState {
                     val newState = it.copy(

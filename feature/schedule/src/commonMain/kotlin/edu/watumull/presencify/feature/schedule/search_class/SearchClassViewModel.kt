@@ -240,7 +240,7 @@ class SearchClassViewModel(
             }
 
             // Load all teachers
-            val teachersResult = teacherRepository.getTeachers(getAll = true)
+            val teachersResult = teacherRepository.getTeachers(getAll = true, isActive = true)
             when (teachersResult) {
                 is edu.watumull.presencify.core.domain.Result.Success -> {
                     updateState {

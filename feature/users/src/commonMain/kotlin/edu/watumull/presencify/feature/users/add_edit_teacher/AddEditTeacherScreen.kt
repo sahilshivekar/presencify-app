@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -171,6 +172,32 @@ private fun AddEditTeacherScreenContent(
             enabled = !state.isLoading && !state.isSubmitting,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(Modifier.height(DesignToken.spacing.xl))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Active",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = if (state.isActive) "Teacher is currently active" else "Teacher is currently inactive",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(
+                checked = state.isActive,
+                onCheckedChange = { onAction(AddEditTeacherAction.UpdateIsActive(it)) },
+                enabled = !state.isLoading && !state.isSubmitting
+            )
+        }
 
         Spacer(Modifier.height(DesignToken.spacing.xl))
 

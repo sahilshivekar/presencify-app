@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -34,6 +35,7 @@ import edu.watumull.presencify.core.domain.enums.TeacherRole
  * @param teacherName The name of the teacher (required).
  * @param role Optional teacher role (Teacher, Head of Department, Principal).
  * @param teacherImageUrl Optional URL for teacher profile image.
+ * @param isActive Whether the teacher is currently active.
  * @param feedback Optional feedback message to display.
  * @param onClick Optional click handler for the list item.
  * @param modifier Modifier for the list item.
@@ -43,35 +45,49 @@ fun TeacherListItem(
     teacherName: String,
     role: TeacherRole? = null,
     teacherImageUrl: String? = null,
+    isActive: Boolean = false,
     feedback: ListItemFeedback? = null,
     trailingContent: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    PresencifyListItem(
+        PresencifyListItem(
         leadingContent = {
-            if (teacherImageUrl != null) {
-                AsyncImage(
-                    model = teacherImageUrl,
-                    contentDescription = "Teacher profile image",
-                    modifier = Modifier
-                        .size(DesignToken.avatars.md)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(DesignToken.avatars.md)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Default profile",
-                        modifier = Modifier.size(DesignToken.avatars.md),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+            Box {
+                if (teacherImageUrl != null) {
+                    AsyncImage(
+                        model = teacherImageUrl,
+                        contentDescription = "Teacher profile image",
+                        modifier = Modifier
+                            .size(DesignToken.avatars.md)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(DesignToken.avatars.md)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Default profile",
+                            modifier = Modifier.size(DesignToken.avatars.md),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                if (isActive) {
+                    Box(
+                        modifier = Modifier
+                            .padding(DesignToken.spacing.xxs)
+                            .align(Alignment.BottomEnd)
+                            .size(DesignToken.spacing.sm)
+                            .clip(CircleShape)
+                            .background(Color.Green)
                     )
                 }
             }
@@ -102,7 +118,7 @@ fun TeacherListItem(
                             is ListItemFeedback.Success -> Color.Green to it.message
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
-                        Column {    
+                        Column {
                             Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                             HorizontalDivider()
                             Spacer(modifier = Modifier.height(DesignToken.spacing.xs))

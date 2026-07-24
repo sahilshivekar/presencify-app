@@ -1,9 +1,11 @@
 package edu.watumull.presencify.core.data.network.teacher
 
 import edu.watumull.presencify.core.data.HttpClientProvider
+import edu.watumull.presencify.core.data.dto.teacher.AddTeacherRequestDto
 import edu.watumull.presencify.core.data.dto.teacher.TeacherDto
 import edu.watumull.presencify.core.data.dto.teacher.TeacherListWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.teacher.TeacherTeachesCourseDto
+import edu.watumull.presencify.core.data.dto.teacher.UpdateTeacherRequestDto
 import edu.watumull.presencify.core.data.network.teacher.ApiEndpoints.ADD_TEACHER
 import edu.watumull.presencify.core.data.network.teacher.ApiEndpoints.ADD_TEACHING_SUBJECT
 import edu.watumull.presencify.core.data.network.teacher.ApiEndpoints.GET_TEACHERS
@@ -35,7 +37,8 @@ class KtorRemoteTeacherDataSource(
         courseId: String?,
         page: Int?,
         limit: Int?,
-        getAll: Boolean?
+        getAll: Boolean?,
+        isActive: Boolean
     ): Result<TeacherListWithTotalCountDto, DataError.Remote> {
         return safeCall<TeacherListWithTotalCountDto> {
             clientProvider.getClient().get(GET_TEACHERS) {
@@ -44,6 +47,7 @@ class KtorRemoteTeacherDataSource(
                 page?.let { parameter("page", it) }
                 limit?.let { parameter("limit", it) }
                 getAll?.let { parameter("getAll", it) }
+                parameter("isActive", isActive)
             }
         }
     }
@@ -60,22 +64,31 @@ class KtorRemoteTeacherDataSource(
         isActive: Boolean?,
         teacherImage: ByteArray?
     ): Result<TeacherDto, DataError.Remote> {
-
-
+        val request = AddTeacherRequestDto(
+            firstName = firstName,
+            middleName = middleName,
+            lastName = lastName,
+            email = email,
+            phoneNumber = phoneNumber,
+            gender = gender,
+            highestQualification = highestQualification,
+            role = role,
+            isActive = isActive,
+        )
         return safeCall<TeacherDto> {
             clientProvider.getClient().post(ADD_TEACHER) {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
-                            append("firstName", firstName)
-                            middleName?.let { append("middleName", it) }
-                            append("lastName", lastName)
-                            append("email", email)
-                            append("phoneNumber", phoneNumber)
-                            append("gender", gender.value)
-                            highestQualification?.let { append("highestQualification", it) }
-                            append("role", role.value)
-                            isActive?.let { append("isActive", it.toString()) }
+                            append("firstName", request.firstName)
+                            request.middleName?.let { append("middleName", it) }
+                            append("lastName", request.lastName)
+                            append("email", request.email)
+                            append("phoneNumber", request.phoneNumber)
+                            append("gender", request.gender.value)
+                            request.highestQualification?.let { append("highestQualification", it) }
+                            append("role", request.role.value)
+                            request.isActive?.let { append("isActive", it.toString()) }
                             teacherImage?.let {
                                 val mimeType = getMimeType(teacherImage)
                                 val extension = getExtensionFromMime(mimeType)
@@ -107,21 +120,24 @@ class KtorRemoteTeacherDataSource(
         gender: Gender?,
         highestQualification: String?,
         phoneNumber: String?,
+        isActive: Boolean?,
     ): Result<TeacherDto, DataError.Remote> {
+        val request = UpdateTeacherRequestDto(
+            id = id,
+            firstName = firstName,
+            middleName = middleName,
+            lastName = lastName,
+            email = email,
+            role = role,
+            gender = gender,
+            highestQualification = highestQualification,
+            phoneNumber = phoneNumber,
+            isActive = isActive,
+        )
         return safeCall<TeacherDto> {
             clientProvider.getClient().put(UPDATE_TEACHER_DETAILS) {
                 contentType(ContentType.Application.Json)
-                setBody(buildMap {
-                    put("id", id)
-                    firstName?.let { put("firstName", it) }
-                    middleName?.let { put("middleName", it) }
-                    lastName?.let { put("lastName", it) }
-                    email?.let { put("email", it) }
-                    role?.value?.let { put("role", it) }
-                    gender?.value?.let { put("gender", it) }
-                    highestQualification?.let { put("highestQualification", it) }
-                    phoneNumber?.let { put("phoneNumber", it) }
-                })
+                setBody(request)
             }
         }
     }

@@ -15,6 +15,7 @@ interface TeacherRepository {
         page: Int? = null,
         limit: Int? = null,
         getAll: Boolean? = null,
+        isActive: Boolean = false,
     ): Result<TeacherListWithTotalCount, DataError.Remote>
 
     suspend fun addTeacher(
@@ -42,6 +43,7 @@ interface TeacherRepository {
         gender: Gender?,
         highestQualification: String?,
         phoneNumber: String?,
+        isActive: Boolean?,
     ): Result<Teacher, DataError.Remote>
 
     suspend fun updateTeacherPassword(

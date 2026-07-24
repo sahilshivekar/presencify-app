@@ -21,9 +21,10 @@ class TeacherRepositoryImpl(
         courseId: String?,
         page: Int?,
         limit: Int?,
-        getAll: Boolean?
+        getAll: Boolean?,
+        isActive: Boolean
     ): Result<TeacherListWithTotalCount, DataError.Remote> {
-        return remoteDataSource.getTeachers(searchQuery, courseId, page, limit, getAll).map { teacherListWithTotalCountDto ->
+        return remoteDataSource.getTeachers(searchQuery, courseId, page, limit, getAll, isActive).map { teacherListWithTotalCountDto ->
             teacherListWithTotalCountDto.toDomain()
         }
     }
@@ -68,6 +69,7 @@ class TeacherRepositoryImpl(
         gender: Gender?,
         highestQualification: String?,
         phoneNumber: String?,
+        isActive: Boolean?,
     ): Result<Teacher, DataError.Remote> {
         return remoteDataSource.updateTeacherDetails(
             id,
@@ -79,6 +81,7 @@ class TeacherRepositoryImpl(
             gender,
             highestQualification,
             phoneNumber,
+            isActive,
         ).map { it.toDomain() }
     }
 

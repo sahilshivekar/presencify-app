@@ -14,6 +14,7 @@ sealed interface AddEditTeacherAction {
     data class UpdateRole(val role: edu.watumull.presencify.core.domain.enums.TeacherRole) : AddEditTeacherAction
     data class ChangeGenderDropDownVisibility(val isVisible: Boolean) : AddEditTeacherAction
     data class ChangeRoleDropDownVisibility(val isVisible: Boolean) : AddEditTeacherAction
+    data class UpdateIsActive(val isActive: Boolean) : AddEditTeacherAction
 
     // Contact Details
     data class UpdateEmail(val email: String) : AddEditTeacherAction
