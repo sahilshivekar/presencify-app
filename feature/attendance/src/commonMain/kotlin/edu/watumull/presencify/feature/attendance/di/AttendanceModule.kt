@@ -25,5 +25,5 @@ val attendanceModule = module {
     viewModel { StudentAttendanceAnalyticsViewModel(get(), get(), get(), get(), get()) }
     viewModel { StudentAttendanceDashboardViewModel(get(), get(), get(), get()) }
     viewModel { AggregateAttendanceAnalyticsViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { DefaultersViewModel(get(), get(), get(), get()) }
+    viewModel { DefaultersViewModel(get(), get(), get(), get(), get()) }
 }

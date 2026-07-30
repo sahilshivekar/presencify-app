@@ -2,6 +2,7 @@ package edu.watumull.presencify.feature.attendance.defaulters
 
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import edu.watumull.presencify.core.domain.model.academics.Branch
+import edu.watumull.presencify.core.domain.model.academics.Division
 import edu.watumull.presencify.core.domain.model.academics.Course
 import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.presentation.UiText
@@ -17,6 +18,7 @@ data class DefaultersState(
     val academicStartYear: String = "",
     val academicEndYear: String = "",
     val selectedBranch: Branch? = null,
+    val selectedDivision: Division? = null,
     val selectedCourse: Course? = null,
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
@@ -27,13 +29,16 @@ data class DefaultersState(
     val isSemesterNumberDropdownOpen: Boolean = false,
     val isBranchDropdownOpen: Boolean = false,
     val isCourseDropdownOpen: Boolean = false,
+    val isDivisionDropdownOpen: Boolean = false,
 
     // Options
     val branchOptions: List<Branch> = emptyList(),
+    val divisionOptions: List<Division> = emptyList(),
     val courseOptions: List<Course> = emptyList(),
 
     // Loading states
     val areBranchesLoading: Boolean = false,
+    val areDivisionsLoading: Boolean = false,
     val areCoursesLoading: Boolean = false,
     val isLoadingStudents: Boolean = false,
 

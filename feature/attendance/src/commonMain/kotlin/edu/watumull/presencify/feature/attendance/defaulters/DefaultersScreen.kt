@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -13,11 +14,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileDownload
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +32,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyDropDownMe
 import edu.watumull.presencify.core.designsystem.components.PresencifyNoResultsIndicator
 import edu.watumull.presencify.core.designsystem.components.PresencifyScaffold
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextField
+import edu.watumull.presencify.core.designsystem.components.shimmerEffect
 import edu.watumull.presencify.core.designsystem.components.dialog.PresencifyAlertDialog
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
@@ -84,21 +86,17 @@ fun DefaultersScreen(
                             text = "Get Attendance",
                             onClick = { onAction(DefaultersAction.GetDefaulters) },
                             isLoading = state.isLoadingStudents,
+                            enabled = state.selectedDivision != null && !state.isLoadingStudents,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
 
                 if (state.isLoadingStudents) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = DesignToken.spacing.xxl),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
+                    items(3) {
+                        StudentListItemShimmer(
+                            modifier = Modifier.padding(horizontal = DesignToken.spacing.lg)
+                        )
                     }
                 } else if (state.students.isEmpty() && !state.isLoadingStudents && state.selectedSemesterNumber != null) {
                     item {
@@ -109,27 +107,27 @@ fun DefaultersScreen(
                     }
                 } else {
                     items(state.students, key = { it.id }) { student ->
-                        StudentListItem(
-                            studentName = "${student.firstName} ${student.lastName}",
-                            prn = student.prn,
-                            studentImageUrl = student.studentImageUrl,
-                            studentBranch = student.branch?.abbreviation,
-                            onClick = { /* Do nothing */ },
-                            modifier = Modifier.padding(horizontal = DesignToken.spacing.lg),
-                            trailingContent = {
-                                val isLoading = state.isAttendanceLoadingMap[student.id] == true
-                                val attendancePercentage = if (state.selectedCourse != null) {
-                                    state.studentCourseAttendanceMap[student.id]?.get(state.selectedCourse.id)
-                                } else {
-                                    state.studentAttendanceMap[student.id]
-                                }
+                        val attendancePercentage = if (state.selectedCourse != null) {
+                            state.studentCourseAttendanceMap[student.id]?.get(state.selectedCourse.id)
+                        } else {
+                            state.studentAttendanceMap[student.id]
+                        }
+                        val isAttendanceLoading = state.isAttendanceLoadingMap[student.id] == true
+                        val shouldShowShimmer = isAttendanceLoading || attendancePercentage == null
 
-                                if (isLoading) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(DesignToken.components.progressMd),
-                                        strokeWidth = DesignToken.strokes.md
-                                    )
-                                } else if (attendancePercentage != null) {
+                        if (shouldShowShimmer) {
+                            StudentListItemShimmer(
+                                modifier = Modifier.padding(horizontal = DesignToken.spacing.lg)
+                            )
+                        } else {
+                            StudentListItem(
+                                studentName = "${student.firstName} ${student.lastName}",
+                                prn = student.prn,
+                                studentImageUrl = student.studentImageUrl,
+                                studentBranch = student.branch?.abbreviation,
+                                onClick = { /* Do nothing */ },
+                                modifier = Modifier.padding(horizontal = DesignToken.spacing.lg),
+                                trailingContent = {
                                     val (present, total) = if (state.selectedCourse != null) {
                                         val courseMap = state.studentCourseAttendanceNumbersMap[student.id]?.get(state.selectedCourse.id)
                                         Pair(courseMap?.first, courseMap?.second)
@@ -148,8 +146,8 @@ fun DefaultersScreen(
                                         )
                                     }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -163,6 +161,59 @@ fun DefaultersScreen(
             dialogType = dialogState.dialogType,
             onDismiss = { onAction(DefaultersAction.DismissDialog) }
         )
+    }
+}
+
+@Composable
+private fun StudentListItemShimmer(
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(DesignToken.spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(DesignToken.avatars.md)
+                    .shimmerEffect()
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.65f)
+                        .height(DesignToken.spacing.lg)
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.45f)
+                        .height(DesignToken.spacing.md)
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.35f)
+                        .height(DesignToken.spacing.md)
+                        .shimmerEffect()
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .shimmerEffect()
+            )
+        }
     }
 }
 
@@ -228,6 +279,22 @@ private fun FilterSection(
             enabled = !state.isLoadingStudents,
             modifier = Modifier.fillMaxWidth()
         )
+
+        if (state.areDivisionsLoading || state.divisionOptions.isNotEmpty()) {
+            PresencifyDropDownMenuBox(
+                value = state.selectedDivision?.divisionCode ?: "",
+                options = listOf(null) + state.divisionOptions,
+                onSelectItem = { onAction(DefaultersAction.SelectDivision(it)) },
+                label = "Division *",
+                itemToString = { it?.divisionCode ?: "Select Division" },
+                expanded = state.isDivisionDropdownOpen,
+                onDropDownVisibilityChanged = {
+                    onAction(DefaultersAction.ChangeDivisionDropDownVisibility(it))
+                },
+                enabled = !state.areDivisionsLoading && !state.isLoadingStudents,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         if (state.courseOptions.isNotEmpty()) {
             PresencifyDropDownMenuBox(
