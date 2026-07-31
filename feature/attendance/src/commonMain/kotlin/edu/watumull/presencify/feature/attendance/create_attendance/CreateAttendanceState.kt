@@ -1,6 +1,7 @@
 package edu.watumull.presencify.feature.attendance.create_attendance
 
 import edu.watumull.presencify.core.domain.model.schedule.ClassSession
+import edu.watumull.presencify.core.presentation.utils.DateTimeUtils.getCurrentDate
 import edu.watumull.presencify.core.presentation.UiText
 import edu.watumull.presencify.core.presentation.components.dialog.DialogState
 import kotlinx.datetime.LocalDate
@@ -13,7 +14,7 @@ data class CreateAttendanceState(
     val classSession: ClassSession? = null,
 
     // Date selection
-    val selectedDate: LocalDate? = null,
+    val selectedDate: LocalDate? = getCurrentDate(),
     val dateError: String? = null,
 
     // Loading states

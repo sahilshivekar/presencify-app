@@ -1,7 +1,11 @@
 package edu.watumull.presencify.core.designsystem.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Clear
@@ -20,6 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
@@ -56,44 +63,58 @@ fun PresencifyTimePickerTextField(
 
     val displayText = value?.to12HourFormat() ?: ""
 
-    PresencifyTextField(
-        value = displayText,
-        onValueChange = { },
-        label = label,
-        readOnly = true,
-        enabled = enabled,
-        supportingText = supportingText,
-        isError = isError,
-        leadingIcon = {
-            IconButton(
-                onClick = { showPicker = true },
-                enabled = enabled,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AccessTime,
-                    contentDescription = pickerIconContentDescription,
-                )
-            }
-        },
-        trailingIcon = if (value != null) {
-            {
+    Box(modifier = modifier) {
+        PresencifyTextField(
+            value = displayText,
+            onValueChange = { },
+            label = label,
+            readOnly = true,
+            enabled = enabled,
+            supportingText = supportingText,
+            isError = isError,
+            leadingIcon = {
                 IconButton(
-                    onClick = {
-                        onValueChange(null)
-                    },
+                    onClick = { showPicker = true },
                     enabled = enabled,
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = clearIconContentDescription,
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = pickerIconContentDescription,
                     )
                 }
-            }
-        } else {
-            null
-        },
-        modifier = modifier,
-    )
+            },
+            trailingIcon = if (value != null) {
+                {
+                    IconButton(
+                        onClick = {
+                            onValueChange(null)
+                        },
+                        enabled = enabled,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = clearIconContentDescription,
+                        )
+                    }
+                }
+            } else {
+                null
+            },
+            modifier = modifier,
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                // Leave the standard Material 48dp touch target uncovered so the Clear icon still works
+                .padding(end = if (value != null) 48.dp else 0.dp)
+                .clickable(
+                    enabled = enabled,
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { showPicker = true }
+                )
+        )
+    }
 
     if (showPicker) {
         val timePickerState = remember(showPicker) {
@@ -129,6 +150,10 @@ fun PresencifyTimePickerTextField(
                     TimePicker(state = timePickerState)
                 }
             },
+            modifier = Modifier.padding(horizontal = DesignToken.spacing.sm),
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+            )
         )
     }
 }
