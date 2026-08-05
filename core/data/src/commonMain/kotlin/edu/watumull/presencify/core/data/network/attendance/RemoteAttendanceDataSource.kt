@@ -5,6 +5,7 @@ import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentAggrega
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceStudentDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
+import edu.watumull.presencify.core.data.dto.attendance.StudentAttendanceResultsDto
 import edu.watumull.presencify.core.domain.DataError
 import edu.watumull.presencify.core.domain.Result
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
@@ -43,6 +44,21 @@ interface RemoteAttendanceDataSource {
         branchId: String?,
         schemeId: String?,
     ): Result<AttendanceStudentAggregatedAndDetailedAttendanceDto, DataError.Remote>
+
+    suspend fun getAttendanceOfEveryStudentForSpecificCourseInSemester(
+        studentIds: List<String>,
+        courseId: String,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?,
+    ): Result<StudentAttendanceResultsDto, DataError.Remote>
 
     suspend fun getAttendanceOfSelfForSpecificCourseInSemester(
         courseId: String,

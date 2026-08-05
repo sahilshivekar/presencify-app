@@ -49,6 +49,40 @@ class AttendanceRepositoryImpl(
         ).map { it.toDomain() }
     }
 
+    override suspend fun getAttendanceOfEveryStudentForSpecificCourseInSemester(
+        studentIds: List<String>,
+        courseId: String,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?
+    ): Result<List<Pair<String, AttendanceStudentAggregatedAndDetailed>>, DataError.Remote> {
+        return remoteDataSource.getAttendanceOfEveryStudentForSpecificCourseInSemester(
+            studentIds,
+            courseId,
+            semesterId,
+            divisionId,
+            batchId,
+            startDate,
+            endDate,
+            semesterNumber,
+            academicStartYear,
+            academicEndYear,
+            branchId,
+            schemeId
+        ).map { dto ->
+            dto.attendanceByStudent.map { studentAttendance ->
+                studentAttendance.studentId to studentAttendance.toDomain()
+            }
+        }
+    }
+
     override suspend fun getAttendanceOfSelfForSpecificCourseInSemester(
         courseId: String, semesterId: String?, divisionId: String?, batchId: String?,
         startDate: LocalDate?, endDate: LocalDate?, semesterNumber: SemesterNumber?, academicStartYear: Int?, academicEndYear: Int?,

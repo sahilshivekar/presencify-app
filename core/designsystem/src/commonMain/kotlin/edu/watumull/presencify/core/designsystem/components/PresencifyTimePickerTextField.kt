@@ -100,7 +100,6 @@ fun PresencifyTimePickerTextField(
             } else {
                 null
             },
-            modifier = modifier,
         )
         Box(
             modifier = Modifier

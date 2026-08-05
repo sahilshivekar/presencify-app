@@ -3,6 +3,7 @@ package edu.watumull.presencify.feature.attendance.defaulters
 import androidx.lifecycle.viewModelScope
 import edu.watumull.presencify.core.designsystem.components.dialog.DialogType
 import edu.watumull.presencify.core.domain.Result
+import edu.watumull.presencify.core.domain.model.student.Student
 import edu.watumull.presencify.core.domain.repository.academics.BranchRepository
 import edu.watumull.presencify.core.domain.repository.academics.DivisionRepository
 import edu.watumull.presencify.core.domain.repository.academics.SemesterRepository
@@ -205,7 +206,17 @@ class DefaultersViewModel(
 
             val semesterId = (semesterResult as? Result.Success)?.data?.semesters?.firstOrNull()?.id
             if (semesterId == null) {
-                updateState { it.copy(areDivisionsLoading = false, areCoursesLoading = false) }
+                updateState {
+                    it.copy(
+                        areDivisionsLoading = false,
+                        areCoursesLoading = false,
+                        dialogState = DialogState(
+                            title = UiText.DynamicString("Error"),
+                            message = UiText.DynamicString("No semester found for the selected criteria"),
+                            dialogType = DialogType.ERROR
+                        )
+                    )
+                }
                 return@launch
             }
 
@@ -226,6 +237,21 @@ class DefaultersViewModel(
                 }
 
                 is Result.Success -> {
+                    if (divisionsResult.data.divisions.isEmpty()) {
+                        updateState {
+                            it.copy(
+                                areDivisionsLoading = false,
+                                areCoursesLoading = false,
+                                dialogState = DialogState(
+                                    title = UiText.DynamicString("Error"),
+                                    message = UiText.DynamicString("No divisions found for this semester"),
+                                    dialogType = DialogType.ERROR
+                                )
+                            )
+                        }
+                        return@launch
+                    }
+
                     updateState {
                         it.copy(
                             divisionOptions = divisionsResult.data.divisions,
@@ -324,7 +350,7 @@ class DefaultersViewModel(
         }
     }
 
-    private fun loadAttendanceForStudents(students: List<edu.watumull.presencify.core.domain.model.student.Student>) {
+    private fun loadAttendanceForStudents(students: List<Student>) {
         if (students.isEmpty()) return
 
         val currentState = state
@@ -371,37 +397,39 @@ class DefaultersViewModel(
                 return@launch
             }
 
-            // 3. Fetch attendance for each student concurrently
-            val studentResults = students.map { student ->
+            // 3. Fetch attendance per course for all students in one request per course
+            val courseResults = courses.map { course ->
                 async {
-                    val studentCourseResults = courses.associate { course ->
-                        val result = attendanceRepository.getAttendanceOfAnyStudentForSpecificCourseInSemester(
-                            studentId = student.id,
-                            courseId = course.id,
-                            semesterId = semesterId,
-                            divisionId = divisionId,
-                            batchId = null,
-                            startDate = currentState.startDate,
-                            endDate = currentState.endDate,
-                            semesterNumber = currentState.selectedSemesterNumber,
-                            academicStartYear = startYear,
-                            academicEndYear = endYear,
-                            branchId = branchId,
-                            schemeId = null
-                        )
-                        course.id to result
-                    }
+                    course.id to attendanceRepository.getAttendanceOfEveryStudentForSpecificCourseInSemester(
+                        studentIds = students.map { it.id },
+                        courseId = course.id,
+                        semesterId = semesterId,
+                        divisionId = divisionId,
+                        batchId = null,
+                        startDate = currentState.startDate,
+                        endDate = currentState.endDate,
+                        semesterNumber = currentState.selectedSemesterNumber,
+                        academicStartYear = startYear,
+                        academicEndYear = endYear,
+                        branchId = branchId,
+                        schemeId = null
+                    )
+                }
+            }.awaitAll()
 
-                    var totalLectures = 0
-                    var attendedLectures = 0
-                    val coursePercentages = mutableMapOf<String, Float>()
-                    val courseNumbers = mutableMapOf<String, Pair<Int, Int>>()
+            val attendanceByStudentId = students.associateWith { student ->
+                var totalLectures = 0
+                var attendedLectures = 0
+                val coursePercentages = mutableMapOf<String, Float>()
+                val courseNumbers = mutableMapOf<String, Pair<Int, Int>>()
 
-                    studentCourseResults.forEach { (courseId, res) ->
-                        if (res is Result.Success) {
+                courseResults.forEach { (courseId, result) ->
+                    if (result is Result.Success) {
+                        val studentAttendance = result.data.firstOrNull { it.first == student.id }?.second
+                        if (studentAttendance != null) {
                             var courseTotal = 0
                             var courseAttended = 0
-                            res.data.aggregatedAttendance.forEach { aggregated ->
+                            studentAttendance.aggregatedAttendance.forEach { aggregated ->
                                 totalLectures += aggregated.totalLectures
                                 attendedLectures += aggregated.attendedLectures
                                 courseTotal += aggregated.totalLectures
@@ -415,22 +443,24 @@ class DefaultersViewModel(
                             courseNumbers[courseId] = courseAttended to courseTotal
                         }
                     }
-
-                    val overallPercentage = if (totalLectures > 0) {
-                        (attendedLectures.toFloat() / totalLectures.toFloat()) * 100f
-                    } else {
-                        0f
-                    }
-
-                    StudentAttendanceResult(
-                        studentId = student.id,
-                        overallPercentage = overallPercentage,
-                        coursePercentages = coursePercentages,
-                        overallNumbers = attendedLectures to totalLectures,
-                        courseNumbers = courseNumbers
-                    )
                 }
-            }.awaitAll() // Wait for all parallel requests to complete
+
+                val overallPercentage = if (totalLectures > 0) {
+                    (attendedLectures.toFloat() / totalLectures.toFloat()) * 100f
+                } else {
+                    0f
+                }
+
+                StudentAttendanceResult(
+                    studentId = student.id,
+                    overallPercentage = overallPercentage,
+                    coursePercentages = coursePercentages,
+                    overallNumbers = attendedLectures to totalLectures,
+                    courseNumbers = courseNumbers
+                )
+            }
+
+            val studentResults = students.map { student -> attendanceByStudentId.getValue(student) }
 
             // Update state simultaneously for all students
             updateState { state ->

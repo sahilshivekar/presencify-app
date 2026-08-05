@@ -8,6 +8,7 @@ import edu.watumull.presencify.core.data.dto.attendance.AttendanceSummaryDto
 import edu.watumull.presencify.core.data.dto.attendance.AttendanceWithTotalCountDto
 import edu.watumull.presencify.core.data.dto.attendance.CreateAttendanceRequestDto
 import edu.watumull.presencify.core.data.dto.attendance.MarkAllAttendanceRequestDto
+import edu.watumull.presencify.core.data.dto.attendance.StudentAttendanceResultsDto
 import edu.watumull.presencify.core.data.dto.attendance.UpdateStudentAttendanceRequestDto
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.BULK_UPDATE_STUDENT_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.CREATE_ATTENDANCE
@@ -17,6 +18,7 @@ import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_ALL
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_SELF
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_STUDENT
+import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.GET_ATTENDANCE_OF_EVERY_STUDENT
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.MARK_MY_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.REMOVE_ATTENDANCE
 import edu.watumull.presencify.core.data.network.attendance.ApiEndpoints.SEND_ATTENDANCE_REPORT
@@ -109,6 +111,38 @@ class KtorRemoteAttendanceDataSource(
         return safeCall<AttendanceStudentAggregatedAndDetailedAttendanceDto> {
             clientProvider.getClient().get(GET_ATTENDANCE_OF_STUDENT) {
                 parameter("studentId", studentId)
+                parameter("courseId", courseId)
+                semesterId?.let { parameter("semesterId", it) }
+                divisionId?.let { parameter("divisionId", it) }
+                batchId?.let { parameter("batchId", it) }
+                startDate?.let { parameter("startDate", it) }
+                endDate?.let { parameter("endDate", it) }
+                semesterNumber?.value?.let { parameter("semesterNumber", it) }
+                academicStartYear?.let { parameter("academicStartYear", it) }
+                academicEndYear?.let { parameter("academicEndYear", it) }
+                branchId?.let { parameter("branchId", it) }
+                schemeId?.let { parameter("schemeId", it) }
+            }
+        }
+    }
+
+    override suspend fun getAttendanceOfEveryStudentForSpecificCourseInSemester(
+        studentIds: List<String>,
+        courseId: String,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?
+    ): Result<StudentAttendanceResultsDto, DataError.Remote> {
+        return safeCall<StudentAttendanceResultsDto> {
+            clientProvider.getClient().get(GET_ATTENDANCE_OF_EVERY_STUDENT) {
+                studentIds.forEach { parameter("studentIds", it) }
                 parameter("courseId", courseId)
                 semesterId?.let { parameter("semesterId", it) }
                 divisionId?.let { parameter("divisionId", it) }

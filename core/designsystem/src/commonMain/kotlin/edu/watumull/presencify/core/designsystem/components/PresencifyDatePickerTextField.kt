@@ -125,7 +125,6 @@ fun PresencifyDatePickerTextField(
             } else {
                 null
             },
-            modifier = modifier,
         )
         Box(
             modifier = Modifier

@@ -44,6 +44,21 @@ interface AttendanceRepository {
         schemeId: String?,
     ): Result<AttendanceStudentAggregatedAndDetailed, DataError.Remote>
 
+    suspend fun getAttendanceOfEveryStudentForSpecificCourseInSemester(
+        studentIds: List<String>,
+        courseId: String,
+        semesterId: String?,
+        divisionId: String?,
+        batchId: String?,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        semesterNumber: SemesterNumber?,
+        academicStartYear: Int?,
+        academicEndYear: Int?,
+        branchId: String?,
+        schemeId: String?,
+    ): Result<List<Pair<String, AttendanceStudentAggregatedAndDetailed>>, DataError.Remote>
+
     suspend fun getAttendanceOfSelfForSpecificCourseInSemester(
         courseId: String,
         semesterId: String?,
