@@ -196,55 +196,35 @@ class DefaultersViewModel(
                 )
             }
 
-            val semesterResult = semesterRepository.getSemesters(
+            when (val semesterResult = semesterRepository.getSemesters(
                 semesterNumber = currentState.selectedSemesterNumber,
                 academicStartYear = startYear,
                 academicEndYear = endYear,
                 branchId = currentState.selectedBranch.id,
                 getAll = true
-            )
-
-            val semesterId = (semesterResult as? Result.Success)?.data?.semesters?.firstOrNull()?.id
-            if (semesterId == null) {
-                updateState {
-                    it.copy(
-                        areDivisionsLoading = false,
-                        areCoursesLoading = false,
-                        dialogState = DialogState(
-                            title = UiText.DynamicString("Error"),
-                            message = UiText.DynamicString("No semester found for the selected criteria"),
-                            dialogType = DialogType.ERROR
-                        )
-                    )
-                }
-                return@launch
-            }
-
-            val fetchedSemester = (semesterResult as? Result.Success)?.data?.semesters?.firstOrNull()
-            if (fetchedSemester != null && currentState.startDate == null && currentState.endDate == null) {
-                updateState {
-                    it.copy(
-                        startDate = fetchedSemester.startDate,
-                        endDate = fetchedSemester.endDate
-                    )
-                }
-            }
-
-            when (val divisionsResult = divisionRepository.getDivisions(semesterId = semesterId, getAll = true)) {
+            )) {
                 is Result.Error -> {
-                    updateState { it.copy(areDivisionsLoading = false, areCoursesLoading = false) }
+                    updateState {
+                        it.copy(
+                            areDivisionsLoading = false,
+                            areCoursesLoading = false
+                        )
+                    }
+                    showError(semesterResult.error.toUiText())
                     return@launch
                 }
 
                 is Result.Success -> {
-                    if (divisionsResult.data.divisions.isEmpty()) {
+                    val semester = semesterResult.data.semesters.firstOrNull()
+
+                    if (semester == null) {
                         updateState {
                             it.copy(
                                 areDivisionsLoading = false,
                                 areCoursesLoading = false,
                                 dialogState = DialogState(
                                     title = UiText.DynamicString("Error"),
-                                    message = UiText.DynamicString("No divisions found for this semester"),
+                                    message = UiText.DynamicString("No semester found for the selected criteria"),
                                     dialogType = DialogType.ERROR
                                 )
                             )
@@ -252,11 +232,49 @@ class DefaultersViewModel(
                         return@launch
                     }
 
-                    updateState {
-                        it.copy(
-                            divisionOptions = divisionsResult.data.divisions,
-                            areDivisionsLoading = false
-                        )
+                    val semesterId = semester.id
+
+                    if (currentState.startDate == null && currentState.endDate == null) {
+                        updateState {
+                            it.copy(
+                                startDate = semester.startDate,
+                                endDate = semester.endDate
+                            )
+                        }
+                    }
+
+
+
+                    when (val divisionsResult =
+                        divisionRepository.getDivisions(semesterId = semesterId, getAll = true)) {
+                        is Result.Error -> {
+                            updateState { it.copy(areDivisionsLoading = false, areCoursesLoading = false) }
+                            return@launch
+                        }
+
+                        is Result.Success -> {
+                            if (divisionsResult.data.divisions.isEmpty()) {
+                                updateState {
+                                    it.copy(
+                                        areDivisionsLoading = false,
+                                        areCoursesLoading = false,
+                                        dialogState = DialogState(
+                                            title = UiText.DynamicString("Error"),
+                                            message = UiText.DynamicString("No divisions found for this semester"),
+                                            dialogType = DialogType.ERROR
+                                        )
+                                    )
+                                }
+                                return@launch
+                            }
+
+                            updateState {
+                                it.copy(
+                                    divisionOptions = divisionsResult.data.divisions,
+                                    areDivisionsLoading = false
+                                )
+                            }
+                        }
                     }
                 }
             }
