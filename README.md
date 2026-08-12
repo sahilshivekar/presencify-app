@@ -2,22 +2,12 @@
   <img
     src="./screenshots/presencify_logo.png"
     alt="Presencify Logo"
-<<<<<<< HEAD
     width="120"
     height="120"
     style="border-radius: 15px;"
   />
 </div>
 <h1>Presencify</h1>
-=======
-    width="100"
-    height="100"
-    style="border-radius: 15px;"
-  />
-  <h1>Presencify</h1>
-</div>
-
->>>>>>> 86eacb94ae356a056b45a7f33ebc44eea5d5a625
 <p>
   A secure, cross-platform attendance ecosystem that combines dynamic QR codes,
   on-device face recognition with OpenCV, and interactive liveness verification
