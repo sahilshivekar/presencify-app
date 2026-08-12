@@ -1,19 +1,13 @@
-<table style="border: 0;">
-  <tr style="border: 0; text-align: center;">
-      <td style="border: 0; text-align: center;">
-        <img
-          src="./screenshots/presencify_logo.png"
-          alt="Presencify Logo"
-          width="70"
-          height="70"
-          style="border-radius: 15px; vertical-align: middle;"
-        />
-        <h1 style="display: inline-block; vertical-align: bottom; margin-left: 10px;">
-          Presencify
-        </h1>
-      </td>
-  </tr>
-</table>
+<div align="center">
+  <img
+    src="./screenshots/presencify_logo.png"
+    alt="Presencify Logo"
+    width="100"
+    height="100"
+    style="border-radius: 15px;"
+  />
+  <h1>Presencify</h1>
+</div>
 
 <p>
   A secure, cross-platform attendance ecosystem that combines dynamic QR codes,
