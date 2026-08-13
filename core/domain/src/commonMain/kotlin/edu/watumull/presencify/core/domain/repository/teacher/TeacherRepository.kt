@@ -61,7 +61,6 @@ interface TeacherRepository {
 
     suspend fun removeTeacher(id: String): Result<Unit, DataError.Remote>
 
-    // Teaching courses operations
     suspend fun getTeachingCourses(teacherId: String): Result<List<TeacherTeachesCourse>, DataError.Remote>
 
     suspend fun addTeachingCourse(
@@ -73,7 +72,6 @@ interface TeacherRepository {
         teacherTeachesCourseId: String
     ): Result<Unit, DataError.Remote>
 
-    // Bulk operations
     suspend fun bulkCreateTeachers(teachers: List<Map<String, Any>>): Result<List<Teacher>, DataError.Remote>
 
     suspend fun bulkDeleteTeachers(teacherIds: List<String>): Result<Unit, DataError.Remote>

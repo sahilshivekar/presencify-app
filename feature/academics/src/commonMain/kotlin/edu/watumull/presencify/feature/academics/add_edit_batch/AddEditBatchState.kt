@@ -13,26 +13,22 @@ data class AddEditBatchState(
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,
 
-    // Semester selection fields
     val semesterNumber: SemesterNumber? = null,
     val academicStartYear: String = "",
     val academicEndYear: String = "",
     val selectedBranchId: String = "",
 
     val branchOptions: List<Branch> = emptyList(),
-    val foundDivision: Division? = null, // Added property for Division
-    val foundSemester: Semester? = null, // Added property for Semester
+    val foundDivision: Division? = null,
+    val foundSemester: Semester? = null,
 
-    // Division selection fields (shown after divisions are found)
     val foundDivisions: List<Division> = emptyList(),
     val selectedDivisionId: String = "",
     val showDivisionInput: Boolean = false,
 
-    // Batch fields (shown after division is selected)
     val batchCode: String = "",
     val showBatchInput: Boolean = false,
 
-    // Error states
     val semesterNumberError: String? = null,
     val academicStartYearError: String? = null,
     val academicEndYearError: String? = null,

@@ -38,7 +38,6 @@ fun String?.validateAsSittingCapacity(): ValidationResult {
 }
 
 fun RoomType?.validateAsRoomType(): ValidationResult {
-    // Optional field - can be null
     return ValidationResult(successful = true)
 }
 

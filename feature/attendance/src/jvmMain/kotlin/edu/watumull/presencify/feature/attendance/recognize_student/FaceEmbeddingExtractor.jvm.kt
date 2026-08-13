@@ -2,7 +2,6 @@ package edu.watumull.presencify.feature.attendance.recognize_student
 
 import java.awt.image.BufferedImage
 
-// Tell KMP that on JVM, PlatformImage IS a BufferedImage
 actual typealias PlatformImage = BufferedImage
 
 actual class FaceEmbeddingExtractor {

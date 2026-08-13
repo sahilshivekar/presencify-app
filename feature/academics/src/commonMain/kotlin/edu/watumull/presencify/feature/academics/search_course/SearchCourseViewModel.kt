@@ -42,7 +42,6 @@ class SearchCourseViewModel(
             SearchCourseIntention.DEFAULT
         }
 
-        // Validate required parameters based on intention
         when (intention) {
             SearchCourseIntention.LINK_UNLINK_COURSE_TO_SEMESTER_NUMBER_BRANCH -> {
                 if (routeParams.branchId == null || routeParams.semesterNumber == null) {
@@ -55,7 +54,6 @@ class SearchCourseViewModel(
                 }
             }
             SearchCourseIntention.DEFAULT -> {
-                // No validation needed
             }
         }
 
@@ -113,7 +111,6 @@ class SearchCourseViewModel(
             }
         },
         endReached = { currentPage, response ->
-            // End reached when we have loaded all courses
             val totalLoadedCourses = currentPage * 20
             totalLoadedCourses >= response.totalCount
         }
@@ -228,7 +225,6 @@ class SearchCourseViewModel(
                 handleLinkUnlinkCourse(courseId)
             }
             SearchCourseIntention.DEFAULT -> {
-                // Should not happen
             }
         }
     }
@@ -240,33 +236,27 @@ class SearchCourseViewModel(
             edu.watumull.presencify.core.domain.enums.SemesterNumber.fromValue(it)
         } ?: return
 
-        // Prevent duplicate clicks
         if (state.loadingCourseIds.contains(courseId)) return
 
-        // Find the course in the list
         val course = state.courses.find { it.id == courseId } ?: return
 
-        // Check if course is already linked to this branch+semester combination
         val branchCourseSemester = course.branchCourseSemesters?.find {
             it.branchId == branchId && it.semesterNumber == semesterNumber
         }
         val isLinked = branchCourseSemester != null
 
-        // Mark course as loading
         updateState { it.copy(
             loadingCourseIds = it.loadingCourseIds + courseId,
             courseFeedback = it.courseFeedback - courseId
         ) }
 
         if (isLinked) {
-            // Unlink course - need the branchCourseSemesterId
             val branchCourseSemesterId = branchCourseSemester.id
 
             courseRepository.removeCourseFromBranchWithSemesterNumber(
                 branchCourseSemesterId = branchCourseSemesterId
             )
                 .onSuccess {
-                    // Update the course in the list
                     val updatedCourses = state.courses.map { c ->
                         if (c.id == courseId) {
                             c.copy(
@@ -296,18 +286,15 @@ class SearchCourseViewModel(
                     }
                 }
         } else {
-            // Link course
             courseRepository.addCourseToBranchWithSemesterNumber(
                 courseId = courseId,
                 branchId = branchId,
                 semesterNumber = semesterNumber
             )
                 .onSuccess {
-                    // Fetch the updated course to get the new BranchCourseSemester entry
                     viewModelScope.launch {
                         courseRepository.getCourseById(courseId)
                             .onSuccess { updatedCourse ->
-                                // Update the course in the list
                                 val updatedCourses = state.courses.map { c ->
                                     if (c.id == courseId) {
                                         updatedCourse
@@ -325,7 +312,6 @@ class SearchCourseViewModel(
                                 }
                             }
                             .onError { error ->
-                                // If we can't fetch the updated course, just remove loading state
                                 updateState {
                                     it.copy(
                                         loadingCourseIds = it.loadingCourseIds - courseId,
@@ -350,29 +336,23 @@ class SearchCourseViewModel(
         val state = stateFlow.value
         val teacherId = state.teacherId ?: return
 
-        // Prevent duplicate clicks
         if (state.loadingCourseIds.contains(courseId)) return
 
-        // Find the course in the list
         val course = state.courses.find { it.id == courseId } ?: return
 
-        // Check if course is already assigned to this teacher
         val teacherTeachesCourse = course.teacherTeachesCourses?.find { it.teacherId == teacherId }
         val isAssigned = teacherTeachesCourse != null
 
-        // Mark course as loading
         updateState { it.copy(
             loadingCourseIds = it.loadingCourseIds + courseId,
             courseFeedback = it.courseFeedback - courseId
         ) }
 
         if (isAssigned) {
-            // Unassign course - need to find the teacherTeachesCourse.id
             val teacherTeachesCourseId = teacherTeachesCourse.id
 
             teacherRepository.removeTeachingCourse(teacherTeachesCourseId)
                 .onSuccess {
-                    // Update the course in the list
                     val updatedCourses = state.courses.map { c ->
                         if (c.id == courseId) {
                             c.copy(
@@ -400,10 +380,8 @@ class SearchCourseViewModel(
                     }
                 }
         } else {
-            // Assign course
             teacherRepository.addTeachingCourse(teacherId, courseId)
                 .onSuccess { teacherTeachesCourse ->
-                    // Update the course in the list
                     val updatedCourses = state.courses.map { c ->
                         if (c.id == courseId) {
                             val existingList = c.teacherTeachesCourses ?: emptyList()
@@ -494,10 +472,8 @@ class SearchCourseViewModel(
 
             is SearchCourseAction.CourseCardClick -> {
                 if (stateFlow.value.intention == SearchCourseIntention.DEFAULT) {
-                    // Navigate to course details
                     sendEvent(SearchCourseEvent.NavigateToCourseDetails(action.courseId))
                 }
-                // For other intentions, do nothing (button handles the action)
             }
 
             is SearchCourseAction.CourseActionButtonClick -> {

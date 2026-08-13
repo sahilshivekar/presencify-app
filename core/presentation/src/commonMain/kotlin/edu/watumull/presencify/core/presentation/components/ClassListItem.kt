@@ -31,26 +31,7 @@ import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.presentation.utils.DateTimeUtils
 import edu.watumull.presencify.core.presentation.utils.toLocalDate
 
-/**
- * List item component for displaying ClassSession information.
- *
- * @param courseName The name of the course (required).
- * @param teacherName The name of the teacher (required).
- * @param startTime Start time in readable format (e.g., "10:00 AM") (required).
- * @param endTime End time in readable format (e.g., "11:00 AM") (required).
- * @param dayOfWeek Day of week (e.g., "Monday") (required).
- * @param activeFrom Active from date in readable format (e.g., "01/08/2024") (required).
- * @param activeTill Active till date in readable format (e.g., "31/12/2024") (required).
- * @param classType Class type display text (e.g., "Lecture", "Tutorial", "Practical") (required).
- * @param isExtraClass Whether this is an extra class (required).
- * @param roomNumber Room number (optional).
- * @param divisionOrBatchText Division or Batch display text (e.g., "Division A" or "Batch B1") (optional).
- * @param branchAbbreviation Branch abbreviation (e.g., "COMPS", "IT") (optional).
- * @param semesterText Semester and academic year text (e.g., "FE (2023-2024)") (optional).
- * @param feedback Optional feedback message to display.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ClassListItem(
@@ -71,7 +52,6 @@ fun ClassListItem(
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    // Check if class is inactive (current date is outside the active period)
     val activeTillDate = activeTill?.toLocalDate()
     val activeFromDate = activeFrom?.toLocalDate()
     val today = DateTimeUtils.getCurrentDate()
@@ -82,14 +62,12 @@ fun ClassListItem(
     PresencifyListItem(
         headlineContent = {
             Column {
-                // Course name
                 Text(
                     text = courseName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Teacher name with prefix (same line logically, but wraps if needed)
                 Text(
                     text = "Prof. $teacherName",
                     style = MaterialTheme.typography.bodyMedium,
@@ -99,11 +77,9 @@ fun ClassListItem(
         },
         supportingContent = {
             Column {
-                // Time info with clock icon, Day
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Clock icon
                     Icon(
                         imageVector = Icons.Default.Schedule,
                         contentDescription = "Time",
@@ -113,14 +89,12 @@ fun ClassListItem(
 
                     Spacer(modifier = Modifier.width(DesignToken.spacing.xs))
 
-                    // Time: "10:00 AM - 11:00 AM"
                     Text(
                         text = "$startTime - $endTime",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    // Day of week
                     dayOfWeek?.let {
                         Text(
                             text = " • $dayOfWeek",
@@ -145,12 +119,10 @@ fun ClassListItem(
                     Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                 }
 
-                // Tags row: Class Type, Room Number, Extra Class (at end)
                 FlowRow(
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.sm),
                     verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.xs)
                 ) {
-                    // Class Type tag
                     classType?.let {
                         Text(
                             text = classType,
@@ -163,7 +135,6 @@ fun ClassListItem(
                         )
                     }
 
-                    // Room Number tag
                     if (roomNumber != null && dayOfWeek != null) {
                         Text(
                             text = roomNumber,
@@ -176,7 +147,6 @@ fun ClassListItem(
                         )
                     }
 
-                    // Extra Class tag (red background) - moved to end
                     if (isExtraClass) {
                         Text(
                             text = "Extra",
@@ -193,12 +163,10 @@ fun ClassListItem(
                 if (semesterText != null && divisionOrBatchText != null && branchAbbreviation != null) {
                     Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                 }
-                // Semester, Division/Batch, Academic Year, Branch in one row with tags
                 FlowRow(
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.sm),
                     verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(DesignToken.spacing.xs)
                 ) {
-                    // Semester tag
                     semesterText?.let { text ->
                         Text(
                             text = text,
@@ -211,7 +179,6 @@ fun ClassListItem(
                         )
                     }
 
-                    // Division/Batch tag
                     divisionOrBatchText?.let { text ->
                         Text(
                             text = text,
@@ -224,7 +191,6 @@ fun ClassListItem(
                         )
                     }
 
-                    // Branch abbreviation tag
                     branchAbbreviation?.let { branch ->
                         Text(
                             text = branch,
@@ -255,7 +221,6 @@ fun ClassListItem(
                                     .padding(horizontal = DesignToken.spacing.xs, vertical = DesignToken.spacing.xs)
                             )
                         } else {
-                            // Active as normal text (no tag)
                             Text(
                                 text = "Active:",
                                 style = MaterialTheme.typography.bodySmall,
@@ -265,7 +230,6 @@ fun ClassListItem(
 
                         Spacer(modifier = Modifier.width(DesignToken.spacing.sm))
 
-                        // Dates text
                         Text(
                             text = "$activeFrom - $activeTill",
                             style = MaterialTheme.typography.bodySmall,
@@ -274,7 +238,6 @@ fun ClassListItem(
                     }
                 }
 
-                // Feedback section (if any)
                 AnimatedVisibility(
                     visible = feedback != null,
                     enter = expandVertically(),

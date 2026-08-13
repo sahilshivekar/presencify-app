@@ -21,18 +21,10 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-/**
- * Android-specific implementation of [edu.watumull.presencify.core.presentation.ShareUtils].
- *
- * This utility enables sharing of text and files (PDF, text, image) through Android's
- * native `Intent`-based sharing system.
- */
+
 actual object ShareUtils {
 
-    /**
-     * Provider function to retrieve the current [Activity].
-     * This must be set before using [shareText] or [shareFile].
-     */
+    
     private var activityProvider: () -> Activity = {
         throw IllegalArgumentException(
             "You need to implement the 'activityProvider' to provide the required Activity. " +
@@ -41,22 +33,12 @@ actual object ShareUtils {
         )
     }
 
-    /**
-     * Sets the activity provider function to be used internally for context retrieval.
-     *
-     * This is required to initialize before calling any sharing methods.
-     *
-     * @param provider A lambda that returns the current [Activity].
-     */
+    
     fun setActivityProvider(provider: () -> Activity) {
         activityProvider = provider
     }
 
-    /**
-     * Shares plain text content using an Android share sheet (`Intent.ACTION_SEND`).
-     *
-     * @param text The text content to share.
-     */
+    
     actual suspend fun shareText(text: String) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -66,14 +48,7 @@ actual object ShareUtils {
         activityProvider.invoke().startActivity(intentChooser)
     }
 
-    /**
-     * Shares a file (e.g. PDF, text, image) using Android's file sharing mechanism.
-     *
-     * If the file is an image, it is compressed before sharing.
-     * The file is temporarily saved to internal cache and shared using a `FileProvider`.
-     *
-     * @param file A [ShareFileModel] containing file metadata and binary content.
-     */
+    
     @OptIn(ExperimentalResourceApi::class)
     actual suspend fun shareFile(file: ShareFileModel) {
         val context = activityProvider.invoke().application.baseContext
@@ -115,12 +90,7 @@ actual object ShareUtils {
         }
     }
 
-    /**
-     * Shares an ImageBitmap with other applications.
-     *
-     * @param title The title to be used in the share dialog
-     * @param image The ImageBitmap to be shared
-     */
+    
     actual suspend fun shareImage(title: String, image: ImageBitmap) {
         val context = activityProvider.invoke().application.baseContext
 
@@ -137,12 +107,7 @@ actual object ShareUtils {
         activityProvider.invoke().startActivity(shareIntent)
     }
 
-    /**
-     * Shares an image with other applications using raw byte data.
-     *
-     * @param title The title to use when sharing the image
-     * @param byte The raw image data as ByteArray
-     */
+    
     @OptIn(ExperimentalResourceApi::class)
     actual suspend fun shareImage(title: String, byte: ByteArray) {
         val context = activityProvider.invoke().application.baseContext
@@ -161,14 +126,7 @@ actual object ShareUtils {
         activityProvider.invoke().startActivity(shareIntent)
     }
 
-    /**
-     * Saves the provided byte array as a temporary file in the internal cache directory.
-     *
-     * @param name The name of the file to be saved.
-     * @param data Byte array representing the file content.
-     * @param context Android [Context] used to access the cache directory.
-     * @return The saved [File] object.
-     */
+    
     private fun saveFile(name: String, data: ByteArray, context: Context): File {
         val cache = context.cacheDir
         val savedFile = File(cache, name)
@@ -176,25 +134,11 @@ actual object ShareUtils {
         return savedFile
     }
 
-    /**
-     * Maps [MimeType] to a corresponding Android MIME type string.
-     *
-     * @return Android-compatible MIME type string.
-     */
+    
     private fun MimeType.toAndroidMimeType(): String = when (this) {
         MimeType.PDF -> "application/pdf"
         MimeType.TEXT -> "text/plain"
-        MimeType.IMAGE -> "image/*"
-        MimeType.CSV -> "text/csv"
-    }
-
-    /**
-     * Saves a Bitmap to a temporary file in the application's cache directory.
-     *
-     * @param image The Android Bitmap to save
-     * @param context The Android context
-     * @return A content URI for the saved image, or null if saving failed
-     */
+        MimeType.IMAGE -> "image
     private suspend fun saveImage(image: Bitmap, context: Context): Uri? {
         return withContext(Dispatchers.IO) {
             try {

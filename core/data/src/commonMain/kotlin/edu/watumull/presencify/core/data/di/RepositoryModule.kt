@@ -45,7 +45,6 @@ import org.koin.dsl.module
 
 val repositoryModule: Module = module {
 
-    // Academics Repositories
     single { BatchRepositoryImpl(get()) } bind BatchRepository::class
     single { BranchRepositoryImpl(get()) } bind BranchRepository::class
     single { CourseRepositoryImpl(get()) } bind CourseRepository::class
@@ -54,26 +53,21 @@ val repositoryModule: Module = module {
     single { SemesterRepositoryImpl(get()) } bind SemesterRepository::class
     single { UniversityRepositoryImpl(get()) } bind UniversityRepository::class
 
-    // Admin Repositories
     single { AdminRepositoryImpl(get()) } bind AdminRepository::class
     single { AdminAuthRepositoryImpl(get(), get(), get(), get()) } bind AdminAuthRepository::class
 
-    // Attendance Repositories
     single { AttendanceRepositoryImpl(get()) } bind AttendanceRepository::class
 
-    // Schedule Repositories
     single { ClassSessionRepositoryImpl(get()) } bind ClassSessionRepository::class
     single { RoomRepositoryImpl(get()) } bind RoomRepository::class
     single { TimetableRepositoryImpl(get()) } bind TimetableRepository::class
 
-    // Student Repositories
     single { StudentRepositoryImpl(get()) } bind StudentRepository::class
     single { StudentDropoutRepositoryImpl(get()) } bind StudentDropoutRepository::class
     single { StudentFCMRepositoryImpl(get()) } bind StudentFCMRepository::class
     single { FCMSyncService(get(), get(), get()) }
     single { StudentAuthRepositoryImpl(get(), get(), get(), get(), get()) } bind StudentAuthRepository::class
 
-    // Teacher Repositories
     single { TeacherRepositoryImpl(get()) } bind TeacherRepository::class
     single { TeacherAuthRepositoryImpl(get(), get(), get(), get()) } bind TeacherAuthRepository::class
 }

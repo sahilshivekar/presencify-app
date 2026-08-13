@@ -187,18 +187,6 @@ class KtorRemoteAttendanceDataSource(
             }
         }
 
-//        return when (result) {
-//            is Result.Success -> {
-//                val aggregated = result.data.aggregatedAttendance.firstOrNull()
-//                if (aggregated != null) {
-//                    Result.Success(aggregated)
-//                } else {
-//                    // No attendance data for this course
-//                    Result.Error(DataError.Remote.Unknown)
-//                }
-//            }
-//            is Result.Error -> result
-//        }
     }
 
     override suspend fun getAttendanceOfAllForSemesterDivisionBatchCourse(

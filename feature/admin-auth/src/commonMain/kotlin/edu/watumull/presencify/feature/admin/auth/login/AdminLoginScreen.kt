@@ -63,7 +63,6 @@ fun AdminLoginScreen(
         )
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),
@@ -92,7 +91,6 @@ private fun AdminLoginScreenContent(
     ) {
         val passwordFocusRequester = remember { FocusRequester() }
 
-        // Logo
         Image(
             modifier = Modifier
                 .padding(top = DesignToken.spacing.xxl)
@@ -133,7 +131,6 @@ private fun AdminLoginScreenContent(
 
         Spacer(Modifier.height(DesignToken.spacing.sm))
 
-        // Email/Username Field
         PresencifyTextField(
             value = state.emailOrUsername,
             onValueChange = { onAction(AdminLoginAction.ChangeEmailOrUsername(it)) },
@@ -150,7 +147,6 @@ private fun AdminLoginScreenContent(
             ),
         )
 
-        // Password Field
         PresencifyTextField(
             value = state.password,
             onValueChange = { onAction(AdminLoginAction.ChangePassword(it)) },
@@ -190,7 +186,6 @@ private fun AdminLoginScreenContent(
             },
         )
 
-        // Login Button
         PresencifyButton(
             onClick = { onAction(AdminLoginAction.ClickLogin) },
             enabled = !state.isLoading,
@@ -200,7 +195,6 @@ private fun AdminLoginScreenContent(
 
         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-        // Forgot Password Button
         PresencifyTextButton(
             onClick = { onAction(AdminLoginAction.ClickForgotPassword) },
             enabled = !state.isLoading

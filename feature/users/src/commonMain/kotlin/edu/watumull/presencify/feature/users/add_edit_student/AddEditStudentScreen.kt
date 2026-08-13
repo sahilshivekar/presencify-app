@@ -94,7 +94,6 @@ fun AddEditStudentScreen(
         }
     }
 
-    // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),

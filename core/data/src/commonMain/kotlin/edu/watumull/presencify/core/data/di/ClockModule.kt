@@ -37,7 +37,7 @@ private class KronosNtpClockImpl : NtpClock {
 
         periodicSyncJob = scope.launch {
             while (isActive) {
-                delay(5 * 60 * 1000L) // 5 minutes
+                delay(5 * 60 * 1000L)
                 sync()
             }
         }

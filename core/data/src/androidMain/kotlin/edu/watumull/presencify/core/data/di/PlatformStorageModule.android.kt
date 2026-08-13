@@ -11,12 +11,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 actual val platformStorageModule = module {
-    // Provide Android SettingsFactory using androidContext()
     single { SettingsFactory(PlatformContext(androidContext())) }
-    // DataStore for Android
     single<DataStore<Preferences>> {
         DataStoreFactory.create { androidContext().filesDir.resolve(Constants.DATASTORE_FILENAME).absolutePath }
     }
-    // FCMTokenProvider for Android Firebase integration
     single { FCMTokenProvider(PlatformContext(androidContext())) }
 }

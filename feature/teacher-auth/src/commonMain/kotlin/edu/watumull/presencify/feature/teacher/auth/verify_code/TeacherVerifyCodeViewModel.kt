@@ -55,12 +55,10 @@ class TeacherVerifyCodeViewModel(
         val email = currentState.email.trim()
         val code = currentState.code.trim()
 
-        // Reset errors
         updateState {
             it.copy(codeError = null)
         }
 
-        // Validation
         if (code.isBlank()) {
             updateState {
                 it.copy(codeError = "Code can't be blank")
@@ -75,7 +73,6 @@ class TeacherVerifyCodeViewModel(
             return
         }
 
-        // Start loading
         updateState {
             it.copy(isLoading = true)
         }

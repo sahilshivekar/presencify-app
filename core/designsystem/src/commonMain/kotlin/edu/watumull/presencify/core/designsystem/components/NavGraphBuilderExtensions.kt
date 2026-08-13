@@ -18,9 +18,7 @@ import androidx.navigation.compose.composable
 import kotlin.jvm.JvmSuppressWildcards
 import kotlin.reflect.KType
 
-/**
- * Object containing predefined transition providers for navigation animations.
- */
+
 object TransitionProviders {
     object Enter {
         val fadeIn: (@JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =

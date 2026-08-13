@@ -11,12 +11,10 @@ import edu.watumull.presencify.core.domain.model.academics.Scheme
 sealed interface SearchStudentAction {
     data object NavigateBack : SearchStudentAction
 
-    // ...existing code...
     data class UpdateSearchQuery(val query: String) : SearchStudentAction
     data object Search : SearchStudentAction
     data object Refresh : SearchStudentAction
 
-    // Filters
     data class ToggleBranch(val branch: Branch) : SearchStudentAction
     data class ToggleSemester(val semester: SemesterNumber) : SearchStudentAction
     data class UpdateAcademicStartYear(val year: String) : SearchStudentAction
@@ -33,12 +31,10 @@ sealed interface SearchStudentAction {
     data object ResetFilters : SearchStudentAction
     data object ApplyFilters : SearchStudentAction
 
-    // Student Actions
     data class StudentCardClick(val studentId: String) : SearchStudentAction
     data class StudentActionButtonClick(val studentId: String) : SearchStudentAction
     data class ToggleStudentDropout(val studentId: String, val isCurrentlyDropout: Boolean) : SearchStudentAction
 
-    // Pagination
     data object LoadMoreStudents : SearchStudentAction
 
     data object ClickFloatingActionButton : SearchStudentAction

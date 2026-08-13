@@ -47,7 +47,6 @@ val networkModule: Module = module {
 
     includes(platformNetworkModule)
 
-    // HttpClientFactory (depends on TokenRepository)
     single { HttpClientFactory(get(), get()) }
 
 
@@ -62,7 +61,6 @@ val networkModule: Module = module {
         get<HttpClientProvider>().getClient()
     }
 
-    // Academics Data Sources
     single<RemoteBatchDataSource> { KtorRemoteBatchDataSource(get()) }
     single<RemoteBranchDataSource> { KtorRemoteBranchDataSource(get()) }
     single<RemoteCourseDataSource> { KtorRemoteCourseDataSource(get()) }
@@ -71,25 +69,20 @@ val networkModule: Module = module {
     single<RemoteSemesterDataSource> { KtorRemoteSemesterDataSource(get()) }
     single<RemoteUniversityDataSource> { KtorRemoteUniversityDataSource(get()) }
 
-    // Admin Data Sources
     single<RemoteAdminDataSource> { KtorRemoteAdminDataSource(get()) }
     single<RemoteAdminAuthDataSource> { KtorRemoteAdminAuthDataSource(get()) }
 
-    // Attendance Data Sources
     single<RemoteAttendanceDataSource> { KtorRemoteAttendanceDataSource(get()) }
 
-    // Schedule Data Sources
     single<RemoteClassSessionDataSource> { KtorRemoteClassSessionDataSource(get()) }
     single<RemoteRoomDataSource> { KtorRemoteRoomDataSource(get()) }
     single<RemoteTimetableDataSource> { KtorRemoteTimetableDataSource(get()) }
 
-    // Student Data Sources
     single<RemoteStudentDataSource> { KtorRemoteStudentDataSource(get()) }
     single<RemoteDropoutDataSource> { KtorRemoteDropoutDataSource(get()) }
     single<RemoteStudentFCMTokenDataSource> { KtorRemoteStudentFCMTokenDataSource(get()) }
     single<RemoteStudentAuthDataSource> { KtorRemoteStudentAuthDataSource(get()) }
 
-    // Teacher Data Sources
     single<RemoteTeacherDataSource> { KtorRemoteTeacherDataSource(get()) }
     single<RemoteTeacherAuthDataSource> { KtorRemoteTeacherAuthDataSource(get()) }
 }

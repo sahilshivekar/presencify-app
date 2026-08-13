@@ -41,7 +41,6 @@ fun SearchAttendanceBottomSheetContent(
             .fillMaxWidth()
             .padding(DesignToken.spacing.lg)
     ) {
-        // Fixed Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,14 +59,12 @@ fun SearchAttendanceBottomSheetContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
 
-        // Scrollable Filter Options
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
         ) {
-            // Date Filter
             FilterSection(title = "Date") {
                 PresencifyDatePickerTextField(
                     value = state.selectedDate,
@@ -79,7 +76,6 @@ fun SearchAttendanceBottomSheetContent(
                 )
             }
 
-            // Branch Filter
             FilterSection(
                 title = "Branch",
                 isLoading = state.areBranchesLoading
@@ -103,7 +99,6 @@ fun SearchAttendanceBottomSheetContent(
                 }
             }
 
-            // Semester Filter
             FilterSection(title = "Semester") {
                 Row(
                     modifier = Modifier
@@ -124,7 +119,6 @@ fun SearchAttendanceBottomSheetContent(
                 }
             }
 
-            // Academic Year of Semester Filter
             FilterSection(title = "Academic Year of Semester") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -146,7 +140,6 @@ fun SearchAttendanceBottomSheetContent(
             }
 
 
-            // Division Filter
             FilterSection(
                 title = "Division",
                 isLoading = state.areDivisionsLoading,
@@ -178,7 +171,6 @@ fun SearchAttendanceBottomSheetContent(
                 }
             }
 
-            // Batch Filter
             FilterSection(
                 title = "Batch",
                 isLoading = state.areBatchesLoading,
@@ -210,7 +202,6 @@ fun SearchAttendanceBottomSheetContent(
                 }
             }
 
-            // Course Filter
             FilterSection(
                 title = "Course",
                 isLoading = state.areCoursesLoading,
@@ -245,7 +236,6 @@ fun SearchAttendanceBottomSheetContent(
             }
         }
 
-        // Fixed Footer with Apply Button
         Column {
             HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
             PresencifyButton(

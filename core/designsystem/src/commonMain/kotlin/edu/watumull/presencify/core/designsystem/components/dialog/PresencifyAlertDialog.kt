@@ -9,16 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.components.PresencifyTextButton
 
-/**
- * A basic alert dialog with confirm and dismiss buttons.
- * Uses [DialogType] to control styling and behavior.
- *
- * @param modifier Modifier to be applied to the dialog
- * @param title Optional title text
- * @param onDismiss Callback when user dismisses the dialog
- * @param onConfirm Callback when user confirms the action
- * @param dialogType The type of dialog that affects styling and button layout
- */
+
 @Composable
 fun PresencifyAlertDialog(
     modifier: Modifier = Modifier,

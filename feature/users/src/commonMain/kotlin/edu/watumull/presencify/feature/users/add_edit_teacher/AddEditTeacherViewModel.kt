@@ -36,7 +36,6 @@ class AddEditTeacherViewModel(
 
     init {
         viewModelScope.launch {
-            // If in edit mode, load teacher details
             state.teacherId?.let { teacherId ->
                 loadTeacherDetails(teacherId)
             }
@@ -85,7 +84,6 @@ class AddEditTeacherViewModel(
             is AddEditTeacherAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditTeacherAction.DismissDialog -> updateState { it.copy(dialogState = null) }
 
-            // Personal Details
             is AddEditTeacherAction.UpdateFirstName -> {
                 val validation = action.firstName.validateAsFirstName()
                 updateState {
@@ -123,7 +121,6 @@ class AddEditTeacherViewModel(
                 it.copy(isActive = action.isActive)
             }
 
-            // Contact Details
             is AddEditTeacherAction.UpdateEmail -> {
                 val validation = action.email.validateAsEmail()
                 updateState {
@@ -137,7 +134,6 @@ class AddEditTeacherViewModel(
                 }
             }
 
-            // Image
             is AddEditTeacherAction.UpdateTeacherImage -> updateState {
                 it.copy(teacherImageBytes = action.imageBytes)
             }
@@ -145,7 +141,6 @@ class AddEditTeacherViewModel(
                 it.copy(isImageDialogVisible = !it.isImageDialogVisible)
             }
 
-            // Navigation
             is AddEditTeacherAction.SubmitClick -> {
                 viewModelScope.launch {
                     submitForm()

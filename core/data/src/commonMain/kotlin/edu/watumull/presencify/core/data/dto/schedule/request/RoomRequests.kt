@@ -7,7 +7,7 @@ data class AddRoomRequest(
     val roomNumber: String,
     val sittingCapacity: Int,
     val name: String? = null,
-    val type: String? = null // RoomType as String
+    val type: String? = null
 )
 
 @Serializable
@@ -15,5 +15,5 @@ data class UpdateRoomRequest(
     val roomNumber: String? = null,
     val sittingCapacity: Int? = null,
     val name: String? = null,
-    val type: String? = null // RoomType as String
+    val type: String? = null
 )

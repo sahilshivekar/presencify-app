@@ -125,7 +125,7 @@ fun DefaultersScreen(
                                 prn = student.prn,
                                 studentImageUrl = student.studentImageUrl,
                                 studentBranch = student.branch?.abbreviation,
-                                onClick = { /* Do nothing */ },
+                                onClick = {  },
                                 modifier = Modifier.padding(horizontal = DesignToken.spacing.lg),
                                 trailingContent = {
                                     val (present, total) = if (state.selectedCourse != null) {

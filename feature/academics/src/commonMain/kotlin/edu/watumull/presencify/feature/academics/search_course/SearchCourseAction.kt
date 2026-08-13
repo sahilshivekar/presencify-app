@@ -8,12 +8,10 @@ sealed interface SearchCourseAction {
     data object NavigateBack : SearchCourseAction
 
 
-    // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchCourseAction
     data object Search : SearchCourseAction
     data object Refresh : SearchCourseAction
 
-    // Filters
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber?) : SearchCourseAction
     data class SelectBranch(val branch: Branch?) : SearchCourseAction
     data class SelectScheme(val scheme: Scheme?) : SearchCourseAction
@@ -22,13 +20,10 @@ sealed interface SearchCourseAction {
     data object ResetFilters : SearchCourseAction
     data object ApplyFilters : SearchCourseAction
 
-    // Course Selection
     data class CourseCardClick(val courseId: String) : SearchCourseAction
 
-    // Course Action Button (Assign/Unassign or Link/Unlink)
     data class CourseActionButtonClick(val courseId: String) : SearchCourseAction
 
-    // Pagination
     data object LoadMoreCourses : SearchCourseAction
 
     data object ClickFloatingActionButton : SearchCourseAction

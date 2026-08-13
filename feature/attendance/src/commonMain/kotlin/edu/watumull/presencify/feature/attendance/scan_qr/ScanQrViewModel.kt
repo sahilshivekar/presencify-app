@@ -61,11 +61,9 @@ class ScanQrViewModel(
 
             updateState { it.copy(isLoading = true) }
 
-            // Decrypt content first
             val decryptedContent = try {
                 DynamicQRCipher.decrypt(content)
             } catch (e: Exception) {
-                // Decryption failed
                 e.printStackTrace()
                 updateState { it.copy(isLoading = false) }
                 SnackbarController.sendEvent(
@@ -76,7 +74,6 @@ class ScanQrViewModel(
                 return@launch
             }
 
-            // Format: attendanceId|timestamp
             val parts = decryptedContent.split("|")
             if (parts.size != 2) {
                 updateState { it.copy(isLoading = false) }
@@ -106,7 +103,7 @@ class ScanQrViewModel(
 
             val diff = abs(currentNtpTime - timestamp)
 
-            if (diff <= 1000) { // 1 second
+            if (diff <= 1000) {
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -114,9 +111,7 @@ class ScanQrViewModel(
                         isQrScanSuccessful = true
                     )
                 }
-                // Success
                 sendEvent(ScanQrEvent.NavigateToRecognizeStudent(attendanceId))
-                // Keep loading state until navigation occurs
             }
         }
     }

@@ -20,14 +20,11 @@ sealed interface AddEditTimetableAction {
 
     data object FindDivisionsAndBatchesClick : AddEditTimetableAction
 
-    // Division selection after finding divisions
     data class SelectDivision(val division: Division?) : AddEditTimetableAction
     data class ChangeDivisionDropDownVisibility(val isOpen: Boolean) : AddEditTimetableAction
 
-    // Batch selection (multiple)
     data class ToggleBatchSelection(val batch: Batch) : AddEditTimetableAction
 
-    // Timetable version
     data class UpdateTimetableVersion(val version: String) : AddEditTimetableAction
 
     data object SaveTimetableClick : AddEditTimetableAction

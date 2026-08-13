@@ -90,14 +90,12 @@ private fun LinkUnlinkCourseScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select a branch and semester to link or unlink courses",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -122,7 +120,6 @@ private fun LinkUnlinkCourseScreenContent(
                 )
             }
 
-            // Semester Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -147,7 +144,6 @@ private fun LinkUnlinkCourseScreenContent(
                 )
             }
 
-            // Link Courses Button
             PresencifyButton(
                 onClick = { onAction(LinkUnlinkCourseAction.LinkCoursesClick) },
                 text = "Link Courses",

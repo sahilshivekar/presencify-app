@@ -44,7 +44,6 @@ class RecognizeStudentViewModel(
     private var timeoutActive: Boolean = false
     private val FACE_MATCH_THRESHOLD = 0.363f
 
-    // Global 90s timeout job; scoped to screen lifetime
     private var globalTimeoutJob: Job? = null
 
     init {
@@ -107,10 +106,7 @@ class RecognizeStudentViewModel(
         }
     }
 
-    /**
-     * Local helper for liveness timing. If you later introduce a true monotonic
-     * clock abstraction, you can replace this implementation there.
-     */
+    
     private fun nowMillis(): Long = ntpClock.now()
 
     private fun startLivenessCheck() {
@@ -150,7 +146,6 @@ class RecognizeStudentViewModel(
         val sequence = mutableListOf<HeadMovement>()
         var lastMovement: HeadMovement? = null
 
-        // First 3 steps: random LEFT/RIGHT/STRAIGHT with no immediate repetition
         repeat(3) {
             var nextMovement = movements.random()
             while (nextMovement == lastMovement) {
@@ -160,7 +155,6 @@ class RecognizeStudentViewModel(
             lastMovement = nextMovement
         }
 
-        // 4th (final) step: always STRAIGHT, so we capture on a straight face
         sequence.add(HeadMovement.STRAIGHT)
 
         return sequence
@@ -169,7 +163,6 @@ class RecognizeStudentViewModel(
     override fun handleAction(action: RecognizeStudentAction) {
         when (action) {
             is RecognizeStudentAction.NavigateBack -> {
-                // Cancel global timeout when user leaves screen manually
                 cancelGlobalTimeout()
                 viewModelScope.launch { sendEvent(RecognizeStudentEvent.NavigateBack) }
             }
@@ -182,7 +175,7 @@ class RecognizeStudentViewModel(
                 validateMovement(action.yaw)
             }
 
-            is RecognizeStudentAction.OnLivenessSuccess -> { /* Handled implicitly */
+            is RecognizeStudentAction.OnLivenessSuccess -> { 
             }
 
             is RecognizeStudentAction.OnRecognitionSuccess -> {
@@ -190,7 +183,6 @@ class RecognizeStudentViewModel(
             }
 
             is RecognizeStudentAction.OnFailure -> {
-                // Instead of showing raw error text on camera, route it through dialog
                 showErrorDialog(action.message)
             }
 
@@ -227,7 +219,6 @@ class RecognizeStudentViewModel(
                 startLivenessCheck()
             }
 
-            // Screen lifecycle: start/cancel the 90s global timeout
             is RecognizeStudentAction.OnScreenStarted -> {
                 startGlobalTimeoutIfNeeded()
             }
@@ -242,7 +233,6 @@ class RecognizeStudentViewModel(
         }
     }
 
-    // Start a 90-second timeout tied to this screen. Only start once per entry.
     private fun startGlobalTimeoutIfNeeded() {
         if (state.isGlobalTimeoutActive || state.hasGlobalTimeoutFired) return
 
@@ -253,7 +243,6 @@ class RecognizeStudentViewModel(
         globalTimeoutJob = viewModelScope.launch {
             delay(90_000L)
 
-            // If liveness already succeeded or timeout already handled, do nothing
             if (state.isLivenessComplete || state.hasGlobalTimeoutFired) {
                 Logger.d(TAG) { "Global timeout job finished but liveness already completed or timeout handled." }
                 return@launch
@@ -266,7 +255,6 @@ class RecognizeStudentViewModel(
                     hasGlobalTimeoutFired = true,
                 )
             }
-            // Route through normal MVI action handling
             trySendAction(RecognizeStudentAction.OnGlobalTimeoutElapsed)
         }
     }
@@ -282,7 +270,6 @@ class RecognizeStudentViewModel(
     private fun handleGlobalTimeoutElapsed() {
         Logger.d(TAG) { "Handling global timeout: backing out and showing snackbar" }
 
-        // Stop any ongoing liveness and prevent further recognition
         updateState {
             it.copy(
                 isRecognizing = false,
@@ -293,19 +280,16 @@ class RecognizeStudentViewModel(
         }
 
         viewModelScope.launch {
-            // Show a global snackbar so user understands why they were navigated back
             SnackbarController.sendEvent(
                 SnackbarEvent(
                     message = "Liveness verification timed out. Please try again.",
                 )
             )
-            // Then navigate back using the existing NavigateBack event
             sendEvent(RecognizeStudentEvent.NavigateBack)
         }
     }
 
     private fun validateMovement(yaw: Float) {
-        // FIX 1: Completely ignore camera frames if a dialog is showing or liveness is done
         if (state.isLivenessComplete || state.dialogState != null) return
 
         val currentTime = nowMillis()
@@ -313,7 +297,6 @@ class RecognizeStudentViewModel(
             "validateMovement(): yaw=$yaw, currentTime=$currentTime, startTimeMillis=$startTimeMillis, elapsed=${currentTime - startTimeMillis}, lastStepCompletedTime=$lastStepCompletedTime"
         }
 
-        // 15s timeout, only if a liveness run is active
         if (timeoutActive && currentTime - startTimeMillis > 15000) {
             Logger.d(TAG) { "Liveness timeout reached." }
             startLivenessCheck()
@@ -321,20 +304,16 @@ class RecognizeStudentViewModel(
             return
         }
 
-        // 400ms Cooldown between step completions
         if (currentTime - lastStepCompletedTime < 400) return
 
         val requiredMovement = state.livenessSequence.getOrNull(state.currentStep) ?: return
 
-        // Mirrored Front Camera Logic with slightly more forgiving thresholds
         val isCorrect = when (requiredMovement) {
             HeadMovement.LEFT -> yaw > 15f
             HeadMovement.RIGHT -> yaw < -15f
             HeadMovement.STRAIGHT -> yaw in -12f..12f
         }
 
-        // --- Cheating / Spoofing Detection Logic ---
-        // Give a 1-second grace period at step 0 so users don't instantly fail if they start slightly askew
         if (state.currentStep > 0 || currentTime - startTimeMillis > 1000) {
             val previousMovement = if (state.currentStep > 0) {
                 state.livenessSequence[state.currentStep - 1]
@@ -342,7 +321,6 @@ class RecognizeStudentViewModel(
                 HeadMovement.STRAIGHT
             }
 
-            // Using 20f to be slightly more forgiving of natural bobbing/leaning before determining an intentional opposite look
             val isCheating = when (requiredMovement) {
                 HeadMovement.LEFT -> {
                     if (previousMovement == HeadMovement.STRAIGHT) yaw < -20f else false
@@ -378,7 +356,6 @@ class RecognizeStudentViewModel(
                 return
             }
         }
-        // --- END Cheating Detection ---
 
         Logger.d(TAG) { "validateMovement(): required=$requiredMovement, isCorrect=$isCorrect, step=${state.currentStep}" }
 
@@ -404,7 +381,6 @@ class RecognizeStudentViewModel(
     }
 
     private fun showErrorDialog(message: UiText, isCheating: Boolean = false) {
-        // Stop the current liveness run; a new one will start when user taps Retry
         timeoutActive = false
 
         updateState {
@@ -414,7 +390,7 @@ class RecognizeStudentViewModel(
                 isLivenessComplete = false,
                 isCheatingSuspected = isCheating,
                 error = null,
-                currentStep = 0, // FIX 2: Hard-reset the step counter so they can't resume
+                currentStep = 0,
                 dialogState = DialogState(
                     dialogType = DialogType.ERROR,
                     title = UiText.DynamicString(if (isCheating) "Cheating Suspected" else "Face Not Recognized"),

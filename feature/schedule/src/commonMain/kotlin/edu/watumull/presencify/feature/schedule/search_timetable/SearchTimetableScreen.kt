@@ -144,8 +144,6 @@ private fun SearchTimetableScreenContent(
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
-            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading timetables for the first time
             if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.filteredTimetables.lastIndex - 10) {
                 onAction(SearchTimetableAction.LoadMoreTimetables)
             }
@@ -192,12 +190,10 @@ private fun SearchTimetableScreenContent(
                         items = state.filteredTimetables,
                         key = { it.id }
                     ) { timetable ->
-                        // Extract division and semester info
                         val division = timetable.division
                         val semester = division?.semester
                         val branch = semester?.branch
 
-                        // Determine year from semester number
                         val year = semester?.semesterNumber?.let { semNum ->
                             when (semNum.value) {
                                 1, 2 -> "FE"
@@ -261,7 +257,6 @@ private fun SearchTimetableBottomSheetContent(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
     ) {
-        // Header with Reset
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -285,7 +280,6 @@ private fun SearchTimetableBottomSheetContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.sm))
 
-        // Branch Filter
         FilterSection(
             title = "Branch",
             isLoading = state.areBranchesLoading
@@ -308,7 +302,6 @@ private fun SearchTimetableBottomSheetContent(
             }
         }
 
-        // Semester Filter
         FilterSection(title = "Semester") {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -328,7 +321,6 @@ private fun SearchTimetableBottomSheetContent(
             }
         }
 
-        // Academic Year of Semester Filter
         FilterSection(title = "Academic Year of Semester") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -351,7 +343,6 @@ private fun SearchTimetableBottomSheetContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.sm))
 
-        // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)

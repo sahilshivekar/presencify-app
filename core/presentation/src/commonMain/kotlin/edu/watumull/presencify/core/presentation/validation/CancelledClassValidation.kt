@@ -11,7 +11,6 @@ fun LocalDate?.validateAsCancelledClassDate(): ValidationResult {
 }
 
 fun String.validateAsCancelledClassReason(): ValidationResult {
-    // Optional field
     if (this.isBlank()) return ValidationResult(successful = true)
 
     val maxLength = ValidationRule.MaxLength(255).validate(this)

@@ -95,7 +95,6 @@ private fun AddEditRoomScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Section: Room Details
             Text(
                 text = "Room Details",
                 style = MaterialTheme.typography.titleMedium,
@@ -103,7 +102,6 @@ private fun AddEditRoomScreenContent(
                 fontWeight = FontWeight.Bold
             )
 
-            // Room Number (Required)
             PresencifyTextField(
                 value = state.roomNumber,
                 onValueChange = { onAction(AddEditRoomAction.UpdateRoomNumber(it)) },
@@ -114,7 +112,6 @@ private fun AddEditRoomScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Room Name (Optional)
             PresencifyTextField(
                 value = state.name,
                 onValueChange = { onAction(AddEditRoomAction.UpdateName(it)) },
@@ -125,7 +122,6 @@ private fun AddEditRoomScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Sitting Capacity (Required)
             PresencifyTextField(
                 value = state.sittingCapacity,
                 onValueChange = { onAction(AddEditRoomAction.UpdateSittingCapacity(it)) },
@@ -152,7 +148,6 @@ private fun AddEditRoomScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
-            // Submit Button
             PresencifyButton(
                 onClick = { onAction(AddEditRoomAction.SubmitClick) },
                 text = if (state.isEditMode) "Update Room" else "Add Room",

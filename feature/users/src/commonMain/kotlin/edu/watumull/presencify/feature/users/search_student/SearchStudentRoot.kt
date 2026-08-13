@@ -24,8 +24,6 @@ fun SearchStudentRoot(
                 onNavigateToStudentDetails(event.studentId)
             }
             is SearchStudentEvent.NavigateBackWithSelection -> {
-                // For now, just navigate back
-                // In the future, this could pass selected student IDs back to caller
                 onNavigateBack()
             }
             is SearchStudentEvent.NavigateToAddEditStudent -> {

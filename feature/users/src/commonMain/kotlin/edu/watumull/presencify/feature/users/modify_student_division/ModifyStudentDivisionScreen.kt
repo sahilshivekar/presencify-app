@@ -94,14 +94,12 @@ private fun ModifyStudentDivisionScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select a branch, semester number, and academic year to find divisions. Then select the new division and start date.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -126,7 +124,6 @@ private fun ModifyStudentDivisionScreenContent(
                 )
             }
 
-            // Semester Number Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -151,7 +148,6 @@ private fun ModifyStudentDivisionScreenContent(
                 )
             }
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -186,7 +182,6 @@ private fun ModifyStudentDivisionScreenContent(
                 }
             }
 
-            // Find Divisions Button
             PresencifyButton(
                 onClick = { onAction(ModifyStudentDivisionAction.FindDivisionsClick) },
                 text = "Find Divisions",
@@ -196,7 +191,6 @@ private fun ModifyStudentDivisionScreenContent(
                     .padding(top = DesignToken.spacing.sm)
             )
 
-            // Division Selection (shown only after finding divisions)
             if (state.areDivisionsVisible) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
@@ -223,7 +217,6 @@ private fun ModifyStudentDivisionScreenContent(
                     )
                 }
 
-                // New Division Start Date Selection
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                     modifier = Modifier.padding(top = DesignToken.spacing.sm)
@@ -247,7 +240,6 @@ private fun ModifyStudentDivisionScreenContent(
                     )
                 }
 
-                // Navigate to Search Student Button
                 PresencifyButton(
                     onClick = { onAction(ModifyStudentDivisionAction.NavigateToSearchStudentClick) },
                     text = "Continue to Search Students",

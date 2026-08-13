@@ -21,10 +21,8 @@ class SearchBranchViewModel(
 ) {
 
     init {
-        // Load initial data
         loadBranches()
 
-        // Setup debounced search
         setupDebouncedSearch()
     }
 

@@ -28,17 +28,7 @@ import coil3.compose.AsyncImage
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * List item component for displaying Student information with profile image.
- *
- * @param studentName The name of the student (required).
- * @param studentBranch The branch/department of the student (required).
- * @param studentYear Optional year (e.g., "FE", "SE", "TE", "BE").
- * @param studentImageUrl Optional URL for student profile image.
- * @param feedback Optional feedback message to display.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun StudentListItem(
     studentName: String,

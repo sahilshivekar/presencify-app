@@ -151,7 +151,6 @@ class SearchClassViewModel(
 
         if (semester != null && branchId != null && startYear != null && endYear != null && state.academicStartYearError == null && state.academicEndYearError == null) {
 
-            // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
             divisionRepository.getDivisions(
                 semesterNumber = semester,
@@ -178,7 +177,6 @@ class SearchClassViewModel(
                     }
                 }
 
-            // Load batches
             updateState { it.copy(areBatchesLoading = true) }
             batchRepository.getBatches(
                 semesterNumber = semester,
@@ -205,7 +203,6 @@ class SearchClassViewModel(
                     }
                 }
         } else {
-            // Clear divisions and batches if prerequisites are not met
             updateState {
                 it.copy(
                     divisionOptions = persistentListOf(),
@@ -223,7 +220,6 @@ class SearchClassViewModel(
         viewModelScope.launch {
             updateState { it.copy(isLoadingRooms = true, isLoadingTeachers = true) }
 
-            // Load all rooms
             val roomsResult = roomRepository.getRooms(getAll = true)
             when (roomsResult) {
                 is edu.watumull.presencify.core.domain.Result.Success -> {
@@ -239,7 +235,6 @@ class SearchClassViewModel(
                 }
             }
 
-            // Load all teachers
             val teachersResult = teacherRepository.getTeachers(getAll = true, isActive = true)
             when (teachersResult) {
                 is edu.watumull.presencify.core.domain.Result.Success -> {
@@ -282,7 +277,6 @@ class SearchClassViewModel(
         loadNextClasses()
     }
 
-    // Custom Validation Helpers
     private fun validateAcademicYears(startYear: String, endYear: String): Pair<String?, String?> {
         var startError: String? = null
         var endError: String? = null

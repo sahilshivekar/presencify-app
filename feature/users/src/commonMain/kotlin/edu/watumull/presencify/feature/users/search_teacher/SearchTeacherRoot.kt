@@ -22,8 +22,6 @@ fun SearchTeacherRoot(
                 onNavigateToTeacherDetails(event.teacherId)
             }
             is SearchTeacherEvent.NavigateBackWithSelection -> {
-                // For now, just navigate back
-                // In the future, this could pass selected teacher IDs back to caller
                 onNavigateBack()
             }
             is SearchTeacherEvent.NavigateToAddEditStaff -> {

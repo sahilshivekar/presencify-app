@@ -69,21 +69,18 @@ class SearchTeacherViewModel(
             }
         },
         endReached = { currentPage, response ->
-            // End reached when we have loaded all teachers
             val totalLoadedTeachers = currentPage * 20
             totalLoadedTeachers >= response.totalTeacher
         }
     )
 
     init {
-        // Set intention from route params
         val intention = try {
             SearchTeacherIntention.valueOf(routeParams.intention)
         } catch (_: IllegalArgumentException) {
             SearchTeacherIntention.DEFAULT
         }
 
-        // Set intention based on courseId
         val finalIntention = if (routeParams.courseId != null) {
             SearchTeacherIntention.SELECT_TEACHER
         } else {
@@ -102,7 +99,6 @@ class SearchTeacherViewModel(
             )
         }
 
-        // Setup debounced search
         setupDebouncedSearch()
     }
 
@@ -164,7 +160,6 @@ class SearchTeacherViewModel(
 
             is SearchTeacherAction.TeacherCardClick -> {
                 if (stateFlow.value.isSelectable) {
-                    // In selection mode, toggle selection
                     val currentSelections = stateFlow.value.selectedTeacherIds
                     val newSelections = if (currentSelections.contains(action.teacherId)) {
                         currentSelections - action.teacherId
@@ -173,7 +168,6 @@ class SearchTeacherViewModel(
                     }
                     updateState { it.copy(selectedTeacherIds = newSelections) }
                 } else {
-                    // Navigate to staff details
                     sendEvent(NavigateToStaffDetails(action.teacherId))
                 }
             }

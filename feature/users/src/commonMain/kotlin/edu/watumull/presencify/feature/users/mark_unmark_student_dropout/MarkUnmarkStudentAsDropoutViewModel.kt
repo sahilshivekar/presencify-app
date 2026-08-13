@@ -58,7 +58,7 @@ class MarkUnmarkStudentAsDropoutViewModel : BaseViewModel<MarkUnmarkStudentAsDro
             val endYearInt = current.endYear.toIntOrNull()
 
             when {
-                startYearInt == null || endYearInt == null -> null // already covered by validators
+                startYearInt == null || endYearInt == null -> null
                 endYearInt != startYearInt + 1 -> "End year must be exactly one year after start year"
                 else -> null
             }

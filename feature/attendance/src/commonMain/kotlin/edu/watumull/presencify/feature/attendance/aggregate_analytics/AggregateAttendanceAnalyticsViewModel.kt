@@ -58,7 +58,6 @@ class AggregateAttendanceAnalyticsViewModel(
         branchRepository.getBranches()
             .onSuccess { branches ->
                 updateState { it.copy(branchOptions = branches, areBranchesLoading = false) }
-                // If branchId was passed via route, pre-select it
                 routeParams.branchId?.let { branchId ->
                     val branch = branches.firstOrNull { it.id == branchId }
                     if (branch != null) {
@@ -101,7 +100,6 @@ class AggregateAttendanceAnalyticsViewModel(
     ) {
         updateState { it.copy(isLoadingAttendance = true, attendanceData = emptyList(), detailedAttendanceRecords = emptyMap()) }
 
-        // Fetch semesters matching filters to resolve semesterId
         semesterRepository.getSemesters(
             semesterNumber = semesterNumber,
             academicStartYear = academicStartYear,
@@ -127,11 +125,9 @@ class AggregateAttendanceAnalyticsViewModel(
 
             updateState { it.copy(semester = semester) }
 
-            // Load divisions and batches for this semester
             loadDivisions(semester.id)
             loadBatches(semester.id)
 
-            // Load attendance data
             loadAttendanceData(semester.id)
         }.onError { error ->
             updateState {
@@ -178,7 +174,6 @@ class AggregateAttendanceAnalyticsViewModel(
     private suspend fun loadAttendanceData(semesterId: String) {
         val state = stateFlow.value
 
-        // First, fetch courses for the semester
         var courses: List<Course> = emptyList()
         var courseFetchFailed = false
 
@@ -205,7 +200,6 @@ class AggregateAttendanceAnalyticsViewModel(
             return
         }
 
-        // For each course, call getAttendanceOfAllForSemesterDivisionBatchCourse
         val aggregatedList = mutableListOf<AggregatedAttendance>()
         val detailedMap = mutableMapOf<String, List<AttendanceRecord>>()
 
@@ -223,7 +217,6 @@ class AggregateAttendanceAnalyticsViewModel(
                 branchId = state.selectedBranch?.id,
                 schemeId = null
             ).onSuccess { summaries ->
-                // summaries is List<AttendanceSummary>, usually one per course
                 val courseSummary = summaries.firstOrNull { it.courseId == course.id }
                     ?: summaries.firstOrNull()
 
@@ -243,7 +236,6 @@ class AggregateAttendanceAnalyticsViewModel(
                     detailedMap[course.id] = records
                 }
             }
-            // Silently skip courses with errors
         }
 
         updateState {
@@ -292,7 +284,6 @@ class AggregateAttendanceAnalyticsViewModel(
             }
             is AggregateAttendanceAnalyticsAction.SelectDivision -> {
                 updateState { it.copy(selectedDivision = action.division) }
-                // Re-fetch attendance with division filter
                 val semester = stateFlow.value.semester ?: return
                 viewModelScope.launch {
                     updateState { it.copy(isLoadingAttendance = true) }
@@ -301,7 +292,6 @@ class AggregateAttendanceAnalyticsViewModel(
             }
             is AggregateAttendanceAnalyticsAction.SelectBatch -> {
                 updateState { it.copy(selectedBatch = action.batch) }
-                // Re-fetch attendance with batch filter
                 val semester = stateFlow.value.semester ?: return
                 viewModelScope.launch {
                     updateState { it.copy(isLoadingAttendance = true) }

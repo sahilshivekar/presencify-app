@@ -99,11 +99,9 @@ class MarkAttendanceViewModel(
         timerJob = null
         updateState { it.copy(isQrVisible = false, qrCodeContent = "") }
 
-        // Fetch fresh data when QR is stopped
         loadAttendance(isRefresh = true)
     }
 
-    // 5. Ensure the job is cancelled when the ViewModel is cleared
     override fun onCleared() {
         super.onCleared()
         timerJob?.cancel()
@@ -130,7 +128,7 @@ class MarkAttendanceViewModel(
                             totalStudents = totalCount,
                             presentStudents = presentCount,
                             absentStudents = absentCount,
-                            isStudentListLoading = false // Ensure loading is disabled on success
+                            isStudentListLoading = false
                         )
                     }
                 }
@@ -138,7 +136,7 @@ class MarkAttendanceViewModel(
                     updateState {
                         it.copy(
                             viewState = MarkAttendanceState.ViewState.Error(error.toUiText()),
-                            isStudentListLoading = false // Ensure loading is disabled on error
+                            isStudentListLoading = false
                         )
                     }
                 }
@@ -225,14 +223,11 @@ class MarkAttendanceViewModel(
 
         val builder = StringBuilder()
 
-        // Header (exact same format as AttendanceDetails)
         builder.appendLine("Attendance Details")
         builder.appendLine()
 
-        // Date
         builder.appendLine("Date: ${attendance.date.toReadableString()}")
 
-        // Class / course details
         classSession?.let { session ->
             val division = session.timetable?.division
             val batch = session.batch
@@ -266,7 +261,6 @@ class MarkAttendanceViewModel(
 
         builder.appendLine()
 
-        // Stats (same labels/casing as AttendanceDetails)
         builder.appendLine("Total Students: ${state.totalStudents}")
         builder.appendLine("Present Students: ${state.presentStudents}")
         builder.appendLine("Absent Students: ${state.absentStudents}")
@@ -275,7 +269,6 @@ class MarkAttendanceViewModel(
 
         val attendanceStudents = attendance.attendanceStudents ?: emptyList()
 
-        // Present students list
         val presentStudents = attendanceStudents.filter { it.attendanceStatus }
         builder.appendLine("Present Students (${presentStudents.size}):")
         if (presentStudents.isEmpty()) {
@@ -291,7 +284,6 @@ class MarkAttendanceViewModel(
 
         builder.appendLine()
 
-        // Absent students list
         val absentStudents = attendanceStudents.filter { !it.attendanceStatus }
         builder.appendLine("Absent Students (${absentStudents.size}):")
         if (absentStudents.isEmpty()) {
@@ -314,11 +306,10 @@ class MarkAttendanceViewModel(
     }
 
     private fun toggleStudentAttendance(studentId: String, currentStatus: Boolean) {
-        // Set loading state for this student
         updateState {
             it.copy(
                 studentLoadingStates = it.studentLoadingStates + (studentId to true),
-                studentFeedbacks = it.studentFeedbacks - studentId // Clear previous feedback
+                studentFeedbacks = it.studentFeedbacks - studentId
             )
         }
 
@@ -330,7 +321,6 @@ class MarkAttendanceViewModel(
                 newAttendanceStatus = newStatus
             )
                 .onSuccess { updatedAttendanceStudent ->
-                    // Update the attendance student in the list
                     val currentState = state
                     val updatedAttendanceStudents =
                         currentState.attendance?.attendanceStudents?.map { attendanceStudent ->
@@ -341,7 +331,6 @@ class MarkAttendanceViewModel(
                             }
                         }
 
-                    // Recalculate counts
                     val presentCount = updatedAttendanceStudents?.count { it.attendanceStatus } ?: 0
                     val totalCount = updatedAttendanceStudents?.size ?: 0
                     val absentCount = totalCount - presentCount
@@ -352,12 +341,10 @@ class MarkAttendanceViewModel(
                             presentStudents = presentCount,
                             absentStudents = absentCount,
                             studentLoadingStates = it.studentLoadingStates - studentId
-                            // No feedback for success
                         )
                     }
                 }
                 .onError { error ->
-                    // Show error feedback permanently - user must take action to fix
                     updateState {
                         it.copy(
                             studentLoadingStates = it.studentLoadingStates - studentId,

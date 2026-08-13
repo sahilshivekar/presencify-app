@@ -55,13 +55,11 @@ class SearchStudentViewModel(
             SearchStudentIntention.DEFAULT
         }
 
-        // Validate required parameters based on intention
         when (intention) {
             SearchStudentIntention.ASSIGN_UNASSIGN_STUDENT_TO_SEMESTER -> {
                 if (routeParams.semesterId == null) {
                     throw IllegalArgumentException("Semester ID is required for assigning/unassigning students to semester")
                 }
-                // Expect branchId
                 if (routeParams.branchId == null) {
                     throw IllegalArgumentException("Branch ID is required for assigning/unassigning students to semester")
                 }
@@ -72,7 +70,6 @@ class SearchStudentViewModel(
                 if (routeParams.divisionId == null) {
                     throw IllegalArgumentException("Division ID is required for division operations")
                 }
-                // Expect branchId, academicStartYear, academicEndYear, semesterNumber
                 if (routeParams.branchId == null || routeParams.academicStartYear == null ||
                     routeParams.academicEndYear == null || routeParams.semesterNumber == null
                 ) {
@@ -85,7 +82,6 @@ class SearchStudentViewModel(
                 if (routeParams.batchId == null) {
                     throw IllegalArgumentException("Batch ID is required for batch operations")
                 }
-                // Expect branchId, academicStartYear, academicEndYear, semesterNumber
                 if (routeParams.branchId == null || routeParams.academicStartYear == null ||
                     routeParams.academicEndYear == null || routeParams.semesterNumber == null
                 ) {
@@ -100,15 +96,12 @@ class SearchStudentViewModel(
             }
 
             SearchStudentIntention.VIEW_ATTENDANCE -> {
-                // No validation needed
             }
 
             SearchStudentIntention.DEFAULT -> {
-                // No validation needed
             }
 
             SearchStudentIntention.ADD_STUDENT_BIOMETRIC -> {
-                // No validation needed
             }
         }
 
@@ -186,7 +179,6 @@ class SearchStudentViewModel(
             }
         },
         endReached = { currentPage, response ->
-            // End reached when we have loaded all students
             val totalLoadedStudents = currentPage * 20
             totalLoadedStudents >= response.totalStudents
         }
@@ -202,7 +194,6 @@ class SearchStudentViewModel(
         }
     }
 
-    // Rule 1: ViewModel Private Validation Helpers
     private fun validateAcademicYearRange(start: String, end: String): Pair<String?, String?> {
         if (start.isBlank() && end.isBlank()) return Pair(null, null)
 
@@ -366,7 +357,6 @@ class SearchStudentViewModel(
 
         if (semester != null && branchId != null && startYear != null && endYear != null) {
 
-            // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
             divisionRepository.getDivisions(
                 semesterNumber = semester,
@@ -393,7 +383,6 @@ class SearchStudentViewModel(
                     }
                 }
 
-            // Load batches
             updateState { it.copy(areBatchesLoading = true) }
             batchRepository.getBatches(
                 semesterNumber = semester,
@@ -447,8 +436,6 @@ class SearchStudentViewModel(
             }
 
             SearchStudentIntention.MARK_UNMARK_STUDENT_AS_DROPOUT -> {
-                // For dropout intention, the action button is handled via ToggleStudentDropout
-                // This case should not be triggered
             }
 
             SearchStudentIntention.VIEW_ATTENDANCE -> {
@@ -460,7 +447,6 @@ class SearchStudentViewModel(
             }
 
             SearchStudentIntention.DEFAULT -> {
-                // Should not happen
             }
         }
     }
@@ -470,10 +456,8 @@ class SearchStudentViewModel(
         val dropoutStartYear = state.dropoutAcademicStartYear ?: return
         val dropoutEndYear = state.dropoutAcademicEndYear ?: return
 
-        // Prevent duplicate clicks
         if (state.loadingStudentIds.contains(studentId)) return
 
-        // Mark student as loading
         updateState {
             it.copy(
                 loadingStudentIds = it.loadingStudentIds + studentId
@@ -481,7 +465,6 @@ class SearchStudentViewModel(
         }
 
         if (isCurrentlyDropout) {
-            // Remove from dropout
             studentDropoutRepository.removeStudentFromDropout(studentId, dropoutStartYear, dropoutEndYear)
                 .onSuccess {
                     updateState {
@@ -490,7 +473,6 @@ class SearchStudentViewModel(
                             studentDropoutStatus = it.studentDropoutStatus + (studentId to false)
                         )
                     }
-                    // Show success snackbar
                     viewModelScope.launch {
                         SnackbarController.sendEvent(
                             SnackbarEvent(
@@ -508,7 +490,6 @@ class SearchStudentViewModel(
                     }
                 }
         } else {
-            // Add to dropout
             studentDropoutRepository.addStudentToDropout(studentId, dropoutStartYear, dropoutEndYear)
                 .onSuccess {
                     updateState {
@@ -517,7 +498,6 @@ class SearchStudentViewModel(
                             studentDropoutStatus = it.studentDropoutStatus + (studentId to true)
                         )
                     }
-                    // Show success snackbar
                     viewModelScope.launch {
                         SnackbarController.sendEvent(
                             SnackbarEvent(
@@ -541,17 +521,13 @@ class SearchStudentViewModel(
         val state = stateFlow.value
         val semesterId = state.semesterId ?: return
 
-        // Prevent duplicate clicks
         if (state.loadingStudentIds.contains(studentId)) return
 
-        // Find the student in the list
         val student = state.students.find { it.id == studentId } ?: return
 
-        // Check if student is already assigned to this semester
         val studentSemester = student.studentSemesters?.find { it.semester?.id == semesterId }
         val isAssigned = studentSemester != null
 
-        // Mark student as loading
         updateState {
             it.copy(
                 loadingStudentIds = it.loadingStudentIds + studentId,
@@ -560,12 +536,10 @@ class SearchStudentViewModel(
         }
 
         if (isAssigned) {
-            // Unassign student from semester - need the studentSemesterId
             val studentSemesterId = studentSemester.id
 
             studentRepository.removeStudentFromSemester(studentSemesterId)
                 .onSuccess {
-                    // Update the student in the list
                     val updatedStudents = state.students.map { s ->
                         if (s.id == studentId) {
                             s.copy(
@@ -597,10 +571,8 @@ class SearchStudentViewModel(
                     }
                 }
         } else {
-            // Assign student to semester
             studentRepository.addStudentToSemester(studentId, semesterId)
                 .onSuccess {
-                    // Fetch updated student to get the new semester info
                     viewModelScope.launch {
                         studentRepository.getStudentById(studentId)
                             .onSuccess { updatedStudent ->
@@ -649,17 +621,13 @@ class SearchStudentViewModel(
         val state = stateFlow.value
         val divisionId = state.divisionId ?: return
 
-        // Prevent duplicate clicks
         if (state.loadingStudentIds.contains(studentId)) return
 
-        // Find the student in the list
         val student = state.students.find { it.id == studentId } ?: return
 
-        // Check if student is already assigned to this division
         val studentDivision = student.studentDivisions?.find { it.division?.id == divisionId && it.endDate == null }
         val isAssigned = studentDivision != null
 
-        // Mark student as loading
         updateState {
             it.copy(
                 loadingStudentIds = it.loadingStudentIds + studentId,
@@ -668,12 +636,10 @@ class SearchStudentViewModel(
         }
 
         if (isAssigned) {
-            // Unassign student from division - use revert method
             val studentDivisionId = studentDivision.id
 
             studentRepository.revertAddStudentToDivision(studentDivisionId)
                 .onSuccess {
-                    // Update the student in the list
                     val updatedStudents = state.students.map { s ->
                         if (s.id == studentId) {
                             s.copy(
@@ -705,10 +671,8 @@ class SearchStudentViewModel(
                     }
                 }
         } else {
-            // Assign student to division
             studentRepository.addStudentToDivision(studentId, divisionId)
                 .onSuccess {
-                    // Fetch updated student
                     viewModelScope.launch {
                         studentRepository.getStudentById(studentId)
                             .onSuccess { updatedStudent ->
@@ -758,7 +722,6 @@ class SearchStudentViewModel(
         val targetDivisionId = state.divisionId ?: return
         val newStartDateString = state.newStartDate ?: return
 
-        // Parse the date from ISO format (yyyy-MM-dd)
         val newStartDate = try {
             LocalDate.parse(newStartDateString)
         } catch (e: Exception) {
@@ -772,13 +735,11 @@ class SearchStudentViewModel(
             return
         }
 
-        // Get semester details from route params
         val branchId = routeParams.branchId ?: return
         val academicStartYear = routeParams.academicStartYear ?: return
         val academicEndYear = routeParams.academicEndYear ?: return
         val semesterNumber = routeParams.semesterNumber ?: return
 
-        // Convert Int to SemesterNumber enum
         val semesterNumberEnum = SemesterNumber.entries.find { it.value == semesterNumber }
         if (semesterNumberEnum == null) {
             updateState {
@@ -791,10 +752,8 @@ class SearchStudentViewModel(
             return
         }
 
-        // Prevent duplicate clicks
         if (state.loadingStudentIds.contains(studentId)) return
 
-        // Mark student as loading
         updateState {
             it.copy(
                 loadingStudentIds = it.loadingStudentIds + studentId,
@@ -802,7 +761,6 @@ class SearchStudentViewModel(
             )
         }
 
-        // Fetch the semester to get semesterId
         semesterRepository.getSemesters(
             semesterNumber = semesterNumberEnum,
             academicStartYear = academicStartYear,
@@ -826,7 +784,6 @@ class SearchStudentViewModel(
 
                 val semesterId = semester.id
 
-                // Find the student in the list
                 val student = state.students.find { it.id == studentId }
                 if (student == null) {
                     updateState {
@@ -840,7 +797,6 @@ class SearchStudentViewModel(
                     return@onSuccess
                 }
 
-                // Check if student is already in the target division for this semester (with endDate = null)
                 val targetDivisionRecord = student.studentDivisions?.find {
                     it.division?.id == targetDivisionId &&
                             it.division?.semesterId == semesterId &&
@@ -848,11 +804,9 @@ class SearchStudentViewModel(
                 }
 
                 if (targetDivisionRecord != null) {
-                    // Student is already in target division, revert the change
                     viewModelScope.launch {
                         studentRepository.revertChangeStudentDivision(targetDivisionRecord.id)
                             .onSuccess {
-                                // Fetch updated student
                                 studentRepository.getStudentById(studentId)
                                     .onSuccess { updatedStudent ->
                                         val updatedStudents = state.students.map { s ->
@@ -894,7 +848,6 @@ class SearchStudentViewModel(
                             }
                     }
                 } else {
-                    // Find the current active division for this semester (where endDate is null)
                     val currentDivisionRecord = student.studentDivisions?.find {
                         it.division?.semesterId == semesterId && it.endDate == null
                     }
@@ -911,7 +864,6 @@ class SearchStudentViewModel(
                         return@onSuccess
                     }
 
-                    // Change student division
                     viewModelScope.launch {
                         studentRepository.changeStudentDivision(
                             studentDivisionId = currentDivisionRecord.id,
@@ -919,7 +871,6 @@ class SearchStudentViewModel(
                             newDivisionStartDate = newStartDate
                         )
                             .onSuccess {
-                                // Fetch updated student
                                 studentRepository.getStudentById(studentId)
                                     .onSuccess { updatedStudent ->
                                         val updatedStudents = state.students.map { s ->
@@ -976,17 +927,13 @@ class SearchStudentViewModel(
         val state = stateFlow.value
         val batchId = state.batchId ?: return
 
-        // Prevent duplicate clicks
         if (state.loadingStudentIds.contains(studentId)) return
 
-        // Find the student in the list
         val student = state.students.find { it.id == studentId } ?: return
 
-        // Check if student is already assigned to this batch
         val studentBatch = student.studentBatches?.find { it.batch?.id == batchId && it.endDate == null }
         val isAssigned = studentBatch != null
 
-        // Mark student as loading
         updateState {
             it.copy(
                 loadingStudentIds = it.loadingStudentIds + studentId,
@@ -995,12 +942,10 @@ class SearchStudentViewModel(
         }
 
         if (isAssigned) {
-            // Unassign student from batch - use revert method
             val studentBatchId = studentBatch.id
 
             studentRepository.revertAddStudentToBatch(studentBatchId)
                 .onSuccess {
-                    // Update the student in the list
                     val updatedStudents = state.students.map { s ->
                         if (s.id == studentId) {
                             s.copy(
@@ -1032,10 +977,8 @@ class SearchStudentViewModel(
                     }
                 }
         } else {
-            // Assign student to batch
             studentRepository.addStudentToBatch(studentId, batchId)
                 .onSuccess {
-                    // Fetch updated student
                     viewModelScope.launch {
                         studentRepository.getStudentById(studentId)
                             .onSuccess { updatedStudent ->
@@ -1085,7 +1028,6 @@ class SearchStudentViewModel(
         val targetBatchId = state.batchId ?: return
         val newStartDateString = state.newStartDate ?: return
 
-        // Parse the date from ISO format (yyyy-MM-dd)
         val newStartDate = try {
             LocalDate.parse(newStartDateString)
         } catch (e: Exception) {
@@ -1099,13 +1041,11 @@ class SearchStudentViewModel(
             return
         }
 
-        // Get semester details from route params
         val branchId = routeParams.branchId ?: return
         val academicStartYear = routeParams.academicStartYear ?: return
         val academicEndYear = routeParams.academicEndYear ?: return
         val semesterNumber = routeParams.semesterNumber ?: return
 
-        // Convert Int to SemesterNumber enum
         val semesterNumberEnum = SemesterNumber.entries.find { it.value == semesterNumber }
         if (semesterNumberEnum == null) {
             updateState {
@@ -1118,10 +1058,8 @@ class SearchStudentViewModel(
             return
         }
 
-        // Prevent duplicate clicks
         if (state.loadingStudentIds.contains(studentId)) return
 
-        // Mark student as loading
         updateState {
             it.copy(
                 loadingStudentIds = it.loadingStudentIds + studentId,
@@ -1129,7 +1067,6 @@ class SearchStudentViewModel(
             )
         }
 
-        // Fetch the semester to get semesterId
         semesterRepository.getSemesters(
             semesterNumber = semesterNumberEnum,
             academicStartYear = academicStartYear,
@@ -1153,7 +1090,6 @@ class SearchStudentViewModel(
 
                 val semesterId = semester.id
 
-                // Find the student in the list
                 val student = state.students.find { it.id == studentId }
                 if (student == null) {
                     updateState {
@@ -1167,7 +1103,6 @@ class SearchStudentViewModel(
                     return@onSuccess
                 }
 
-                // Find divisions that belong to this semester (with endDate = null)
                 val semesterDivisionIds = student.studentDivisions
                     ?.filter { it.division?.semesterId == semesterId && it.endDate == null }
                     ?.mapNotNull { it.division?.id }
@@ -1185,8 +1120,6 @@ class SearchStudentViewModel(
                     return@onSuccess
                 }
 
-                // Check if student is already in the target batch for this semester (with endDate = null)
-                // Filter batches where batch's divisionId is in semesterDivisionIds
                 val targetBatchRecord = student.studentBatches?.find {
                     it.batch?.id == targetBatchId &&
                             it.batch?.divisionId in semesterDivisionIds &&
@@ -1194,11 +1127,9 @@ class SearchStudentViewModel(
                 }
 
                 if (targetBatchRecord != null) {
-                    // Student is already in target batch, revert the change
                     viewModelScope.launch {
                         studentRepository.revertChangeStudentBatch(targetBatchRecord.id)
                             .onSuccess {
-                                // Fetch updated student
                                 studentRepository.getStudentById(studentId)
                                     .onSuccess { updatedStudent ->
                                         val updatedStudents = state.students.map { s ->
@@ -1240,7 +1171,6 @@ class SearchStudentViewModel(
                             }
                     }
                 } else {
-                    // Find the current active batch for this semester (where endDate is null and divisionId in semesterDivisionIds)
                     val currentBatchRecord = student.studentBatches?.find {
                         it.batch?.divisionId in semesterDivisionIds && it.endDate == null
                     }
@@ -1257,7 +1187,6 @@ class SearchStudentViewModel(
                         return@onSuccess
                     }
 
-                    // Change student batch
                     viewModelScope.launch {
                         studentRepository.changeStudentBatch(
                             studentBatchId = currentBatchRecord.id,
@@ -1265,7 +1194,6 @@ class SearchStudentViewModel(
                             newBatchStartDate = newStartDate
                         )
                             .onSuccess {
-                                // Fetch updated student
                                 studentRepository.getStudentById(studentId)
                                     .onSuccess { updatedStudent ->
                                         val updatedStudents = state.students.map { s ->
@@ -1366,7 +1294,6 @@ class SearchStudentViewModel(
                 }
             }
 
-            // Rule 2: ViewModel Real-Time State Updates
             is SearchStudentAction.UpdateAcademicStartYear -> {
                 val errors = validateAcademicYearRange(action.year, stateFlow.value.academicEndYear)
                 updateState {
@@ -1460,7 +1387,6 @@ class SearchStudentViewModel(
                 updateState { it.copy(selectedBatch = action.batch) }
             }
 
-            // Rule 3: Reset clears error states, Apply executed immediately
             is SearchStudentAction.ResetFilters -> {
                 updateState {
                     it.copy(

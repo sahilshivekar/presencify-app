@@ -66,7 +66,6 @@ class TeacherLoginViewModel(
         val email = currentState.email.trim()
         val password = currentState.password
 
-        // Reset errors
         updateState {
             it.copy(
                 emailError = null,
@@ -74,7 +73,6 @@ class TeacherLoginViewModel(
             )
         }
 
-        // Validation - Basic blank checks only as per rules
         var hasErrors = false
         if (email.isBlank()) {
             updateState { it.copy(emailError = "Email is required") }
@@ -90,11 +88,10 @@ class TeacherLoginViewModel(
             return
         }
 
-        // Start loading
         updateState {
             it.copy(
                 isLoading = true,
-                isPasswordVisible = false // Hide password during login
+                isPasswordVisible = false
             )
         }
 

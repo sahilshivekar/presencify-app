@@ -18,7 +18,6 @@ actual suspend fun extractFaceDescriptors(
 ): List<FloatArray>? = withContext(Dispatchers.Default) {
 
     try {
-        // Fetch context via Koin
         val context = try {
             object : KoinComponent {}.get<Context>()
         } catch (e: Exception) {
@@ -46,8 +45,7 @@ actual suspend fun extractFaceDescriptors(
                 }
 
                 Log.d(TAG, "Bitmap decoded successfully. Size: ${originalBitmap.width}x${originalBitmap.height}")
-                // 1. Scale down the image if it's too large (YuNet struggles with 12MP+ images)
-                val maxDim = 800f // 800px is highly optimal for YuNet
+                val maxDim = 800f
                 val scale = maxDim / maxOf(originalBitmap.width, originalBitmap.height)
                 val scaledBitmap = if (scale < 1.0f) {
                     Bitmap.createScaledBitmap(
@@ -60,12 +58,10 @@ actual suspend fun extractFaceDescriptors(
                     originalBitmap
                 }
 
-                // Free up massive original bitmap memory immediately
                 if (scaledBitmap != originalBitmap) originalBitmap.recycle()
 
-                // 2. Brute-force rotation sweep (Handles missing EXIF data perfectly)
                 var foundDescriptor: FloatArray? = null
-                val rotationsToTry = listOf(0f, 90f, 270f, 180f) // Common angles first
+                val rotationsToTry = listOf(0f, 90f, 270f, 180f)
 
                 for (angle in rotationsToTry) {
                     val matrix = Matrix().apply { postRotate(angle) }
@@ -80,7 +76,6 @@ actual suspend fun extractFaceDescriptors(
                         scaledBitmap
                     }
 
-                    // Ensure ARGB_8888 format for OpenCV
                     val finalBitmap = if (rotatedBitmap.config != Bitmap.Config.ARGB_8888) {
                         val converted = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true)
                         if (rotatedBitmap != scaledBitmap) rotatedBitmap.recycle()
@@ -89,27 +84,23 @@ actual suspend fun extractFaceDescriptors(
                         rotatedBitmap
                     }
 
-                    // Try to detect face and extract descriptor
                     foundDescriptor = extractor.generateSingleDescriptor(finalBitmap)
 
-                    // Memory cleanup for this loop iteration
                     if (finalBitmap != scaledBitmap) finalBitmap.recycle()
 
-                    // If a face is found, stop rotating and proceed!
                     if (foundDescriptor != null) {
                         Log.d(TAG, "Success! Face found at rotation: $angle degrees")
                         break
                     }
                 }
 
-                // Cleanup base scaled bitmap
                 scaledBitmap.recycle()
 
                 if (foundDescriptor == null) {
                     Log.e(TAG, "Failed: No face detected in any rotation.")
                 }
 
-                foundDescriptor // Returns the array, or null to mapNotNull
+                foundDescriptor
             }
 
             descriptors.takeIf { it.isNotEmpty() }

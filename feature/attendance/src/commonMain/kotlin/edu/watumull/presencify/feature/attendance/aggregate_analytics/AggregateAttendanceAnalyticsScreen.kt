@@ -82,10 +82,8 @@ fun AggregateAttendanceAnalyticsScreen(
                         .padding(DesignToken.spacing.lg),
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                 ) {
-                    // Filter Section
                     FilterSection(state = state, onAction = onAction)
 
-                    // Loading
                     if (state.isLoadingAttendance) {
                         Box(
                             modifier = Modifier
@@ -97,7 +95,6 @@ fun AggregateAttendanceAnalyticsScreen(
                         }
                     }
 
-                    // Attendance Data
                     if (!state.isLoadingAttendance && state.attendanceData.isNotEmpty() && state.semester != null) {
                         AttendanceChartsSection(
                             attendanceData = state.attendanceData,
@@ -107,7 +104,6 @@ fun AggregateAttendanceAnalyticsScreen(
                         )
                     }
 
-                    // No data state
                     if (!state.isLoadingAttendance && state.semester != null && state.attendanceData.isEmpty()) {
                         Text(
                             text = "No attendance data available for the selected filters.",
@@ -146,7 +142,6 @@ private fun FilterSection(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        // Semester Number Dropdown
         PresencifyDropDownMenuBox<SemesterNumber>(
             value = state.selectedSemesterNumber?.toDisplayLabel() ?: "",
             options = SemesterNumber.entries,
@@ -165,7 +160,6 @@ private fun FilterSection(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Academic Year Fields
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
@@ -186,7 +180,6 @@ private fun FilterSection(
             )
         }
 
-        // Branch Dropdown
         PresencifyDropDownMenuBox<Branch>(
             value = state.selectedBranch?.name ?: "",
             options = state.branchOptions,
@@ -205,7 +198,6 @@ private fun FilterSection(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Division and Batch dropdowns (visible after semester is resolved)
         AnimatedVisibility(
             visible = state.semester != null,
             enter = expandVertically(),
@@ -221,7 +213,6 @@ private fun FilterSection(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Division Dropdown
                 PresencifyDropDownMenuBox<Division>(
                     value = state.selectedDivision?.divisionCode ?: "All Divisions",
                     options = state.divisionOptions,
@@ -240,24 +231,6 @@ private fun FilterSection(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // Batch Dropdown
-//                PresencifyDropDownMenuBox<Batch>(
-//                    value = state.selectedBatch?.batchCode ?: "All Batches",
-//                    options = state.batchOptions,
-//                    onSelectItem = { onAction(AggregateAttendanceAnalyticsAction.SelectBatch(it)) },
-//                    label = "Batch (Optional)",
-//                    itemToString = { it.batchCode },
-//                    expanded = state.isBatchDropdownOpen,
-//                    onDropDownVisibilityChanged = {
-//                        onAction(
-//                            AggregateAttendanceAnalyticsAction.ChangeBatchDropDownVisibility(
-//                                it
-//                            )
-//                        )
-//                    },
-//                    enabled = !state.areBatchesLoading && !state.isLoadingAttendance,
-//                    modifier = Modifier.fillMaxWidth()
-//                )
             }
         }
     }
@@ -281,7 +254,6 @@ private fun AttendanceChartsSection(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
-            // Section 1: Weekly Attendance with Course Filter Chips
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
@@ -293,13 +265,11 @@ private fun AttendanceChartsSection(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Course filter chips (Overall first, then individual courses)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
-                    // Overall chip
                     val isOverallSelected = selectedCourseIds.value.contains(OVERALL_CHIP_ID)
                     val overallColor = getOverallChartColor()
 
@@ -329,7 +299,6 @@ private fun AttendanceChartsSection(
                         }
                     )
 
-                    // Individual course chips
                     attendanceData.forEachIndexed { index, course ->
                         val isSelected = selectedCourseIds.value.contains(course.courseId)
                         val courseColor = getChartColorForIndex(index)
@@ -362,7 +331,6 @@ private fun AttendanceChartsSection(
                     }
                 }
 
-                // Weekly Attendance Chart
                 val filteredAttendanceData = attendanceData.filter {
                     selectedCourseIds.value.contains(it.courseId)
                 }
@@ -388,7 +356,6 @@ private fun AttendanceChartsSection(
                 }
             }
 
-            // Section 2: Average Attendance per Course (Donut Graphs)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
@@ -429,7 +396,6 @@ private fun AttendanceChartsSection(
                             )
                         }
 
-                        // Spacers for left alignment on incomplete rows
                         if (rowItems.size < itemsPerRow) {
                             repeat(itemsPerRow - rowItems.size) {
                                 Spacer(modifier = Modifier.weight(1f))
@@ -446,9 +412,6 @@ private fun AttendanceChartsSection(
     }
 }
 
-// ============================
-// Chart Composables (adapted for aggregate AttendanceRecord data)
-// ============================
 
 @Composable
 private fun AggregateWeeklyAttendanceTrendChart(
@@ -471,13 +434,11 @@ private fun AggregateWeeklyAttendanceTrendChart(
 
     val firstMonday = getMondayOfWeek(semester.startDate)
 
-    // Build weekly percentage data for each selected course
     val courseWeeklyPercentages = attendanceData.map { course ->
         val records = detailedRecords[course.courseId] ?: emptyList()
         calculateAggregateWeeklyPercentages(records, firstMonday, numberOfWeeks)
     }
 
-    // Build overall average line
     val overallWeeklyPercentages = if (showOverall) {
         val allCoursePercentages = allAttendanceData.map { course ->
             val records = detailedRecords[course.courseId] ?: emptyList()
@@ -516,7 +477,6 @@ private fun AggregateWeeklyAttendanceTrendChart(
             val xValues = (0 until numberOfWeeks).map { it.toDouble() }
             modelProducer.runTransaction {
                 lineSeries {
-                    // Add invisible series with 0% and 100% to force Y-axis range
                     series(listOf(0.0, 0.0), listOf(0.0, 100.0))
 
                     allWeeklyPercentages.forEach { yData ->
@@ -528,7 +488,6 @@ private fun AggregateWeeklyAttendanceTrendChart(
 
         val overallColor = getOverallChartColor()
         val lineSpecs = buildList {
-            // Invisible line for Y-axis range anchor (0-100%)
             add(
                 LineCartesianLayer.Line(
                     fill = LineCartesianLayer.LineFill.single(
@@ -607,9 +566,6 @@ private fun AggregateWeeklyAttendanceTrendChart(
     }
 }
 
-// ============================
-// Helper Functions
-// ============================
 
 private fun getMondayOfWeek(date: kotlinx.datetime.LocalDate): kotlinx.datetime.LocalDate {
     val dayOfWeek = date.dayOfWeek
@@ -632,11 +588,7 @@ private fun getWeekSundays(
     return sundays
 }
 
-/**
- * Calculate weekly attendance percentages from aggregate AttendanceRecord data.
- * For each week: sum(presentStudents) / sum(totalStudents) * 100.
- * Weeks with no records yield 0%.
- */
+
 private fun calculateAggregateWeeklyPercentages(
     records: List<AttendanceRecord>,
     firstMonday: kotlinx.datetime.LocalDate,
@@ -670,17 +622,17 @@ private fun getChartColorForIndex(index: Int): androidx.compose.ui.graphics.Colo
         MaterialTheme.colorScheme.secondary,
         MaterialTheme.colorScheme.tertiary,
         MaterialTheme.colorScheme.error,
-        androidx.compose.ui.graphics.Color(0xFF00BCD4), // Cyan
-        androidx.compose.ui.graphics.Color(0xFFFF9800), // Orange
-        androidx.compose.ui.graphics.Color(0xFF9C27B0), // Purple
-        androidx.compose.ui.graphics.Color(0xFF4CAF50), // Green
-        androidx.compose.ui.graphics.Color(0xFFE91E63), // Pink
-        androidx.compose.ui.graphics.Color(0xFF009688), // Teal
-        androidx.compose.ui.graphics.Color(0xFFFF5722), // Deep Orange
-        androidx.compose.ui.graphics.Color(0xFF3F51B5), // Indigo
-        androidx.compose.ui.graphics.Color(0xFF8BC34A), // Light Green
-        androidx.compose.ui.graphics.Color(0xFFFFEB3B), // Yellow
-        androidx.compose.ui.graphics.Color(0xFF795548), // Brown
+        androidx.compose.ui.graphics.Color(0xFF00BCD4),
+        androidx.compose.ui.graphics.Color(0xFFFF9800),
+        androidx.compose.ui.graphics.Color(0xFF9C27B0),
+        androidx.compose.ui.graphics.Color(0xFF4CAF50),
+        androidx.compose.ui.graphics.Color(0xFFE91E63),
+        androidx.compose.ui.graphics.Color(0xFF009688),
+        androidx.compose.ui.graphics.Color(0xFFFF5722),
+        androidx.compose.ui.graphics.Color(0xFF3F51B5),
+        androidx.compose.ui.graphics.Color(0xFF8BC34A),
+        androidx.compose.ui.graphics.Color(0xFFFFEB3B),
+        androidx.compose.ui.graphics.Color(0xFF795548),
     )
     return colors[index % colors.size]
 }

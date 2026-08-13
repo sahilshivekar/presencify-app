@@ -99,7 +99,6 @@ class AssignUnassignStudentToSemesterViewModel(
                     updateState { it.copy(isLookingSemester = false) }
 
                     if (semesterListWithTotalCount.semesters.isEmpty()) {
-                        // Semester not found
                         updateState {
                             it.copy(
                                 dialogState = DialogState(
@@ -112,7 +111,6 @@ class AssignUnassignStudentToSemesterViewModel(
                             )
                         }
                     } else {
-                        // Semester found, navigate to search student screen
                         val semesterId = semesterListWithTotalCount.semesters.first().id
                         val branchId = state.selectedBranch?.id ?: return@launch
                         sendEvent(AssignUnassignStudentToSemesterEvent.NavigateToSearchStudent(semesterId, branchId))

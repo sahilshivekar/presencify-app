@@ -36,7 +36,6 @@ class SearchRoomViewModel(
         onRequest = { page ->
             val state = stateFlow.value
 
-            // Parse capacity values
             val minCap = state.minCapacity.toIntOrNull()
             val maxCap = state.maxCapacity.toIntOrNull()
 
@@ -44,7 +43,7 @@ class SearchRoomViewModel(
                 searchQuery = state.searchQuery.ifBlank { null },
                 sortBy = state.selectedSortBy,
                 sortOrder = state.selectedSortOrder,
-                type = state.selectedRoomTypes.firstOrNull(), // Server accepts single value
+                type = state.selectedRoomTypes.firstOrNull(),
                 minCapacity = minCap,
                 maxCapacity = maxCap,
                 freeBetweenStartTime = state.freeBetweenStartTime,
@@ -78,19 +77,15 @@ class SearchRoomViewModel(
             }
         },
         endReached = { currentPage, response ->
-            // End reached when we have loaded all rooms
-            // currentPage here is the page that was just loaded (before getNextKey is called)
             val totalLoadedRooms = currentPage * 20
             totalLoadedRooms >= response.totalCount
         }
     )
 
     init {
-        // Setup debounced search immediately
         setupDebouncedSearch()
 
         viewModelScope.launch {
-            // Initial load
             refreshSearch()
         }
     }
@@ -124,7 +119,6 @@ class SearchRoomViewModel(
         val state = stateFlow.value
         var isValid = true
 
-        // Validate minCapacity
         val minCapError = if (state.minCapacity.isNotBlank()) {
             val minCap = state.minCapacity.toIntOrNull()
             when {
@@ -134,7 +128,6 @@ class SearchRoomViewModel(
             }
         } else null
 
-        // Validate maxCapacity
         val maxCapError = if (state.maxCapacity.isNotBlank()) {
             val maxCap = state.maxCapacity.toIntOrNull()
             when {
@@ -144,7 +137,6 @@ class SearchRoomViewModel(
             }
         } else null
 
-        // Validate capacity range
         val rangeError = if (minCapError == null && maxCapError == null &&
             state.minCapacity.isNotBlank() && state.maxCapacity.isNotBlank()) {
             val minCap = state.minCapacity.toInt()
@@ -152,12 +144,10 @@ class SearchRoomViewModel(
             if (minCap > maxCap) "Min capacity cannot be greater than max capacity" else null
         } else null
 
-        // Validate busy time range
         var busyStartError: String? = null
         var busyEndError: String? = null
         var dayOfWeekError: String? = null
 
-        // Validate that all three (start time, end time, day of week) are selected together or none
         val hasStartTime = state.freeBetweenStartTime != null
         val hasEndTime = state.freeBetweenEndTime != null
         val hasDayOfWeek = state.selectedDayOfWeek != null
@@ -247,7 +237,6 @@ class SearchRoomViewModel(
                     val newTypes = if (currentTypes.contains(action.roomType)) {
                         currentTypes.remove(action.roomType)
                     } else {
-                        // Server accepts only single value, so clear others
                         persistentListOf(action.roomType)
                     }
                     it.copy(selectedRoomTypes = newTypes)

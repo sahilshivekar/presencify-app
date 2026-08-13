@@ -233,7 +233,6 @@ class FaceAnalyzer(
             val baseBitmap = imageProxy.toBitmap()
             val rotationDegrees = imageProxy.imageInfo.rotationDegrees.toFloat()
 
-            // Rotate bitmap so ONNX receives an upright image
             val uprightBitmap = if (rotationDegrees != 0f) {
                 val matrix = Matrix().apply { postRotate(rotationDegrees) }
                 Bitmap.createBitmap(baseBitmap, 0, 0, baseBitmap.width, baseBitmap.height, matrix, true)
@@ -241,7 +240,6 @@ class FaceAnalyzer(
                 baseBitmap.copy(Bitmap.Config.ARGB_8888, true)
             }
 
-            // Pass upright bitmap with 0 rotation to ML Kit
             val image = InputImage.fromBitmap(uprightBitmap, 0)
 
             faceDetector.process(image)
@@ -269,7 +267,6 @@ class FaceAnalyzer(
 
                                 analyzerScope.launch {
                                     try {
-                                        // 1. Original Embedding
                                         Log.d(TAG, "Starting ONNX extraction for ORIGINAL embedding...")
                                         val originalEmbedding = faceEmbeddingExtractor.generateSingleDescriptor(uprightBitmap)
 
@@ -279,7 +276,6 @@ class FaceAnalyzer(
                                             Log.e(TAG, "FAILED: ONNX Original Embedding came back null. (No face detected by BlazeFace)")
                                         }
 
-                                        // 2. Mirrored Embedding
                                         Log.d(TAG, "Creating mirrored bitmap and starting MIRRORED extraction...")
                                         val mirrorMatrix = Matrix().apply { preScale(-1.0f, 1.0f) }
                                         val mirroredBitmap = Bitmap.createBitmap(
@@ -296,7 +292,6 @@ class FaceAnalyzer(
                                             Log.e(TAG, "FAILED: ONNX Mirrored Embedding came back null.")
                                         }
 
-                                        // 3. Final Handoff
                                         if (originalEmbedding != null && mirroredEmbedding != null) {
                                             Log.d(TAG, "Both ONNX embeddings extracted successfully. Passing to ViewModel...")
 
@@ -315,8 +310,6 @@ class FaceAnalyzer(
                                 }
                                 return@addOnSuccessListener
                             } else {
-                                // Optional trace logging, usually too noisy but helpful if it gets stuck
-                                // Log.v(TAG, "Waiting for head to stabilize... Current Yaw: $yaw")
                             }
                         }
                     } else {

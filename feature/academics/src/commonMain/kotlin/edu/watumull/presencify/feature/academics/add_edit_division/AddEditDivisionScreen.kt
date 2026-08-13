@@ -56,7 +56,6 @@ fun AddEditDivisionScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (!state.isEditMode) {
-                        // Step 1: Semester Selection
                         Text(
                             text = "Step 1: Select Semester",
                             style = MaterialTheme.typography.titleLarge,
@@ -66,7 +65,6 @@ fun AddEditDivisionScreen(
                                 .padding(bottom = DesignToken.spacing.lg)
                         )
 
-                        // Semester Number Dropdown
                         PresencifyDropDownMenuBox<SemesterNumber>(
                             value = state.semesterNumber?.toDisplayLabel() ?: "",
                             options = SemesterNumber.entries,
@@ -88,7 +86,6 @@ fun AddEditDivisionScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                        // Academic Start Year
                         PresencifyTextField(
                             value = state.academicStartYear,
                             onValueChange = { onAction(AddEditDivisionAction.UpdateAcademicStartYear(it)) },
@@ -101,7 +98,6 @@ fun AddEditDivisionScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                        // Academic End Year
                         PresencifyTextField(
                             value = state.academicEndYear,
                             onValueChange = { onAction(AddEditDivisionAction.UpdateAcademicEndYear(it)) },
@@ -114,7 +110,6 @@ fun AddEditDivisionScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                        // Branch Dropdown
                         PresencifyDropDownMenuBox<Branch>(
                             value = state.branchOptions.find { it.id == state.selectedBranchId }?.abbreviation ?: "",
                             options = state.branchOptions,
@@ -136,7 +131,6 @@ fun AddEditDivisionScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.xl))
 
-                        // Find Semester Button
                         PresencifyButton(
                             onClick = { onAction(AddEditDivisionAction.FindSemesterClick) },
                             text = "Find Semester",
@@ -237,7 +231,6 @@ fun AddEditDivisionScreen(
         }
     }
 
-    // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,

@@ -21,10 +21,8 @@ class SearchSchemeViewModel(
 ) {
 
     init {
-        // Load initial data
         loadSchemes()
 
-        // Setup debounced search
         setupDebouncedSearch()
     }
 

@@ -29,7 +29,6 @@ class ImportTeachersViewModel(
                 sendEvent(ImportTeachersEvent.NavigateBack)
             }
             is ImportTeachersAction.ClickSelectCsvFile -> {
-                // Handled in UI
             }
              is ImportTeachersAction.CsvFileSelected -> {
                 when(val result = action.result) {
@@ -66,7 +65,7 @@ class ImportTeachersViewModel(
                              error = UiText.DynamicString(result.message)
                          ) }
                     }
-                    else -> {} // Cancelled
+                    else -> {}
                 }
             }
             is ImportTeachersAction.ClickSubmit -> {

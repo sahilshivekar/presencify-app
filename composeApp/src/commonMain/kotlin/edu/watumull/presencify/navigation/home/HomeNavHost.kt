@@ -146,7 +146,6 @@ fun HomeNavHost(
         if (deepLink.type == "ExtraLectureAdded") {
             homeNavController.navigateToClassDetailsWithSyntheticBackStack(deepLink.classId, rootNavController)
         }
-        // Mark as consumed to prevent duplicate navigation on recomposition (e.g., screen rotation)
         onDeepLinkConsumed()
     }
 }

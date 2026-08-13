@@ -49,12 +49,10 @@ class AdminForgotPasswordViewModel(
         val currentState = state
         val email = currentState.email.trim()
 
-        // Reset errors
         updateState {
             it.copy(emailError = null)
         }
 
-        // Validation
         val emailValidationResult = email.validateAsEmail()
         if (!emailValidationResult.successful) {
             updateState {
@@ -63,7 +61,6 @@ class AdminForgotPasswordViewModel(
             return
         }
 
-        // Start loading
         updateState {
             it.copy(isLoading = true)
         }

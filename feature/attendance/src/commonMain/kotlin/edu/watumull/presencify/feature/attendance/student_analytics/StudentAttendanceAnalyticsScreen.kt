@@ -132,7 +132,6 @@ private fun StudentAttendanceAnalyticsScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Student Info Header
             StudentInfoHeader(
                 studentName = "${student.firstName} ${student.middleName?.let { "$it " } ?: ""}${student.lastName}",
                 prn = student.prn,
@@ -142,7 +141,6 @@ private fun StudentAttendanceAnalyticsScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
-            // Semesters List
             if (student.studentSemesters.isNullOrEmpty()) {
                 PresencifyNoResultsIndicator(
                     text = "No attendance data available yet"
@@ -233,13 +231,11 @@ private fun SemesterAttendanceItem(
 ) {
     val semester = studentSemester.semester ?: return
 
-    // Get divisions from StudentDivision where division.semesterId matches current semester
     val studentDivisions = student.studentDivisions
         ?.filter { it.division?.semesterId == semester.id }
         ?.sortedBy { it.startDate }
         ?: emptyList()
 
-    // Get batches from StudentBatch
     val studentBatches = student.studentBatches
 
     edu.watumull.presencify.core.designsystem.components.PresencifyCard(
@@ -248,7 +244,6 @@ private fun SemesterAttendanceItem(
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Semester Header with Expand Icon
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -283,14 +278,12 @@ private fun SemesterAttendanceItem(
                 }
             }
 
-            // Semester Details (similar to StudentDetailsScreen)
             SemesterDetailsSection(
                 semester = semester,
                 studentDivisions = studentDivisions,
                 studentBatches = studentBatches
             )
 
-            // Expandable Attendance Section
             AnimatedVisibility(
                 visible = isExpanded,
                 enter = expandVertically(),
@@ -355,7 +348,6 @@ private fun SemesterDetailsSection(
             .padding(start = DesignToken.spacing.lg)
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
     ) {
-        // Semester line
         Box(
             modifier = Modifier
                 .width(DesignToken.strokes.thick)
@@ -367,7 +359,6 @@ private fun SemesterDetailsSection(
                 )
         )
 
-        // Semester details column
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
@@ -396,7 +387,6 @@ private fun SemesterDetailsSection(
                 )
             }
 
-            // Divisions
             studentDivisions.forEach { studentDivision ->
                 DivisionDetailsItem(
                     studentDivision = studentDivision,
@@ -404,7 +394,6 @@ private fun SemesterDetailsSection(
                 )
             }
 
-            // Semester end date
             Row(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
@@ -459,7 +448,6 @@ private fun DivisionDetailsItem(
             .padding(start = DesignToken.spacing.xxl)
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
     ) {
-        // Division line
         Box(
             modifier = Modifier
                 .width(DesignToken.strokes.thick)
@@ -471,7 +459,6 @@ private fun DivisionDetailsItem(
                 )
         )
 
-        // Division details column
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
@@ -500,7 +487,6 @@ private fun DivisionDetailsItem(
                 )
             }
 
-            // Batches
             val pastBatches = studentBatches
                 ?.filter {
                     it.batch?.divisionId == studentDivision.division?.id &&
@@ -573,7 +559,6 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
             .padding(start = DesignToken.spacing.xxl)
             .height(androidx.compose.foundation.layout.IntrinsicSize.Min)
     ) {
-        // Batch line
         Box(
             modifier = Modifier
                 .width(DesignToken.strokes.thick)
@@ -585,7 +570,6 @@ private fun BatchDetailsItem(studentBatch: edu.watumull.presencify.core.domain.m
                 )
         )
 
-        // Batch details column
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
@@ -653,21 +637,17 @@ private fun AttendanceCoursesGrid(
     onAction: (StudentAttendanceAnalyticsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // State to track which courses are selected for display in the chart
-    // Default: only "Overall" selected
     val selectedCourseIds = remember {
         mutableStateOf(setOf(OVERALL_CHIP_ID))
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        // Determine items per row based on available width
         val itemsPerRow = if (maxWidth >= 600.dp) 3 else 2
 
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
-            // Section 1: Weekly Attendance with Course Filter Chips
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
@@ -679,13 +659,11 @@ private fun AttendanceCoursesGrid(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Course filter chips (Overall first, then individual courses)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
-                    // Overall chip
                     val isOverallSelected = selectedCourseIds.value.contains(OVERALL_CHIP_ID)
                     val overallColor = getOverallChartColor()
 
@@ -715,7 +693,6 @@ private fun AttendanceCoursesGrid(
                         }
                     )
 
-                    // Individual course chips
                     attendanceData.forEachIndexed { index, course ->
                         val isSelected = selectedCourseIds.value.contains(course.courseId)
                         val courseColor = getChartColorForIndex(index)
@@ -748,7 +725,6 @@ private fun AttendanceCoursesGrid(
                     }
                 }
 
-                // Weekly Attendance Chart - filtered by selected courses
                 val filteredAttendanceData = attendanceData.filter {
                     selectedCourseIds.value.contains(it.courseId)
                 }
@@ -774,7 +750,6 @@ private fun AttendanceCoursesGrid(
                 }
             }
 
-            // Section 2: Average Attendance per Course
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
@@ -786,7 +761,6 @@ private fun AttendanceCoursesGrid(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Group items into rows
                 val rows = attendanceData.chunked(itemsPerRow)
 
                 rows.forEach { rowItems ->
@@ -813,7 +787,6 @@ private fun AttendanceCoursesGrid(
                             )
                         }
 
-                        // Add empty spacers for incomplete last row to maintain left alignment
                         if (rowItems.size < itemsPerRow) {
                             repeat(itemsPerRow - rowItems.size) {
                                 Spacer(modifier = Modifier.weight(1f))
@@ -821,7 +794,6 @@ private fun AttendanceCoursesGrid(
                         }
                     }
 
-                    // Add spacing between rows except after the last row
                     if (rowItems != rows.last()) {
                         Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                     }
@@ -846,21 +818,17 @@ private fun WeeklyAttendanceTrendChart(
 
     val scrollState = rememberScrollState()
 
-    // Calculate calendar weeks (Monday-to-Sunday) spanning the semester
     val weekSundays = getWeekSundays(semester.startDate, semester.endDate)
     val numberOfWeeks = weekSundays.size
     if (numberOfWeeks == 0) return
 
-    // The Monday of the first week
     val firstMonday = getMondayOfWeek(semester.startDate)
 
-    // Build weekly percentage data for each selected course
     val courseWeeklyPercentages = attendanceData.map { course ->
         val records = detailedAttendance[course.courseId] ?: emptyList()
         calculateWeeklyPercentages(records, firstMonday, numberOfWeeks)
     }
 
-    // Build overall average line: average of ALL courses' weekly percentages (not just selected)
     val overallWeeklyPercentages = if (showOverall) {
         val allCoursePercentages = allAttendanceData.map { course ->
             val records = detailedAttendance[course.courseId] ?: emptyList()
@@ -879,7 +847,6 @@ private fun WeeklyAttendanceTrendChart(
         null
     }
 
-    // Combine: overall line first (if present), then individual course lines
     val allWeeklyPercentages = buildList {
         overallWeeklyPercentages?.let { add(it) }
         addAll(courseWeeklyPercentages)
@@ -887,7 +854,6 @@ private fun WeeklyAttendanceTrendChart(
 
     if (allWeeklyPercentages.isEmpty()) return
 
-    // Build x-axis labels: "12 Jan" (Sunday date of each week)
     @Suppress("DEPRECATION")
     val weekLabels = weekSundays.map { sunday ->
         val monthName = sunday.month.name.take(3).lowercase()
@@ -895,7 +861,6 @@ private fun WeeklyAttendanceTrendChart(
         "${sunday.dayOfMonth} $monthName"
     }
 
-    // Create a stable key from courseIds + overall flag
     val courseKey = (if (showOverall) "overall," else "") +
             attendanceData.joinToString(",") { it.courseId }
 
@@ -906,7 +871,6 @@ private fun WeeklyAttendanceTrendChart(
             val xValues = (0 until numberOfWeeks).map { it.toDouble() }
             modelProducer.runTransaction {
                 lineSeries {
-                    // Add invisible series with 0% and 100% to force Y-axis range
                     series(listOf(0.0, 0.0), listOf(0.0, 100.0))
 
                     allWeeklyPercentages.forEach { yData ->
@@ -916,10 +880,8 @@ private fun WeeklyAttendanceTrendChart(
             }
         }
 
-        // Build line specs: overall line first (if present), then course lines
         val overallColor = getOverallChartColor()
         val lineSpecs = buildList {
-            // Invisible line for Y-axis range anchor (0-100%)
             add(
                 LineCartesianLayer.Line(
                     fill = LineCartesianLayer.LineFill.single(
@@ -998,43 +960,30 @@ private fun WeeklyAttendanceTrendChart(
     }
 }
 
-/**
- * Get the Monday of the calendar week (ISO: Monday=first day) containing [date].
- * kotlinx.datetime DayOfWeek: MONDAY=1 ... SUNDAY=7
- */
+
 private fun getMondayOfWeek(date: kotlinx.datetime.LocalDate): kotlinx.datetime.LocalDate {
-    val dayOfWeek = date.dayOfWeek // MONDAY..SUNDAY
-    val daysFromMonday = dayOfWeek.ordinal // MONDAY=0, TUESDAY=1, ..., SUNDAY=6
+    val dayOfWeek = date.dayOfWeek
+    val daysFromMonday = dayOfWeek.ordinal
     return kotlinx.datetime.LocalDate.fromEpochDays(date.toEpochDays() - daysFromMonday)
 }
 
-/**
- * Get the Sunday ending each calendar week (Mon-Sun) that spans from
- * [semesterStart] to [semesterEnd]. Returns a list of Sunday dates.
- */
+
 private fun getWeekSundays(
     semesterStart: kotlinx.datetime.LocalDate,
     semesterEnd: kotlinx.datetime.LocalDate
 ): List<kotlinx.datetime.LocalDate> {
     val firstMonday = getMondayOfWeek(semesterStart)
-    // First Sunday = firstMonday + 6 days
     var sunday = kotlinx.datetime.LocalDate.fromEpochDays(firstMonday.toEpochDays() + 6)
     val sundays = mutableListOf<kotlinx.datetime.LocalDate>()
     while (sunday.toEpochDays() <= semesterEnd.toEpochDays() + 6) {
         sundays.add(sunday)
         sunday = kotlinx.datetime.LocalDate.fromEpochDays(sunday.toEpochDays() + 7)
-        // Stop if we've gone past the semester end's week
         if (sundays.last().toEpochDays() > semesterEnd.toEpochDays() + 6) break
     }
     return sundays
 }
 
-/**
- * Calculate weekly attendance percentages from detailed records.
- * Weeks are Mon-Sun calendar weeks starting from [firstMonday].
- * For each week: (attended / total classes that week) * 100.
- * Weeks with no classes yield 0%.
- */
+
 private fun calculateWeeklyPercentages(
     records: List<edu.watumull.presencify.core.domain.model.attendance.DetailedAttendanceRecord>,
     firstMonday: kotlinx.datetime.LocalDate,
@@ -1044,7 +993,6 @@ private fun calculateWeeklyPercentages(
 
     val firstMondayEpoch = firstMonday.toEpochDays()
 
-    // Group records by week index (each week is 7 days starting from firstMonday)
     val recordsByWeek = records.groupBy { record ->
         val daysSinceFirstMonday = record.date.toEpochDays() - firstMondayEpoch
         (daysSinceFirstMonday / 7).toInt().coerceIn(0, numberOfWeeks - 1)
@@ -1053,7 +1001,7 @@ private fun calculateWeeklyPercentages(
     return (0 until numberOfWeeks).map { weekIndex ->
         val weekRecords = recordsByWeek[weekIndex]
         if (weekRecords.isNullOrEmpty()) {
-            0f // No classes this week
+            0f
         } else {
             val total = weekRecords.size
             val attended = weekRecords.count { it.attendanceStatus }
@@ -1062,27 +1010,25 @@ private fun calculateWeeklyPercentages(
     }
 }
 
-// Helper function to get distinct colors for each course line
 @Composable
 private fun getChartColorForIndex(index: Int): androidx.compose.ui.graphics.Color {
     val colors = listOf(
         MaterialTheme.colorScheme.secondary,
         MaterialTheme.colorScheme.tertiary,
         MaterialTheme.colorScheme.error,
-        androidx.compose.ui.graphics.Color(0xFFFF9800), // Orange
-        androidx.compose.ui.graphics.Color(0xFF9C27B0), // Purple
-        androidx.compose.ui.graphics.Color(0xFF4CAF50), // Green
-        androidx.compose.ui.graphics.Color(0xFFE91E63), // Pink
-        androidx.compose.ui.graphics.Color(0xFFFF5722), // Deep Orange
-        androidx.compose.ui.graphics.Color(0xFF3F51B5), // Indigo
-        androidx.compose.ui.graphics.Color(0xFF8BC34A), // Light Green
-        androidx.compose.ui.graphics.Color(0xFFFFEB3B), // Yellow
-        androidx.compose.ui.graphics.Color(0xFF795548), // Brown
+        androidx.compose.ui.graphics.Color(0xFFFF9800),
+        androidx.compose.ui.graphics.Color(0xFF9C27B0),
+        androidx.compose.ui.graphics.Color(0xFF4CAF50),
+        androidx.compose.ui.graphics.Color(0xFFE91E63),
+        androidx.compose.ui.graphics.Color(0xFFFF5722),
+        androidx.compose.ui.graphics.Color(0xFF3F51B5),
+        androidx.compose.ui.graphics.Color(0xFF8BC34A),
+        androidx.compose.ui.graphics.Color(0xFFFFEB3B),
+        androidx.compose.ui.graphics.Color(0xFF795548),
     )
     return colors[index % colors.size]
 }
 
-// Color for the "Overall" average line — distinct from all course colors
 @Composable
 private fun getOverallChartColor(): androidx.compose.ui.graphics.Color {
     return MaterialTheme.colorScheme.onSurface

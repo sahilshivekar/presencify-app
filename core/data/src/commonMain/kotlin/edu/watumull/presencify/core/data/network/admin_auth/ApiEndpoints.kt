@@ -6,7 +6,6 @@ import edu.watumull.presencify.core.data.network.BaseApiEndpoints.AUTH
 import edu.watumull.presencify.core.data.network.BaseApiEndpoints.PRESENCIFY_BASE_URL
 
 object ApiEndpoints {
-    // Admin auth endpoints
     val LOGIN = "$PRESENCIFY_BASE_URL/$API_V1/$AUTH/$ADMINS/login"
     val SEND_VERIFICATION_CODE_FORGOT = "$PRESENCIFY_BASE_URL/$API_V1/$AUTH/$ADMINS/forgot-password"
     val VERIFY_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$AUTH/$ADMINS/verify-code"

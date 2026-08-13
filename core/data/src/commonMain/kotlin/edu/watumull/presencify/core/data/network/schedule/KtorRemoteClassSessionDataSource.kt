@@ -234,14 +234,6 @@ class KtorRemoteClassSessionDataSource(
         }
     }
 
-//    override suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassDto>, DataError.Remote> {
-//        return safeCall<List<ClassDto>> {
-//            clientProvider.getClient().post(BULK_CREATE_CLASSES) {
-//                contentType(ContentType.Application.Json)
-//                setBody(BulkCreateClassesRequest(classes = classes))
-//            }
-//        }
-//    }
 
     override suspend fun bulkDeleteClasses(classIds: List<String>): Result<Unit, DataError.Remote> {
         return safeCall<Unit> {
@@ -255,7 +247,6 @@ class KtorRemoteClassSessionDataSource(
     override suspend fun bulkCreateClassesFromCSV(): Result<List<ClassDto>, DataError.Remote> {
         return safeCall<List<ClassDto>> {
             clientProvider.getClient().post(BULK_CREATE_CLASSES_FROM_CSV) {
-                // File upload handled by middleware
             }
         }
     }

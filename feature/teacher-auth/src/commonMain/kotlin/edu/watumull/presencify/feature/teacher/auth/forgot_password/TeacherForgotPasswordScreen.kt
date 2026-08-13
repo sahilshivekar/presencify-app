@@ -44,7 +44,6 @@ fun TeacherForgotPasswordScreen(
         )
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),
@@ -74,7 +73,6 @@ private fun TeacherForgotPasswordScreenContent(
         Column(
             horizontalAlignment = Alignment.Start
         ) {
-            // Description
             Text(
                 text = "Enter your email address and we will send you a verification code.",
                 style = MaterialTheme.typography.bodyLarge.copy(
@@ -85,7 +83,6 @@ private fun TeacherForgotPasswordScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.xxl))
 
-            // Email TextField
             PresencifyTextField(
                 value = state.email,
                 onValueChange = { email ->
@@ -110,7 +107,6 @@ private fun TeacherForgotPasswordScreenContent(
             )
         }
 
-        // Send Code Button
         PresencifyButton(
             onClick = { onAction(TeacherForgotPasswordAction.ClickSendCode) },
             enabled = !state.isLoading,

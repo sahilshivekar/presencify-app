@@ -16,7 +16,6 @@ fun String.validateAsUniversityName(): ValidationResult {
 }
 
 fun String.validateAsUniversityAbbreviation(): ValidationResult {
-    // Optional but has limit if provided
     if (this.isBlank()) return ValidationResult(successful = true)
 
     val maxLength = ValidationRule.MaxLength(20).validate(this)

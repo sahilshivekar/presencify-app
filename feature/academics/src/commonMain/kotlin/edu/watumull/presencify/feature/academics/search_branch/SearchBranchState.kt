@@ -10,11 +10,9 @@ import kotlinx.collections.immutable.persistentListOf
 data class SearchBranchState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Branches List
     val branches: PersistentList<Branch> = persistentListOf(),
     val isLoadingBranches: Boolean = true
 ) {

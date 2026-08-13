@@ -54,7 +54,6 @@ class AddEditDivisionViewModel(
 
         divisionRepository.getDivisionById(divisionId)
             .onSuccess { division ->
-                // Fetch the semester to get full details
                 semesterRepository.getSemesterById(division.semesterId)
                     .onSuccess { semester ->
                         loadOptionalCourses(
@@ -196,7 +195,6 @@ class AddEditDivisionViewModel(
             .onSuccess { result ->
                 val semesters = result.semesters
                 if (semesters.isNotEmpty()) {
-                    // Use the first matching semester
                     val semester = semesters[0]
                     updateState { it.copy(isLoading = false, foundSemester = semester, showDivisionInput = true, divisionCodeError = null) }
                     loadOptionalCourses(

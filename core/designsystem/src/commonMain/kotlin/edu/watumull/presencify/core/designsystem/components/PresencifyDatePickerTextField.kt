@@ -36,14 +36,7 @@ import kotlin.Boolean
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-/**
- * A Presencify-styled, read-only text field that opens a Material3 [DatePicker] dialog.
- *
- * Mirrors the UX used in `SearchClassScreen`:
- * - Leading icon opens picker
- * - Trailing clear icon appears only when [value] != null
- * - Uses OK/Cancel dialog buttons
- */
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun PresencifyDatePickerTextField(
@@ -62,15 +55,13 @@ fun PresencifyDatePickerTextField(
     val selectableDates = remember(isDateAllowed) {
         object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                // Convert UTC millis to LocalDate using kotlinx.datetime
                 val localDate = Instant.fromEpochMilliseconds(utcTimeMillis)
-                    .toLocalDateTime(TimeZone.UTC) // DatePicker API operates in UTC
+                    .toLocalDateTime(TimeZone.UTC)
                     .date
 
                 return isDateAllowed(localDate)
             }
 
-            // Optional: Block users from skipping to future/past years if needed
             override fun isSelectableYear(year: Int): Boolean = true
         }
     }
@@ -129,7 +120,6 @@ fun PresencifyDatePickerTextField(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                // Leave the standard Material 48dp touch target uncovered so the Clear icon still works
                 .padding(end = if (value != null) 48.dp else 0.dp)
                 .clickable(
                     enabled = enabled,

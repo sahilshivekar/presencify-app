@@ -198,7 +198,6 @@ private fun TeacherImageContainer(
     state: TeacherDetailsState,
     onAction: (TeacherDetailsAction) -> Unit,
 ) {
-    // Image dialog
     if (state.isImageDialogVisible) {
         Dialog(
             onDismissRequest = { onAction(TeacherDetailsAction.ToggleImageDialog) },
@@ -265,8 +264,6 @@ private fun TeacherImageContainer(
                         PresencifyButton(
                             modifier = Modifier.wrapContentSize(),
                             onClick = {
-                                // TODO: Implement file picker for image upload
-                                // onAction(TeacherDetailsAction.TeacherNewImageUploaded(imageBytes))
                             },
                             enabled = !state.isUpdatingImage && !state.isRemovingImage,
                             isLoading = false

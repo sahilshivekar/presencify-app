@@ -152,7 +152,6 @@ class SearchTimetableViewModel(
                 val newBranches = if (currentBranches.contains(action.branch)) {
                     currentBranches - action.branch
                 } else {
-                    // Server accepts only single value, so clear others
                     persistentListOf(action.branch)
                 }
                 updateState { it.copy(selectedBranches = newBranches.toPersistentList()) }
@@ -163,7 +162,6 @@ class SearchTimetableViewModel(
                 val newSemesters = if (currentSemesters.contains(action.semester)) {
                     currentSemesters - action.semester
                 } else {
-                    // Server accepts only single value, so clear others
                     persistentListOf(action.semester)
                 }
                 updateState { it.copy(selectedSemesters = newSemesters.toPersistentList()) }

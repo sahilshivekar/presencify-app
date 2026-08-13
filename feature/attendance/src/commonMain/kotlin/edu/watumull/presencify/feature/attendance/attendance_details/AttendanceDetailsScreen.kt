@@ -124,7 +124,6 @@ fun AttendanceDetailsScreen(
                                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                                 .fillMaxSize()
                         ) {
-                            // Class Details Section
                             item {
                                 Column(
                                     modifier = Modifier
@@ -139,12 +138,10 @@ fun AttendanceDetailsScreen(
 
                                     Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
-                                    // Action Buttons (between class details and stats)
                                     ActionButtonsSection(onAction = onAction)
 
                                     Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
-                                    // Stats Cards Section
                                     AttendanceStatsSection(
                                         totalStudents = state.totalStudents,
                                         presentStudents = state.presentStudents,
@@ -155,7 +152,6 @@ fun AttendanceDetailsScreen(
                                 }
                             }
 
-                            // Sticky Tab Row
                             stickyHeader {
                                 SecondaryScrollableTabRow(
                                     selectedTabIndex = allTabs.indexOf(state.selectedTab),
@@ -182,7 +178,6 @@ fun AttendanceDetailsScreen(
                                 }
                             }
 
-                            // Students List for Selected Tab
                             if (filteredStudents.isEmpty()) {
                                 item {
                                     Box(
@@ -227,7 +222,6 @@ fun AttendanceDetailsScreen(
                                 }
                             }
 
-                            // Bottom padding
                             item {
                                 Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
                             }
@@ -238,7 +232,6 @@ fun AttendanceDetailsScreen(
         }
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,
@@ -313,21 +306,18 @@ private fun AttendanceStatsSection(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
-        // Total Students Card
         AttendanceStatCard(
             label = "Total",
             count = totalStudents,
             color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.weight(1f)
         )
-        // Present Students Card
         AttendanceStatCard(
             label = "Present",
             count = presentStudents,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
-        // Absent Students Card
         AttendanceStatCard(
             label = "Absent",
             count = absentStudents,
@@ -379,7 +369,6 @@ private fun ActionButtonsSection(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Edit Attendance Button
         PresencifyTextButton(
             onClick = { onAction(AttendanceDetailsAction.EditAttendanceClick) }
         ) {
@@ -389,7 +378,6 @@ private fun ActionButtonsSection(
             )
         }
 
-        // Remove Button
         PresencifyTextButton(
             onClick = { onAction(AttendanceDetailsAction.RemoveAttendanceClick) }
         ) {
@@ -409,14 +397,11 @@ private fun buildAttendanceShareText(
 
     val builder = StringBuilder()
 
-    // Header
     builder.appendLine("Attendance Details")
     builder.appendLine()
 
-    // Date
     builder.appendLine("Date: ${attendance.date.toReadableString()}")
 
-    // Class / course details
     classSession?.let { session ->
         val division = session.timetable?.division
         val batch = session.batch
@@ -450,7 +435,6 @@ private fun buildAttendanceShareText(
 
     builder.appendLine()
 
-    // Stats
     builder.appendLine("Total Students: ${state.totalStudents}")
     builder.appendLine("Present Students: ${state.presentStudents}")
     builder.appendLine("Absent Students: ${state.absentStudents}")
@@ -459,7 +443,6 @@ private fun buildAttendanceShareText(
 
     val attendanceStudents = attendance.attendanceStudents
 
-    // Present students list
     val presentStudents = attendanceStudents!!.filter { it.attendanceStatus }
     builder.appendLine("Present Students (${presentStudents.size}):")
     if (presentStudents.isEmpty()) {
@@ -475,7 +458,6 @@ private fun buildAttendanceShareText(
 
     builder.appendLine()
 
-    // Absent students list
     val absentStudents = attendanceStudents.filter { !it.attendanceStatus }
     builder.appendLine("Absent Students (${absentStudents.size}):")
     if (absentStudents.isEmpty()) {

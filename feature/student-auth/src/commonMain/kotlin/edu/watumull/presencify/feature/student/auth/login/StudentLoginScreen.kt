@@ -63,7 +63,6 @@ fun StudentLoginScreen(
         )
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),
@@ -92,7 +91,6 @@ private fun StudentLoginScreenContent(
     ) {
         val passwordFocusRequester = remember { FocusRequester() }
 
-        // Logo
         Image(
             modifier = Modifier
                 .padding(top = DesignToken.spacing.xxl)
@@ -133,7 +131,6 @@ private fun StudentLoginScreenContent(
 
         Spacer(Modifier.height(DesignToken.spacing.sm))
 
-        // Email/PRN Field
         PresencifyTextField(
             value = state.emailOrPRN,
             onValueChange = { onAction(StudentLoginAction.ChangeEmailOrPRN(it)) },
@@ -150,7 +147,6 @@ private fun StudentLoginScreenContent(
             ),
         )
 
-        // Password Field
         PresencifyTextField(
             value = state.password,
             onValueChange = { onAction(StudentLoginAction.ChangePassword(it)) },
@@ -190,7 +186,6 @@ private fun StudentLoginScreenContent(
             },
         )
 
-        // Login Button
         PresencifyButton(
             onClick = { onAction(StudentLoginAction.ClickLogin) },
             enabled = !state.isLoading,
@@ -200,7 +195,6 @@ private fun StudentLoginScreenContent(
 
         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-        // Forgot Password Button
         PresencifyTextButton(
             onClick = { onAction(StudentLoginAction.ClickForgotPassword) },
             text = "Forgot password?",

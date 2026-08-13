@@ -18,47 +18,37 @@ import kotlinx.collections.immutable.toImmutableList
 data class SearchCourseState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search & Filter
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Courses List
     val courses: PersistentList<Course> = persistentListOf(),
     val isLoadingCourses: Boolean = true,
 
-    // Selection Mode
     val intention: SearchCourseIntention = SearchCourseIntention.DEFAULT,
     val branchId: String? = null,
     val semesterNumber: Int? = null,
     val teacherId: String? = null,
 
-    // Filter Options - Semester Number
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Filter Options - Branches
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Filter Options - Scheme
     val schemeOptions: PersistentList<Scheme> = persistentListOf(),
     val selectedScheme: Scheme? = null,
     val areSchemesLoading: Boolean = true,
 
-    // Filter Options - Teachers
     val teacherOptions: PersistentList<Teacher> = persistentListOf(),
     val selectedTeacherIds: Set<String> = emptySet(),
     val areTeachersLoading: Boolean = true,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false,
 
-    // Track individual course operations (assign/unassign)
     val loadingCourseIds: Set<String> = emptySet(),
 
-    // Feedback for individual course operations
     val courseFeedback: Map<String, ListItemFeedback?> = emptyMap()
 ) {
     sealed interface ViewState {

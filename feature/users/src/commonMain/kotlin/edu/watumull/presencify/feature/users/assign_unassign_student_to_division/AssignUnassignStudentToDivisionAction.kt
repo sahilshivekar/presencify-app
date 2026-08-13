@@ -18,7 +18,6 @@ sealed interface AssignUnassignStudentToDivisionAction {
 
     data object FindDivisionsClick : AssignUnassignStudentToDivisionAction
 
-    // Division selection after finding divisions
     data class SelectDivision(val division: Division?) : AssignUnassignStudentToDivisionAction
     data class ChangeDivisionDropDownVisibility(val isOpen: Boolean) : AssignUnassignStudentToDivisionAction
     data object NavigateToSearchStudentClick : AssignUnassignStudentToDivisionAction

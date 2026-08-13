@@ -9,7 +9,6 @@ import edu.watumull.presencify.core.data.network.BaseApiEndpoints.TIMETABLES
 
 object ApiEndpoints {
 
-    // Class endpoints
     val GET_CLASSES = "$PRESENCIFY_BASE_URL/$API_V1/$CLASSES"
     val ADD_CLASS = "$PRESENCIFY_BASE_URL/$API_V1/$CLASSES"
     val GET_CLASS_BY_ID = "$PRESENCIFY_BASE_URL/$API_V1/$CLASSES"
@@ -22,7 +21,6 @@ object ApiEndpoints {
     val BULK_DELETE_CLASSES = "$PRESENCIFY_BASE_URL/$API_V1/$CLASSES/bulk"
     val BULK_CREATE_CLASSES_FROM_CSV = "$PRESENCIFY_BASE_URL/$API_V1/$CLASSES/bulk/csv"
 
-    // Room endpoints
     val GET_ROOMS = "$PRESENCIFY_BASE_URL/$API_V1/$ROOMS"
     val ADD_ROOM = "$PRESENCIFY_BASE_URL/$API_V1/$ROOMS"
     val GET_ROOM_BY_ID = "$PRESENCIFY_BASE_URL/$API_V1/$ROOMS"
@@ -30,7 +28,6 @@ object ApiEndpoints {
     val UPDATE_ROOM = "$PRESENCIFY_BASE_URL/$API_V1/$ROOMS"
     val REMOVE_ROOM = "$PRESENCIFY_BASE_URL/$API_V1/$ROOMS"
 
-    // Timetable endpoints
     val GET_TIMETABLES = "$PRESENCIFY_BASE_URL/$API_V1/$TIMETABLES"
     val GET_TIMETABLE_BY_ID = "$PRESENCIFY_BASE_URL/$API_V1/$TIMETABLES"
     val ADD_TIMETABLE = "$PRESENCIFY_BASE_URL/$API_V1/$TIMETABLES"

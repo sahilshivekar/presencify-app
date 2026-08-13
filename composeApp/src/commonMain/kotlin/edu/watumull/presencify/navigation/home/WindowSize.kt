@@ -4,18 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * Window size classes based on Material Design 3 guidelines
- */
+
 enum class WindowWidthSizeClass {
-    Compact,  // < 600dp
-    Medium,   // 600dp - 840dp
-    Expanded  // > 840dp
+    Compact,
+    Medium,
+    Expanded
 }
 
-/**
- * Calculate the current window width size class
- */
+
 @Composable
 expect fun calculateWindowWidth(): Dp
 

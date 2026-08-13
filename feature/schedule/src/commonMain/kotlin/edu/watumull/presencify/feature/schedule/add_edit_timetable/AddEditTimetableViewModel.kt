@@ -87,7 +87,6 @@ class AddEditTimetableViewModel(
                                     viewState = AddEditTimetableState.ViewState.Content,
                                     selectedDivision = division,
                                     timetableVersion = timetable.timetableVersion.toString(),
-                                    // We need to populate the form with division info
                                     selectedBranch = state.branchOptions.firstOrNull { b -> b.id == semester.branchId },
                                     selectedSemesterNumber = semester.semesterNumber,
                                     startYear = semester.academicStartYear.toString(),
@@ -131,7 +130,6 @@ class AddEditTimetableViewModel(
         val startYear = state.startYear
         val endYear = state.endYear
 
-        // Validate using validation functions
         val branchValidation = branch.validateAsBranch()
         val semesterValidation = semesterNumber.validateAsSemesterNumber()
         val startYearValidation = startYear.validateAsAcademicStartYear(endYear = endYear)
@@ -163,7 +161,6 @@ class AddEditTimetableViewModel(
 
             updateState { it.copy(isLookingDivisions = true, isLookingBatches = true) }
 
-            // Load divisions
             divisionRepository.getDivisions(
                 branchId = branchId,
                 semesterNumber = semesterNumber,
@@ -175,7 +172,6 @@ class AddEditTimetableViewModel(
                     updateState { it.copy(isLookingDivisions = false) }
 
                     if (divisionListWithTotalCount.divisions.isEmpty()) {
-                        // No divisions found
                         updateState {
                             it.copy(
                                 isLookingBatches = false,
@@ -189,7 +185,6 @@ class AddEditTimetableViewModel(
                             )
                         }
                     } else {
-                        // Divisions found, show them in dropdown
                         updateState {
                             it.copy(
                                 divisionOptions = divisionListWithTotalCount.divisions.toPersistentList(),
@@ -199,7 +194,6 @@ class AddEditTimetableViewModel(
                             )
                         }
 
-                        // Load batches
                         loadBatches(branchId, semesterNumber, startYear, endYear)
                     }
                 }
@@ -259,10 +253,8 @@ class AddEditTimetableViewModel(
         val division = state.selectedDivision
         val timetableVersion = state.timetableVersion
 
-        // Validate using validation functions
         val divisionValidation = division.validateAsDivision()
 
-        // Validate timetable version (only in add mode)
         val versionValidation = if (!state.isEditMode) {
             timetableVersion.toIntOrNull().validateAsTimetableVersion()
         } else {
@@ -289,7 +281,6 @@ class AddEditTimetableViewModel(
             updateState { it.copy(isSaving = true) }
 
             val result = if (state.isEditMode && state.timetableId != null) {
-                // Update existing timetable
                 if (version == null) {
                     updateState {
                         it.copy(
@@ -305,7 +296,6 @@ class AddEditTimetableViewModel(
                 }
                 timetableRepository.updateTimetable(state.timetableId!!, version)
             } else {
-                // Add new timetable
                 timetableRepository.addTimetable(divisionId, version)
             }
 
@@ -349,7 +339,6 @@ class AddEditTimetableViewModel(
                     it.copy(
                         selectedBranch = action.branch,
                         branchError = null,
-                        // Reset divisions and batches when branch changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null,
@@ -365,7 +354,6 @@ class AddEditTimetableViewModel(
                     it.copy(
                         selectedSemesterNumber = action.semesterNumber,
                         semesterNumberError = null,
-                        // Reset divisions and batches when semester changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null,
@@ -381,7 +369,6 @@ class AddEditTimetableViewModel(
                     it.copy(
                         startYear = action.year,
                         startYearError = null,
-                        // Reset divisions and batches when year changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null,
@@ -397,7 +384,6 @@ class AddEditTimetableViewModel(
                     it.copy(
                         endYear = action.year,
                         endYearError = null,
-                        // Reset divisions and batches when year changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null,

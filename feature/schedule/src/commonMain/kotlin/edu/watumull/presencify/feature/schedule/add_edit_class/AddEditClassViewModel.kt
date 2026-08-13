@@ -78,14 +78,12 @@ class AddEditClassViewModel(
     private suspend fun loadCourses() {
         updateState { it.copy(isLoadingCourses = true) }
 
-        // First get the timetable to find the division and semester
         timetableRepository.getTimetableById(state.timetableId)
             .onSuccess { timetable ->
                 val divisionId = timetable.division?.id
                 val semesterId = timetable.division?.semester?.id
 
                 if (divisionId != null && semesterId != null) {
-                    // Load division courses and semester details in parallel
                     viewModelScope.launch {
                         val coursesResult = divisionRepository.getCoursesOfDivision(divisionId)
                         val semesterResult = semesterRepository.getSemesterById(semesterId)
@@ -156,7 +154,6 @@ class AddEditClassViewModel(
                         availableTeachers = teachersWithCount.teachers.toImmutableList(),
                         isLoadingTeachers = false
                     )
-                    // If in edit mode and a teacher is already selected, ensure we use the instance from availableTeachers
                     if (it.isEditMode && it.selectedTeacher != null) {
                         val matchedTeacher =
                             teachersWithCount.teachers.find { teacher -> teacher.id == it.selectedTeacher?.id }
@@ -213,11 +210,9 @@ class AddEditClassViewModel(
     private suspend fun loadBatches() {
         updateState { it.copy(isLoadingBatches = true) }
 
-        // First get the timetable to find the division
         timetableRepository.getTimetableById(state.timetableId)
             .onSuccess { timetable ->
                 timetable.division?.id?.let { divisionId ->
-                    // Load batches for this division
                     batchRepository.getBatches(divisionId = divisionId, getAll = true)
                         .onSuccess { batchesWithCount ->
                             updateState {
@@ -225,7 +220,6 @@ class AddEditClassViewModel(
                                     availableBatches = batchesWithCount.batches.toImmutableList(),
                                     isLoadingBatches = false
                                 )
-                                // If in edit mode and a batch is already selected, ensure we use the instance from availableBatches
                                 if (it.isEditMode && it.selectedBatch != null) {
                                     val matchedBatch =
                                         batchesWithCount.batches.find { batch -> batch.id == it.selectedBatch?.id }
@@ -309,7 +303,6 @@ class AddEditClassViewModel(
     private fun validateFields(): Boolean {
         val state = stateFlow.value
 
-        // In edit mode, only validate active dates
         if (state.isEditMode) {
             val activeFromValidation = state.activeFrom.validateAsClassActiveFrom(state.activeTill)
             val activeTillValidation = state.activeTill.validateAsClassActiveTill(state.activeFrom)
@@ -334,7 +327,6 @@ class AddEditClassViewModel(
             return true
         }
 
-        // In add mode, validate all fields
         val courseValidation = state.selectedCourse.validateAsCourse()
         val teacherValidation = state.selectedTeacher.validateAsTeacher()
         val roomValidation = state.selectedRoom.validateAsRoom()
@@ -344,7 +336,6 @@ class AddEditClassViewModel(
         val startTimeValidation = state.startTime.validateAsStartTime(state.endTime)
         val endTimeValidation = state.endTime.validateAsEndTime(state.startTime)
 
-        // Batch is required if course type is Practical
         val batchValidation = if (state.selectedCourse?.courseType == CourseType.PRACTICAL) {
             state.selectedBatch.validateAsBatch()
         } else {
@@ -402,14 +393,12 @@ class AddEditClassViewModel(
             updateState { it.copy(isSubmitting = true) }
 
             val result = if (state.isEditMode) {
-                // In edit mode, only update active dates
                 classSessionRepository.editActiveDatesOfClass(
                     classId = state.classId!!,
                     newActiveFrom = state.activeFrom!!,
                     newActiveTill = state.activeTill!!
                 )
             } else if (state.isExtraClass) {
-                // Add extra class
                 classSessionRepository.addExtraClass(
                     teacherId = state.selectedTeacher!!.id,
                     startTime = state.startTime!!,
@@ -423,7 +412,6 @@ class AddEditClassViewModel(
                     timetableId = state.timetableId
                 )
             } else {
-                // Add regular class
                 classSessionRepository.addClass(
                     teacherId = state.selectedTeacher!!.id,
                     startTime = state.startTime!!,

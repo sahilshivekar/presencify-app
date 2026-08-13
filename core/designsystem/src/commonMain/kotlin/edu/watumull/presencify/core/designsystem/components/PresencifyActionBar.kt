@@ -14,19 +14,7 @@ import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-/**
- * A reusable action bar component with leading icon, text, and trailing icon.
- * Similar to dashboard items but more flexible for various use cases.
- *
- * @param text The text to display
- * @param onClick Action to perform when clicked
- * @param modifier Modifier for the component
- * @param leadingIcon Optional leading icon (DrawableResource)
- * @param leadingImageVector Optional leading icon (ImageVector) - takes precedence over leadingIcon
- * @param trailingIcon Optional trailing icon (ImageVector) - defaults to ChevronRight
- * @param leadingIconTint Tint color for the leading icon - defaults to primary color
- * @param trailingIconTint Tint color for the trailing icon - defaults to outline color
- */
+
 @Composable
 fun PresencifyActionBar(
     text: String,

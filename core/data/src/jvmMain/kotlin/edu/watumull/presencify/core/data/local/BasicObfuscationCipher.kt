@@ -2,10 +2,7 @@ package edu.watumull.presencify.core.data.local
 
 import java.util.*
 
-/**
- * Very simple obfuscation: XOR with a derived key, then Base64.
- * This is NOT strong encryption; it only deters casual inspection.
- */
+
 class BasicObfuscationCipher : StringCipher {
     private val keyBytes: ByteArray =
         (System.getProperty("user.name")?.reversed() ?: "presencify").toByteArray()

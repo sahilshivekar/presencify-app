@@ -93,14 +93,12 @@ private fun AssignUnassignStudentToDivisionScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select a branch, semester number, and academic year to find divisions",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -125,7 +123,6 @@ private fun AssignUnassignStudentToDivisionScreenContent(
                 )
             }
 
-            // Semester Number Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -150,7 +147,6 @@ private fun AssignUnassignStudentToDivisionScreenContent(
                 )
             }
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -185,7 +181,6 @@ private fun AssignUnassignStudentToDivisionScreenContent(
                 }
             }
 
-            // Find Divisions Button
             PresencifyButton(
                 onClick = { onAction(AssignUnassignStudentToDivisionAction.FindDivisionsClick) },
                 text = "Find Divisions",
@@ -195,7 +190,6 @@ private fun AssignUnassignStudentToDivisionScreenContent(
                     .padding(top = DesignToken.spacing.sm)
             )
 
-            // Division Selection (shown only after finding divisions)
             if (state.areDivisionsVisible) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
@@ -222,7 +216,6 @@ private fun AssignUnassignStudentToDivisionScreenContent(
                     )
                 }
 
-                // Navigate to Search Student Button
                 PresencifyButton(
                     onClick = { onAction(AssignUnassignStudentToDivisionAction.NavigateToSearchStudentClick) },
                     text = "Continue to Search Students",

@@ -18,18 +18,7 @@ import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * List item component for displaying Course information.
- *
- * @param name The name of the course.
- * @param code The course code.
- * @param schemeName The scheme name associated with the course.
- * @param optionalCourse Optional course name if the course is optional.
- * @param feedback Optional feedback message to display.
- * @param trailingContent Optional trailing content composable.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun CourseListItem(
     name: String,

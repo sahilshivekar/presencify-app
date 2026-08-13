@@ -14,7 +14,6 @@ data class AggregateAttendanceAnalyticsState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Filter fields
     val selectedSemesterNumber: SemesterNumber? = null,
     val academicStartYear: String = "",
     val academicEndYear: String = "",
@@ -22,30 +21,24 @@ data class AggregateAttendanceAnalyticsState(
     val selectedDivision: Division? = null,
     val selectedBatch: Batch? = null,
 
-    // Dropdown visibility
     val isSemesterNumberDropdownOpen: Boolean = false,
     val isBranchDropdownOpen: Boolean = false,
     val isDivisionDropdownOpen: Boolean = false,
     val isBatchDropdownOpen: Boolean = false,
 
-    // Options
     val branchOptions: List<Branch> = emptyList(),
     val divisionOptions: List<Division> = emptyList(),
     val batchOptions: List<Batch> = emptyList(),
 
-    // Loading states
     val areBranchesLoading: Boolean = false,
     val areDivisionsLoading: Boolean = false,
     val areBatchesLoading: Boolean = false,
     val isLoadingAttendance: Boolean = false,
 
-    // Resolved semester
     val semester: Semester? = null,
 
-    // Attendance data
     val attendanceData: List<AggregatedAttendance> = emptyList(),
 
-    // Detailed attendance records per course: Map<CourseId, List<AttendanceRecord>>
     val detailedAttendanceRecords: Map<String, List<AttendanceRecord>> = emptyMap(),
 ) {
     sealed interface ViewState {

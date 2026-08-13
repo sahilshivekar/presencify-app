@@ -5,17 +5,10 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.readBytes
 
-/**
- * Cross-platform image picker utility for selecting images from device storage.
- * Uses FileKit library to provide consistent API across Android, iOS, and Desktop platforms.
- */
+
 object ImagePicker {
     
-    /**
-     * Opens a file picker dialog to select an image file.
-     * 
-     * @return ByteArray of the selected image, or null if no image was selected or an error occurred.
-     */
+    
     suspend fun pickImage(): ByteArray? {
         return try {
             val file = FileKit.openFilePicker(FileKitType.Image)
@@ -26,17 +19,9 @@ object ImagePicker {
         }
     }
     
-    /**
-     * Opens a file picker dialog to select multiple image files.
-     * Note: This is a placeholder as FileKit doesn't natively support multiple selections in the current version.
-     * You may need to call pickImage() multiple times or implement platform-specific solutions.
-     * 
-     * @return List of ByteArrays of the selected images, or empty list if no images were selected or an error occurred.
-     */
+    
     suspend fun pickMultipleImages(): List<ByteArray> {
         return try {
-            // Note: FileKit.openFilePicker doesn't support multiple=true directly
-            // This would need to be implemented platform-specifically
             val file = FileKit.openFilePicker(FileKitType.Image)
             if (file != null) {
                 listOf(file.readBytes())
@@ -50,9 +35,7 @@ object ImagePicker {
     }
 }
 
-/**
- * Result wrapper for image picking operations
- */
+
 sealed class ImagePickerResult {
     data class Success(val imageData: ByteArray) : ImagePickerResult() {
         override fun equals(other: Any?): Boolean {
@@ -74,9 +57,7 @@ sealed class ImagePickerResult {
     data class Error(val message: String) : ImagePickerResult()
 }
 
-/**
- * Extension function to pick an image with result wrapper
- */
+
 suspend fun ImagePicker.pickImageWithResult(): ImagePickerResult {
     return try {
         val imageData = pickImage()
@@ -90,9 +71,7 @@ suspend fun ImagePicker.pickImageWithResult(): ImagePickerResult {
     }
 }
 
-/**
- * Extension function to pick multiple images with result wrapper
- */
+
 suspend fun ImagePicker.pickMultipleImagesWithResult(): ImagePickerResult {
     return try {
         val imagesData = pickMultipleImages()

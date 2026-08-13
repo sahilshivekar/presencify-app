@@ -26,12 +26,10 @@ fun RecognizeStudentScreen(
     state: RecognizeStudentState,
     onAction: (RecognizeStudentAction) -> Unit
 ) {
-    // Notify ViewModel when screen becomes visible so it can start the 90s timeout
     LaunchedEffect(Unit) {
         onAction(RecognizeStudentAction.OnScreenStarted)
     }
 
-    // Ensure we cancel the timeout when screen is disposed/navigated away
     DisposableEffect(Unit) {
         onDispose {
             onAction(RecognizeStudentAction.OnScreenStopped)
@@ -84,10 +82,9 @@ fun RecognizeStudentScreen(
                         onCheatingDetected = {
                             onAction(RecognizeStudentAction.OnCheatingDetected)
                         },
-                        storedFaceDescriptor = state.storedFaceDescriptor!! // if the ViewState is Success then the face descriptor must be non-null, otherwise the screen would not have been navigated to in the first place
+                        storedFaceDescriptor = state.storedFaceDescriptor!!
                     )
 
-                    // Liveness Instructions Overlay
                     if (!state.isLivenessComplete && state.error == null && state.cameraPermissionGranted) {
                         LivenessOverlay(
                             sequence = state.livenessSequence,
@@ -96,7 +93,6 @@ fun RecognizeStudentScreen(
                         )
                     }
 
-                    // Loading / Recognizing Indicator
                     if (state.isLoading || state.isRecognizing) {
                         Box(
                             modifier = Modifier
@@ -120,7 +116,6 @@ fun RecognizeStudentScreen(
         }
     }
 
-    // Dialog for face not recognized / cheating / generic errors
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,

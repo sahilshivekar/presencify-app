@@ -93,14 +93,12 @@ private fun AssignUnassignStudentToBatchScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select a branch, semester number, and academic year to find all batches",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -125,7 +123,6 @@ private fun AssignUnassignStudentToBatchScreenContent(
                 )
             }
 
-            // Semester Number Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -150,7 +147,6 @@ private fun AssignUnassignStudentToBatchScreenContent(
                 )
             }
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -185,7 +181,6 @@ private fun AssignUnassignStudentToBatchScreenContent(
                 }
             }
 
-            // Find Batches Button
             PresencifyButton(
                 onClick = { onAction(AssignUnassignStudentToBatchAction.FindBatchesClick) },
                 text = "Find Batches",
@@ -195,7 +190,6 @@ private fun AssignUnassignStudentToBatchScreenContent(
                     .padding(top = DesignToken.spacing.sm)
             )
 
-            // Batch Selection (shown only after finding batches)
             if (state.areBatchesVisible) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
@@ -222,7 +216,6 @@ private fun AssignUnassignStudentToBatchScreenContent(
                     )
                 }
 
-                // Navigate to Search Student Button
                 PresencifyButton(
                     onClick = { onAction(AssignUnassignStudentToBatchAction.NavigateToSearchStudentClick) },
                     text = "Continue to Search Students",

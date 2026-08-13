@@ -13,9 +13,6 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
         namespace = "edu.watumull.presencify.core.data"
         compileSdk = 36
@@ -31,13 +28,7 @@ kotlin {
         }
     }
 
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
 
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
     val xcfName = "core:dataKit"
 
     iosX64 {
@@ -60,21 +51,13 @@ kotlin {
 
     jvm()
 
-    // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
         commonMain {
             dependencies {
-                // Project modules
                 implementation(project(":core:domain"))
 
-                // DI
                 implementation(libs.koin.core)
 
-                // Ktor Client + Serialization
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.auth)
@@ -82,29 +65,22 @@ kotlin {
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.kotlinx.serialization.json)
 
-                // Coroutines
                 implementation(libs.kotlinx.coroutines.core)
 
-                // DateTime
                 implementation(libs.kotlinx.datetime)
 
-                // Kronos (NTP)
                 api(libs.kronos)
 
-                // Settings (multiplatform core)
                 implementation(libs.settings.core)
 
-                // DataStore (if used elsewhere in module)
                 implementation(libs.datastore.preferences)
 
-                // Okio for Path/toPath used in DataStoreFactory
                 implementation(libs.okio)
             }
         }
 
         jvmMain {
             dependencies {
-                // Use the CIO engine for Desktop/JVM
                 implementation(libs.ktor.client.cio)
             }
         }
@@ -117,19 +93,14 @@ kotlin {
 
         androidMain {
             dependencies {
-                // Android Ktor engine
                 implementation(libs.ktor.client.okhttp)
 
-                // AndroidX Security Crypto for EncryptedSharedPreferences
                 implementation(libs.androidx.security.crypto)
 
-                // Koin Android for androidContext()
                 implementation(libs.koin.android)
 
-                // Import the Firebase BoM using the catalog reference
                 implementation(project.dependencies.platform(libs.firebase.bom))
 
-                // Add the dependency for FCM (version is managed automatically by the BoM)
                 implementation(libs.firebase.messaging)
             }
         }
@@ -144,7 +115,6 @@ kotlin {
 
         iosMain {
             dependencies {
-                // iOS Ktor engine
                 implementation(libs.ktor.client.darwin)
             }
         }
@@ -157,7 +127,6 @@ buildkonfig {
     objectName = "BuildKonfig"
 
     defaultConfigs {
-        // This acts as your Debug/Development environment
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "PRESENCIFY_BASE_URL",
@@ -166,7 +135,6 @@ buildkonfig {
     }
 
     defaultConfigs("release") {
-        // This overrides the default for your Release/Production environment
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "PRESENCIFY_BASE_URL",

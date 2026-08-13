@@ -11,7 +11,6 @@ fun TeacherRole?.validateAsTeacherRole(): ValidationResult {
 }
 
 fun String.validateAsHighestQualification(): ValidationResult {
-    // Optional field
     if (this.isBlank()) return ValidationResult(successful = true)
 
     val maxLength = ValidationRule.MaxLength(255).validate(this)

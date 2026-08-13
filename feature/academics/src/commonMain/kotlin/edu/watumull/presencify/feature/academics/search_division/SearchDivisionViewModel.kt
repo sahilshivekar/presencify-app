@@ -69,7 +69,6 @@ class SearchDivisionViewModel(
                 }
             },
             endReached = { currentPage, response ->
-                // End reached when we have loaded all divisions
                 val totalLoadedDivisions = currentPage * 20
                 totalLoadedDivisions >= response.totalCount
             }

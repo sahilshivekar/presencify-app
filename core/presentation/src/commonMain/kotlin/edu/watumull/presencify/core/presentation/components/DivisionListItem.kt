@@ -19,20 +19,7 @@ import edu.watumull.presencify.core.domain.enums.SemesterNumber
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
-/**
- * List item component for displaying Division information.
- *
- * @param divisionCode The division code.
- * @param batchCodes List of batch codes in this division.
- * @param semesterNumber The semester number.
- * @param semesterAcademicStartYear The academic start year of the semester.
- * @param semesterAcademicEndYear The academic end year of the semester.
- * @param branchAbbreviation The branch abbreviation.
- * @param feedback Optional feedback message to display.
- * @param trailingContent Optional trailing content composable.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun DivisionListItem(
     divisionCode: String,

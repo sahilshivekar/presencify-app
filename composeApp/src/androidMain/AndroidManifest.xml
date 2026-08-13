@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <!-- Required for Android 13+ -->
+    
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -23,7 +23,7 @@
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         tools:replace="android:name, android:allowBackup">
 
-        <!-- FileProvider for sharing files -->
+        
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

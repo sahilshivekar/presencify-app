@@ -108,12 +108,10 @@ class SearchAttendanceViewModel(
         when (action) {
             SearchAttendanceAction.NavigateBack -> sendEvent(SearchAttendanceEvent.NavigateBack)
 
-            // Search & Refresh
             is SearchAttendanceAction.UpdateSearchQuery -> updateState { it.copy(searchQuery = action.query) }
             SearchAttendanceAction.Search -> loadAttendances()
             SearchAttendanceAction.Refresh -> refreshAttendances()
 
-            // Filters
             is SearchAttendanceAction.SelectDate -> updateState { it.copy(selectedDate = action.date) }
             is SearchAttendanceAction.ToggleBranch -> toggleBranch(action.branch)
             is SearchAttendanceAction.ToggleSemester -> toggleSemester(action.semester)
@@ -134,12 +132,10 @@ class SearchAttendanceViewModel(
             SearchAttendanceAction.ResetFilters -> resetFilters()
             SearchAttendanceAction.ApplyFilters -> applyFilters()
 
-            // Attendance Actions
             is SearchAttendanceAction.AttendanceCardClick -> sendEvent(
                 SearchAttendanceEvent.NavigateToAttendanceDetails(action.attendanceId)
             )
 
-            // Pagination
             SearchAttendanceAction.LoadMoreAttendances -> loadMoreAttendances()
         }
     }
@@ -178,7 +174,6 @@ class SearchAttendanceViewModel(
                     }
             }
         }
-        // Initial load with empty filters
         loadAttendances()
     }
 
@@ -236,7 +231,6 @@ class SearchAttendanceViewModel(
             }
             it.copy(selectedSemesters = newSelection)
         }
-        // Load divisions, batches, and courses when semester is selected
         loadDivisionsAndBatches()
         fetchCoursesForSelectedSemester()
     }
@@ -248,7 +242,6 @@ class SearchAttendanceViewModel(
         val startYear = state.academicStartYear.toIntOrNull()
         val endYear = state.academicEndYear.toIntOrNull()
 
-        // Early return if required filters are not selected
         if (selectedSemester == null || startYear == null || endYear == null) {
             updateState {
                 it.copy(
@@ -314,7 +307,6 @@ class SearchAttendanceViewModel(
         updateState { it.copy(areCoursesLoading = true) }
 
         viewModelScope.launch {
-            // First get semester ID
             semesterRepository.getSemesters(
                 semesterNumber = selectedSemester,
                 academicStartYear = startYear,
@@ -325,7 +317,6 @@ class SearchAttendanceViewModel(
             ).onSuccess { semesterList ->
                 val semester = semesterList.semesters.firstOrNull()
                 if (semester != null) {
-                    // Fetch courses for this semester
                     semesterRepository.getCoursesOfSemester(semester.id)
                         .onSuccess { courses ->
                             val combinedCourses = courses.compulsoryCourses + courses.optionalCourses.mapNotNull { divisionCourse ->

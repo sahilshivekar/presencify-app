@@ -13,7 +13,6 @@ data class AddEditDivisionState(
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,
 
-    // Semester selection fields
     val semesterNumber: SemesterNumber? = null,
     val academicStartYear: String = "",
     val academicEndYear: String = "",
@@ -21,7 +20,6 @@ data class AddEditDivisionState(
 
     val branchOptions: List<Branch> = emptyList(),
 
-    // Division fields (shown after semester is found)
     val foundSemester: Semester? = null,
     val divisionCode: String = "",
     val showDivisionInput: Boolean = false,
@@ -30,7 +28,6 @@ data class AddEditDivisionState(
     val selectedOptionalCourses: Map<String, String> = emptyMap(),
     val openOptionalDropdowns: Set<String> = emptySet(),
 
-    // Error states
     val semesterNumberError: String? = null,
     val academicStartYearError: String? = null,
     val academicEndYearError: String? = null,

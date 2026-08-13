@@ -66,7 +66,6 @@ class AdminLoginViewModel(
         val emailOrUsername = currentState.emailOrUsername.trim()
         val password = currentState.password
 
-        // Reset errors
         updateState {
             it.copy(
                 emailOrUsernameError = null,
@@ -74,7 +73,6 @@ class AdminLoginViewModel(
             )
         }
 
-        // Validation
         var hasErrors = false
         if (emailOrUsername.isBlank()) {
             updateState { it.copy(emailOrUsernameError = "Email or username is required") }
@@ -90,11 +88,10 @@ class AdminLoginViewModel(
             return
         }
 
-        // Start loading
         updateState {
             it.copy(
                 isLoading = true,
-                isPasswordVisible = false // Hide password during login
+                isPasswordVisible = false
             )
         }
 

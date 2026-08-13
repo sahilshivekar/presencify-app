@@ -15,11 +15,9 @@ import presencify.core.presentation.generated.resources.error_unexpected
 fun DataError.toUiText(): UiText {
 
     return when(this) {
-        // Dynamic String Case
         is DataError.Remote.BusinessLogicError -> {
             UiText.DynamicString(this.message)
         }
-        // Resource ID Cases
         DataError.Local.DiskFull -> UiText.StringResourceId(Res.string.error_storage_full)
         DataError.Local.Unknown -> UiText.StringResourceId(Res.string.error_unexpected)
         DataError.Remote.RequestTimeout -> UiText.StringResourceId(Res.string.error_request_timeout)

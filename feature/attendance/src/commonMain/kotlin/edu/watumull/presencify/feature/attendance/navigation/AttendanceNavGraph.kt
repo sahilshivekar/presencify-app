@@ -34,7 +34,6 @@ fun NavGraphBuilder.attendanceDashboard(
         )
     }
 
-    // for student dashboard when role is student
     composableWithSlideTransitions<AttendanceRoutes.StudentAttendanceDashboard> {
         StudentAttendanceDashboardRoot(
             onNavigateBack = onNavigateBack,
@@ -53,7 +52,6 @@ fun NavGraphBuilder.attendanceNavGraph(
     onNavigateBackFromMarkAttendanceScreen: (String) -> Unit,
     onRefreshDashboard: () -> Unit,
 ) {
-    // 2. Create/Update Sheet
     composableWithSlideTransitions<AttendanceRoutes.CreateAttendanceSheet> {
         CreateAttendanceRoot(
             onNavigateBack = onNavigateBack,
@@ -61,7 +59,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 3. Mark Attendance
     composableWithSlideTransitions<AttendanceRoutes.MarkStudentAttendance> {
         MarkAttendanceRoot(
             onNavigateBackFromMarkAttendanceScreen = onNavigateBackFromMarkAttendanceScreen
@@ -83,7 +80,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 5. Aggregate (Batch/Group) Analytics
     composableWithSlideTransitions<AttendanceRoutes.AggregateAttendanceAnalytics> {
         AggregateAttendanceAnalyticsRoot(
             onNavigateBack = onNavigateBack,
@@ -91,7 +87,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 6. Search
     composableWithSlideTransitions<AttendanceRoutes.SearchAttendance> {
         SearchAttendanceRoot(
             onNavigateBack = onNavigateBack,
@@ -99,7 +94,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 7. Specific Attendance Details
     composableWithSlideTransitions<AttendanceRoutes.AttendanceDetails> {
         AttendanceDetailsRoot(
             onNavigateBack = onNavigateBack,
@@ -107,7 +101,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 8. Scan QR
     composableWithSlideTransitions<AttendanceRoutes.ScanQr> {
         ScanQrRoot(
             onNavigateBack = onNavigateBack,
@@ -117,7 +110,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 9. Face Scan
     composableWithSlideTransitions<AttendanceRoutes.RecognizeStudent> { backStackEntry ->
          RecognizeStudentRoot(
             onNavigateBack = onRefreshDashboard,
@@ -125,7 +117,6 @@ fun NavGraphBuilder.attendanceNavGraph(
         )
     }
 
-    // 10. Defaulters
     composableWithSlideTransitions<AttendanceRoutes.Defaulters> {
         DefaultersRoot(
             onNavigateBack = onNavigateBack,

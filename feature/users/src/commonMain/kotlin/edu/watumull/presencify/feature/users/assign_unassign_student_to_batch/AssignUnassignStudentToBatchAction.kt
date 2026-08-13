@@ -19,7 +19,6 @@ sealed interface AssignUnassignStudentToBatchAction {
 
     data object FindBatchesClick : AssignUnassignStudentToBatchAction
 
-    // Batch selection after finding batches
     data class SelectBatch(val batch: Batch?) : AssignUnassignStudentToBatchAction
     data class ChangeBatchDropDownVisibility(val isOpen: Boolean) : AssignUnassignStudentToBatchAction
     data object NavigateToSearchStudentClick : AssignUnassignStudentToBatchAction

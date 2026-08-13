@@ -101,7 +101,6 @@ class ModifyStudentDivisionViewModel(
                     updateState { it.copy(isLookingDivisions = false) }
 
                     if (divisionListWithTotalCount.divisions.isEmpty()) {
-                        // No divisions found
                         updateState {
                             it.copy(
                                 dialogState = DialogState(
@@ -114,7 +113,6 @@ class ModifyStudentDivisionViewModel(
                             )
                         }
                     } else {
-                        // Divisions found, show them in dropdown
                         updateState {
                             it.copy(
                                 divisionOptions = divisionListWithTotalCount.divisions.toPersistentList(),
@@ -191,7 +189,6 @@ class ModifyStudentDivisionViewModel(
                     it.copy(
                         selectedBranch = action.branch,
                         branchError = null,
-                        // Reset divisions when branch changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null
@@ -204,7 +201,6 @@ class ModifyStudentDivisionViewModel(
                     it.copy(
                         selectedSemesterNumber = action.semesterNumber,
                         semesterNumberError = null,
-                        // Reset divisions when semester changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null
@@ -217,7 +213,6 @@ class ModifyStudentDivisionViewModel(
                     it.copy(
                         startYear = action.year,
                         startYearError = null,
-                        // Reset divisions when year changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null
@@ -230,7 +225,6 @@ class ModifyStudentDivisionViewModel(
                     it.copy(
                         endYear = action.year,
                         endYearError = null,
-                        // Reset divisions when year changes
                         areDivisionsVisible = false,
                         divisionOptions = persistentListOf(),
                         selectedDivision = null

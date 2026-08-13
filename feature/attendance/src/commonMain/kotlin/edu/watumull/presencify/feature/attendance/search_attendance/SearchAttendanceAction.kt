@@ -10,12 +10,10 @@ import kotlinx.datetime.LocalDate
 sealed interface SearchAttendanceAction {
     data object NavigateBack : SearchAttendanceAction
 
-    // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchAttendanceAction
     data object Search : SearchAttendanceAction
     data object Refresh : SearchAttendanceAction
 
-    // Filters
     data class SelectDate(val date: LocalDate?) : SearchAttendanceAction
     data class ToggleBranch(val branch: Branch) : SearchAttendanceAction
     data class ToggleSemester(val semester: SemesterNumber) : SearchAttendanceAction
@@ -28,9 +26,7 @@ sealed interface SearchAttendanceAction {
     data object ResetFilters : SearchAttendanceAction
     data object ApplyFilters : SearchAttendanceAction
 
-    // Attendance Actions
     data class AttendanceCardClick(val attendanceId: String) : SearchAttendanceAction
 
-    // Pagination
     data object LoadMoreAttendances : SearchAttendanceAction
 }

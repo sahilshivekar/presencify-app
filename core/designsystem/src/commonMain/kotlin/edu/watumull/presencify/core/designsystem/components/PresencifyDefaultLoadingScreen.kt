@@ -22,7 +22,6 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-// Can be used for showing empty search results, failure in loading data on a details screen
 @Composable
 fun PresencifyDefaultLoadingScreen(
     modifier: Modifier = Modifier,
@@ -38,7 +37,7 @@ fun PresencifyDefaultLoadingScreen(
             modifier = modifier
                 .semantics { testTag = "PresencifyLoadingDialog" }
                 .testTag("PresencifyLoadingDialog"),
-            shape = MaterialTheme.shapes.extraLarge, // Rounded square borders
+            shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),

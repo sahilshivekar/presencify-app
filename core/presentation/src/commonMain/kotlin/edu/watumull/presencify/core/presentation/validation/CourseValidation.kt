@@ -24,7 +24,6 @@ fun String.validateAsCourseName(): ValidationResult {
 }
 
 fun String.validateAsOptionalCourse(): ValidationResult {
-    // Optional field
     if (this.isBlank()) return ValidationResult(successful = true)
 
     val maxLength = ValidationRule.MaxLength(255).validate(this)

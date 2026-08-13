@@ -14,10 +14,8 @@ import org.koin.dsl.module
 actual val platformStorageModule = module {
     single { SettingsFactory(PlatformContext()) }
     single<StringCipher> { BasicObfuscationCipher() }
-    // DataStore for JVM
     single<DataStore<Preferences>> {
         DataStoreFactory.create { dataStorePath() }
     }
-    // FCMTokenProvider for JVM (no-op)
     single { FCMTokenProvider(PlatformContext()) }
 }

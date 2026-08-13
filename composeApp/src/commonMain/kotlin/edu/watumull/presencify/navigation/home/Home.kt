@@ -32,7 +32,6 @@ fun Home(
     val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    // Determine window size for adaptive navigation
     val windowSizeClass = calculateWindowWidthSizeClass()
     val useNavigationRail = windowSizeClass >= WindowWidthSizeClass.Medium
 
@@ -55,7 +54,6 @@ fun Home(
         },
 
         bottomBar = {
-            // Only show bottom bar on compact screens
             if (!useNavigationRail) {
                 HomeBottomNavigationBar(
                     onItemSelected = { route ->
@@ -79,7 +77,6 @@ fun Home(
                 .padding(paddingValues),
             verticalAlignment = Alignment.Top,
         ) {
-            // Show navigation rail on medium+ screens
             if (useNavigationRail) {
                 HomeNavigationRail(
                     currentDestination = currentDestination,

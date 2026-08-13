@@ -15,30 +15,24 @@ data class AssignUnassignStudentToSemesterState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Branch Selection
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Semester Number Selection
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Academic Year Selection
     val startYear: String = "",
     val endYear: String = "",
 
-    // Validation
     val branchError: String? = null,
     val semesterNumberError: String? = null,
     val startYearError: String? = null,
     val endYearError: String? = null,
 
-    // Dropdown states
     val isBranchDropdownOpen: Boolean = false,
     val isSemesterNumberDropdownOpen: Boolean = false,
 
-    // Loading state for semester lookup
     val isLookingSemester: Boolean = false,
 ) {
     sealed interface ViewState {

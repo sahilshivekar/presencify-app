@@ -66,7 +66,6 @@ class StudentLoginViewModel(
         val emailOrPRN = currentState.emailOrPRN.trim()
         val password = currentState.password
 
-        // Reset errors
         updateState {
             it.copy(
                 emailOrPRNError = null,
@@ -74,7 +73,6 @@ class StudentLoginViewModel(
             )
         }
 
-        // Validation
         var hasErrors = false
         if (emailOrPRN.isBlank()) {
             updateState { it.copy(emailOrPRNError = "Email or PRN is required") }
@@ -90,11 +88,10 @@ class StudentLoginViewModel(
             return
         }
 
-        // Start loading
         updateState {
             it.copy(
                 isLoading = true,
-                isPasswordVisible = false // Hide password during login
+                isPasswordVisible = false
             )
         }
 

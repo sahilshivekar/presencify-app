@@ -18,51 +18,40 @@ import kotlinx.datetime.LocalDate
 data class SearchAttendanceState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search & Filter
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Attendance List
     val attendances: PersistentList<Attendance> = persistentListOf(),
     val isLoadingAttendances: Boolean = true,
 
-    // Filter Options - Date
     val selectedDate: LocalDate? = null,
 
-    // Filter Options - Branches
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Filter Options - Semesters
     val semesterOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesters: PersistentList<SemesterNumber> = persistentListOf(),
 
-    // Filter Options - Academic Year of Semester
     val academicStartYear: String = "",
     val academicEndYear: String = "",
 
 
-    // Filter Options - Division
     val divisionOptions: PersistentList<Division> = persistentListOf(),
     val selectedDivision: Division? = null,
     val areDivisionsLoading: Boolean = false,
 
-    // Filter Options - Batch
     val batchOptions: PersistentList<Batch> = persistentListOf(),
     val selectedBatch: Batch? = null,
     val areBatchesLoading: Boolean = false,
 
-    // Filter Options - Courses (fetched based on semester selection)
     val courseOptions: PersistentList<Course> = persistentListOf(),
     val selectedCourse: Course? = null,
     val areCoursesLoading: Boolean = false,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false,
 
-    // Parameters passed via navigation (if any)
     val routeCourseId: String? = null,
     val isRouteCourseLoading: Boolean = false,
     val studentId: String? = null,

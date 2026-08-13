@@ -44,7 +44,6 @@ fun AdminForgotPasswordScreen(
         )
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),
@@ -74,7 +73,6 @@ private fun AdminForgotPasswordScreenContent(
         Column(
             horizontalAlignment = Alignment.Start
         ) {
-            // Description
             Text(
                 text = "Enter your email address and we will send you a verification code.",
                 style = MaterialTheme.typography.bodyLarge.copy(
@@ -85,7 +83,6 @@ private fun AdminForgotPasswordScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.xxl))
 
-            // Email TextField
             PresencifyTextField(
                 value = state.email,
                 onValueChange = { email ->
@@ -110,7 +107,6 @@ private fun AdminForgotPasswordScreenContent(
             )
         }
 
-        // Send Code Button
         PresencifyButton(
             onClick = { onAction(AdminForgotPasswordAction.ClickSendCode) },
             enabled = !state.isLoading,

@@ -44,7 +44,6 @@ fun StudentVerifyCodeScreen(
         )
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),
@@ -74,7 +73,6 @@ private fun StudentVerifyCodeScreenContent(
         Column(
             horizontalAlignment = Alignment.Start
         ) {
-            // Description
             Text(
                 text = "Enter the six digit verification code sent to your email address ${state.email}" +
                         "\n\n" +
@@ -86,7 +84,6 @@ private fun StudentVerifyCodeScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.xxl))
 
-            // Verification Code TextField
             PresencifyTextField(
                 value = state.code,
                 onValueChange = { code ->
@@ -109,7 +106,6 @@ private fun StudentVerifyCodeScreenContent(
             )
         }
 
-        // Verify Code Button
         PresencifyButton(
             onClick = { onAction(StudentVerifyCodeAction.ClickVerifyCode) },
             enabled = !state.isLoading,

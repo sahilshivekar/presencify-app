@@ -169,7 +169,6 @@ class StudentDetailsViewModel(
         viewModelScope.launch {
                 updateState { it.copy(isLoggingOut = true) }
                 studentAuthRepository.logout()
-                // Navigation or state cleanup is handled by AppViewModel observing userRole/userId
                 updateState { it.copy(isLoggingOut = false) }
 
         }
@@ -270,7 +269,6 @@ class StudentDetailsViewModel(
         removeStudent()
     }
 
-    // ...existing code...
 
     private fun removeStudent() {
         viewModelScope.launch {

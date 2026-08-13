@@ -83,7 +83,6 @@ fun ScheduleDashboardScreen(
                         }
                     }
 
-                    // Section: Rooms and Classes
                     DashboardSection(title = "Rooms and Classes") {
                         DashboardRow {
                             DashboardItem(
@@ -141,7 +140,6 @@ private fun UpcomingClassesGrid(
         }
 
         else -> {
-            // Determine the number of rows based on the size of upcomingClasses
             val rowsCount = when {
                 upcomingClasses.size <= 4 -> 1
                 upcomingClasses.size <= 8 -> 2
@@ -149,7 +147,6 @@ private fun UpcomingClassesGrid(
                 else -> 4
             }
 
-            // Group the list into chunks (columns) based on the calculated rowsCount
             val chunkedClasses = upcomingClasses.chunked(rowsCount)
 
             LazyRow(
@@ -185,7 +182,6 @@ private fun UpcomingClassesShimmer() {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
     ) {
-        // Render a few fake columns for the loading state
         items(count = 3) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
@@ -193,9 +189,8 @@ private fun UpcomingClassesShimmer() {
                 repeat(4) {
                     Box(
                         modifier = Modifier
-                            // Use a standard estimated width for the shimmer
                             .width(DesignToken.spacing.huge * 5)
-                            .height(DesignToken.spacing.huge * 1.5f) // Estimated height of a card
+                            .height(DesignToken.spacing.huge * 1.5f)
                             .shimmerEffect()
                     )
                 }
@@ -262,19 +257,16 @@ private fun UpcomingClassDateLabel(upcomingClass: ClassSession) {
 
     val currentTime = DateTimeUtils.getCurrentTime()
 
-    // 1. Convert current time and class times into total minutes for easy comparison
     val currentMinutes = currentTime.hour * 60 + currentTime.minute
     val classStartMinutes = upcomingClass.startTime.hour * 60 + upcomingClass.startTime.minute
     val classEndMinutes = upcomingClass.endTime.toReadableString().let {
-        // Using total minutes from local time values
         upcomingClass.endTime.hour * 60 + upcomingClass.endTime.minute
     }
 
-    // 2. Check if the class belongs to today and has already finished
     val isOver = daysUntilClass == 0L && currentMinutes >= classEndMinutes
 
     val label = when {
-        isOver -> "over" // Show the over tag if the class has finished today
+        isOver -> "over"
 
         daysUntilClass == 0L -> {
             val remainingMinutes = classStartMinutes - currentMinutes
@@ -287,7 +279,6 @@ private fun UpcomingClassDateLabel(upcomingClass: ClassSession) {
     }
 
     if (label != null) {
-        // 3. Style the "over" tag differently (e.g., using a muted grey/outline variant)
         val containerColor = when {
             isOver -> MaterialTheme.colorScheme.surfaceVariant
             daysUntilClass == 0L -> MaterialTheme.colorScheme.errorContainer

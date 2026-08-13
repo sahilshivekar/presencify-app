@@ -43,7 +43,6 @@ fun SelectRoleScreen(
     onAction: (SelectRoleAction) -> Unit,
 ) {
     PresencifyScaffold(
-        // Back functionality disabled: Empty lambda passed, and topBarTitle = null hides the UI
         backPress = { },
         topBarTitle = null,
     ) { paddingValues ->
@@ -97,14 +96,12 @@ private fun SelectRoleScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
-            // 1. Logo
             Image(
                 painter = painterResource(Res.drawable.presencify_logo_circle_svg),
                 contentDescription = "App Logo",
                 modifier = Modifier.size(DesignToken.images.sm)
             )
 
-            // 2. Welcome Text
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Welcome to Presencify",
@@ -121,7 +118,6 @@ private fun SelectRoleScreenContent(
                 )
             }
 
-            // 3. Role List Items
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
                 modifier = Modifier.widthIn(max = 400.dp)

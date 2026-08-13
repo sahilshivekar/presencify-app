@@ -94,14 +94,12 @@ private fun ModifyStudentBatchScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select a branch, semester number, and academic year to find batches. Then select the new batch and start date.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -126,7 +124,6 @@ private fun ModifyStudentBatchScreenContent(
                 )
             }
 
-            // Semester Number Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -151,7 +148,6 @@ private fun ModifyStudentBatchScreenContent(
                 )
             }
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -186,7 +182,6 @@ private fun ModifyStudentBatchScreenContent(
                 }
             }
 
-            // Find Batches Button
             PresencifyButton(
                 onClick = { onAction(ModifyStudentBatchAction.FindBatchesClick) },
                 text = "Find Batches",
@@ -196,7 +191,6 @@ private fun ModifyStudentBatchScreenContent(
                     .padding(top = DesignToken.spacing.sm)
             )
 
-            // Batch Selection (shown only after finding batches)
             if (state.areBatchesVisible) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
@@ -223,7 +217,6 @@ private fun ModifyStudentBatchScreenContent(
                     )
                 }
 
-                // New Batch Start Date Selection
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
                     modifier = Modifier.padding(top = DesignToken.spacing.sm)
@@ -247,7 +240,6 @@ private fun ModifyStudentBatchScreenContent(
                     )
                 }
 
-                // Navigate to Search Student Button
                 PresencifyButton(
                     onClick = { onAction(ModifyStudentBatchAction.NavigateToSearchStudentClick) },
                     text = "Continue to Search Students",

@@ -101,7 +101,6 @@ class ModifyStudentBatchViewModel(
             )
                 .onSuccess { divisionListWithTotalCount ->
                     if (divisionListWithTotalCount.divisions.isEmpty()) {
-                        // No divisions found
                         updateState {
                             it.copy(
                                 isLookingBatches = false,
@@ -115,7 +114,6 @@ class ModifyStudentBatchViewModel(
                             )
                         }
                     } else {
-                        // Divisions found, now fetch all batches for all divisions
                         fetchAllBatchesForDivisions(
                             divisions = divisionListWithTotalCount.divisions,
                             branchId = branchId,
@@ -147,7 +145,6 @@ class ModifyStudentBatchViewModel(
         startYear: Int,
         endYear: Int
     ) {
-        // Fetch batches for all divisions in parallel
         val allBatches = mutableListOf<edu.watumull.presencify.core.domain.model.academics.Batch>()
         var hasError = false
         var errorMessage: UiText? = null
@@ -183,7 +180,6 @@ class ModifyStudentBatchViewModel(
                 )
             }
         } else if (allBatches.isEmpty()) {
-            // No batches found
             updateState {
                 it.copy(
                     dialogState = DialogState(
@@ -196,7 +192,6 @@ class ModifyStudentBatchViewModel(
                 )
             }
         } else {
-            // Batches found, show them in dropdown
             updateState {
                 it.copy(
                     batchOptions = allBatches.toPersistentList(),
@@ -259,7 +254,6 @@ class ModifyStudentBatchViewModel(
                     it.copy(
                         selectedBranch = action.branch,
                         branchError = null,
-                        // Reset batches when branch changes
                         areBatchesVisible = false,
                         batchOptions = persistentListOf(),
                         selectedBatch = null
@@ -272,7 +266,6 @@ class ModifyStudentBatchViewModel(
                     it.copy(
                         selectedSemesterNumber = action.semesterNumber,
                         semesterNumberError = null,
-                        // Reset batches when semester changes
                         areBatchesVisible = false,
                         batchOptions = persistentListOf(),
                         selectedBatch = null
@@ -285,7 +278,6 @@ class ModifyStudentBatchViewModel(
                     it.copy(
                         startYear = action.year,
                         startYearError = null,
-                        // Reset batches when year changes
                         areBatchesVisible = false,
                         batchOptions = persistentListOf(),
                         selectedBatch = null
@@ -298,7 +290,6 @@ class ModifyStudentBatchViewModel(
                     it.copy(
                         endYear = action.year,
                         endYearError = null,
-                        // Reset batches when year changes
                         areBatchesVisible = false,
                         batchOptions = persistentListOf(),
                         selectedBatch = null

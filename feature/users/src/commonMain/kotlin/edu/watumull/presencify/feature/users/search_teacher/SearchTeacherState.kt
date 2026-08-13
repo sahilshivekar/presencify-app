@@ -11,24 +11,19 @@ import kotlinx.collections.immutable.persistentListOf
 data class SearchTeacherState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search & Filter
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Teachers List
     val teachers: PersistentList<Teacher> = persistentListOf(),
     val isLoadingTeachers: Boolean = true,
 
-    // Selection Mode
     val intention: SearchTeacherIntention = SearchTeacherIntention.DEFAULT,
     val selectedTeacherIds: Set<String> = emptySet(),
     val isSelectable: Boolean = false,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false,
 
-    // Parameters from route
     val courseId: String? = null,
     val getAll: Boolean? = null,
 ) {

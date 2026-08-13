@@ -6,17 +6,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    // New Plugins
-//    alias(libs.plugins.ksp)
-//    alias(libs.plugins.room)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.google.services)
 }
 
-// FIX 1: Pass the path as a String, not a File object
-//room {
-//    schemaDirectory("$projectDir/schemas")
-//}
 
 kotlin {
     compilerOptions {
@@ -39,14 +32,12 @@ kotlin {
         }
     }
 
-    // This creates 'jvmMain' and 'jvmTest' source sets
     jvm()
 
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
 
-            // --- Android Specific ---
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
@@ -71,7 +62,6 @@ kotlin {
             implementation(project(":feature:users"))
             implementation(project(":feature:admin-mgt"))
 
-            // UI
             implementation("org.jetbrains.compose.runtime:runtime:1.10.0")
             implementation("org.jetbrains.compose.foundation:foundation:1.10.0")
             implementation("org.jetbrains.compose.material3:material3:1.9.0")
@@ -81,35 +71,27 @@ kotlin {
             implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.0")
 
 
-            // Lifecycle & Navigation
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.navigation.compose)
 
-            // Core
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.collections.immutable)
 
-            // DI (Koin)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            // Networking (Ktor)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
 
-            // Database (Room) & Storage
-//            implementation(libs.room.runtime)
-//            implementation(libs.sqlite.bundled)
             implementation(libs.datastore.preferences)
 
-            // Image Loading (Coil)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
 
@@ -126,12 +108,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
 
-            // Testing Libraries
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
             implementation(libs.koin.test)
 
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation("org.jetbrains.compose.ui:ui-test:1.10.0")
         }
 
@@ -143,7 +123,6 @@ kotlin {
             implementation(libs.compose.material.icons.extended.desktop)
         }
 
-        // FIX 2: Changed 'desktopTest' to 'jvmTest' to match the 'jvm()' target defined above
         jvmTest.dependencies {
             implementation("org.jetbrains.compose.ui:ui-test-junit4:1.10.0")
         }
@@ -156,19 +135,10 @@ kotlin {
     }
 }
 
-// Add Room KSP dependencies for each target
 dependencies {
-    // Note: KSP dependencies are usually added at the top-level dependencies block
-    // targeting specific source sets using "ksp<Target>"
-//    add("kspCommonMainMetadata", libs.room.compiler)
-//    add("kspAndroid", libs.room.compiler)
-//    add("kspJvm", libs.room.compiler)
-//    add("kspIosArm64", libs.room.compiler)
-//    add("kspIosSimulatorArm64", libs.room.compiler)
 
-    debugImplementation(compose.uiTooling)
+    debugImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
 
-    // Android UI Testing
     androidTestImplementation(libs.androidx.ui.test.junit4.android)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

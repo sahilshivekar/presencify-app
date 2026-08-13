@@ -82,12 +82,10 @@ class StudentAttendanceAnalyticsViewModel(
         val state = stateFlow.value
         val student = state.student ?: return
 
-        // Mark this semester as loading
         updateState {
             it.copy(loadingSemesterIds = it.loadingSemesterIds + semesterId)
         }
 
-        // Get the semester to extract course info
         val studentSemester = student.studentSemesters
             ?.firstOrNull { it.semester?.id == semesterId }
             ?: run {
@@ -97,7 +95,6 @@ class StudentAttendanceAnalyticsViewModel(
                 return
             }
 
-        // Fetch courses for this semester from the repository
         val coursesResult = semesterRepository.getCoursesOfSemester(semesterId)
 
         var courses: List<Course> = emptyList()
@@ -126,7 +123,6 @@ class StudentAttendanceAnalyticsViewModel(
         }
 
         if (courses.isEmpty()) {
-            // Courses list is empty but no error - just no courses assigned
             updateState {
                 it.copy(
                     loadingSemesterIds = it.loadingSemesterIds - semesterId,
@@ -136,7 +132,6 @@ class StudentAttendanceAnalyticsViewModel(
             return
         }
 
-        // Fetch attendance for each course in parallel
         val attendanceResults = courses.map { course ->
             viewModelScope.async {
                 if (userRepository.getUserRole().firstOrNull() == UserRole.STUDENT) {
@@ -176,7 +171,6 @@ class StudentAttendanceAnalyticsViewModel(
             }
         }.awaitAll()
 
-        // Collect successful results
         val aggregatedAttendance =
             mutableListOf<edu.watumull.presencify.core.domain.model.attendance.AggregatedAttendance>()
         val detailedAttendanceMap =
@@ -184,17 +178,13 @@ class StudentAttendanceAnalyticsViewModel(
 
         attendanceResults.forEach { result ->
             result.onSuccess { attendanceData ->
-                // Extract aggregated attendance
                 attendanceData.aggregatedAttendance.forEach { aggregated ->
                     aggregatedAttendance.add(aggregated)
-                    // Map detailed records to the course ID from aggregated
                     detailedAttendanceMap[aggregated.courseId] = attendanceData.detailedAttendanceRecord
                 }
             }
-            // Silently skip errors (courses with no attendance data)
         }
 
-        // Update state with attendance data
         updateState {
             it.copy(
                 loadingSemesterIds = it.loadingSemesterIds - semesterId,
@@ -223,7 +213,6 @@ class StudentAttendanceAnalyticsViewModel(
                 }
                 updateState { it.copy(expandedSemesterIds = newExpanded) }
 
-                // If expanding and we don't have data yet, load it
                 if (!currentExpanded.contains(action.semesterId)) {
                     viewModelScope.launch {
                         loadSemesterAttendance(action.semesterId)

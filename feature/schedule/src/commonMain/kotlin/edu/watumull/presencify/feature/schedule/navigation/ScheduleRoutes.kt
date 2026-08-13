@@ -18,7 +18,7 @@ sealed interface ScheduleRoutes : NavRoute {
 
     @Serializable
     data class SearchClass(
-        val intention: String = SearchClassIntention.DEFAULT.name // search class
+        val intention: String = SearchClassIntention.DEFAULT.name
     ) : ScheduleRoutes
 
     @Serializable

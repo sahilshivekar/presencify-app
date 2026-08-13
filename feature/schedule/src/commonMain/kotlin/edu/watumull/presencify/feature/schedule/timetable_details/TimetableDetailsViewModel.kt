@@ -55,7 +55,6 @@ class TimetableDetailsViewModel(
             getAll = true
         )
             .onSuccess { classListWithTotalCount ->
-                // Group classes by day of week
                 val classesByDay = classListWithTotalCount.classes.groupBy { it.dayOfWeek }
                 updateState { it.copy(classesByDay = classesByDay, isLoadingClasses = false) }
             }

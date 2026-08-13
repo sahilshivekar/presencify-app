@@ -31,7 +31,6 @@ class ImportStudentsViewModel(
             }
 
             is ImportStudentsAction.ClickSelectCsvFile -> {
-                // Handled in UI via launch, or we can't trigger UI picker from VM easily
             }
 
             is ImportStudentsAction.CsvFileSelected -> {
@@ -54,7 +53,7 @@ class ImportStudentsViewModel(
                         }
                     }
 
-                    else -> {} // Cancelled
+                    else -> {}
                 }
             }
 
@@ -97,7 +96,6 @@ parentEmail: Optional string, must be a valid email format if provided.""".trimI
 
         viewModelScope.launch {
 
-            // Using ShareUtils to export these to the device
             ShareUtils.shareFile(
                 ShareFileModel(
                     mime = MimeType.CSV,

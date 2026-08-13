@@ -10,14 +10,11 @@ data class CreateAttendanceState(
     val viewState: ViewState = ViewState.Loading,
     val dialogState: DialogState? = null,
 
-    // Class details
     val classSession: ClassSession? = null,
 
-    // Date selection
     val selectedDate: LocalDate? = getCurrentDate(),
     val dateError: String? = null,
 
-    // Loading states
     val isCreatingAttendance: Boolean = false
 ) {
     sealed interface ViewState {

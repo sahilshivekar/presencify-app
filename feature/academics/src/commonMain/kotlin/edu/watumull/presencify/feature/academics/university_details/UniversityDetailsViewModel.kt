@@ -72,7 +72,6 @@ class UniversityDetailsViewModel(
             is UniversityDetailsAction.ConfirmRemoveUniversity -> {
                 val universityId = state.universityIdToDelete ?: return
                 viewModelScope.launch {
-                    // Set removingUniversityId only when deletion actually starts
                     updateState { it.copy(removingUniversityId = universityId, dialogState = null) }
                     removeUniversity(universityId)
                 }
@@ -89,7 +88,6 @@ class UniversityDetailsViewModel(
                         SnackbarEvent(message = "University removed successfully")
                     )
                 }
-                // Reload universities after successful removal
                 loadUniversities()
                 updateState { it.copy(removingUniversityId = null, universityIdToDelete = null) }
             }

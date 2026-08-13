@@ -10,11 +10,9 @@ import kotlinx.collections.immutable.persistentListOf
 data class SearchSchemeState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Schemes List
     val schemes: PersistentList<Scheme> = persistentListOf(),
     val isLoadingSchemes: Boolean = true
 ) {

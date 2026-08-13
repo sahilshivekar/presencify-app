@@ -278,7 +278,6 @@ private fun StudentImageContainer(
     state: StudentDetailsState,
     onAction: (StudentDetailsAction) -> Unit,
 ) {
-    // Image dialog
     if (state.isImageDialogVisible) {
         Dialog(
             onDismissRequest = { onAction(StudentDetailsAction.ToggleImageDialog) },
@@ -345,8 +344,6 @@ private fun StudentImageContainer(
                         PresencifyButton(
                             modifier = Modifier.wrapContentSize(),
                             onClick = {
-                                // TODO: Implement file picker for image upload
-                                // onAction(StudentDetailsAction.StudentNewImageUploaded(imageBytes))
                             },
                             enabled = !state.isUpdatingImage && !state.isRemovingImage,
                             isLoading = false
@@ -429,7 +426,6 @@ private fun PersonalDetailsContainer(state: StudentDetailsState) {
             )
         }
 
-        // Full name
         DetailRow(
             label = "Full Name",
             value = buildString {
@@ -441,7 +437,6 @@ private fun PersonalDetailsContainer(state: StudentDetailsState) {
             }.trim()
         )
 
-        // Date of birth
         state.student?.dob?.let { dob ->
             DetailRow(
                 label = "Date of Birth",
@@ -454,7 +449,6 @@ private fun PersonalDetailsContainer(state: StudentDetailsState) {
             )
         }
 
-        // Gender
         DetailRow(
             label = "Gender",
             value = state.student?.gender?.toDisplayLabel() ?: "",
@@ -590,7 +584,6 @@ private fun DropoutDetailsContainer(state: StudentDetailsState) {
 
 @Composable
 private fun SemesterDetailsContainer(state: StudentDetailsState) {
-    // Only show if studentSemesters is not null and not empty
     val semesters = state.studentSemesters
     if (semesters.isNullOrEmpty()) return
 
@@ -669,7 +662,6 @@ private fun SemesterItem(
             .padding(start = DesignToken.spacing.lg)
             .height(IntrinsicSize.Min)
     ) {
-        // Semester line
         Box(
             modifier = Modifier
                 .width(DesignToken.strokes.thick)
@@ -681,7 +673,6 @@ private fun SemesterItem(
                 )
         )
 
-        // Semester details column
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
@@ -710,7 +701,6 @@ private fun SemesterItem(
                 )
             }
 
-            // Past divisions
             val pastDivisions = studentDivisions
                 ?.filter { it.division?.semesterId == semester.id }
                 ?.sortedBy { it.startDate }
@@ -722,7 +712,6 @@ private fun SemesterItem(
                 )
             }
 
-            // Semester end date
             Row(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
@@ -777,7 +766,6 @@ private fun DivisionItem(
             .padding(start = DesignToken.spacing.xxl)
             .height(IntrinsicSize.Min)
     ) {
-        // Division line
         Box(
             modifier = Modifier
                 .width(DesignToken.strokes.thick)
@@ -789,7 +777,6 @@ private fun DivisionItem(
                 )
         )
 
-        // Division details column
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
@@ -818,15 +805,14 @@ private fun DivisionItem(
                 )
             }
 
-            // Past batches
             val pastBatches = studentBatches
                 ?.filter {
                     it.batch?.divisionId == studentDivision.division?.id &&
                             it.startDate >= studentDivision.startDate &&
                             (
-                                    it.endDate == null ||                           // Batch still ongoing
-                                            studentDivision.endDate == null ||               // Division still ongoing
-                                            it.endDate!! <= studentDivision.endDate!!            // Batch ended before division ended
+                                    it.endDate == null ||
+                                            studentDivision.endDate == null ||
+                                            it.endDate!! <= studentDivision.endDate!!
                                     )
                 }
                 ?.sortedBy { it.startDate }
@@ -889,7 +875,6 @@ private fun BatchItem(studentBatch: StudentBatch) {
             .padding(start = DesignToken.spacing.xxl)
             .height(IntrinsicSize.Min)
     ) {
-        // Batch line
         Box(
             modifier = Modifier
                 .width(DesignToken.strokes.thick)
@@ -901,7 +886,6 @@ private fun BatchItem(studentBatch: StudentBatch) {
                 )
         )
 
-        // Batch details column
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,

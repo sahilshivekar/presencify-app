@@ -109,7 +109,6 @@ private fun ImportTeachersScreenContent(
                 textAlign = TextAlign.Center
             )
 
-            // File Selection Box
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

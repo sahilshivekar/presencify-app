@@ -30,60 +30,18 @@ import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import kotlin.math.roundToInt
 
-/**
- * Determines the stroke color based on attendance percentage ranges.
- * - 90-100%: Dark Green
- * - 75-89%: Green
- * - 65-74%: Yellow
- * - 50-64%: Amber/Orange
- * - 30-49%: Orange
- * - 0-29%: Red
- */
+
 private fun getAttendanceColor(percentage: Float): Color {
     return when {
-        percentage >= 75f -> Color(0xFF4CAF50) // Green
-        percentage >= 65f -> Color(0xFFFFEB3B) // Yellow
-        percentage >= 50f -> Color(0xFFFFC107) // Amber
-        percentage >= 30f -> Color(0xFFFF9800) // Orange
-        else -> Color(0xFFF44336) // Red
+        percentage >= 75f -> Color(0xFF4CAF50)
+        percentage >= 65f -> Color(0xFFFFEB3B)
+        percentage >= 50f -> Color(0xFFFFC107)
+        percentage >= 30f -> Color(0xFFFF9800)
+        else -> Color(0xFFF44336)
     }
 }
 
-/**
- * A generic donut graph component that displays progress in a circular format
- * with customizable color schemes and center content.
- *
- * Example usage:
- * ```
- * // Simple percentage display
- * DonutGraph(
- *     percentage = 75f,
- *     centerText = "75%",
- *     label = "Completed"
- * )
- *
- * // Value/Total display with custom colors
- * DonutGraph(
- *     value = 7,
- *     total = 10,
- *     label = "Tasks Completed",
- *     progressBrush = Brush.linearGradient(listOf(Color.Blue, Color.Cyan))
- * )
- * ```
- *
- * @param percentage Progress percentage (0-100). If provided, overrides value/total calculation.
- * @param value Current value (numerator) for automatic percentage calculation.
- * @param total Total value (denominator) for automatic percentage calculation.
- * @param centerText Custom text to display in the center. If null, shows value/total or percentage.
- * @param centerSubtext Custom subtext to display below center text. If null, shows percentage.
- * @param label Text to display below the indicator.
- * @param modifier Modifier for the component.
- * @param size Size of the circular indicator.
- * @param strokeWidth Width of the progress stroke.
- * @param progressColor Color for the progress arc. If null, uses attendance-based color scheme.
- * @param backgroundColor Background color of the track. Defaults to surface color.
- * @param animate Whether to animate the progress when first displayed.
- */
+
 @Composable
 fun DonutGraph(
     modifier: Modifier = Modifier,
@@ -100,21 +58,18 @@ fun DonutGraph(
     animate: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
-    // Calculate percentage from value/total if not provided directly
     val calculatedPercentage = percentage ?: if (value != null && total != null && total > 0) {
         (value.toFloat() / total.toFloat() * 100f)
     } else {
         0f
     }
 
-    // Animate progress
     val animatedProgress by animateFloatAsState(
         targetValue = if (animate) calculatedPercentage / 100f else calculatedPercentage / 100f,
         animationSpec = tween(durationMillis = 1000),
         label = "donut_progress"
     )
 
-    // Determine colors - use attendance color logic by default
     val strokeColor = progressColor ?: getAttendanceColor(calculatedPercentage)
     val bgColor = backgroundColor ?: MaterialTheme.colorScheme.surface
 
@@ -129,7 +84,6 @@ fun DonutGraph(
             else -> MaterialTheme.typography.titleLarge
         }
 
-        // Circular Progress Indicator
         Box(
             modifier = Modifier.size(size),
             contentAlignment = Alignment.Center
@@ -144,7 +98,6 @@ fun DonutGraph(
                 val radius = (canvasSize - strokeWidthPx) / 2f
                 val center = Offset(canvasSize / 2f, canvasSize / 2f)
 
-                // Background circle
                 drawCircle(
                     color = bgColor,
                     radius = radius,
@@ -152,7 +105,6 @@ fun DonutGraph(
                     style = Stroke(width = strokeWidthPx)
                 )
 
-                // Progress arc
                 val sweepAngle = 360f * animatedProgress
                 drawArc(
                     color = strokeColor,
@@ -165,7 +117,6 @@ fun DonutGraph(
                 )
             }
 
-            // Center content - only show percentage
             Text(
                 text = centerText ?: "${calculatedPercentage.roundToInt()}%",
                 style = centerTextStyle,
@@ -174,7 +125,6 @@ fun DonutGraph(
             )
         }
 
-        // Value/Total below the circle (if both value and total are provided)
         if (value != null && total != null) {
             Text(
                 text = "$value/$total",
@@ -184,7 +134,6 @@ fun DonutGraph(
             )
         }
 
-        // Center subtext (if provided)
         if (centerSubtext != null) {
             Text(
                 text = centerSubtext,
@@ -194,7 +143,6 @@ fun DonutGraph(
             )
         }
 
-        // Label below the indicator
         if (label != null) {
             Text(
                 text = label,

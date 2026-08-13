@@ -17,44 +17,35 @@ data class SearchRoomState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // ...existing code...
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Rooms List
     val rooms: PersistentList<Room> = persistentListOf(),
     val isLoadingRooms: Boolean = true,
 
-    // Filter Options - Sort By
     val sortByOptions: ImmutableList<RoomSortBy> = RoomSortBy.entries.toImmutableList(),
     val selectedSortBy: RoomSortBy = RoomSortBy.ROOM_NUMBER,
 
-    // Filter Options - Sort Order
     val sortOrderOptions: ImmutableList<RoomSortOrder> = RoomSortOrder.entries.toImmutableList(),
     val selectedSortOrder: RoomSortOrder = RoomSortOrder.ASCENDING,
 
-    // Filter Options - Room Type
     val roomTypeOptions: ImmutableList<RoomType> = RoomType.entries.toImmutableList(),
     val selectedRoomTypes: PersistentList<RoomType> = persistentListOf(),
 
-    // Filter Options - Day of Week
     val dayOfWeekOptions: ImmutableList<DayOfWeek> = DayOfWeek.entries.toImmutableList(),
     val selectedDayOfWeek: DayOfWeek? = null,
 
-    // Filter Options - Capacity
     val minCapacity: String = "",
     val maxCapacity: String = "",
     val minCapacityError: String? = null,
     val maxCapacityError: String? = null,
 
-    // Filter Options - Busy Time Range
     val freeBetweenStartTime: LocalTime? = null,
     val freeBetweenEndTime: LocalTime? = null,
     val busyStartTimeError: String? = null,
     val busyEndTimeError: String? = null,
     val dayOfWeekError: String? = null,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false
 ) {

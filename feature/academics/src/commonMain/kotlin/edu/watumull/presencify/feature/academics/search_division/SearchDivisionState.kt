@@ -14,28 +14,22 @@ import kotlinx.collections.immutable.toImmutableList
 data class SearchDivisionState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search & Filter
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Divisions List
     val divisions: PersistentList<Division> = persistentListOf(),
     val isLoadingDivisions: Boolean = true,
 
-    // Filter Options - Semester Number
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Filter Options - Academic Year
     val academicStartYear: String = "",
     val academicEndYear: String = "",
 
-    // Filter Options - Branches
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false
 ) {

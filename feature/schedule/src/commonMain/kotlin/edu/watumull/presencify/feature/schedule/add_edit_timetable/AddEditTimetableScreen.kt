@@ -100,7 +100,6 @@ private fun AddEditTimetableScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = if (state.isEditMode) {
                     "Update timetable information"
@@ -111,7 +110,6 @@ private fun AddEditTimetableScreenContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -136,7 +134,6 @@ private fun AddEditTimetableScreenContent(
                 )
             }
 
-            // Semester Number Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -161,7 +158,6 @@ private fun AddEditTimetableScreenContent(
                 )
             }
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -198,7 +194,6 @@ private fun AddEditTimetableScreenContent(
                 }
             }
 
-            // Find Divisions and Batches Button
             if (!state.isEditMode) {
                 PresencifyButton(
                     onClick = { onAction(AddEditTimetableAction.FindDivisionsAndBatchesClick) },
@@ -210,7 +205,6 @@ private fun AddEditTimetableScreenContent(
                 )
             }
 
-            // Division Selection (shown only after finding divisions or in edit mode)
             if (state.areDivisionsVisible) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm),
@@ -237,7 +231,6 @@ private fun AddEditTimetableScreenContent(
                     )
                 }
 
-                // Batch Selection (shown only after finding batches)
                 if (state.areBatchesVisible) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
@@ -275,7 +268,6 @@ private fun AddEditTimetableScreenContent(
                     }
                 }
 
-                // Timetable Version
                 Column(
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
                 ) {
@@ -296,7 +288,6 @@ private fun AddEditTimetableScreenContent(
                     )
                 }
 
-                // Save Button
                 PresencifyButton(
                     onClick = { onAction(AddEditTimetableAction.SaveTimetableClick) },
                     text = if (state.isEditMode) "Update Timetable" else "Create Timetable",

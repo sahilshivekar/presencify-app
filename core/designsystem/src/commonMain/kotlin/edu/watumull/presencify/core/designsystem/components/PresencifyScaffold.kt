@@ -33,9 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * Simple top bar with centered title and left-aligned back button.
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PresencifyTopBar(
@@ -75,10 +73,7 @@ private fun PresencifyTopBar(
     )
 }
 
-/**
- * Normal scaffold with centered title top app bar and optional floating action button.
- * Used for regular screens that don't need bottom sheets or pull-to-refresh.
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PresencifyScaffold(
@@ -106,10 +101,7 @@ fun PresencifyScaffold(
     )
 }
 
-/**
- * Bottom sheet scaffold with centered title top app bar, optional floating action button,
- * and bottom sheet. Used for search screens with filtering.
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PresencifyBottomSheetScaffold(

@@ -77,7 +77,6 @@ class SemesterDetailsViewModel(
             }
             .onError { _ ->
                 updateState { it.copy(isLoadingCourses = false) }
-                // Don't show error dialog for courses - just leave the list empty
             }
     }
 

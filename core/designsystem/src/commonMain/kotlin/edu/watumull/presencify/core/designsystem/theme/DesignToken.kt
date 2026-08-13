@@ -6,10 +6,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-// ------------------------------------------------------------
-// SPACING
-// ------------------------------------------------------------
-
 @Immutable
 data class AppSpacing(
     val none: Dp = 0.dp,
@@ -28,10 +24,6 @@ val LocalSpacing = staticCompositionLocalOf {
     AppSpacing()
 }
 
-// ------------------------------------------------------------
-// ELEVATION
-// ------------------------------------------------------------
-
 @Immutable
 data class AppElevation(
     val none: Dp = 0.dp,
@@ -46,10 +38,6 @@ data class AppElevation(
 val LocalElevation = staticCompositionLocalOf {
     AppElevation()
 }
-
-// ------------------------------------------------------------
-// ICON SIZES
-// ------------------------------------------------------------
 
 @Immutable
 data class AppIconSizes(
@@ -66,10 +54,6 @@ val LocalIconSizes = staticCompositionLocalOf {
     AppIconSizes()
 }
 
-// ------------------------------------------------------------
-// AVATAR SIZES
-// ------------------------------------------------------------
-
 @Immutable
 data class AppAvatarSizes(
     val sm: Dp = 32.dp,
@@ -82,10 +66,6 @@ data class AppAvatarSizes(
 val LocalAvatarSizes = staticCompositionLocalOf {
     AppAvatarSizes()
 }
-
-// ------------------------------------------------------------
-// IMAGE SIZES
-// ------------------------------------------------------------
 
 @Immutable
 data class AppImageSizes(
@@ -100,21 +80,15 @@ val LocalImageSizes = staticCompositionLocalOf {
     AppImageSizes()
 }
 
-// ------------------------------------------------------------
-// STROKES
-// ------------------------------------------------------------
-
 @Immutable
 data class AppStrokes(
     val none: Dp = 0.dp,
 
-    // Borders / dividers
     val hairline: Dp = 0.5.dp,
     val thin: Dp = 1.dp,
     val md: Dp = 2.dp,
     val thick: Dp = 4.dp,
 
-    // Charts / graphs / progress indicators
     val extraThick: Dp = 8.dp,
     val huge: Dp = 12.dp,
 )
@@ -122,10 +96,6 @@ data class AppStrokes(
 val LocalStrokes = staticCompositionLocalOf {
     AppStrokes()
 }
-
-// ------------------------------------------------------------
-// COMPONENT SIZES
-// ------------------------------------------------------------
 
 @Immutable
 data class AppComponentSizes(
@@ -137,10 +107,6 @@ data class AppComponentSizes(
 val LocalComponentSizes = staticCompositionLocalOf {
     AppComponentSizes()
 }
-
-// ------------------------------------------------------------
-// DESIGN TOKEN ACCESS API
-// ------------------------------------------------------------
 
 object DesignToken {
 

@@ -70,7 +70,6 @@ class HttpClientFactory(
             install(Auth) {
                 bearer {
                     loadTokens {
-                        // Direct call without runBlocking since these are not suspending functions
                         val accessToken = tokenRepository.readAccessToken() ?: ""
                         val refreshToken = tokenRepository.readRefreshToken() ?: ""
 
@@ -81,15 +80,12 @@ class HttpClientFactory(
                     }
 
                     refreshTokens {
-                        // Get the current refresh token
                         val refreshToken = tokenRepository.readRefreshToken()
 
-                        // Get user role
                         val userRole = userRepository.getUserRole().firstOrNull()
 
                         println("👤 User role: $userRole")
 
-                        // Create basic client for refresh
                         val basicClient = createBasicClient(engine)
 
                         return@refreshTokens try {
@@ -120,15 +116,12 @@ class HttpClientFactory(
                                 }
                             }
 
-                            // Update tokens in repository
                             tokenRepository.saveAccessToken(tokenDto.accessToken)
                             tokenRepository.saveRefreshToken(tokenDto.refreshToken)
 
-                            // Return new BearerTokens
                             BearerTokens(tokenDto.accessToken, tokenDto.refreshToken)
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            // Clear tokens on refresh failure
                             tokenRepository.clearTokens()
                             userRepository.clearUserDetails()
                             null
@@ -136,12 +129,10 @@ class HttpClientFactory(
                             basicClient.close()
                         }
                     }
-                    // this means send the first request without tokens
                     sendWithoutRequest { request ->
                         val isAuthEndpoint = request.url.pathSegments.contains("login") ||
                                 request.url.pathSegments.contains("register")
 
-                        // Return true to skip auth for these endpoints
                         !isAuthEndpoint
                     }
                 }

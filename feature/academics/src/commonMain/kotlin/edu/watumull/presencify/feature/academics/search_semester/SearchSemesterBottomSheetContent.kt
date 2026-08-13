@@ -38,7 +38,6 @@ fun SearchSemesterBottomSheetContent(
             .fillMaxWidth()
             .padding(DesignToken.spacing.lg)
     ) {
-        // Fixed Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,14 +56,12 @@ fun SearchSemesterBottomSheetContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
 
-        // Scrollable Filter Options
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
         ) {
-            // Semester Number Filter
             FilterSection(title = "Semester") {
                 Row(
                     modifier = Modifier
@@ -88,7 +85,6 @@ fun SearchSemesterBottomSheetContent(
                 }
             }
 
-            // Academic Year Filter
             FilterSection(title = "Academic Year") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -109,7 +105,6 @@ fun SearchSemesterBottomSheetContent(
                 }
             }
 
-            // Branch Filter
             FilterSection(
                 title = "Branch",
                 isLoading = state.areBranchesLoading
@@ -133,7 +128,6 @@ fun SearchSemesterBottomSheetContent(
                 }
             }
 
-            // Scheme Filter
             FilterSection(
                 title = "Scheme",
                 isLoading = state.areSchemesLoading
@@ -161,7 +155,6 @@ fun SearchSemesterBottomSheetContent(
             }
         }
 
-        // Fixed Apply Filters Button
         PresencifyButton(
             onClick = {
                 onDismiss()

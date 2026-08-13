@@ -13,7 +13,6 @@ data class AddEditTeacherState(
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,
 
-    // Personal Details
     val firstName: String = "",
     val firstNameError: String? = null,
     val middleName: String = "",
@@ -31,13 +30,11 @@ data class AddEditTeacherState(
     val isActive: Boolean = true,
     val originalIsActive: Boolean? = null,
 
-    // Contact Details
     val email: String = "",
     val emailError: String? = null,
     val phoneNumber: String = "",
     val phoneNumberError: String? = null,
 
-    // Image
     val teacherImageBytes: ByteArray? = null,
     val teacherImageUrl: String? = null,
     val isImageDialogVisible: Boolean = false,

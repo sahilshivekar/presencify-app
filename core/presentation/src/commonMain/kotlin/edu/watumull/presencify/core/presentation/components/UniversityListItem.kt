@@ -15,16 +15,6 @@ import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * List item component for displaying University information.
- *
- * @param name The name of the university.
- * @param abbreviation The abbreviation of the university.
- * @param feedback Optional feedback message to display.
- * @param trailingContent Optional trailing content composable.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
 @Composable
 fun UniversityListItem(
     name: String,
@@ -58,7 +48,7 @@ fun UniversityListItem(
                             is ListItemFeedback.Success -> Color.Green to it.message
                             is ListItemFeedback.Error -> MaterialTheme.colorScheme.error to it.message
                         }
-                        Column {    
+                        Column {
                             Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
                             HorizontalDivider()
                             Spacer(modifier = Modifier.height(DesignToken.spacing.xs))

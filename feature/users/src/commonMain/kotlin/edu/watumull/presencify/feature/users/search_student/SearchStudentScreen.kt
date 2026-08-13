@@ -148,8 +148,6 @@ private fun SearchStudentScreenContent(
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
-            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading students for the first time
             if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.students.lastIndex - 10) {
                 onAction(SearchStudentAction.LoadMoreStudents)
             }
@@ -293,7 +291,6 @@ private fun SearchStudentScreenContent(
                                     }
 
                                     SearchStudentIntention.MODIFY_STUDENT_DIVISION -> {
-                                        // Check if student is in the target division for this semester (endDate = null)
                                         val isInTargetDivision = student.studentDivisions?.any {
                                             it.division?.id == state.divisionId && it.endDate == null
                                         } == true
@@ -365,7 +362,6 @@ private fun SearchStudentScreenContent(
                                     }
 
                                     SearchStudentIntention.MODIFY_STUDENT_BATCH -> {
-                                        // Check if student is in the target batch (endDate = null)
                                         val isInTargetBatch = student.studentBatches?.any {
                                             it.batch?.id == state.batchId && it.endDate == null
                                         } == true

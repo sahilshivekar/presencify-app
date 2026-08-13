@@ -32,14 +32,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 
-/**
- * A Presencify-styled, read-only text field that opens a Material3 [TimePicker] dialog.
- *
- * Mirrors the UX used in `SearchClassScreen`:
- * - Leading icon opens picker
- * - Trailing clear icon appears only when a value is set
- * - Uses OK/Cancel dialog buttons
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PresencifyTimePickerTextField(
@@ -54,11 +47,6 @@ fun PresencifyTimePickerTextField(
     clearIconContentDescription: String = "Clear time",
 ) {
 
-//    val timePickerState = rememberTimePickerState(
-//        initialHour = value?.hour ?: 0,
-//        initialMinute = value?.minute ?: 0,
-//        is24Hour = false,
-//    )
     var showPicker by remember { mutableStateOf(false) }
 
     val displayText = value?.to12HourFormat() ?: ""
@@ -104,7 +92,6 @@ fun PresencifyTimePickerTextField(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                // Leave the standard Material 48dp touch target uncovered so the Clear icon still works
                 .padding(end = if (value != null) 48.dp else 0.dp)
                 .clickable(
                     enabled = enabled,

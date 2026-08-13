@@ -62,7 +62,6 @@ class CreateAttendanceViewModel(
     private fun createAttendance() {
         val state = stateFlow.value
 
-        // Validate date
         if (state.selectedDate == null) {
             updateState {
                 it.copy(
@@ -85,7 +84,6 @@ class CreateAttendanceViewModel(
                             isCreatingAttendance = false,
                         )
                     }
-                    // Navigate to mark attendance screen
                     sendEvent(NavigateToMarkAttendance(attendance.id))
                 }
                 .onError { error ->

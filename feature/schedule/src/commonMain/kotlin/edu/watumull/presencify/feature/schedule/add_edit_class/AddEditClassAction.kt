@@ -9,7 +9,6 @@ sealed interface AddEditClassAction {
     data object ConfirmNavigateBack : AddEditClassAction
     data object DismissDialog : AddEditClassAction
 
-    // Class Details
     data class UpdateCourse(val courseId: String?) : AddEditClassAction
     data class ChangeCourseDropDownVisibility(val isVisible: Boolean) : AddEditClassAction
 
@@ -33,6 +32,5 @@ sealed interface AddEditClassAction {
 
     data class UpdateIsExtraClass(val isExtraClass: Boolean) : AddEditClassAction
 
-    // Submit
     data object SubmitClick : AddEditClassAction
 }

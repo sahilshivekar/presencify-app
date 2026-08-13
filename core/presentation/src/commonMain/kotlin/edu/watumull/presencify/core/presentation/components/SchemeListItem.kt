@@ -15,15 +15,7 @@ import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * List item component for displaying Scheme information.
- *
- * @param name The name of the scheme.
- * @param universityName The university name associated with the scheme.
- * @param feedback Optional feedback message to display.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun SchemeListItem(
     name: String,

@@ -20,18 +20,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.RoomType
 
-/**
- * List item component for displaying Room information.
- *
- * @param roomNumber The room number.
- * @param sittingCapacity The sitting capacity of the room.
- * @param type Optional room type (Classroom, Lab, Office).
- * @param name Optional name of the room.
- * @param feedback Optional feedback message to display.
- * @param trailingIcon Optional trailing icon composable.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun RoomListItem(
     roomNumber: String,

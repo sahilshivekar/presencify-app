@@ -378,14 +378,12 @@ class DefaultersViewModel(
         val endYear = currentState.academicEndYear.toIntOrNull() ?: return
 
         viewModelScope.launch {
-            // Mark all valid students as loading
             updateState { state ->
                 val newLoadingMap = state.isAttendanceLoadingMap.toMutableMap()
                 students.forEach { newLoadingMap[it.id] = true }
                 state.copy(isAttendanceLoadingMap = newLoadingMap)
             }
 
-            // 1. Resolve the semester
             val semesterResult = semesterRepository.getSemesters(
                 semesterNumber = currentState.selectedSemesterNumber,
                 academicStartYear = startYear,
@@ -396,12 +394,10 @@ class DefaultersViewModel(
 
             val semesterId = (semesterResult as? Result.Success)?.data?.semesters?.firstOrNull()?.id
             if (semesterId == null) {
-                // If we can't find semesterId, stop loading
                 clearLoadingStateForStudents(students)
                 return@launch
             }
 
-            // 2. Fetch courses for the selected division
             val coursesResult = divisionRepository.getCoursesOfDivision(divisionId)
             val courses = (coursesResult as? Result.Success)?.data?.let {
                 it.compulsoryCourses +
@@ -415,7 +411,6 @@ class DefaultersViewModel(
                 return@launch
             }
 
-            // 3. Fetch attendance per course for all students in one request per course
             val courseResults = courses.map { course ->
                 async {
                     course.id to attendanceRepository.getAttendanceOfEveryStudentForSpecificCourseInSemester(
@@ -480,7 +475,6 @@ class DefaultersViewModel(
 
             val studentResults = students.map { student -> attendanceByStudentId.getValue(student) }
 
-            // Update state simultaneously for all students
             updateState { state ->
                 val newAttendanceMap = state.studentAttendanceMap.toMutableMap()
                 val newCourseAttendanceMap = state.studentCourseAttendanceMap.toMutableMap()
@@ -493,7 +487,7 @@ class DefaultersViewModel(
                     newCourseAttendanceMap[result.studentId] = result.coursePercentages
                     newNumbersMap[result.studentId] = result.overallNumbers
                     newCourseNumbersMap[result.studentId] = result.courseNumbers
-                    newLoadingMap[result.studentId] = false // Clear loading state for this student
+                    newLoadingMap[result.studentId] = false
                 }
 
                 state.copy(
@@ -588,7 +582,6 @@ class DefaultersViewModel(
                             if (percentage < 75.0f) {
                                 isDefaulter = true
                             }
-                            // Encapsulating the entire string inside ="..." prevents Excel from parsing it as a formula or date
                             "=\"${numbers.first}/${numbers.second} - ${percentage.toInt()}%\""
                         } else {
                             "N/A"

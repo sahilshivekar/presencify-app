@@ -75,7 +75,6 @@ fun TimetableDetailsScreen(
                             .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                             .fillMaxSize()
                     ) {
-                        // Timetable Info Card
                         Column(
                             modifier = Modifier.padding(DesignToken.spacing.lg)
                         ) {
@@ -84,7 +83,6 @@ fun TimetableDetailsScreen(
                                 val semester = division?.semester
                                 val branch = semester?.branch
 
-                                // Determine year from semester number
                                 val year = semester?.semesterNumber?.let { semNum ->
                                     when (semNum.value) {
                                         1, 2 -> "FE"
@@ -124,15 +122,6 @@ fun TimetableDetailsScreen(
                                         )
                                     }
 
-//                                    PresencifyTextButton(
-//                                        onClick = { onAction(TimetableDetailsAction.EditTimetableClick) },
-//                                        enabled = !state.isRemovingTimetable
-//                                    ) {
-//                                        Text(
-//                                            text = "Edit timetable",
-//                                            color = MaterialTheme.colorScheme.primary
-//                                        )
-//                                    }
                                     if (LocalUserRole.current == UserRole.ADMIN) {
                                         PresencifyTextButton(
                                             onClick = { onAction(TimetableDetailsAction.RemoveTimetableClick) },
@@ -157,7 +146,6 @@ fun TimetableDetailsScreen(
                         }
 
 
-                        // Day Tabs
                         val allDays = listOf(
                             DayOfWeek.MONDAY,
                             DayOfWeek.TUESDAY,
@@ -189,7 +177,6 @@ fun TimetableDetailsScreen(
                         }
 
 
-                        // Classes List for Selected Day
                         if (state.isLoadingClasses) {
                             Box(
                                 modifier = Modifier
@@ -203,7 +190,6 @@ fun TimetableDetailsScreen(
                             val classesForSelectedDay = state.classesByDay[state.selectedDay] ?: emptyList()
                             val today = DateTimeUtils.getCurrentDate()
 
-                            // Filter active and inactive classes
                             val activeClasses = classesForSelectedDay.filter { classSession ->
                                 classSession.activeFrom <= today && classSession.activeTill >= today
                             }
@@ -229,7 +215,6 @@ fun TimetableDetailsScreen(
                                         .padding(DesignToken.spacing.lg),
                                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
                                 ) {
-                                    // Active Classes
                                     if (activeClasses.isNotEmpty()) {
                                         items(
                                             items = activeClasses,
@@ -243,7 +228,6 @@ fun TimetableDetailsScreen(
                                                 "${semester.semesterNumber.value} (${it.academicStartYear}-${it.academicEndYear})"
                                             }
 
-                                            // Build division or batch text
                                             val batch = classSession.batch
                                             val batchText = when {
                                                 batch?.batchCode != null -> batch.batchCode
@@ -265,7 +249,6 @@ fun TimetableDetailsScreen(
                                         }
                                     }
 
-                                    // Inactive Classes Toggle
                                     if (inactiveClasses.isNotEmpty()) {
                                         item {
                                             PresencifyActionBar(
@@ -276,7 +259,6 @@ fun TimetableDetailsScreen(
                                             )
                                         }
 
-                                        // Show Inactive Classes if expanded
                                         if (state.showInactiveClasses) {
                                             items(
                                                 items = inactiveClasses,
@@ -295,12 +277,10 @@ fun TimetableDetailsScreen(
                                                     }
                                                 } ?: "Unknown"
 
-                                                // Build semester text (e.g., "FE (2023-2024)")
                                                 val semesterText = semester?.let {
                                                     "$year (${it.academicStartYear}-${it.academicEndYear})"
                                                 }
 
-                                                // Build division or batch text
                                                 val batch = classSession.batch
                                                 val divisionOrBatchText = when {
                                                     batch?.batchCode != null -> "Batch ${batch.batchCode}"
@@ -323,7 +303,6 @@ fun TimetableDetailsScreen(
                                         }
                                     }
 
-                                    // Show message if only inactive classes exist
                                     if (activeClasses.isEmpty() && inactiveClasses.isNotEmpty() && !state.showInactiveClasses) {
                                         item {
                                             Box(

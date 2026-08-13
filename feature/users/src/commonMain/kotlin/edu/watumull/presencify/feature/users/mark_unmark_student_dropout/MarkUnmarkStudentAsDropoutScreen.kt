@@ -89,14 +89,12 @@ private fun MarkUnmarkStudentAsDropoutScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select the academic year for which you want to mark students as dropout",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -131,7 +129,6 @@ private fun MarkUnmarkStudentAsDropoutScreenContent(
                 }
             }
 
-            // Continue Button
             PresencifyButton(
                 onClick = { onAction(MarkUnmarkStudentAsDropoutAction.ContinueClick) },
                 text = "Continue",

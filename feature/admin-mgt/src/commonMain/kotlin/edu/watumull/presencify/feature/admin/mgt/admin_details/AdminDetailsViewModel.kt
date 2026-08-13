@@ -141,7 +141,6 @@ class AdminDetailsViewModel(
         val email = currentState.editableEmail.trim()
         val username = currentState.editableUsername.trim()
 
-        // Validation
         val emailValidationResult = email.validateAsEmail()
         val usernameValidationResult = username.validateAsAdminUsername()
 
@@ -156,7 +155,6 @@ class AdminDetailsViewModel(
             return
         }
 
-        // Check if any changes were made
         if (email == currentState.orgEmail && username == currentState.orgUsername) {
             viewModelScope.launch {
                 SnackbarController.sendEvent(SnackbarEvent("No changes made to the email and username."))
@@ -276,7 +274,7 @@ class AdminDetailsViewModel(
         updateState {
             it.copy(
                 isRemovingAccount = true,
-                dialogState = null // Dismiss confirmation dialog
+                dialogState = null
             )
         }
 

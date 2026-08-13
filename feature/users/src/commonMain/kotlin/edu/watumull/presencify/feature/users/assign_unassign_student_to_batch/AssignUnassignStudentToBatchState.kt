@@ -16,37 +16,30 @@ data class AssignUnassignStudentToBatchState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Branch Selection
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Semester Number Selection
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Academic Year Selection
     val startYear: String = "",
     val endYear: String = "",
 
-    // Batch Selection (shown after finding batches)
     val batchOptions: PersistentList<Batch> = persistentListOf(),
     val selectedBatch: Batch? = null,
     val areBatchesVisible: Boolean = false,
 
-    // Validation
     val branchError: String? = null,
     val semesterNumberError: String? = null,
     val startYearError: String? = null,
     val endYearError: String? = null,
     val batchError: String? = null,
 
-    // Dropdown states
     val isBranchDropdownOpen: Boolean = false,
     val isSemesterNumberDropdownOpen: Boolean = false,
     val isBatchDropdownOpen: Boolean = false,
 
-    // Loading states
     val isLookingDivisions: Boolean = false,
 ) {
     sealed interface ViewState {

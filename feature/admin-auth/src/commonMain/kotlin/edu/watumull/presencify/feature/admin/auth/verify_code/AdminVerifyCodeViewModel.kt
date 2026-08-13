@@ -60,7 +60,6 @@ class AdminVerifyCodeViewModel(
         val codeValidation = code.validateAsVerificationCode()
         val emailValidation = email.validateAsEmail()
 
-        // Set errors (login screen style: validate on submit)
         updateState {
             it.copy(
                 codeError = codeValidation.errorMessage
@@ -69,7 +68,6 @@ class AdminVerifyCodeViewModel(
 
         if (!codeValidation.successful) return
 
-        // Email is a route param; still validate to avoid weird states
         if (!emailValidation.successful) {
             viewModelScope.launch {
                 SnackbarController.sendEvent(SnackbarEvent("Technical error occurred, please restart the app"))
@@ -77,7 +75,6 @@ class AdminVerifyCodeViewModel(
             return
         }
 
-        // Start loading
         updateState {
             it.copy(isLoading = true)
         }

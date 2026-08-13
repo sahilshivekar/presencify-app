@@ -20,6 +20,5 @@ actual fun RecognizeStudentCamera(
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Text("Camera Not Implemented on iOS")
-        // TODO: Implement Vision Framework + AVFoundation integration
     }
 }

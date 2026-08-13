@@ -17,29 +17,23 @@ data class ModifyStudentBatchState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Branch Selection
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Semester Number Selection
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Academic Year Selection
     val startYear: String = "",
     val endYear: String = "",
 
-    // Batch Selection (shown after finding batches)
     val batchOptions: PersistentList<Batch> = persistentListOf(),
     val selectedBatch: Batch? = null,
     val areBatchesVisible: Boolean = false,
 
-    // New Batch Start Date
     val newBatchStartDate: LocalDate? = null,
     val isDatePickerVisible: Boolean = false,
 
-    // Validation
     val branchError: String? = null,
     val semesterNumberError: String? = null,
     val startYearError: String? = null,
@@ -47,12 +41,10 @@ data class ModifyStudentBatchState(
     val batchError: String? = null,
     val newBatchStartDateError: String? = null,
 
-    // Dropdown states
     val isBranchDropdownOpen: Boolean = false,
     val isSemesterNumberDropdownOpen: Boolean = false,
     val isBatchDropdownOpen: Boolean = false,
 
-    // Loading states
     val isLookingBatches: Boolean = false,
 ) {
     sealed interface ViewState {

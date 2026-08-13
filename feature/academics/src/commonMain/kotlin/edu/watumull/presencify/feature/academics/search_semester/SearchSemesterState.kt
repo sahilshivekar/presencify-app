@@ -15,33 +15,26 @@ import kotlinx.collections.immutable.toImmutableList
 data class SearchSemesterState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search & Filter
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Semesters List
     val semesters: PersistentList<Semester> = persistentListOf(),
     val isLoadingSemesters: Boolean = true,
 
-    // Filter Options - Semester Number
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Filter Options - Academic Year
     val academicStartYear: String = "",
     val academicEndYear: String = "",
 
-    // Filter Options - Branches
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranches: PersistentList<Branch> = persistentListOf(),
     val areBranchesLoading: Boolean = true,
 
-    // Filter Options - Scheme
     val schemeOptions: PersistentList<Scheme> = persistentListOf(),
     val selectedScheme: Scheme? = null,
     val areSchemesLoading: Boolean = true,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false
 ) {

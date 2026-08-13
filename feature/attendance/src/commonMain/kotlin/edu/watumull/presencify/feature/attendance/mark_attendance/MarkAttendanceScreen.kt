@@ -145,7 +145,6 @@ fun MarkAttendanceScreen(
                                         ),
                                     )
 
-                                    // 2. Render the QR code when visible
                                     if (state.isQrVisible && state.qrCodeContent.isNotEmpty()) {
                                         val logo = painterResource(resource = Res.drawable.presencify_logo_circle_svg)
 
@@ -184,7 +183,6 @@ fun MarkAttendanceScreen(
                                 }
 
 
-                                // Stats Cards Section
                                 AttendanceStatsSection(
                                     totalStudents = state.totalStudents,
                                     presentStudents = state.presentStudents,
@@ -193,7 +191,6 @@ fun MarkAttendanceScreen(
                             }
                         }
 
-                        // Students List Header
                         item {
                             Column(
                                 modifier = Modifier
@@ -219,7 +216,6 @@ fun MarkAttendanceScreen(
                                     PresencifyOutlinedButton(
                                         text = "Mark All Absent",
                                         onClick = { onAction(MarkAttendanceAction.ClickMarkAllAbsent) },
-                                        // Enable only if there's someone to mark absent AND neither operation is currently loading
                                         enabled = isMarkAllAbsentEnabled == true && !state.isMarkingAllAbsent && !state.isMarkingAllPresent,
                                         isLoading = state.isMarkingAllAbsent,
                                         modifier = Modifier.weight(1f)
@@ -228,7 +224,6 @@ fun MarkAttendanceScreen(
                                     PresencifyButton(
                                         text = "Mark All Present",
                                         onClick = { onAction(MarkAttendanceAction.ClickMarkAllPresent) },
-                                        // Enable only if there's someone to mark present AND neither operation is currently loading
                                         enabled = isMarkAllPresentEnabled == true && !state.isMarkingAllPresent && !state.isMarkingAllAbsent,
                                         isLoading = state.isMarkingAllPresent,
                                         modifier = Modifier.weight(1f)
@@ -238,7 +233,6 @@ fun MarkAttendanceScreen(
                             }
                         }
 
-                        // Students List
                         if (state.isStudentListLoading) {
                             items(10) {
                                 Column(
@@ -249,7 +243,7 @@ fun MarkAttendanceScreen(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(72.dp) // Approximate height of StudentListItem
+                                            .height(72.dp)
                                             .shimmerEffect()
                                     )
                                     Spacer(modifier = Modifier.height(DesignToken.spacing.md))
@@ -325,7 +319,6 @@ fun MarkAttendanceScreen(
         }
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,
@@ -382,7 +375,7 @@ private fun ClassDetailsSection(
             divisionOrBatchText = divisionBatchText,
             branchAbbreviation = branch?.abbreviation,
             semesterText = semesterText,
-            onClick = { /* No action for this view */ },
+            onClick = {  },
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -399,21 +392,18 @@ private fun AttendanceStatsSection(
         horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)
     ) {
 
-        // Total Students Card
         AttendanceStatCard(
             label = "Total",
             count = totalStudents,
             color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.weight(1f)
         )
-        // Present Students Card
         AttendanceStatCard(
             label = "Present",
             count = presentStudents,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
-        // Absent Students Card
         AttendanceStatCard(
             label = "Absent",
             count = absentStudents,

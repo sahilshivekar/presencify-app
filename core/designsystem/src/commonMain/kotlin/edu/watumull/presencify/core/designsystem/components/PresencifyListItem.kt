@@ -11,21 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * Reusable list item component that provides consistent theming and structure across the app.
- *
- * Designed for use in search screens and any list-based UI where consistent formatting is needed.
- * Uses Material 3's ListItem with subtle elevation for professional appearance.
- *
- * All content slots accept composables for maximum flexibility - use Text, Icon, Image, or any custom composable.
- *
- * @param headlineContent Required main content displayed prominently (typically Text).
- * @param modifier Modifier for the list item.
- * @param supportingContent Optional secondary content displayed below the headline (typically Text for subtitle).
- * @param leadingContent Optional content displayed at the start of the item (typically Icon or Avatar).
- * @param trailingContent Optional content displayed at the end of the item (e.g., badge, icon, status indicator).
- * @param onClick Optional click handler. When provided, the item becomes clickable with ripple effect.
- */
+
 @Composable
 fun PresencifyListItem(
     headlineContent: @Composable () -> Unit,

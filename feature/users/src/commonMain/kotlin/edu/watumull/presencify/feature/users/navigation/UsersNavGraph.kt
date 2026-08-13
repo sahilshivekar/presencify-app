@@ -198,10 +198,8 @@ fun NavGraphBuilder.usersNavGraph(
         )
     }
     composableWithSlideTransitions<UsersRoutes.AssignCourseToTeacher> {
-        // TODO: Add screen content
     }
     composableWithSlideTransitions<UsersRoutes.UnassignCourseToTeacher> {
-        // TODO: Add screen content
     }
     composableWithSlideTransitions<UsersRoutes.TeacherDetails> {
         TeacherDetailsRoot(

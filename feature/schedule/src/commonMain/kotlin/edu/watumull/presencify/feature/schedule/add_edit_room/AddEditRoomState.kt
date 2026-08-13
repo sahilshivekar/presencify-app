@@ -10,11 +10,9 @@ data class AddEditRoomState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Mode
     val isEditMode: Boolean = false,
     val roomId: String? = null,
 
-    // Room Details
     val roomNumber: String = "",
     val roomNumberError: String? = null,
 
@@ -27,11 +25,9 @@ data class AddEditRoomState(
     val roomType: RoomType? = null,
     val roomTypeError: String? = null,
 
-    // Dropdowns
     val roomTypeOptions: ImmutableList<RoomType> = RoomType.entries.toImmutableList(),
     val isRoomTypeDropdownOpen: Boolean = false,
 
-    // Loading
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false
 ) {

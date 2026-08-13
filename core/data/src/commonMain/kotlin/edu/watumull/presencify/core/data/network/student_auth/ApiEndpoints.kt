@@ -4,10 +4,8 @@ import edu.watumull.presencify.core.data.network.BaseApiEndpoints.API_V1
 import edu.watumull.presencify.core.data.network.BaseApiEndpoints.PRESENCIFY_BASE_URL
 
 object ApiEndpoints {
-    // Path segments
     val STUDENT_AUTH = "auth/students"
     
-    // Student authentication endpoints
     val LOGIN_STUDENT = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/login"
     val SEND_VERIFICATION_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/send-verification-code"
     val VERIFY_CODE = "$PRESENCIFY_BASE_URL/$API_V1/$STUDENT_AUTH/verify-code"

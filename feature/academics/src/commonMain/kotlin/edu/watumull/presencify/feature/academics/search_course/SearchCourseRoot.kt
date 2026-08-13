@@ -22,8 +22,6 @@ fun SearchCourseRoot(
                 onNavigateToCourseDetails(event.courseId)
             }
             is SearchCourseEvent.NavigateBackWithSelection -> {
-                // For now, just navigate back
-                // In the future, this could pass selected course IDs back to caller
                 onNavigateBack()
             }
             is SearchCourseEvent.NavigateToAddEditCourse -> {

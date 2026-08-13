@@ -271,7 +271,6 @@ class AddEditBatchViewModel(
             .onSuccess { result ->
                 val divisions = result.divisions
                 if (divisions.isNotEmpty()) {
-                    // Use the first matching division as default
                     updateState {
                         it.copy(
                             isLoading = false,

@@ -136,11 +136,6 @@ class ClassSessionRepositoryImpl(
         return remoteDataSource.cancelClass(classId, date, reason).map { it.toDomain() }
     }
 
-//    override suspend fun bulkCreateClasses(classes: List<Map<String, Any>>): Result<List<ClassSession>, DataError.Remote> {
-//        return remoteDataSource.bulkCreateClasses(classes).map { list ->
-//            list.map { it.toDomain() }
-//        }
-//    }
 
     override suspend fun bulkDeleteClasses(classIds: List<String>): Result<Unit, DataError.Remote> {
         return remoteDataSource.bulkDeleteClasses(classIds)

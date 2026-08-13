@@ -39,7 +39,6 @@ fun NavGraphBuilder.scheduleNavGraph(
     onNavigateToAddEditTimetable: (String?) -> Unit,
     onNavigateToCreateAttendanceSheet: (String) -> Unit
 ) {
-    // Room Navigation
     composableWithSlideTransitions<ScheduleRoutes.SearchRoom> {
         SearchRoomRoot(
             onNavigateBack = onNavigateBack,
@@ -59,7 +58,6 @@ fun NavGraphBuilder.scheduleNavGraph(
         )
     }
 
-    // Class Navigation
     composableWithSlideTransitions<ScheduleRoutes.SearchClass> {
         SearchClassRoot(
             onNavigateBack = onNavigateBack,
@@ -80,7 +78,6 @@ fun NavGraphBuilder.scheduleNavGraph(
         )
     }
 
-    // Timetable Navigation
     composableWithSlideTransitions<ScheduleRoutes.SearchTimetable> {
         SearchTimetableRoot(
             onNavigateBack = onNavigateBack,
@@ -103,12 +100,9 @@ fun NavGraphBuilder.scheduleNavGraph(
         )
     }
 
-    // Schedule Views (TODO)
     composableWithSlideTransitions<ScheduleRoutes.StudentSchedule> {
-        // TODO: Add screen content
     }
     composableWithSlideTransitions<ScheduleRoutes.TeacherSchedule> {
-        // TODO: Add screen content
     }
 }
 

@@ -130,8 +130,6 @@ private fun SearchClassScreenContent(
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
-            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading students for the first time
             if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.classes.lastIndex - 10) {
                 onAction(SearchClassAction.LoadMoreClasses)
             }
@@ -178,20 +176,17 @@ private fun SearchClassScreenContent(
                         items = state.classes,
                         key = { it.id }
                     ) { classSession ->
-                        // Extract division and semester info
                         val division = classSession.timetable?.division
                         val batch = classSession.batch
                         val semester = division?.semester
                         val branch = semester?.branch
 
-                        // Build division/batch display text
                         val divisionBatchText = when {
                             batch != null -> batch.batchCode
                             division != null -> division.divisionCode
                             else -> null
                         }
 
-                        // Build semester and academic year text
                         val semesterText = semester?.let { sem ->
                             val semNum = sem.semesterNumber.value
                             val academicYear = "${sem.academicStartYear}-${sem.academicEndYear}"
@@ -258,7 +253,6 @@ private fun SearchClassBottomSheetContent(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
     ) {
-        // Header with Reset
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -282,7 +276,6 @@ private fun SearchClassBottomSheetContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.sm))
 
-        // Branch Filter
         FilterSection(
             title = "Branch",
             isLoading = state.areBranchesLoading
@@ -305,7 +298,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Semester Filter
         FilterSection(title = "Semester") {
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -325,7 +317,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Academic Year of Semester Filter
         FilterSection(title = "Academic Year of Semester") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -350,7 +341,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Division Filter
         FilterSection(
             title = "Division",
             isLoading = state.areDivisionsLoading,
@@ -386,7 +376,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Batch Filter
         FilterSection(
             title = "Batch",
             isLoading = state.areBatchesLoading,
@@ -422,7 +411,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Course Type Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Course Type",
@@ -450,7 +438,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Extra Class Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -472,7 +459,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Time Range Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Time Range",
@@ -509,7 +495,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Date Range Filter (Active From/Till)
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Active Date Range",
@@ -545,7 +530,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Rooms Filter
         FilterSection(
             title = "Rooms",
             isLoading = state.isLoadingRooms,
@@ -570,7 +554,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Teachers Filter
         FilterSection(
             title = "Teachers",
             isLoading = state.isLoadingTeachers,
@@ -595,7 +578,6 @@ private fun SearchClassBottomSheetContent(
             }
         }
 
-        // Action Buttons
         Row(
             horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
             modifier = Modifier.fillMaxWidth()
@@ -621,7 +603,7 @@ private fun SearchClassBottomSheetContent(
                     onDismiss()
                 },
                 text = "Apply",
-                enabled = !hasValidationErrors, // Button is enabled only if there are NO errors
+                enabled = !hasValidationErrors,
                 modifier = Modifier.weight(1f)
             )
         }

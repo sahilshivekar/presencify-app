@@ -15,15 +15,7 @@ import androidx.compose.ui.graphics.Color
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * List item component for displaying Branch information.
- *
- * @param name The name of the branch.
- * @param abbreviation The abbreviation of the branch.
- * @param feedback Optional feedback message to display.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun BranchListItem(
     name: String,

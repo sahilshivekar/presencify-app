@@ -28,21 +28,7 @@ import edu.watumull.presencify.core.designsystem.components.DonutGraph
 import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * List item component for displaying Attendance information.
- *
- * Shows the attendance date at the top, followed by all ClassListItem content.
- *
- * @param attendanceDate The attendance date in readable format (e.g., "27/02/2026") (required).
- * @param courseName The name of the course (required).
- * @param teacherName The name of the teacher (required).
- * @param startTime Start time in readable format (e.g., "10:00 AM") (required).
- * @param endTime End time in readable format (e.g., "11:00 AM") (required).
- * @param dayOfWeek Day of week (e.g., "Monday") (required).
- * @param feedback Optional feedback message to display.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AttendanceListItem(
@@ -81,7 +67,6 @@ fun AttendanceListItem(
                     )
                 }
 
-                // Teacher name with prefix (same line logically, but wraps if needed)
                 Text(
                     text = "Prof. $teacherName",
                     style = MaterialTheme.typography.bodyMedium,
@@ -101,12 +86,6 @@ fun AttendanceListItem(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-//                    Text(
-//                        text = "$presentCount/$totalCount",
-//                        style = MaterialTheme.typography.labelMedium, // Or bodyMedium? labelMedium is slightly smaller/bolder usually
-//                        color = MaterialTheme.colorScheme.onSurface
-//                    )
-//                    Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
                     val percentage = if (totalCount > 0) (presentCount.toFloat() / totalCount.toFloat()) * 100f else 0f
                     DonutGraph(
@@ -115,18 +94,16 @@ fun AttendanceListItem(
                         strokeWidth = DesignToken.strokes.thick,
                         total = totalCount,
                         value = presentCount,
-                        animate = false // Disable animation for list items to improve performance
+                        animate = false
                     )
                 }
             }
         },
         supportingContent = {
             Column {
-                // Time info with clock icon, Day
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Clock icon
                     Icon(
                         imageVector = Icons.Default.Schedule,
                         contentDescription = "Time",
@@ -136,14 +113,12 @@ fun AttendanceListItem(
 
                     Spacer(modifier = Modifier.width(DesignToken.spacing.xs))
 
-                    // Time: "10:00 AM - 11:00 AM"
                     Text(
                         text = "$startTime - $endTime",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    // Day of week
                     dayOfWeek?.let {
                         Text(
                             text = " • $dayOfWeek",
@@ -153,7 +128,6 @@ fun AttendanceListItem(
                     }
                 }
 
-                // Feedback section (if any)
                 AnimatedVisibility(
                     visible = feedback != null,
                     enter = expandVertically(),

@@ -15,33 +15,26 @@ import kotlinx.collections.immutable.toImmutableList
 data class SearchBatchState(
     val viewState: ViewState = ViewState.Content,
 
-    // Search & Filter
     val searchQuery: String = "",
     val isRefreshing: Boolean = false,
 
-    // Batches List
     val batches: PersistentList<Batch> = persistentListOf(),
     val isLoadingBatches: Boolean = true,
 
-    // Filter Options - Semester Number
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Filter Options - Academic Year
     val academicStartYear: String = "",
     val academicEndYear: String = "",
 
-    // Filter Options - Branches
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Filter Options - Division
     val divisionOptions: PersistentList<Division> = persistentListOf(),
     val selectedDivision: Division? = null,
     val areDivisionsLoading: Boolean = false,
 
-    // Pagination
     val currentPage: Int = 1,
     val isLoadingMore: Boolean = false
 ) {

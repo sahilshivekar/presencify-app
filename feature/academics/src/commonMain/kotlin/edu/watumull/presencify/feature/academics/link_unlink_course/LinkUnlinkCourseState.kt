@@ -15,20 +15,16 @@ data class LinkUnlinkCourseState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Branch Selection
     val branchOptions: PersistentList<Branch> = persistentListOf(),
     val selectedBranch: Branch? = null,
     val areBranchesLoading: Boolean = true,
 
-    // Semester Selection
     val semesterNumberOptions: ImmutableList<SemesterNumber> = SemesterNumber.entries.toImmutableList(),
     val selectedSemesterNumber: SemesterNumber? = null,
 
-    // Validation
     val branchError: String? = null,
     val semesterError: String? = null,
 
-    // Dropdown states
     val isBranchDropdownOpen: Boolean = false,
     val isSemesterDropdownOpen: Boolean = false,
 ) {

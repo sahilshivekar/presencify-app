@@ -72,7 +72,6 @@ fun AddEditClassScreen(
                             .padding(DesignToken.spacing.lg),
                         verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
                     ) {
-                        // Course Dropdown
                         PresencifyDropDownMenuBox<Course>(
                             value = state.selectedCourse?.name ?: "",
                             options = state.availableCourses,
@@ -92,7 +91,6 @@ fun AddEditClassScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Teacher Dropdown
                         PresencifyDropDownMenuBox<Teacher>(
                             value = state.selectedTeacher?.let { "${it.firstName} ${it.lastName}" } ?: "",
                             options = state.availableTeachers,
@@ -113,7 +111,6 @@ fun AddEditClassScreen(
                         )
 
 
-                        // Batch Dropdown (Optional)
                         if (state.selectedCourse?.courseType == CourseType.PRACTICAL) {
                             PresencifyDropDownMenuBox<Batch>(
                                 value = state.selectedBatch?.batchCode ?: "",
@@ -135,7 +132,6 @@ fun AddEditClassScreen(
                             )
                         }
 
-                        // Day of Week Dropdown
                         PresencifyDropDownMenuBox<DayOfWeek>(
                             value = state.dayOfWeek?.value ?: "",
                             options = state.dayOfWeekOptions,
@@ -179,7 +175,6 @@ fun AddEditClassScreen(
                             )
                         }
 
-                        // Room Dropdown
                         PresencifyDropDownMenuBox<Room>(
                             value = state.selectedRoom?.roomNumber ?: "",
                             options = state.availableRooms,
@@ -221,7 +216,6 @@ fun AddEditClassScreen(
                             )
                         }
 
-                        // Extra Class Toggle (only show in add mode)
                         if (!state.isEditMode) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -249,7 +243,6 @@ fun AddEditClassScreen(
 
                         Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
-                        // Submit Button
                         PresencifyButton(
                             onClick = { onAction(AddEditClassAction.SubmitClick) },
                             text = if (state.isEditMode) "Update Active Dates" else "Add Class",
@@ -263,7 +256,6 @@ fun AddEditClassScreen(
         }
     }
 
-    // Dialog
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,

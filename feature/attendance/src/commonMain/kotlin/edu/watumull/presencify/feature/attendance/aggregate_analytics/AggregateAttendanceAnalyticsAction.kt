@@ -11,7 +11,6 @@ sealed interface AggregateAttendanceAnalyticsAction {
 
     data class DonutCourseClick(val courseId: String) : AggregateAttendanceAnalyticsAction
 
-    // Filter actions
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber) : AggregateAttendanceAnalyticsAction
     data class UpdateAcademicStartYear(val year: String) : AggregateAttendanceAnalyticsAction
     data class UpdateAcademicEndYear(val year: String) : AggregateAttendanceAnalyticsAction
@@ -19,7 +18,6 @@ sealed interface AggregateAttendanceAnalyticsAction {
     data class SelectDivision(val division: Division?) : AggregateAttendanceAnalyticsAction
     data class SelectBatch(val batch: Batch?) : AggregateAttendanceAnalyticsAction
 
-    // Dropdown visibility
     data class ChangeSemesterNumberDropDownVisibility(val isVisible: Boolean) : AggregateAttendanceAnalyticsAction
     data class ChangeBranchDropDownVisibility(val isVisible: Boolean) : AggregateAttendanceAnalyticsAction
     data class ChangeDivisionDropDownVisibility(val isVisible: Boolean) : AggregateAttendanceAnalyticsAction

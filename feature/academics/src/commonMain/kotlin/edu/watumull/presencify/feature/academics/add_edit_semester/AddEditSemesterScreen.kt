@@ -59,7 +59,6 @@ fun AddEditSemesterScreen(
                         .padding(bottom = DesignToken.spacing.lg)
                 )
 
-                // Semester Number Dropdown
                 PresencifyDropDownMenuBox<SemesterNumber>(
                     value = state.semesterNumber?.toDisplayLabel() ?: "",
                     options = SemesterNumber.entries,
@@ -75,7 +74,6 @@ fun AddEditSemesterScreen(
 
                 Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                // Academic Start Year
                 PresencifyTextField(
                     value = state.academicStartYear,
                     onValueChange = { onAction(AddEditSemesterAction.UpdateAcademicStartYear(it)) },
@@ -88,7 +86,6 @@ fun AddEditSemesterScreen(
 
                 Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                // Academic End Year
                 PresencifyTextField(
                     value = state.academicEndYear,
                     onValueChange = { onAction(AddEditSemesterAction.UpdateAcademicEndYear(it)) },
@@ -130,7 +127,6 @@ fun AddEditSemesterScreen(
 
                 Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                // Branch Dropdown
                 PresencifyDropDownMenuBox<Branch>(
                     value = state.branchOptions.find { it.id == state.selectedBranchId }?.abbreviation ?: "",
                     options = state.branchOptions,
@@ -146,7 +142,6 @@ fun AddEditSemesterScreen(
 
                 Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                // Scheme Dropdown
                 PresencifyDropDownMenuBox<Scheme>(
                     value = state.schemeOptions.find { it.id == state.selectedSchemeId }?.name ?: "",
                     options = state.schemeOptions,
@@ -173,7 +168,6 @@ fun AddEditSemesterScreen(
         }
     }
 
-    // Alert Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,

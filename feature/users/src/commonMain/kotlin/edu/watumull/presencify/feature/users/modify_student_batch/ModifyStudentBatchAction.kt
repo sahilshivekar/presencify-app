@@ -19,11 +19,9 @@ sealed interface ModifyStudentBatchAction {
 
     data object FindBatchesClick : ModifyStudentBatchAction
 
-    // Batch selection after finding batches
     data class SelectBatch(val batch: Batch?) : ModifyStudentBatchAction
     data class ChangeBatchDropDownVisibility(val isOpen: Boolean) : ModifyStudentBatchAction
 
-    // Date picker actions
     data class ChangeDatePickerVisibility(val isVisible: Boolean) : ModifyStudentBatchAction
     data class UpdateNewBatchStartDate(val date: LocalDate?) : ModifyStudentBatchAction
 

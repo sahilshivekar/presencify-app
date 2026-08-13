@@ -7,24 +7,17 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import edu.watumull.presencify.feature.schedule.navigation.ScheduleRoutes
 
 
-/**
- * Navigate to Attendance Dashboard screen
- */
+
 fun NavController.navigateToAttendanceDashboard() {
     navigate(AttendanceRoutes.AttendanceDashboard)
 }
 
-/**
- * Navigate to Create/Update Attendance Sheet
- */
+
 fun NavController.navigateToCreateAttendanceSheet(classId: String) {
     navigate(AttendanceRoutes.CreateAttendanceSheet(classId = classId))
 }
 
-/**
- * Navigate to Mark Student Attendance screen.
- * Automatically pops the CreateAttendanceSheet screen if it is the current destination.
- */
+
 fun NavController.navigateToMarkStudentAttendance(attendanceId: String) {
     val currentDestination = currentBackStackEntry?.destination
     val previousDestination = previousBackStackEntry?.destination
@@ -35,13 +28,10 @@ fun NavController.navigateToMarkStudentAttendance(attendanceId: String) {
     navigate(AttendanceRoutes.MarkStudentAttendance(attendanceId = attendanceId)) {
         if (isCurrentlyOnCreateSheet) {
             if (isPreviousSearchClass) {
-                // If the flow was SearchClass -> CreateAttendanceSheet,
-                // pop SearchClass inclusively to clear the entire sequence.
                 popUpTo<ScheduleRoutes.SearchClass> {
                     inclusive = true
                 }
             } else {
-                // Otherwise, just pop the CreateAttendanceSheet screen.
                 popUpTo<AttendanceRoutes.CreateAttendanceSheet> {
                     inclusive = true
                 }
@@ -51,52 +41,35 @@ fun NavController.navigateToMarkStudentAttendance(attendanceId: String) {
 }
 
 
-/**
- * Pops the entire backstack down to the root destination, clearing its state,
- * and launches a fresh instance of the root screen to force a full page refresh.
- */
+
 fun NavController.refreshRootDestination() {
     val rootDestination = graph.findStartDestination()
 
-    // Navigate back to the start destination
     navigate(rootDestination.id) {
-        // Pop up to the start destination itself to clear its saved instance/state
         popUpTo(rootDestination.id) {
             inclusive = true
         }
-        // Avoid multi-instances of the root if clicked repeatedly
         launchSingleTop = true
     }
 }
 
-/**
- * Handles going back from the Mark Student Attendance screen.
- * - If the user came from Attendance Details, it clears the history and re-routes
- *   to a fresh, completely refreshed details screen.
- * - Otherwise, it falls back to a standard backward pop.
- */
+
 fun NavController.navigateBackFromMarkAttendanceScreen(attendanceId: String) {
-    // If the stale details screen was popped inclusively during the forward navigation,
-    // the previous backstack entry will now be the screen *before* details (e.g., Dashboard).
     val isLaunchedFromDetailsScreen = previousBackStackEntry?.destination
         ?.hasRoute<AttendanceRoutes.AttendanceDetails>() == true
 
     if (isLaunchedFromDetailsScreen) {
-        // Clear out the Mark screen and load a brand new, refreshed Details instance
         navigate(AttendanceRoutes.AttendanceDetails(attendanceId = attendanceId)) {
             popUpTo<AttendanceRoutes.AttendanceDetails> {
                 inclusive = true
             }
         }
     } else {
-        // Fall back normally (handles the post-creation sheet flows)
         navigateUp()
     }
 }
 
-/**
- * Navigate to Individual Student Analytics with filters
- */
+
 fun NavController.navigateToStudentAttendanceAnalytics(
     studentId: String,
     semesterId: String? = null,
@@ -129,9 +102,7 @@ fun NavController.navigateToStudentAttendanceAnalytics(
     )
 }
 
-/**
- * Navigate to Aggregate (Batch/Group) Analytics with filters
- */
+
 fun NavController.navigateToAggregateAttendanceAnalytics(
     semesterId: String? = null,
     divisionId: String? = null,
@@ -162,9 +133,7 @@ fun NavController.navigateToAggregateAttendanceAnalytics(
     )
 }
 
-/**
- * Navigate to Search Attendance screen
- */
+
 fun NavController.navigateToSearchAttendance(
     courseId: String? = null,
     studentId: String? = null,
@@ -187,9 +156,7 @@ fun NavController.navigateToSearchAttendance(
     )
 }
 
-/**
- * Navigate to specific Attendance Details
- */
+
 fun NavController.navigateToAttendanceDetails(attendanceId: String) {
     navigate(AttendanceRoutes.AttendanceDetails(attendanceId = attendanceId))
 }
@@ -206,9 +173,7 @@ fun NavController.navigateToRecognizeStudent(attendanceId: String) {
     }
 }
 
-/**
- * Navigate to Defaulters screen
- */
+
 fun NavController.navigateToDefaulters() {
     navigate(AttendanceRoutes.Defaulters)
 }

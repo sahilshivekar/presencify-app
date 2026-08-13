@@ -14,10 +14,8 @@ data class AddEditStudentState(
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,
 
-    // Current Step
     val currentStep: StudentFormStep = StudentFormStep.PERSONAL_DETAILS,
 
-    // Personal Details
     val prn: String = "",
     val prnError: String? = null,
     val firstName: String = "",
@@ -33,7 +31,6 @@ data class AddEditStudentState(
     val dobError: String? = null,
     val isDatePickerVisible: Boolean = false,
 
-    // Contact Details
     val email: String = "",
     val emailError: String? = null,
     val parentEmail: String = "",
@@ -41,7 +38,6 @@ data class AddEditStudentState(
     val phoneNumber: String = "",
     val phoneNumberError: String? = null,
 
-    // Academic Details
     val admissionYear: String = "",
     val admissionYearError: String? = null,
     val admissionType: AdmissionType? = null,
@@ -56,7 +52,6 @@ data class AddEditStudentState(
     val isSchemeDropdownOpen: Boolean = false,
     val schemeOptions: List<Scheme> = emptyList(),
 
-    // Image
     val studentImageBytes: ByteArray? = null,
     val studentImageUrl: String? = null,
     val isImageDialogVisible: Boolean = false,

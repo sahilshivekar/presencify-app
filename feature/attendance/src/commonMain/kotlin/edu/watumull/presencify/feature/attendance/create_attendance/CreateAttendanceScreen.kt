@@ -93,14 +93,12 @@ fun CreateAttendanceScreen(
                                 .padding(vertical = DesignToken.spacing.lg),
                             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                         ) {
-                            // Class Details Section
                             state.classSession?.let { classSession ->
                                 ClassDetailsSection(
                                     classSession = classSession
                                 )
                             }
 
-                            // Date Selection Section
                             DateSelectionSection(
                                 selectedDate = state.selectedDate,
                                 dateError = state.dateError,
@@ -120,7 +118,6 @@ fun CreateAttendanceScreen(
             }
         }
 
-        // Dialog for errors/success
         state.dialogState?.let { dialogState ->
             PresencifyAlertDialog(
                 title = dialogState.title?.asString(),
@@ -177,7 +174,7 @@ private fun ClassDetailsSection(
             divisionOrBatchText = divisionBatchText,
             branchAbbreviation = branch?.abbreviation,
             semesterText = semesterText,
-            onClick = { /* No action for this view */ },
+            onClick = {  },
             modifier = Modifier.fillMaxWidth()
         )
     }

@@ -49,7 +49,6 @@ fun AcademicsDashboardScreen(
                     modifier = Modifier.widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                 ) {
-                    // Section 1: Curriculum and Governance
                     DashboardSection(title = "Curriculum and Governance") {
                         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                             Row(
@@ -97,7 +96,6 @@ fun AcademicsDashboardScreen(
                         }
                     }
 
-                    // Section 2: Academic Time & Cohort
                     DashboardSection(title = "Academic Time & cohort") {
                         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                             PresencifyActionBar(

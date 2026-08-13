@@ -25,7 +25,6 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 
             coreDataModule,
 
-            // feature modules
             onboardingModule,
             adminAuthModule,
             adminMgtModule,

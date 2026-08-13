@@ -51,7 +51,6 @@ fun UsersDashboardScreen(
                     modifier = Modifier.widthIn(max = UiConstants.MAX_CONTENT_WIDTH),
                     verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
                 ) {
-                    // Section 1: Users
                     DashboardSection(title = "Users") {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -72,7 +71,6 @@ fun UsersDashboardScreen(
                         }
                     }
                     if (LocalUserRole.current == UserRole.ADMIN) {
-                        // Section 2: Assign Students
                         DashboardSection(title = "Assign students") {
                             Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                                 PresencifyActionBar(
@@ -108,7 +106,6 @@ fun UsersDashboardScreen(
                             }
                         }
 
-                        // Section 3: Dropout
                         DashboardSection(title = "Dropout students management") {
                             PresencifyActionBar(
                                 text = "Mark/Unmark Student as Dropout",
@@ -118,7 +115,6 @@ fun UsersDashboardScreen(
                             )
                         }
 
-                        // Section 4: Import
                         DashboardSection(title = "Import from CSV") {
                             Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.md)) {
                                 PresencifyActionBar(

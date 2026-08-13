@@ -50,10 +50,10 @@ class KtorRemoteRoomDataSource(
                 sortBy?.let { parameter("sortBy", it.value) }
                 sortOrder?.let { parameter("sortOrder", it.value) }
                 freeBetweenStartTime?.let {
-                    parameter("freeBetweenStartTime", it.toApiTimeString()) // Formats as HH:MM:SS
+                    parameter("freeBetweenStartTime", it.toApiTimeString())
                 }
                 freeBetweenEndTime?.let {
-                    parameter("freeBetweenEndTime", it.toApiTimeString()) // Formats as HH:MM:SS
+                    parameter("freeBetweenEndTime", it.toApiTimeString())
                 }
                 dayOfWeek?.let { parameter("dayOfWeek", it.value) }
                 page?.let { parameter("page", it) }

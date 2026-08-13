@@ -86,7 +86,6 @@ fun AdminDetailsScreen(
         }
     }
 
-    // Dialog handling
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,
@@ -120,7 +119,6 @@ private fun AdminDetailsScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Profile Icon
             Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
             Icon(
                 modifier = Modifier
@@ -131,7 +129,6 @@ private fun AdminDetailsScreenContent(
                 tint = MaterialTheme.colorScheme.primary
             )
 
-            // Admin Details Container
             AdminDetailsContainer(
                 state = state,
                 onAction = onAction
@@ -139,7 +136,6 @@ private fun AdminDetailsScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
-            // Password Container
             PasswordContainer(
                 state = state,
                 onAction = onAction
@@ -147,7 +143,6 @@ private fun AdminDetailsScreenContent(
 
             Spacer(modifier = Modifier.height(DesignToken.spacing.lg))
 
-            // Account Settings Container
             AccountSettingsContainer(
                 state = state,
                 onAction = onAction
@@ -367,7 +362,6 @@ private fun AccountSettingsContainer(
 
         Spacer(modifier = Modifier.height(DesignToken.spacing.sm))
 
-        // Verify Email (only show if not verified)
         if (state.isVerified == false) {
             ListItem(
                 headlineContent = {
@@ -397,7 +391,6 @@ private fun AccountSettingsContainer(
             HorizontalDivider()
         }
 
-        // Add Admin
         ListItem(
             headlineContent = {
                 Text(
@@ -416,7 +409,6 @@ private fun AccountSettingsContainer(
         )
         HorizontalDivider()
 
-        // Log out
         ListItem(
             headlineContent = {
                 Text(
@@ -444,7 +436,6 @@ private fun AccountSettingsContainer(
         )
         HorizontalDivider()
 
-        // Remove Account
         ListItem(
             headlineContent = {
                 Text(

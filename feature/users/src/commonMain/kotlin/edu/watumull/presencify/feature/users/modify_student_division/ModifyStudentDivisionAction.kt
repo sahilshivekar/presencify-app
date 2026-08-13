@@ -19,7 +19,6 @@ sealed interface ModifyStudentDivisionAction {
 
     data object FindDivisionsClick : ModifyStudentDivisionAction
 
-    // Division selection after finding divisions
     data class SelectDivision(val division: Division?) : ModifyStudentDivisionAction
     data class ChangeDivisionDropDownVisibility(val isOpen: Boolean) : ModifyStudentDivisionAction
 

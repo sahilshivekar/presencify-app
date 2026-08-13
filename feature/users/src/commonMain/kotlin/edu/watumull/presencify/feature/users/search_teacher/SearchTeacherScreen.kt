@@ -64,7 +64,6 @@ fun SearchTeacherScreen(
         topBarTitle = "Search Teachers",
         scaffoldState = scaffoldState,
         sheetContent = {
-            // Empty sheet content since teachers don't have filters
         },
         floatingActionButton = {
             if (LocalUserRole.current == UserRole.ADMIN) {
@@ -119,8 +118,6 @@ private fun SearchTeacherScreenContent(
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
-            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading students for the first time
             if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.teachers.lastIndex - 10) {
                 onAction(SearchTeacherAction.LoadMoreTeachers)
             }
@@ -241,7 +238,6 @@ private fun SearchTeacherScreenContent(
 
         }
 
-        // Done button for selection mode
         if (state.isSelectable) {
             PresencifyButton(
                 onClick = { onAction(SearchTeacherAction.DoneButtonClick) },

@@ -7,7 +7,6 @@ import kotlinx.datetime.LocalDate
 
 @Suppress("DEPRECATION")
 fun LocalDate?.validateAsDob(): ValidationResult {
-    // Optional field
     if (this == null) return ValidationResult(successful = true)
 
     val today = DateTimeUtils.getCurrentDate()

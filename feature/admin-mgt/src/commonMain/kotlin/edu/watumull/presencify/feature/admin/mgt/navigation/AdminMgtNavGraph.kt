@@ -38,7 +38,6 @@ fun NavGraphBuilder.adminMgtNavGraph(
     }
 
     composableWithSlideTransitions<AdminMgtRoutes.SearchAdmin> {
-        // TODO: Add screen content
     }
 
 }

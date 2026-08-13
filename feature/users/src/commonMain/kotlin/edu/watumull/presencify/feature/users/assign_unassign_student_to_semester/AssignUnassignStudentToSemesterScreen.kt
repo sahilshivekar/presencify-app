@@ -92,14 +92,12 @@ private fun AssignUnassignStudentToSemesterScreenContent(
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg),
             horizontalAlignment = Alignment.Start
         ) {
-            // Instructions
             Text(
                 text = "Select a branch, semester number, and academic year to find the semester",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Branch Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -124,7 +122,6 @@ private fun AssignUnassignStudentToSemesterScreenContent(
                 )
             }
 
-            // Semester Number Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -149,7 +146,6 @@ private fun AssignUnassignStudentToSemesterScreenContent(
                 )
             }
 
-            // Academic Year Selection
             Column(
                 verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)
             ) {
@@ -184,7 +180,6 @@ private fun AssignUnassignStudentToSemesterScreenContent(
                 }
             }
 
-            // Find and Navigate Button
             PresencifyButton(
                 onClick = { onAction(AssignUnassignStudentToSemesterAction.FindAndNavigateClick) },
                 text = "Find Semester & Continue",

@@ -79,7 +79,7 @@ fun String.validateAsLastName(): ValidationResult {
 
 
 fun String.validateAsMiddleName(): ValidationResult {
-    if (this.isBlank()) return ValidationResult(successful = true)  // Optional
+    if (this.isBlank()) return ValidationResult(successful = true)
 
     val minLength = ValidationRule.MinLength(1).validate(this)
     if (!minLength.successful) return minLength

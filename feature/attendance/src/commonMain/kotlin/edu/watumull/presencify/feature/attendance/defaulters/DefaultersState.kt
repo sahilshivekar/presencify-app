@@ -13,7 +13,6 @@ data class DefaultersState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Filter fields
     val selectedSemesterNumber: SemesterNumber? = null,
     val academicStartYear: String = "",
     val academicEndYear: String = "",
@@ -25,27 +24,22 @@ data class DefaultersState(
     val showStartDatePicker: Boolean = false,
     val showEndDatePicker: Boolean = false,
 
-    // Dropdown visibility
     val isSemesterNumberDropdownOpen: Boolean = false,
     val isBranchDropdownOpen: Boolean = false,
     val isCourseDropdownOpen: Boolean = false,
     val isDivisionDropdownOpen: Boolean = false,
 
-    // Options
     val branchOptions: List<Branch> = emptyList(),
     val divisionOptions: List<Division> = emptyList(),
     val courseOptions: List<Course> = emptyList(),
 
-    // Loading states
     val areBranchesLoading: Boolean = false,
     val areDivisionsLoading: Boolean = false,
     val areCoursesLoading: Boolean = false,
     val isLoadingStudents: Boolean = false,
 
-    // Student data
     val students: List<Student> = emptyList(),
 
-    // Attendance Data
     val studentAttendanceMap: Map<String, Float> = emptyMap(),
     val studentCourseAttendanceMap: Map<String, Map<String, Float>> = emptyMap(),
     val studentAttendanceNumbersMap: Map<String, Pair<Int, Int>> = emptyMap(),

@@ -85,7 +85,6 @@ interface StudentRepository {
 
     suspend fun removeStudent(id: String): Result<Unit, DataError.Remote>
 
-    // Semester operations
     suspend fun getStudentSemesters(id: String): Result<List<StudentSemester>, DataError.Remote>
 
     suspend fun addStudentToSemester(
@@ -95,7 +94,6 @@ interface StudentRepository {
 
     suspend fun removeStudentFromSemester(studentSemesterId: String): Result<Unit, DataError.Remote>
 
-    // Division operations
     suspend fun getStudentDivisions(id: String, semesterNumber: SemesterNumber?): Result<List<StudentDivision>, DataError.Remote>
 
     suspend fun addStudentToDivision(
@@ -113,7 +111,6 @@ interface StudentRepository {
 
     suspend fun revertChangeStudentDivision(newStudentDivisionId: String): Result<Unit, DataError.Remote>
 
-    // Batch operations
     suspend fun getStudentBatches(id: String, semesterNumber: SemesterNumber?): Result<List<StudentBatch>, DataError.Remote>
 
     suspend fun addStudentToBatch(
@@ -131,7 +128,6 @@ interface StudentRepository {
 
     suspend fun revertChangeStudentBatch(newStudentBatchId: String): Result<Unit, DataError.Remote>
 
-    // Bulk operations
     suspend fun bulkCreateStudents(students: List<Map<String, Any?>>): Result<List<Student>, DataError.Remote>
 
     suspend fun bulkDeleteStudents(studentIds: List<String>): Result<Unit, DataError.Remote>
@@ -144,7 +140,6 @@ interface StudentRepository {
 
     suspend fun bulkCreateStudentsFromCSV(csvData: ByteArray): Result<Unit, DataError.Remote>
 
-    // Biometric operations
     suspend fun submitBiometrics(
         images: List<ByteArray>,
         faceDescriptor: List<Float>

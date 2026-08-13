@@ -27,7 +27,7 @@ fun <T> PresencifyDropDownMenuBox(
     options: List<T>,
     onSelectItem: (T) -> Unit,
     label: String,
-    itemToString: (T) -> String, // Generic way to get display text
+    itemToString: (T) -> String,
 ) {
 
     val localFocusManager = LocalFocusManager.current

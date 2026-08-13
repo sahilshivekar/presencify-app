@@ -35,10 +35,8 @@ class MainActivity : ComponentActivity() {
 
         initKoin(applicationContext)
 
-        // Initialize FileKit for Android so ImagePicker can use it
         FileKit.init(this)
 
-        // Set the activity provider for ShareUtils
         ShareUtils.setActivityProvider { this }
 
         setContent {

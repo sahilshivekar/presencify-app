@@ -48,11 +48,11 @@ sealed interface AcademicsRoutes : NavRoute {
     @Serializable
     data class SearchCourse(
 
-        val intention: String = SearchCourseIntention.DEFAULT.name, //SearchCourseIntention
+        val intention: String = SearchCourseIntention.DEFAULT.name,
 
         val branchId: String? = null,
 
-        val semesterNumber: Int? = null, //SemesterNumber
+        val semesterNumber: Int? = null,
 
         val schemeId: String? = null,
 

@@ -132,7 +132,6 @@ fun AddEditCourseScreen(
         }
     }
 
-    // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             dialogType = dialogState.dialogType,

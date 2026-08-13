@@ -29,17 +29,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.TeacherRole
 
-/**
- * List item component for displaying Teacher information with profile image.
- *
- * @param teacherName The name of the teacher (required).
- * @param role Optional teacher role (Teacher, Head of Department, Principal).
- * @param teacherImageUrl Optional URL for teacher profile image.
- * @param isActive Whether the teacher is currently active.
- * @param feedback Optional feedback message to display.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun TeacherListItem(
     teacherName: String,

@@ -14,7 +14,7 @@ suspend inline fun <reified T> safeCall(
 ): Result<T, DataError.Remote> {
     val response = try {
         execute()
-    } catch (e: IOException) { // Covers SocketTimeoutException and UnresolvedAddressException
+    } catch (e: IOException) {
         e.printStackTrace()
         return Result.Error(DataError.Remote.NoInternet)
     } catch (e: Exception) {
@@ -34,15 +34,12 @@ suspend inline fun <reified T> responseToResult(
             try {
                 val apiResponse = response.body<ApiResponseDto<T>>()
 
-                // 1. Check if the type is Unit
                 if (Unit is T) {
                     Result.Success(Unit)
                 }
-                // 2. Otherwise, check if data is null before force unwrapping
                 else if (apiResponse.data != null) {
                     Result.Success(apiResponse.data)
                 }
-                // 3. Handle cases where data is null but T is not Unit
                 else {
                     Result.Error(DataError.Remote.Serialization)
                 }

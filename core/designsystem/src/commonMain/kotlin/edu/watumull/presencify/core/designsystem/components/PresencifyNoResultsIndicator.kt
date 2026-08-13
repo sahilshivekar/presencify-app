@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-// Can be used for showing empty search results, failure in loading data on a details screen
 @Composable
 fun PresencifyNoResultsIndicator(
     modifier: Modifier = Modifier,

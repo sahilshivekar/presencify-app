@@ -17,20 +17,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 
-/**
- * List item component for displaying Batch information.
- *
- * @param batchCode The batch code.
- * @param divisionCode The division code that this batch belongs to.
- * @param semesterNumber The semester number.
- * @param semesterAcademicStartYear The academic start year of the semester.
- * @param semesterAcademicEndYear The academic end year of the semester.
- * @param branchAbbreviation The branch abbreviation.
- * @param feedback Optional feedback message to display.
- * @param trailingContent Optional trailing content composable.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun BatchListItem(
     batchCode: String,

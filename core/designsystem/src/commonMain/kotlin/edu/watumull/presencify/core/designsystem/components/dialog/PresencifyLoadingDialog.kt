@@ -21,14 +21,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 
-/**
- * A loading dialog with rounded square borders containing a circular progress indicator.
- * Prevents user interactions while showing loading state.
- *
- * @param modifier Modifier to be applied to the dialog
- * @param message Optional loading message to display
- * @param isVisible Whether the dialog is visible
- */
+
 @Composable
 fun PresencifyLoadingDialog(
     modifier: Modifier = Modifier,
@@ -37,7 +30,7 @@ fun PresencifyLoadingDialog(
 ) {
     if (isVisible) {
         Dialog(
-            onDismissRequest = {}, // Non-dismissible to prevent accidental actions
+            onDismissRequest = {},
             properties = DialogProperties(
                 dismissOnBackPress = false,
                 dismissOnClickOutside = false
@@ -47,7 +40,7 @@ fun PresencifyLoadingDialog(
                 modifier = modifier
                     .semantics { testTag = "PresencifyLoadingDialog" }
                     .testTag("PresencifyLoadingDialog"),
-                shape = MaterialTheme.shapes.extraLarge, // Rounded square borders
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                 ),
@@ -60,7 +53,6 @@ fun PresencifyLoadingDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Circular progress indicator inside the square dialog
                     CircularProgressIndicator(
                         modifier = Modifier.size(DesignToken.components.progressMd),
                         color = MaterialTheme.colorScheme.primary,

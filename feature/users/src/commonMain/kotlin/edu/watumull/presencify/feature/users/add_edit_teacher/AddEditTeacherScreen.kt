@@ -59,7 +59,6 @@ fun AddEditTeacherScreen(
         }
     }
 
-    // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),
@@ -84,7 +83,6 @@ private fun AddEditTeacherScreenContent(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Personal Details Section
         Text(
             text = "Personal Details",
             style = MaterialTheme.typography.titleLarge,
@@ -201,7 +199,6 @@ private fun AddEditTeacherScreenContent(
 
         Spacer(Modifier.height(DesignToken.spacing.xl))
 
-        // Contact Details Section
         Text(
             text = "Contact Details",
             style = MaterialTheme.typography.titleLarge,
@@ -235,7 +232,6 @@ private fun AddEditTeacherScreenContent(
 
         Spacer(Modifier.height(DesignToken.spacing.xl))
 
-        // Submit Button
         PresencifyButton(
             onClick = { onAction(AddEditTeacherAction.SubmitClick) },
             text = if (state.isEditMode) "Update Teacher" else "Add Teacher",

@@ -17,12 +17,10 @@ data class AddEditClassState(
     val viewState: ViewState = ViewState.Content,
     val dialogState: DialogState? = null,
 
-    // Mode
     val isEditMode: Boolean = false,
     val classId: String? = null,
     val timetableId: String = "",
 
-    // Class Details
     val selectedCourse: Course? = null,
     val selectedCourseError: String? = null,
     val availableCourses: ImmutableList<Course> = persistentListOf(),
@@ -66,7 +64,6 @@ data class AddEditClassState(
 
     val isExtraClass: Boolean = false,
 
-    // Loading
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false
 ) {

@@ -32,7 +32,6 @@ class AddAdminViewModel(
                     )
                 }
 
-                // Validate on keystroke for forms
                 val validationResult = action.email.validateAsEmail()
                 updateState {
                     it.copy(
@@ -49,7 +48,6 @@ class AddAdminViewModel(
                     )
                 }
 
-                // Validate on keystroke for forms
                 val validationResult = action.username.validateAsAdminUsername()
                 updateState {
                     it.copy(
@@ -67,7 +65,6 @@ class AddAdminViewModel(
                     )
                 }
 
-                // Validate on keystroke for forms
                 val validationResult = action.password.validateAsPassword()
                 updateState {
                     it.copy(
@@ -75,7 +72,6 @@ class AddAdminViewModel(
                     )
                 }
 
-                // Also check confirm password match if it's not empty
                 if (state.confirmPassword.isNotEmpty()) {
                     validatePasswordMatch(action.password, state.confirmPassword)
                 }
@@ -89,7 +85,6 @@ class AddAdminViewModel(
                     )
                 }
 
-                // Validate password match
                 validatePasswordMatch(state.password, action.confirmPassword)
             }
 
@@ -160,7 +155,6 @@ class AddAdminViewModel(
         val password = currentState.password
         val confirmPassword = currentState.confirmPassword
 
-        // Final validation on submit
         val emailValidationResult = email.validateAsEmail()
         val usernameValidationResult = username.validateAsAdminUsername()
         val passwordValidationResult = password.validateAsPassword()

@@ -227,7 +227,6 @@ class TeacherDetailsViewModel(
         removeTeacher()
     }
 
-    // ...existing code...
 
     private fun removeTeacher() {
         viewModelScope.launch {

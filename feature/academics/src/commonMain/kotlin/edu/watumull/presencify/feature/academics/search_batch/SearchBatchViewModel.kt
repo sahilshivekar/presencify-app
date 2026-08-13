@@ -71,7 +71,6 @@ class SearchBatchViewModel(
             }
         },
         endReached = { currentPage, response ->
-            // End reached when we have loaded all batches
             val totalLoadedBatches = currentPage * 20
             totalLoadedBatches >= response.totalCount
         }
@@ -140,7 +139,6 @@ class SearchBatchViewModel(
 
         if (semester != null && branchId != null && startYear != null && endYear != null) {
 
-            // Load divisions
             updateState { it.copy(areDivisionsLoading = true) }
             divisionRepository.getDivisions(
                 semesterNumber = semester,
@@ -167,7 +165,6 @@ class SearchBatchViewModel(
                     }
                 }
         } else {
-            // Clear divisions if prerequisites are not met
             updateState {
                 it.copy(
                     divisionOptions = persistentListOf(),

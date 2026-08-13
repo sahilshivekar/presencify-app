@@ -8,12 +8,10 @@ sealed interface SearchBatchAction {
     data object NavigateBack : SearchBatchAction
 
 
-    // Search & Refresh
     data class UpdateSearchQuery(val query: String) : SearchBatchAction
     data object Search : SearchBatchAction
     data object Refresh : SearchBatchAction
 
-    // Filters
     data class SelectSemesterNumber(val semesterNumber: SemesterNumber?) : SearchBatchAction
     data class UpdateAcademicStartYear(val year: String) : SearchBatchAction
     data class UpdateAcademicEndYear(val year: String) : SearchBatchAction
@@ -23,10 +21,8 @@ sealed interface SearchBatchAction {
     data object ResetFilters : SearchBatchAction
     data object ApplyFilters : SearchBatchAction
 
-    // Batch Card Click
     data class BatchCardClick(val batchId: String) : SearchBatchAction
 
-    // Pagination
     data object LoadMoreBatches : SearchBatchAction
 
     data object ClickFloatingActionButton : SearchBatchAction

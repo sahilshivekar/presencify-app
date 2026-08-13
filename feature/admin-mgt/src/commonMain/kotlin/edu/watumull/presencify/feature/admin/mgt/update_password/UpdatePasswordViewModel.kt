@@ -31,7 +31,6 @@ class UpdatePasswordViewModel(
                     )
                 }
 
-                // Validate on keystroke for forms
                 val validationResult = action.password.validateAsPassword()
                 updateState {
                     it.copy(
@@ -39,7 +38,6 @@ class UpdatePasswordViewModel(
                     )
                 }
 
-                // Also check confirm password match if it's not empty
                 if (state.confirmPassword.isNotEmpty()) {
                     validatePasswordMatch(action.password, state.confirmPassword)
                 }
@@ -53,7 +51,6 @@ class UpdatePasswordViewModel(
                     )
                 }
 
-                // Validate password match
                 validatePasswordMatch(state.password, action.confirmPassword)
             }
 
@@ -94,7 +91,6 @@ class UpdatePasswordViewModel(
         val password = currentState.password
         val confirmPassword = currentState.confirmPassword
 
-        // Final validation on submit
         val passwordValidationResult = password.validateAsPassword()
         val passwordsMatch = password == confirmPassword
 

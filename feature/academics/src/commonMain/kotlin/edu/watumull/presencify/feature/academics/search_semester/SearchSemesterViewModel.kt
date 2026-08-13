@@ -72,7 +72,6 @@ class SearchSemesterViewModel(
             }
         },
         endReached = { currentPage, response ->
-            // End reached when we have loaded all semesters
             val totalLoadedSemesters = currentPage * 20
             totalLoadedSemesters >= response.totalCount
         }

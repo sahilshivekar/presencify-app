@@ -152,8 +152,6 @@ private fun SearchRoomScreenContent(
         snapshotFlow {
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.distinctUntilChanged().collect { lastVisibleIndex ->
-            // If lastVisibleIndex == 0 then it means the list is empty and the loading indicator is an inside item{} taking index 0
-            // initial load should only be trigger within init block of the view model, so that we can apply pre-filtering before loading students for the first time
             if (lastVisibleIndex != null && lastVisibleIndex != 0 && lastVisibleIndex >= state.rooms.lastIndex - 10) {
                 onAction(SearchRoomAction.LoadMoreRooms)
             }
@@ -253,7 +251,6 @@ private fun SearchRoomBottomSheetContent(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
     ) {
-        // Header
         Text(
             text = "Filter Rooms",
             style = MaterialTheme.typography.titleLarge,
@@ -261,7 +258,6 @@ private fun SearchRoomBottomSheetContent(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        // Sort By Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Sort By",
@@ -296,7 +292,6 @@ private fun SearchRoomBottomSheetContent(
             }
         }
 
-        // Sort Order Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Sort Order",
@@ -331,7 +326,6 @@ private fun SearchRoomBottomSheetContent(
             }
         }
 
-        // Room Type Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Room Type",
@@ -360,7 +354,6 @@ private fun SearchRoomBottomSheetContent(
         }
 
 
-        // Capacity Range Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Capacity Range",
@@ -393,7 +386,6 @@ private fun SearchRoomBottomSheetContent(
             }
         }
 
-        // Busy Time Range Filter
         Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
             Text(
                 text = "Show rooms available on",
@@ -423,7 +415,6 @@ private fun SearchRoomBottomSheetContent(
                     isError = state.busyEndTimeError != null,
                 )
             }
-            // Day of Week Filter
             Column(verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.sm)) {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -449,7 +440,6 @@ private fun SearchRoomBottomSheetContent(
                     }
                 }
 
-                // Show error if exists
                 state.dayOfWeekError?.let { error ->
                     Text(
                         text = error,
@@ -461,7 +451,6 @@ private fun SearchRoomBottomSheetContent(
 
         }
 
-        // Action Buttons
         Row(
             horizontalArrangement = Arrangement.spacedBy(DesignToken.spacing.md),
             modifier = Modifier.fillMaxWidth()

@@ -47,7 +47,7 @@ sealed interface UsersRoutes : NavRoute {
 
         val branchIds: List<String>? = null,
 
-        val semesterNumbers: List<Int>? = null, //SemesterNumber
+        val semesterNumbers: List<Int>? = null,
 
         val academicStartYearOfSemester: Int? = null,
 
@@ -65,7 +65,7 @@ sealed interface UsersRoutes : NavRoute {
 
         val dropoutAcademicEndYear: Int? = null,
 
-        val admissionTypes: List<String>? = null, // AdmissionType
+        val admissionTypes: List<String>? = null,
 
         val admissionYear: Int? = null,
 
@@ -85,7 +85,6 @@ sealed interface UsersRoutes : NavRoute {
 
         val intention: String = SearchStudentIntention.DEFAULT.name,
 
-        // Additional filter constraint parameters
         val branchId: String? = null,
 
         val academicStartYear: Int? = null,
@@ -132,7 +131,7 @@ sealed interface UsersRoutes : NavRoute {
 
         val getAll: Boolean? = null,
 
-        val intention: String = SearchTeacherIntention.DEFAULT.name, //SearchTeacherIntention
+        val intention: String = SearchTeacherIntention.DEFAULT.name,
 
     ) : UsersRoutes
 

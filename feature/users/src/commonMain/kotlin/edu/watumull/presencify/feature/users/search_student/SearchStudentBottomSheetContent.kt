@@ -46,7 +46,6 @@ fun SearchStudentBottomSheetContent(
             .fillMaxWidth()
             .padding(DesignToken.spacing.lg)
     ) {
-        // Fixed Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -65,14 +64,12 @@ fun SearchStudentBottomSheetContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DesignToken.spacing.lg))
 
-        // Scrollable Filter Options
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.lg)
         ) {
-            // Branch Filter
             FilterSection(
                 title = "Branch",
                 isLoading = state.areBranchesLoading
@@ -96,7 +93,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Semester Filter
             FilterSection(title = "Semester") {
                 Row(
                     modifier = Modifier
@@ -117,7 +113,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Academic Year of Semester Filter
             FilterSection(title = "Academic Year of Semester") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -142,7 +137,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Admission Year Filter
             FilterSection(title = "Admission Year") {
                 PresencifyTextField(
                     value = state.admissionYear ?: "",
@@ -157,7 +151,6 @@ fun SearchStudentBottomSheetContent(
                 )
             }
 
-            // Admission Type Filter
             FilterSection(title = "Admission Type") {
                 Row(
                     modifier = Modifier
@@ -182,7 +175,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Dropout Year Filter
             FilterSection(title = "Dropout Year") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -207,7 +199,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Biometric Verification Status Filter
             FilterSection(title = "Biometric Verification Status") {
                 Row(
                     modifier = Modifier
@@ -232,7 +223,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Scheme Filter
             FilterSection(
                 title = "Scheme",
                 isLoading = state.areSchemesLoading
@@ -259,7 +249,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Division Filter
             FilterSection(
                 title = "Division",
                 isLoading = state.areDivisionsLoading,
@@ -298,7 +287,6 @@ fun SearchStudentBottomSheetContent(
                 }
             }
 
-            // Batch Filter
             FilterSection(
                 title = "Batch",
                 isLoading = state.areBatchesLoading,
@@ -338,7 +326,6 @@ fun SearchStudentBottomSheetContent(
             }
         }
 
-        // Fixed Apply Filters Button
         PresencifyButton(
             onClick = {
                 onDismiss()

@@ -41,11 +41,6 @@ enum class SemesterNumber(val value: Int) : DisplayLabelProvider {
     companion object {
         fun fromValue(value: Int): SemesterNumber? = entries.find { it.value == value }
 
-        /**
-         * Check if we are currently in even semester period (Jan-June).
-         * - Jan-June: Even semesters (2,4,6,8) are active
-         * - July-Dec: Odd semesters (1,3,5,7) are active
-         */
         @OptIn(ExperimentalTime::class)
         fun isEvenSemesterPeriod(): Boolean {
             val now = Clock.System.now()
@@ -53,46 +48,23 @@ enum class SemesterNumber(val value: Int) : DisplayLabelProvider {
             return now.month.number in 1..6
         }
 
-        /**
-         * Check if we are currently in odd semester period (July-Dec).
-         * - Jan-June: Even semesters (2,4,6,8) are active
-         * - July-Dec: Odd semesters (1,3,5,7) are active
-         */
         fun isOddSemesterPeriod(): Boolean = !isEvenSemesterPeriod()
 
-        /**
-         * Get the current academic start year based on the current date.
-         * Academic year: July-June cycle
-         * - Jan-June: Academic year started previous year (e.g., 2025-2026)
-         * - July-Dec: Academic year starts this year (e.g., 2026-2027)
-         */
         @OptIn(ExperimentalTime::class)
         fun getCurrentAcademicStartYear(): Int {
             val now = Clock.System.now()
                 .toLocalDateTime(TimeZone.currentSystemDefault())
             val currentMonth = now.month.number
             val currentYear = now.year
-
-            // Jan-June: Even semesters (2,4,6,8) are active, academic year started previous year
-            // July-Dec: Odd semesters (1,3,5,7) are active, academic year starts this year
             return if (currentMonth in 1..6) currentYear - 1 else currentYear
         }
 
-        /**
-         * Get the current academic end year based on the current date.
-         * Academic year: July-June cycle
-         * - Jan-June: Academic year ends this year (e.g., 2025-2026)
-         * - July-Dec: Academic year ends next year (e.g., 2026-2027)
-         */
         @OptIn(ExperimentalTime::class)
         fun getCurrentAcademicEndYear(): Int {
             val now = Clock.System.now()
                 .toLocalDateTime(TimeZone.currentSystemDefault())
             val currentMonth = now.month.number
             val currentYear = now.year
-
-            // Jan-June: Even semesters (2,4,6,8) are active, academic year ends this year
-            // July-Dec: Odd semesters (1,3,5,7) are active, academic year ends next year
             return if (currentMonth in 1..6) currentYear else currentYear + 1
         }
     }

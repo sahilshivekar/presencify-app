@@ -81,12 +81,10 @@ fun ClassDetailsScreen(
                                 }
                             } ?: "Unknown"
 
-                            // Build semester text (e.g., "FE (2023-2024)")
                             val semesterText = semester?.let {
                                 "$year (${it.academicStartYear}-${it.academicEndYear})"
                             }
 
-                            // Build division or batch text
                             val batch = classSession.batch
                             val divisionOrBatchText = when {
                                 batch?.batchCode != null -> "Batch ${batch.batchCode}"

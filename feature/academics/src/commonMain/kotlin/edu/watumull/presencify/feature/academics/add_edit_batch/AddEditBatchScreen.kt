@@ -54,7 +54,6 @@ fun AddEditBatchScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (!state.isEditMode) {
-                        // Step 1: Semester Selection
                         Text(
                             text = "Step 1: Select Semester",
                             style = MaterialTheme.typography.titleLarge,
@@ -64,7 +63,6 @@ fun AddEditBatchScreen(
                                 .padding(bottom = DesignToken.spacing.lg)
                         )
 
-                        // Semester Number Dropdown
                         PresencifyDropDownMenuBox<SemesterNumber>(
                             value = state.semesterNumber?.toDisplayLabel() ?: "",
                             options = SemesterNumber.entries,
@@ -86,7 +84,6 @@ fun AddEditBatchScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                        // Academic Start Year
                         PresencifyTextField(
                             value = state.academicStartYear,
                             onValueChange = { onAction(AddEditBatchAction.UpdateAcademicStartYear(it)) },
@@ -99,7 +96,6 @@ fun AddEditBatchScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                        // Academic End Year
                         PresencifyTextField(
                             value = state.academicEndYear,
                             onValueChange = { onAction(AddEditBatchAction.UpdateAcademicEndYear(it)) },
@@ -112,7 +108,6 @@ fun AddEditBatchScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.lg))
 
-                        // Branch Dropdown
                         PresencifyDropDownMenuBox<Branch>(
                             value = state.branchOptions.find { it.id == state.selectedBranchId }?.abbreviation ?: "",
                             options = state.branchOptions,
@@ -134,7 +129,6 @@ fun AddEditBatchScreen(
 
                         Spacer(Modifier.height(DesignToken.spacing.xl))
 
-                        // Find Divisions Button
                         PresencifyButton(
                             onClick = { onAction(AddEditBatchAction.FindDivisionsClick) },
                             text = "Find Divisions",
@@ -144,7 +138,6 @@ fun AddEditBatchScreen(
                         )
                     }
 
-                    // Step 2: Division Selection (shown after divisions found)
                     if (!state.isEditMode && state.showDivisionInput && state.foundDivisions.isNotEmpty()) {
                         Spacer(Modifier.height(DesignToken.spacing.xxl))
 
@@ -177,7 +170,6 @@ fun AddEditBatchScreen(
                         )
                     }
 
-                    // Step 3: Batch Code (shown after division is selected)
                     if (state.showBatchInput) {
                         Spacer(Modifier.height(DesignToken.spacing.xxl))
 
@@ -192,7 +184,6 @@ fun AddEditBatchScreen(
                             )
                         }
 
-                        // Display Division Code and Semester Details
                         state.foundDivision?.let { division ->
                             state.foundSemester?.let { semester ->
                                 Text(
@@ -231,7 +222,6 @@ fun AddEditBatchScreen(
         }
     }
 
-    // Dialogs
     state.dialogState?.let { dialogState ->
         PresencifyAlertDialog(
             title = dialogState.title?.asString(),

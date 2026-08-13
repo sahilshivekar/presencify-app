@@ -109,9 +109,6 @@ fun PresencifyTextButton(
         contentPadding = contentPadding,
         interactionSource = interactionSource,
         content = {
-//            when {
-//                content != null -> content()
-//                else -> {
             if (isLoading == true) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -128,8 +125,6 @@ fun PresencifyTextButton(
                     )
                 }
             }
-//                }
-//            }
         }
     )
 }

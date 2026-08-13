@@ -125,7 +125,6 @@ fun SemesterDetailsScreen(
 
                         Spacer(modifier = Modifier.height(DesignToken.spacing.xl))
 
-                        // Courses Section
                         Text(
                             text = "Courses of this semester",
                             style = MaterialTheme.typography.titleSmall,

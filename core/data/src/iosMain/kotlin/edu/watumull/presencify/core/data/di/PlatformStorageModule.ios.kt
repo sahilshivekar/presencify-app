@@ -11,10 +11,8 @@ import org.koin.dsl.module
 
 actual val platformStorageModule = module {
     single { SettingsFactory(PlatformContext()) }
-    // DataStore for iOS
     single<DataStore<Preferences>> {
         DataStoreFactory.create { dataStorePath() }
     }
-    // FCMTokenProvider for iOS (no-op)
     single { FCMTokenProvider(PlatformContext()) }
 }

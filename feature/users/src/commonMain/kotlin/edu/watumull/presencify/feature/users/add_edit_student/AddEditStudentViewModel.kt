@@ -53,7 +53,6 @@ class AddEditStudentViewModel(
             loadSchemes()
             loadAdmissionYearOptions()
 
-            // If in edit mode, load student details
             state.studentId?.let { studentId ->
                 loadStudentDetails(studentId)
             }
@@ -97,7 +96,6 @@ class AddEditStudentViewModel(
     }
 
     private fun loadAdmissionYearOptions() {
-        // Admission year is now entered manually via text field.
     }
 
     private suspend fun loadStudentDetails(studentId: String) {
@@ -147,7 +145,6 @@ class AddEditStudentViewModel(
             is AddEditStudentAction.ConfirmNavigateBack -> confirmNavigateBack()
             is AddEditStudentAction.DismissDialog -> updateState { it.copy(dialogState = null) }
 
-            // Personal Details
             is AddEditStudentAction.UpdatePrn -> {
                 val validation = action.prn.validateAsPrn()
                 updateState {
@@ -192,7 +189,6 @@ class AddEditStudentViewModel(
                 it.copy(isDatePickerVisible = action.isVisible)
             }
 
-            // Contact Details
             is AddEditStudentAction.UpdateEmail -> {
                 val validation = action.email.validateAsEmail()
                 updateState {
@@ -215,7 +211,6 @@ class AddEditStudentViewModel(
                 }
             }
 
-            // Academic Details
             is AddEditStudentAction.UpdateAdmissionYear -> updateState {
                 val cleaned = action.year.filter { it.isDigit() }.take(4)
                 it.copy(admissionYear = cleaned, admissionYearError = null)
@@ -239,7 +234,6 @@ class AddEditStudentViewModel(
                 it.copy(isSchemeDropdownOpen = action.isVisible)
             }
 
-            // Image
             is AddEditStudentAction.UpdateStudentImage -> updateState {
                 it.copy(studentImageBytes = action.imageBytes)
             }
@@ -247,7 +241,6 @@ class AddEditStudentViewModel(
                 it.copy(isImageDialogVisible = !it.isImageDialogVisible)
             }
 
-            // Navigation
             is AddEditStudentAction.ValidateAndNext -> validateAndNext()
             is AddEditStudentAction.BackStep -> backStep()
             is AddEditStudentAction.SubmitClick -> {
@@ -284,7 +277,6 @@ class AddEditStudentViewModel(
             StudentFormStep.CONTACT_DETAILS -> updateState { it.copy(currentStep = StudentFormStep.PERSONAL_DETAILS) }
             StudentFormStep.ACADEMIC_DETAILS -> updateState { it.copy(currentStep = StudentFormStep.CONTACT_DETAILS) }
             else -> {
-                // Already on first step, handle back navigation
                 handleBackNavigation()
             }
         }
@@ -392,7 +384,6 @@ class AddEditStudentViewModel(
     }
 
     private suspend fun submitForm() {
-        // Validate all sections
         if (!validatePersonalDetails() || !validateContactDetails() || !validateAcademicDetails()) {
             return
         }

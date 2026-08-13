@@ -20,20 +20,7 @@ import edu.watumull.presencify.core.designsystem.components.PresencifyListItem
 import edu.watumull.presencify.core.designsystem.theme.DesignToken
 import edu.watumull.presencify.core.domain.enums.SemesterNumber
 
-/**
- * List item component for displaying Timetable information.
- *
- * @param branchAbbreviation The abbreviation of the branch.
- * @param year The year (e.g., "TE", "BE").
- * @param semesterNumber The semester number enum.
- * @param semesterAcademicStartYear The academic start year of the semester.
- * @param semesterAcademicEndYear The academic end year of the semester.
- * @param divisionCode The division code.
- * @param feedback Optional feedback message to display.
- * @param trailingContent Optional trailing content composable.
- * @param onClick Optional click handler for the list item.
- * @param modifier Modifier for the list item.
- */
+
 @Composable
 fun TimetableListItem(
     branchAbbreviation: String,

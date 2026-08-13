@@ -110,7 +110,6 @@ private fun ImportStudentsScreenContent(
             modifier = Modifier
                 .widthIn(max = UiConstants.MAX_CONTENT_WIDTH)
                 .fillMaxWidth(),
-//            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(DesignToken.spacing.xl)
         ) {
             Text(
@@ -119,7 +118,6 @@ private fun ImportStudentsScreenContent(
                 textAlign = TextAlign.Left
             )
 
-            // File Selection Box
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

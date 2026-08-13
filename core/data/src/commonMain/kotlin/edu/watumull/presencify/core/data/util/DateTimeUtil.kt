@@ -6,7 +6,6 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 
 
-// HH:MM:SS format for API calls
 fun LocalTime.toApiTimeString(): String {
     return this.format(LocalTime.Format {
         hour(Padding.ZERO)
