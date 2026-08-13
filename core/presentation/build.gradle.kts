@@ -53,13 +53,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("org.jetbrains.compose.runtime:runtime:1.10.0")
-                implementation("org.jetbrains.compose.foundation:foundation:1.10.0")
-                implementation("org.jetbrains.compose.material3:material3:1.9.0")
-                implementation("org.jetbrains.compose.material:material:1.10.0")
-                implementation("org.jetbrains.compose.ui:ui:1.10.0")
-                implementation("org.jetbrains.compose.components:components-resources:1.10.0")
-                implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.0")
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.material)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.ui.tooling.preview)
                 implementation(libs.compose.material.icons.core)
                 implementation(libs.compose.material.icons.extended)
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
